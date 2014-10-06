@@ -1,0 +1,157 @@
+<style type="text/css" media="screen">
+	#template-container {}
+	#template-content {}
+	
+	/**
+	 * template-header can be applied to any block level tag
+	 * but ideally should be used in conjuction with DIV (for make a header box) or H1-H6 (for making heading) 
+	*/
+	.template-header {}
+	
+	/**
+	 * special sections 
+	 */
+	.template-breadcrumb {}
+	.template-pagination {}	
+		
+	/**
+	 * special messaging and notifications
+	 * 
+	 */
+	.template-info {}
+	.template-alert {}
+	.template-error {}
+	
+	
+	/**
+	 * main website header/logo section
+	 */
+	#template-container > header {}
+	#template-container > header h1 {}
+	#template-container > header h2 {}
+	#template-container > header img {}
+		
+	/**
+	 * main top navigation
+	 */
+	#template-container > header > nav {}
+		
+	/**
+	 * main side navigation/bar
+	 */
+	#template-container > aside {}
+		
+	/**
+	 * main content section
+	 * this can be applied to DIV or SECTION, but we strongly recommend DIV
+	 * since acutal section will be groupped by the module.  This is only meant for styling
+	 */
+	#template-content {}
+		
+	/**
+	 * primary section headers
+	 */
+	section > header h1 {}
+		
+	/**
+	 * main website footer
+	 */
+	#template-container > footer {}
+		
+		
+	/**
+	 * module title/page title
+	 */
+	#template-content > section {} /* module section */
+	#template-content > section > header /* module header.  this is also considered page header */
+	#template-content > section > header h1 {}
+	
+	/**
+	 * styling the content listing header */
+	#template-content > section > article > header h3 {} /* without 'a' tag indicates this is a view of the content */
+	#template-content > section > article > header h3 a {} /* with 'a' tag indicates this is listing of content */
+	
+		
+</style>
+
+<style type="text/css" media="screen">
+	/**
+	 * styling website headings
+	 * we could use h1.template-header, but since just to remove styling collision we implicitly 
+	 */
+	#template-container > header > h1.template-header {}
+		
+	/**
+	 * styling website section headers
+	 * such as left side navigation and other parts
+	 * these are simple sections and may or maynot use SECTION tag
+	 */
+	h3.template-header {}
+	h4.template-header {}
+		
+	/**
+	 * styling webpage heading
+	 */
+	#template-content > section > header h1 {}
+		
+	/**
+	 * styling other major headerings
+	 */
+		
+		
+		
+</style>
+
+<body id="template-container" onload="">
+	<header>
+		<nav></nav>
+		<hgroup>
+			<h1></h1>
+			<h2></h2>
+		</hgroup>
+		<img />
+	</header>
+	
+	<nav></nav>
+	<aside></aside>
+	
+	<div id="template-content">
+		
+		
+		
+		
+		
+		
+		
+		<!-- module layout -->
+		<section class='module-{nameofmoudle}'>
+			<header>
+			</header>
+			
+			<article>
+				<header>
+					<h3></h3>
+					<p></p>
+				</header>
+				
+				<p></p>
+				<div></div>
+				
+				<footer>
+				</footer>
+			</article>
+			
+			<footer>
+			</footer>
+		</section>
+		
+		
+		
+		
+		
+		
+	</div>
+	<footer>
+		
+	</footer>
+</body>

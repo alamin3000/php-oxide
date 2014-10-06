@@ -1,0 +1,51 @@
+/*
+ * Following CSS classes are used in phpoxide
+ */
+
+/* main container for the layout */
+#template-container {}
+
+/* using toolbar.  currently used by admin layout */
+.template-toolbar {}
+ 
+/* top location crumb */
+.template-breadcrumb { }
+ 
+ /* page number and navigation */
+.template-pagination {}
+ 
+/* usually used for tags and topics */
+.template-taxonomy {}
+ 
+/* defining any element into button. usually used with 'a' tag to make links look like button */
+.template-button {}
+
+/* making any section into box.  usually making borders */
+.template-box {}
+
+/* used for non critical alerts. can be used with any tag */
+.template-alert {}
+
+/* used for critical errors */
+.template-error {}
+
+/* used for general information */
+.template-info {}
+
+
+/* used to indicate listing.  this can be used with ul, ol or any other section */
+.template-list {
+}
+
+.template-x {
+   /*
+	 * used for horizontal layout.  can be used in anything, forms, lists, etc
+	 */
+}
+
+.template-y {
+	/*
+	 * used for vertical layout
+	 */
+}
+

@@ -1,0 +1,33 @@
+FrontController
+   
+
+
+[content/admin]
+AdminContentPostForm = Called when Content Admin Post form is initialized.  Allows plugin to add additional controls/validators
+AdminContentPostContentPreSave = Called when content admin is about to add/update content
+AdminContentPostContentPostSave
+
+
+[user]
+ModuleUserDefaultIndexBuildAlertArray
+
+
+
+
+<section>
+   <h3>Content module notifications</h3>
+   <dl>
+      <dt>ContentListQuery</dt>
+      <dd>Notified before query is executed for listing.  Best place to add any additional SQL query.</dd>
+      <dd>provides <b>sql/SelectQuery</b></dd>
+      
+      <dt>ContentListContents</dt>
+      <dd>Notifies with all contents for listing.  If no content is retrived, it will be an empty array</dd>
+      
+      
+      <dt>ModuleContentInfoFooterRender</dt>
+      <dd>Notifies for every content's footer.  This is ideal place to put comments (if module action = view)</dd>
+      
+   </dl>
+</section>
+  

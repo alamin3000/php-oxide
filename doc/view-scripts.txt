@@ -1,0 +1,11 @@
+View is responsible for rendering the contents
+
+TEMPLATE:
+1.1 HTML HEAD 
+_html::title()
+
+GETTING THE MAIN CONTENT VIEW
+$this->getView(PHPOXIDE_CONTENT_VIEW) 
+
+GETTING THE TITLE OF THE PAGE
+$this->title()

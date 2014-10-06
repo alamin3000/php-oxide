@@ -1,0 +1,49 @@
+Rendering a Html Element
+- render
+	- _callback($element, $inners, $buffer)
+	- onPreRender
+	- onRenderStartTag
+		= <p attr1=val1...>
+	- onRenderInnerTag
+		= text
+	- onRenderEndTag
+		- _callback($element, $inner, $buffer)
+		= </p>
+	- onPostRender
+
+Rendering a Html Control (oxide\ui\html\Control)
+- render
+	- _callback($element, $inners, $buffer)
+	- onPreRender
+		- onRenderLabel
+			= <label>
+			- onPreControlRender
+				- label gets *
+	- onRenderStartTag
+		= <textarea attr1=val1...>
+	- onRenderInnerTag
+		- _callback($element, $inner, $buffer)
+		= text
+	- onRenderEndTag
+		= </textarea>
+	- onPostRender
+		- onPostControlRender
+			= <p>
+			= <p>
+
+Rendering a Html Form
+- render
+	- _callback($element, $inners, $buffer)
+	- onPreRender
+	- onRenderStartTag
+		= <p attr1=val1...>
+	- onRenderInnerTag
+		- _callback($element, $inner, $buffer)
+		- onRenderFormHeader
+		= text
+		- onPreControlRender
+		- onPostControlRender
+		- onRenderFormFooter
+	- onRenderEndTag
+		= </p>
+	- onPostRender

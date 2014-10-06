@@ -1,0 +1,10 @@
+render
+   onPreRender()
+      onPreControlRender() // form
+   onRenderStartTag()
+      onRenderLabel()      // control
+   onRenderInnerTag()
+   onRenderEndTag()
+   onPostRender()
+      onPostControlRender() // form
+
