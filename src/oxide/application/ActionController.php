@@ -13,7 +13,6 @@ use oxide\data\model\Cingle;
 use oxide\helper\Util;
 use Exception;
 use oxide\util\ConfigFile;
-use oxide\helper\Notifier;
 
 /**
  * Action Controller
@@ -109,17 +108,16 @@ abstract class ActionController extends CommandController {
     * @notifies {Module}{Controller}{Action}End
 	 */
 	protected function onExecute(Context $context) {
-		// get the action name
-		$notifier = EventNotifier::defaultInstance();
+      $httpmethod = $this->_route->method;
 		$action_name = $this->getActionName();
 		
       if($this->_catchAll) {
          array_unshift($this->_route->params, $this->getActionName());
          $this->_route->params = array_filter($this->_route->params);
-         $this->forward($this->_defaultActionName);
+         $this->forward($this->_defaultActionName, $httpmethod);
       } else {
          // for to appropriate action method
-         $this->forward($action_name);
+         $this->forward($action_name,$httpmethod);
       }
 	}
 	
@@ -215,7 +213,8 @@ abstract class ActionController extends CommandController {
       }
    }
    /**
-    *
+    * Get params using slash pair, where first part is the key and second part is value.
+    * ie., domain.com/module/controller/action/key/value
     * @access public
     * @return array 
     */
@@ -414,7 +413,7 @@ abstract class ActionController extends CommandController {
 	 * @param string $action
     * @throws Exception
 	 */
-	public function forward($action) {
+	public function forward($action, $httpmethod = null) {
       $context = $this->getContext();
       if(empty($action)) {
 			throw new Exception('Action name can not be empty.', 500);

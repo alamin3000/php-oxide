@@ -1,0 +1,22 @@
+{
+    "name": "phpoxide/oxide",
+    "description": "A Modern php (5.5+) application framework.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alamin Ahmed",
+            "email": "al.ahmed@outlook.com",
+            "homepage" : "http://aahmed.com",
+            "role" : "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "zendframework/zend-authentication": "2.0.*",
+        "zendframework/zend-permissions-acl": "2.0.*"
+    },
+    
+    "autoload": {
+        "psr-0": {"oxide": "src/"}
+    }
+}

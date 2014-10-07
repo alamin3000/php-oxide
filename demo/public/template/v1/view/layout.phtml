@@ -1,0 +1,42 @@
+<?php
+use oxide\helper\html;
+use oxide\helper\template;
+
+?>
+<!DOCTYPE html>
+<html lang="en-US">	
+   <head>
+		<meta charset="utf-8" />
+      <link href="/template/v1/css/layout.css" type="text/css" rel="stylesheet"/>
+      <link href="/template/v1/css/script.css" type="text/css" rel="stylesheet"/>
+      <link href="/template/v1/css/template.css" type="text/css" rel="stylesheet"/>
+      <script type="text/javascript" src="/template/v1/script/app.js"></script>
+		<?php echo html::head() ?>
+	</head>
+	
+	<body>
+      <header>
+         <h1>Sample Website</h1>
+         <h2>Demonstrates phpoxide web application</h2>
+         <nav>
+            <ul>
+               <li><a href="/">Home</a></li>
+               <li><a href="/">About</a></li>
+            </ul>
+         </nav>
+      </header>
+      <aside>
+         <p>
+				Welcome to sample phpoxide site.  This site demonstrate built-in modules at minimulistic fashion.
+			</p>
+      </aside>
+      
+      <div>
+         <?= template::content() ?>
+      </div>
+      
+      <footer>
+         <p>copyright phpoxide @ <a href="http://phpoxide.googlecode.com">http://phpoxide.googlecode.com</a></p>
+      </footer>
+	</body>
+</html>

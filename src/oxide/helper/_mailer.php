@@ -1,5 +1,5 @@
 <?php
-namespace oxide\util;
+namespace oxide\helper;
 use Zend\Mail\Message as MailMessage;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
@@ -7,13 +7,12 @@ use Zend\Mail\Transport\Sendmail;
 
 
 /**
- * factory class for sending mail
+ * Helper class to send email
  *
- * this is static class.
  * @package oxide
  * @subpackage util
  */
-class Mailer
+abstract class _mailer
 {   
    const
       TO = 'To',
@@ -86,11 +85,11 @@ class Mailer
     * @param type $attach
     * @return type
     */
-   public static function mail($from, $tos, $subject, $message)
+   public static function mail($from, $tos, $subject, $html = null, $plain = null)
    {
       $boundary = md5(time());
-      $plain_text = strip_tags($message);
-      $html_text = $message;
+      $plain_text = $plain;
+      $html_text = $html;
       
       $to = self::generateToAddressString($tos);      
 

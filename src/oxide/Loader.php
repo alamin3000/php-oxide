@@ -47,8 +47,7 @@ class Loader {
     */
    static public function register_autoload() {
       self::$namespaces['oxide'] = dirname(__FILE__);
-		self::$namespaces['Zend'] = dirname(__FILE__) . '/../vendor/Zend';
-      spl_autoload_register(__NAMESPACE__ .'\Loader::load');
+      
    }
    
    /**
@@ -57,6 +56,7 @@ class Loader {
     * @return \oxide\http\FrontController
     */
    public static function bootstrap($appdir, $autostart = true) {
+      spl_autoload_register(__NAMESPACE__ .'\Loader::load');
       App::init($appdir);
       $config = App::config();
       $context = App::context();
