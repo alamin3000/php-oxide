@@ -10,6 +10,7 @@
             "role" : "Developer"
         }
     ],
+    
     "require": {
         "php": ">=5.5.0",
         "zendframework/zend-authentication": "2.0.*",
