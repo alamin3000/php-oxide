@@ -1,6 +1,8 @@
 {
     "name": "phpoxide/oxide",
+    "type": "framework",
     "description": "A Modern php (5.5+) application framework.",
+    "keywords": ["php","framework"],
     "license": "MIT",
     "authors": [
         {
