@@ -13,7 +13,8 @@
     "require": {
         "php": ">=5.5.0",
         "zendframework/zend-authentication": "2.0.*",
-        "zendframework/zend-permissions-acl": "2.0.*"
+        "zendframework/zend-permissions-acl": "2.0.*",
+        "zendframework/zend-mail" : "2.0.*"
     },
     
     "autoload": {
