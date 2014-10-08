@@ -47,7 +47,7 @@ class Loader {
     */
    static public function register_autoload() {
       self::$namespaces['oxide'] = dirname(__FILE__);
-      
+      spl_autoload_register(__NAMESPACE__ .'\Loader::load');
    }
    
    /**
@@ -56,7 +56,7 @@ class Loader {
     * @return \oxide\http\FrontController
     */
    public static function bootstrap($appdir, $autostart = true) {
-      spl_autoload_register(__NAMESPACE__ .'\Loader::load');
+      self::register_autoload();
       App::init($appdir);
       $config = App::config();
       $context = App::context();
