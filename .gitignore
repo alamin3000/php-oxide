@@ -1,2 +1,5 @@
 /vendor/
 .DS_Store
+/nbproject/private/
+project.xml
+project.properties
