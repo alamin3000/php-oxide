@@ -108,16 +108,15 @@ abstract class ActionController extends CommandController {
     * @notifies {Module}{Controller}{Action}End
 	 */
 	protected function onExecute(Context $context) {
-      $httpmethod = $this->_route->method;
 		$action_name = $this->getActionName();
 		
       if($this->_catchAll) {
          array_unshift($this->_route->params, $this->getActionName());
          $this->_route->params = array_filter($this->_route->params);
-         $this->forward($this->_defaultActionName, $httpmethod);
+         $this->forward($this->_defaultActionName);
       } else {
          // for to appropriate action method
-         $this->forward($action_name,$httpmethod);
+         $this->forward($action_name);
       }
 	}
 	
@@ -413,7 +412,7 @@ abstract class ActionController extends CommandController {
 	 * @param string $action
     * @throws Exception
 	 */
-	public function forward($action, $httpmethod = null) {
+	public function forward($action) {
       $context = $this->getContext();
       if(empty($action)) {
 			throw new Exception('Action name can not be empty.', 500);
