@@ -49,6 +49,7 @@ class Route
 		 */
 		$action = null,
            
+      $namespace = null,
 
 		/**
 		 * array of param strings

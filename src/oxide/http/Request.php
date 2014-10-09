@@ -97,7 +97,7 @@ class Request {
     * @return string
     */
    public function getPath() {
-      return $this->getUrlComponent('path');
+      return $this->getUriComponents('path');
    }
    
    /**

@@ -19,6 +19,7 @@ class Router
 		$defaultAction = null;
 	
 	protected
+      $_registry = [],
       $_routes = [],
 		$_schema = ['module', 'controller', 'action', 'params'],
 		$_separator = '/';
@@ -28,43 +29,25 @@ class Router
 		CONTROLLER  = 'controller',
 		ACTION      = 'action',
 		PARAMS      = 'params';
-
-	/**
-	 * sets URL routing part separator
-	 *
-	 * This separator is used to break down the routing parts from URL string
-	 * defaults is set to standard '/' path character.
-	 * @param string $separator
-	 */
-	public function setUrlRoutingPartSeparator($separator)
-	{
-		$this->_separator = $separator;
-	}
-
-	/**
-	 * sets URL routing schema
-	 *
-	 * URL routing schema is defined by an array with linear routing parts.
-	 * Each parts are separated by current URL parts separator
-	 *
-	 * For example, standard routing for URL is based on following schema:<br>
-	 * /module_name/controller_name/action_name/param1/param2...<br>
-	 * For this schmea, defination array will be:
-	 * <code>
-	 *		$schema = array('module', 'controller', 'action', 'params')
-	 * </code>
-	 *
-	 *
-	 * @param array $schema
-	 */
-	public function setUrlRoutingSchemaDefination($schema)
-	{
-		$this->_schema = $schema;
-	}
    
-   public function register($path, $route) {
-      
+   /**
+    * Register given path with the module
+    * 
+    * @param string $path
+    * @param string $module
+    */
+   public function register($path, $module) {
+      $this->_registry[$path] = $module;
    }
+   
+   /**
+    * Unregister the given path from the registray
+    * @param string $path
+    */
+   public function unregister($path) {
+      unset($this->_registry[$path]);
+   }
+   
 	/**
 	 * create route from given url path
 	 *
@@ -112,130 +95,46 @@ class Router
 
 		return $route;
 	}
-   
-   /**
-    * add a forward routing condition
-    * 
-    * @param type $target
-    * @param type $forward 
-    */
-   public function addRouteMap($target, $forward) {
-      $this->_routeMap[(string) $target] = $forward;
-   }
-   
-   /**
-    *
-    * @param type $target
-    * @param type $forward 
-    */
-   public function addUrlMap($url, $forward) {
-      $this->_routeMap[$url] = $forward;
-   }
-   
-   /**
-    * match if any URL rewrite has been configured
-    * if so, matched path will be returned
-    * 
-    * @param string $path 
-    * @return string
-    */
-   protected function _matchRedirect($path)
-   {
-      $tmp_path = trim(strtolower($path), '/');
-      $reroutes = $this->_context->getConfig()->redirect;
-      
-      if($reroutes) {
-         foreach( $reroutes as $target => $forward) {
-            if($tmp_path == trim(strtolower($target), '/')) {
-               return $forward;
-            }
-         }
-      }
-      
-      
-      return $path;
-   }
-   
-   
-   /**
-    *
-    * @param Route $route1
-    * @param Route $route2
-    * @return type 
-    */
-   protected function _matchReRoute(Route $route1, Route $route2)
-   {
-      if($route1->module == $route2->module ||
-         $route1->module == '*') {
-         // module match
-      }
-      
-      if($route1->controller == '*' ||
-         $route1->controller == $route2->controller) {
-         // controller match
-      }
-      
-      if($route1->action == '*' ||
-         $route2->action == $route2->action) {
-         // action match
-      }
-      
-      return $route;
-   }
-   
-
+ 
    /**
 	 * match if defined routes are available with given path.
 	 *
 	 * @access protected
 	 * @param $route route to be match
-	 * @return Route
+	 * @return bool
 	 * @todo complete implement this method
 	 */
-	protected function match(Route $route)
-	{
-//      // match using config file
-//      $path = $this->_matchRedirect($route->path);
-//      if($path != $route->path) {
-//         header ('HTTP/1.1 301 Moved Permanently');
-//         header ('Location: '. $path);
-//         exit;
-//      }
-//      
+	protected function match($path) {
+      $registry = $this->_registry;
+      if(empty($registry)) return FALSE;
+            
+      // sort with longer path first
+      $offsets = array_keys($registry);
+      rsort($offsets);
       
-		return $route;
+      foreach($offsets as $offset) {
+         $module = $registry[$offset];
+         if(($path == $offset) || ($offset === "" || strpos($path, rtrim($offset, '/') . '/') === 0)) {
+            // path matched with registry
+            $parampath = trim(substr($path, strlen($offset)), '/');
+            return $parampath;
+         }
+      }
+      
+		return FALSE;
 	}
    
-   /**
-    * Route the given regquest
-    * 
-    * @param \oxide\http\Request $request
-    * @return Router
-    */
-   public function routeRequest(Request $request) {
-      $path = $request->getUriComponents(Request::URI_PATH);
-      $route = $this->routeUrlPath($path);
-      $route->method = $request->getMethod();
+   public function route(Request $request) {
+      $registry = $this->_registry;
+      if(empty($registry)) return NULL;
       
+      $route = $this->urlToRoute($request->getPath());
+      $path = $route->module;
+      if(!isset($registry[$path])) return NULL;
+      $route->method = $request->getMethod();
       return $route;
    }
-   
-	
-
-	/**
-	 * route given url
-	 * 
-	 * @param string $path
-	 * @return Route
-	 */
-	public function routeUrlPath($path) {
-		// parse the path for routing components
-		$route = $this->urlToRoute($path);
-		
-		// match the route with predefined routings
-		return $this->match($route);
-	}
-   
+	   
    /**
     * makes necessary changes to the route object and reroutes to default controller
     * 

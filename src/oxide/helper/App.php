@@ -3,6 +3,7 @@ namespace oxide\helper;
 use oxide\http\FrontController;
 use oxide\data\Connection;
 use oxide\http\Context;
+use oxide\util\EventNotifier;
 use oxide\data\model\DbKeyValueObject;
 use oxide\util\ConfigFile;
 use oxide\helper\Util;
@@ -15,10 +16,10 @@ abstract class App {
 		
    /**
     * Initialize the application
-    * @param type $dir
+    * @param type $config_dir
     */
-	public static function init($dir) {
-		self::$_dir = rtrim($dir, '/');
+	public static function init($config_dir) {
+		self::$_config_dir = $config_dir;
 	}
 	
    /**
@@ -27,6 +28,7 @@ abstract class App {
     * @return string
     */
 	public static function dir($name = null) {
+      throw new \Exception('not implemented yet.');
 		$dir = self::$_dir;
 		if($name) {
 			return $dir . '/' . $name;
@@ -73,7 +75,7 @@ abstract class App {
 	public static function config($key = null, $default = null, $throwerror = false) {
 		static $config = null;
 		if($config === null) {
-			$dir = self::dir('config');
+			$dir = self::$_config_dir;
 			$file = $dir . '/config.ini';
 			if(!is_file($file)) {
 				throw new \Exception('Application Config file not found in location: ' . $file);
@@ -98,7 +100,7 @@ abstract class App {
    public static function pref($namespace = null, $key = null, $default = null, $required = false) {
       static $instance = null;
       if($instance === null) {
-         $dir = self::dir('config');
+         $dir = self::$_config_dir;
          $file = $dir . '/pref.ini';
          if(!is_file($file)) {
             throw new \Exception('Application preference file is not found in location: '. $file);
@@ -127,8 +129,7 @@ abstract class App {
     */
 	public static function instance() {
       if(!FrontController::hasDefaultInstance()) {
-         $fc = new FrontController();
-         FrontController::setDefaultInstance($fc);
+         throw new \Exception("Deafult Front Controller instance not found.");
       }
 		return FrontController::defaultInstance();
 	}
@@ -139,10 +140,17 @@ abstract class App {
     */
    public static function context() {
       if(!Context::hasDefaultInstance()) {
-         $context = new Context();
-         Context::setDefaultInstance($context);
+         throw new \Exception("Deafult Context instance not found.");
       }
       return Context::defaultInstance();
+   }
+   
+   /**
+    * Get default application notifier
+    * @return EventNotifier
+    */
+   public static function notifier() {
+      return EventNotifier::defaultInstance();
    }
    
    /**

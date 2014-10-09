@@ -2,7 +2,7 @@
 namespace oxide\util;
 
 class ConfigFile implements \ArrayAccess, \Countable {
-   use pattern\ArrayFunctionsTrait, pattern\PropertyAccessTrait;
+   use pattern\ArrayFunctionsTrait;
 
    /**
     * 
@@ -11,7 +11,6 @@ class ConfigFile implements \ArrayAccess, \Countable {
     * @param type $readonly
     */
    public function __construct($file = null, $data = null) {
-   	$this->_t_array_storage = &$this->_t_property_storage;   	
       if($file) {
 	      $this->merge(self::parse($file));
       }

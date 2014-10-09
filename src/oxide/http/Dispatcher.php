@@ -21,36 +21,6 @@ class Dispatcher {
 		$_default = array(),
 		$_controllerInstance = '\oxide\http\Command';
 
-
-	/**
-	 * adds the given route to dispatching queue
-	 * 
-	 * @return 
-	 * @param Route $route
-	 */
-	public function addRouteToQueue(Route $route) {
-		$this->_routes[] = $route;
-	}
-		
-	/**
-	 * starts dispatching loop
-	 * 
-	 * @access public
-	 * @param Context $context context which to dispatch
-	 */
-	public function startDispatchingQueue(Context $context) {
-		// make sure there is routes to dispatch to
-		if(count($this->_routes) == 0) return;
-		
-		// starts the dispatching loop
-		$i = 0;
-		do {
-			$route = $this->_routes[$i];
-         $this->shouldRetryDispatching = true;
-			$this->dispatch($route, $context);
-			$i++;	
-		} while(isset($this->_routes[$i]));
-	}
 	
 	/**
 	 * dispatch given $context  to the controller via given $route

@@ -55,29 +55,37 @@ class Loader {
     * @param array $config
     * @return \oxide\http\FrontController
     */
-   public static function bootstrap($appdir, $autostart = true) {
+   public static function bootstrap($appdir, $autorun = true) {
+      // registering autoload for phpoxide
       self::register_autoload();
-      App::init($appdir);
-      $config = App::config();
-      $context = App::context();
-      $fc = App::instance();
-		$context->set('config', $config, true); // set the application config
-		
+      App::init($appdir); //initialize the App helper
+      $config = App::config(); 
+      
+      // creating the application context
+      $context = new http\Context();
+      http\Context::setDefaultInstance($context);
+      $context->set('config', $config, true); // set the application config.
+      //
+      // create the front controller and set the default instance
+      $fc = new http\FrontController($context);
+      http\FrontController::setDefaultInstance($fc);
+      
+      // bootstrap
       $bootstraps = Util::value($config, 'bootstrap', null);
       if($bootstraps) {
          foreach($bootstraps as $namespace => $dir) {
-            self::$namespaces[$namespace] = $dir;
+            self::$namespaces[$namespace] = $dir; // register the namespace
             $class = ucfirst($namespace);
             $fullclass = "{$namespace}\\{$class}";
             $method = "initialize";
             if(method_exists($fullclass, $method)) {
-               $fullclass::{$method}($context);
+               $fullclass::{$method}($fc);
             }
          }
       }
       
-		if($autostart) {
-			$fc->execute($context);
+		if($autorun) {
+			$fc->run();
 		}
 		
 		return $fc;

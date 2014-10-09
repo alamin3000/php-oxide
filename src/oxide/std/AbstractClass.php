@@ -13,49 +13,49 @@ use ReflectionClass;
  * @subpackage http
  */
 abstract class AbstractClass {
-   protected 
-      $_name = null,
-      $_namespace = null,
-      $_dir = null;
-   
-   public function __construct() {
-      $reflector = new ReflectionClass(get_called_class());
-     	$dir = realpath(dirname($reflector->getFileName()));
-      $this->_name = $reflector->getName();
-      $this->_dir = $dir;
-      $this->_namespace = $reflector->getNamespaceName();
-	}
-   
-   /**
-    * 
-    * @return type
-    */
-   public function getName() {
-      return $this->_name;
+   public static function initialize() {
+      
    }
    
    /**
-    * 
-    * @return type
+    * Get the class reflector
+    * @staticvar type $reflector
+    * @return ReflectionClass
     */
-   public function getNamespace() {
-      return $this->_namespace;
+   public static function classReflector() {
+      static $reflector = null;
+      if($reflector === null) {
+         $reflector = new ReflectionClass(get_called_class());
+      }
+      
+      return $reflector;
    }
    
    /**
-    * 
+    * Get the 
+    * @staticvar type $dir
     * @return type
     */
-   public function getDirectory() {
-      return $this->_dir;
+   public static function classDir() {
+      static $dir = null;
+      if($dir === null) {
+         $dir = realpath(dirname(self::classReflector()->getFileName()));
+      }
+      
+      return $dir;
    }
    
    /**
-    * Returns the given $path relative to the current directory
-    * @param string $path
-    * @return string
+    * Get the namespace
+    * @staticvar type $namespace
+    * @return type
     */
-   public function getDirectoryPath($path) {
-      return $this->getDirectory() . '/' . $path;
+   public static function classNamespace() {
+      static $namespace = null;
+      if($namespace === null) {
+         $namespace = self::classReflector()->getNamespaceName();
+      }
+      
+      return $namespace;
    }
 }

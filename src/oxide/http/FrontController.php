@@ -4,7 +4,7 @@ use oxide\http\Context;
 use oxide\http\Router;
 use oxide\http\Dispatcher;
 use oxide\util\EventNotifier;
-
+use oxide\util\pattern\DefaultInstanceTrait;
 /**
  * Front Controller.  
  * 
@@ -15,8 +15,8 @@ use oxide\util\EventNotifier;
  * @package oxide
  * @subpackage http
  */
-class FrontController implements Command {
-   use \oxide\util\pattern\DefaultInstanceTrait;
+class FrontController {
+   use DefaultInstanceTrait;
    const
       EVENT_START = 'FrontControllerStart',
       EVENT_END = 'FrontControllerEnd',
@@ -27,9 +27,30 @@ class FrontController implements Command {
       EVENT_EXCEPTION = 'FrontControllerException';
    
 	protected
+      $_context = null,
 		$_router = null,
 		$_dispatcher = null;
+   
+   /**
+    * Initializes the front controller
+    * @param Context $context
+    */
+   public function __construct(Context $context) {
+      $this->_context = $context;
+   }
+   
+   /**
+    * Get the context
+    * @return Context
+    */
+   public function getContext() {
+      return $this->_context;
+   }
 				
+   /**
+    * Get the router for the front controller
+    * @return Router
+    */
 	public function getRouter() {
 		if($this->_router === null) {
 			$this->_router = new Router();
@@ -54,7 +75,8 @@ class FrontController implements Command {
     * @param \oxide\http\Context $context
     * @throws \oxide\http\Exception
     */
-   public function execute(Context $context) {      
+   public function run() {   
+      $context = $this->getContext();
       $request = $context->getRequest();
 		$response = $context->getResponse();
 		$notifier = EventNotifier::defaultInstance();
@@ -65,15 +87,18 @@ class FrontController implements Command {
          $router = $this->getRouter();
 			$context->set('router', $router);
          $notifier->notify(self::EVENT_PRE_ROUTE, $this, $router,  $request);      
-         $route = $router->routeRequest($request);
+         $route = $router->route($request);
          $notifier->notify(self::EVENT_POST_ROUTE, $this, $router,  $route);      
+         
+         if(!$route) {
+            throw new \Exception("Unable to route requested path: {$request->getPath()}");
+         }
          
          // dispatch using the routing information
          $dispatcher = $this->getDispatcher();
          $context->set('dispatcher', $dispatcher);
          $notifier->notify(self::EVENT_PRE_DISPTACH, $this, $dispatcher, $route);
-         $dispatcher->addRouteToQueue($route);
-         $dispatcher->startDispatchingQueue($context);
+         $dispatcher->dispatch($route,$context);
          $notifier->notify(self::EVENT_POST_DISPATCH, $this, $dispatcher, $route);
       }
       
