@@ -312,7 +312,7 @@ abstract class ActionController extends CommandController {
 	public function getViewController() {
       if(!ViewController::hasDefaultInstance()) {
          $config = App::config();
-         $viewController = new ViewController($config->get('template'), $this->getModuleName());
+         $viewController = new ViewController($config->get('templates'), $this->getModuleName());
          ViewController::setDefaultInstance($viewController);
       }
       

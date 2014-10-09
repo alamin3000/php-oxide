@@ -71,7 +71,7 @@ class Loader {
       http\FrontController::setDefaultInstance($fc);
       
       // bootstrap
-      $bootstraps = Util::value($config, 'bootstrap', null);
+      $bootstraps = Util::value($config, 'bootstraps', null);
       if($bootstraps) {
          foreach($bootstraps as $namespace => $dir) {
             self::$namespaces[$namespace] = $dir; // register the namespace
@@ -84,6 +84,14 @@ class Loader {
          }
       }
       
+      $modules = Util::value($config, 'modules', null);
+      $router = $fc->getRouter();
+      if($modules) {
+         foreach($modules as $module => $dir) {
+            self::$namespaces[$module] = $dir;
+            $router->register($module, $module);
+         }
+      }
 		if($autorun) {
 			$fc->run();
 		}

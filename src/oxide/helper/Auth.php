@@ -22,12 +22,12 @@ abstract class Auth {
 	
 	public static function rules() {
 		$config = App::config();
-		return $config->get('rule', null);
+		return $config->get('rules', null);
 	}
 	
 	public static function roles() {
 		$config = App::config();
-		return $config->get('role', null);
+		return $config->get('roles', null);
 	}
 	
 	public static function access(Route $route, $throwException = true) {
