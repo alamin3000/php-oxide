@@ -108,8 +108,7 @@ abstract class ActionController extends CommandController {
     * @notifies {Module}{Controller}{Action}End
 	 */
 	protected function onExecute(Context $context) {
-		$action_name = $this->getActionName();
-		
+		$action_name = $this->getActionName();		
       if($this->_catchAll) {
          array_unshift($this->_route->params, $this->getActionName());
          $this->_route->params = array_filter($this->_route->params);
@@ -413,18 +412,20 @@ abstract class ActionController extends CommandController {
     * @throws Exception
 	 */
 	public function forward($action) {
-      $context = $this->getContext();
       if(empty($action)) {
 			throw new Exception('Action name can not be empty.', 500);
 		}
-      
+      $context = $this->getContext();
       $args = func_get_args();
+      $request = $context->getRequest();
+      $httpmethod = strtoupper($request->getMethod());
+
       $this->setActionName($action);
       
       // generate method name
 		$action = $this->sanitize($action);
-      $method = str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
-		$method = $this->_actionMethodPrefix . $method . $this->_actionMethodSuffix;
+      $action_filtered = str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
+		$method = $this->_actionMethodPrefix . $action_filtered . $this->_actionMethodSuffix;
       
       // we need to update the view script if view is already loaded
       if($this->_view) {
@@ -432,16 +433,29 @@ abstract class ActionController extends CommandController {
       }
       
       $this->onActionStart($context, $action);
-		// attempt to call action method
+      $args[0] = $context;    // replaces the first param (which is $action) with context
+                              // rest params will be sent to the method
+      
+      $handled = false;
+      
+		// call the standard method if available execute{Actionname}
 		if(method_exists($this, $method)) {
-         
-			$args[0] = $context;    // replaces the first param (which is $action) with context
-                                 // rest params will be sent to the method
          call_user_func_array(array($this, $method), $args);
-		} else {
+         $handled = true;
+		} 
+      
+      // now call the http method version
+      $http_method = "{$method}_{$httpmethod}";
+      if(method_exists($this, $http_method)) {
+         call_user_func_array(array($this, $http_method), $args);
+         $handled = true;
+      }
+      
+      if(!$handled) {
          // action doesn't exists
          $this->onUndefinedAction($context, $action);
 		}
+      
       $this->onActionEnd($context, $action);
 	}
 

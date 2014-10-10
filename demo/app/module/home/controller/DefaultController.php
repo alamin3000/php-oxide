@@ -22,8 +22,10 @@ class DefaultController extends ActionController
       parent::onInit($context);
    }
    
-   public function executeIndex(Context $context) {
+   public function executeIndex_GET(Context $context) {
+      
    }
+
    
    /**
     * handle all controller level exceptions
