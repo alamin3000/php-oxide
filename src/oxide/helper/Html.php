@@ -397,13 +397,13 @@ abstract class Html
     */
    public static function select($name, $value = null, $options = [], $label = null, $attribs = null) {
       if(!$attribs) $attribs = [];
-      $attrib['name'] = $name;
+      $attribs['name'] = $name;
       
       if($label) {
          $label = self::label($label, $name);
       }
       
-      self::start('select', $attrib);
+      self::start('select', $attribs);
       foreach($options as $key => $val) {
          if(is_int($key)) {
             $text = $val;
