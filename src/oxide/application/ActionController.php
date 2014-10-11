@@ -438,18 +438,19 @@ abstract class ActionController extends CommandController {
       
       $handled = false;
       
-		// call the standard method if available execute{Actionname}
-		if(method_exists($this, $method)) {
-         call_user_func_array(array($this, $method), $args);
-         $handled = true;
-		} 
-      
       // now call the http method version
+      // this is specific version, so will be called first
       $http_method = "{$method}_{$httpmethod}";
       if(method_exists($this, $http_method)) {
          call_user_func_array(array($this, $http_method), $args);
          $handled = true;
       }
+      
+      // call the standard method if available execute{Actionname}
+		if(method_exists($this, $method)) {
+         call_user_func_array(array($this, $method), $args);
+         $handled = true;
+		} 
       
       if(!$handled) {
          // action doesn't exists
