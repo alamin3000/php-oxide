@@ -12,8 +12,6 @@ class Loader {
     */
    static public $namespaces = [];
    
-   
-
    /**
     * Load given $classname using $dir if provided, else static::$namespaces 
     * @param type $classname
@@ -43,7 +41,7 @@ class Loader {
    }
    
    /**
-    * register autoload for the frame work
+    * register autoload for the framework
     */
    static public function register_autoload() {
       self::$namespaces['oxide'] = dirname(__FILE__);
@@ -53,7 +51,7 @@ class Loader {
    /**
     * Initializes the FrontController and returns the instance.
     * @param array $config
-    * @return \oxide\http\FrontController
+    * @return http\FrontController
     */
    public static function bootstrap($appdir, $autorun = true) {
       // registering autoload for phpoxide

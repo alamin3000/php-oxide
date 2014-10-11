@@ -372,10 +372,10 @@ abstract class Html
    
    public static function button($type, $name, $value = null, $label = null, $attribs = null) {
       if(!$attribs) $attribs = [];
-      $attrib['name'] = $name;
-      $attrib['type'] = $type;
-      if($value) $attrib['value'] = $value;
-      return self::tag('button', $label,  $attrib);
+      $attribs['name'] = $name;
+      $attribs['type'] = $type;
+      if($value) $attribs['value'] = $value;
+      return self::tag('button', $label,  $attribs);
 	}
    
    public static function textarea($name, $value = null,  $label = null, $attribs = null) {
