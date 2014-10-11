@@ -86,7 +86,7 @@ abstract class ActionController extends CommandController {
  		// setup view directory
 		$this->_viewDir			= dirname($this->_controllerDir) . '/view';
 		$this->_viewDirSuffix	= $this->_controllerName . '/';
-		$this->_actionName		= (empty($route->action)) ? $this->_defaultActionName : $route->action;
+		$this->_actionName		= $route->action;
 	}
    
    /**
@@ -110,13 +110,17 @@ abstract class ActionController extends CommandController {
 	protected function onExecute(Context $context) {
 		$action_name = $this->getActionName();		
       if($this->_catchAll) {
-         array_unshift($this->_route->params, $this->getActionName());
+         array_unshift($this->_route->params, $action_name);
          $this->_route->params = array_filter($this->_route->params);
-         $this->forward($this->_defaultActionName);
+         $action_name = $this->_defaultActionName;
       } else {
          // for to appropriate action method
-         $this->forward($action_name);
+         if(empty($action_name)) {
+            $action_name = $this->_defaultActionName;
+         }
       }
+      
+      $this->forward($action_name);
 	}
 	
 	/**
