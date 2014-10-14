@@ -29,6 +29,7 @@ class ImageUrlUploadControl extends InputControl {
    public function setForm(\oxide\ui\html\Form $form = null) {
       parent::setForm($form);
       $validation = $form->getValidationProcessor();
+      $validation->addValidationComponent($this->_imageUploadControl);
       // we need to make the upload file path relative to the root document, so it can be accessed by website
       $replacefilter = new ReplaceFilterer(filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'), '');
       $validation->getProcessorContainer()->addProcessor(
