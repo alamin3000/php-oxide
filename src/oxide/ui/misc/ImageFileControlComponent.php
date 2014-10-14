@@ -37,9 +37,6 @@ class ImageFileControlComponent extends FileControl implements ValidationCompone
     */
    public function __construct($name, $value = null, $label = null, $attrbs = null, array $options = null) {
       parent::__construct($name, $value, $label, $attrbs);
-      if($options) {
-         $this->_options = array_merge($this->_options, $options);
-      }      
    }
    
    /**
@@ -47,7 +44,7 @@ class ImageFileControlComponent extends FileControl implements ValidationCompone
     * @param array $options
     */
    public function setOptions(array $options) {
-      $this->_options = $options;
+      $this->_options = array_merge($this->_options, $options);
    }
    
    

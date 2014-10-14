@@ -35,6 +35,7 @@ class ImageUrlUploadControl extends InputControl {
               new FilterProcessor($replacefilter), $this->_imageUploadControl->getName());
 
       $validation->addProcessCallbacks(null, function(&$values) {
+         print 'here';
          $urlname = $this->getName();
          $uploadname = $this->_imageUploadControl->getName();
          $imageurl = null;
