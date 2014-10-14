@@ -441,7 +441,7 @@ abstract class ActionController extends CommandController {
       
       $method_pre = "{$method}_start";
       if(method_exists($this, $method_pre)) {
-         $method_pre($context);
+         call_user_func_array(array($this, $method_pre), $args);
       }
       
       // now call the http method version
@@ -465,7 +465,7 @@ abstract class ActionController extends CommandController {
       
       $method_post = "{$method}_end";
       if(method_exists($this, $method_post)) {
-         $method_post($context);
+         call_user_func_array(array($this, $method_post), $args);
       }
 	}
    
