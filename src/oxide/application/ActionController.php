@@ -469,20 +469,12 @@ abstract class ActionController extends CommandController {
       }
 	}
    
-   protected function _generateActionMethodName($action, $prefix = null, $postfix = null) {
-      
-   }
-
-   
    protected function _generateFullRouteClassName($prefix = '', $suffix = '') {
       $module = ucfirst($this->getModuleName());
 		$controller = ucfirst($this->getControllerName());
 		$action = ucfirst($this->getActionName());
       return "{$prefix}{$module}{$controller}{$action}{$suffix}";
    }
-
-   protected function onActionStart(Context $context, $action) {}
-   protected function onActionEnd(Context $context, $action) {}
 
    /**
     * Calls when action provided is not defined in the class

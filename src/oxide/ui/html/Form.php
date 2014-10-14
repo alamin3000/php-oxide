@@ -307,6 +307,10 @@ class Form extends Element {
       
       return $issubmit;
 	}
+   
+   public function setValidationProcessor(validation\ValidationProcessor $processor) {
+      $this->_validationProcessor = $processor;
+   }
 
    /**
     * Get the form validation processor
