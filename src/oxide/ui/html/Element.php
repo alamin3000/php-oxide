@@ -160,7 +160,9 @@ class Element extends Tag implements \ArrayAccess, \Countable {
          else return (string) $buffer;
       }
       catch (\Exception $e) {
-         print \oxide\helper\Util::dump($e);
+         print 'Error in Element rendering: ' . get_called_class();
+         print ' ';
+         print $e->getMessage();
       }
    }
    
