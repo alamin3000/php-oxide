@@ -136,6 +136,11 @@ abstract class _ui {
       return Html::end();
    }
    
+   public static function a($href, $text) {
+      $attribs['class'] = "btn";
+      return Html::a($href, $text, $attribs);
+   }
+   
    /**
     * 
     * @param type $href

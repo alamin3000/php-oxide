@@ -419,8 +419,11 @@ abstract class ActionController extends CommandController {
       if(empty($action)) {
 			throw new Exception('Action name can not be empty.', 500);
 		}
+      $handled = false;
       $context = $this->getContext();
       $args = func_get_args();
+      $args[0] = $context;    // replaces the first param (which is $action) with context
+                              // rest params will be sent to the method
       $request = $context->getRequest();
       $httpmethod = strtoupper($request->getMethod());
 
@@ -436,11 +439,10 @@ abstract class ActionController extends CommandController {
          $this->_view->setScript($this->generateFullViewScriptPath($this->getActionName()));
       }
       
-      $this->onActionStart($context, $action);
-      $args[0] = $context;    // replaces the first param (which is $action) with context
-                              // rest params will be sent to the method
-      
-      $handled = false;
+      $method_pre = "{$method}_start";
+      if(method_exists($this, $method_pre)) {
+         $method_pre($context);
+      }
       
       // now call the http method version
       // this is specific version, so will be called first
@@ -461,8 +463,15 @@ abstract class ActionController extends CommandController {
          $this->onUndefinedAction($context, $action);
 		}
       
-      $this->onActionEnd($context, $action);
+      $method_post = "{$method}_end";
+      if(method_exists($this, $method_post)) {
+         $method_post($context);
+      }
 	}
+   
+   protected function _generateActionMethodName($action, $prefix = null, $postfix = null) {
+      
+   }
 
    
    protected function _generateFullRouteClassName($prefix = '', $suffix = '') {

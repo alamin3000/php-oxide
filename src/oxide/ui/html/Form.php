@@ -278,8 +278,7 @@ class Form extends Element {
    }
    
 	/**
-	 * checks if form has been submitted or not
-	 * 
+	 * Checks if form has been submitted or not
     * Optionally checks if form submit validation using session
     * @param boolean $session_check this checks the submit with session, to make sure it is not form spoofing
 	 * @return bool
