@@ -160,9 +160,11 @@ class Element extends Tag implements \ArrayAccess, \Countable {
          else return (string) $buffer;
       }
       catch (\Exception $e) {
-         print 'Error in Element rendering: ' . get_called_class();
-         print ' ';
-         print $e->getMessage();
+         echo 'Error in Element rendering: ' . get_called_class(),
+               '. (';
+               $e->getMessage();
+               ') ';
+         die('Terminated due to exception.');
       }
    }
    

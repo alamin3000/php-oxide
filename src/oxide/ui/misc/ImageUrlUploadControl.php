@@ -13,7 +13,8 @@ class ImageUrlUploadControl extends InputControl {
       
       // now create the image upload control
       $file_control_name = $this->getName().'_file';
-      $this->_imageUploadControl = new ImageFileControlComponent($file_control_name, null, null, $options);
+      $this->_imageUploadControl = new ImageFileControlComponent($file_control_name);
+      $this->_imageUploadControl->setOptions($options);
    }
    
    protected function onPreRender(ArrayString $buffer) {

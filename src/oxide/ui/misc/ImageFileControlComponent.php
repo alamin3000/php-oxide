@@ -42,6 +42,15 @@ class ImageFileControlComponent extends FileControl implements ValidationCompone
       }      
    }
    
+   /**
+    * Set upload options
+    * @param array $options
+    */
+   public function setOptions(array $options) {
+      $this->_options = $options;
+   }
+   
+   
    public function setForm(Form $form = null) {
       parent::setForm($form);
       if($form) {
