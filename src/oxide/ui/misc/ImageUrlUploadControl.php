@@ -8,13 +8,20 @@ class ImageUrlUploadControl extends InputControl {
    protected
       $_imageUploadControl = null;
    
-   public function __construct($name, $value = null, $label = null, $options = null, $attrbs = null) {
+   public function __construct($name, $value = null, $label = null, $attrbs = null) {
       parent::__construct(self::TYPE_TEXT, $name, $value, $label, $attrbs);
       
       // now create the image upload control
       $file_control_name = $this->getName().'_file';
       $this->_imageUploadControl = new ImageFileControlComponent($file_control_name);
-      $this->_imageUploadControl->setOptions($options);
+   }
+   
+   /**
+    * Get the internal image file control component
+    * @return ImageFileControlComponent
+    */
+   public function getImageUploadControl() {
+      return $this->_imageUploadControl;
    }
    
    protected function onPreRender(ArrayString $buffer) {
