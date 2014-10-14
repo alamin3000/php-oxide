@@ -45,8 +45,8 @@ class ImageUrlUploadControl extends InputControl {
             $imageurl = $values[$urlname];
          }
          
-         $values[$urlname] - $urlname;
-         $this->setValue($urlname);
+         $values[$urlname] = $imageurl;
+         $this->setValue($imageurl);
       });
    }
    
