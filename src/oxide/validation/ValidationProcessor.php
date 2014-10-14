@@ -1,6 +1,5 @@
 <?php
 namespace oxide\validation;
-use oxide\util\Notifier;
 /**
  * 
  */
@@ -19,8 +18,8 @@ class ValidationProcessor implements Processor {
        */
       $_processors = null,
            
-      $_preProcessCallback = null,
-      $_postProcessCallback = null,
+      $_preProcessCallbacks = [],
+      $_postProcessCallbacks = [],
            
 
       $_requiredKeys = array(),
@@ -156,9 +155,9 @@ class ValidationProcessor implements Processor {
       return $this->_processors;
    }
    
-   public function setProcessCallbacks(\Closure $preprocess = null, \Closure $postprocess = null) {
-      if($preprocess) $this->_preProcessCallback = $preprocess;
-      if($postprocess) $this->_postProcessCallback = $postprocess;
+   public function addProcessCallbacks(\Closure $preprocess = null, \Closure $postprocess = null) {
+      if($preprocess) $this->_preProcessCallback[] = $preprocess;
+      if($postprocess) $this->_postProcessCallback[] = $postprocess;
    }
 
    
@@ -175,9 +174,13 @@ class ValidationProcessor implements Processor {
     * @return null|array
     */
    public function process($values, ValidationResult &$result = null)  {
-      if($this->_preProcessCallback) {
-         $preprocess = $this->_preProcessCallback;
-         $preprocess($values, $result);
+      // calls the preprocess callbacks, if any
+      if(!empty($this->_preProcessCallback)) {
+         $preprocessors = $this->_preProcessCallback;
+         foreach($preprocessors as $processor) {
+            $processor($values, $result);
+         }
+         
       }
       // initial setups
       if(!$result) $result = new ValidationResult();
@@ -238,9 +241,12 @@ class ValidationProcessor implements Processor {
          return NULL;
       }
       
-      if($this->_postProcessCallback) {
-         $postprocess = $this->_postProcessCallback;
-         $postprocess($values, $result);
+      // call the post processor callbacks, if any
+      if(!empty($this->_postProcessCallback)) {
+         $processors = $this->_postProcessCallback;
+         foreach($processors as $processor) {
+            $processor($values, $result);
+         }
       }
       return $values;
    }

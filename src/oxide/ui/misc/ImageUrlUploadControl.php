@@ -3,6 +3,8 @@ namespace oxide\ui\misc;
 use oxide\ui\html\InputControl;
 use oxide\ui\misc\ImageFileControlComponent;
 use oxide\util\ArrayString;
+use oxide\validation\string\ReplaceFilterer;
+use oxide\validation\FilterProcessor;
 
 class ImageUrlUploadControl extends InputControl {
    protected
@@ -22,6 +24,29 @@ class ImageUrlUploadControl extends InputControl {
     */
    public function getImageUploadControl() {
       return $this->_imageUploadControl;
+   }
+   
+   public function setForm(\oxide\ui\html\Form $form = null) {
+      parent::setForm($form);
+      $validation = $form->getValidationProcessor();
+      // we need to make the upload file path relative to the root document, so it can be accessed by website
+      $replacefilter = new ReplaceFilterer(filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'), '');
+      $validation->getProcessorContainer()->addProcessor(
+              new FilterProcessor($replacefilter), $this->_imageUploadControl->getName());
+
+      $validation->addProcessCallbacks(null, function(&$values) {
+         $urlname = $this->getName();
+         $uploadname = $this->_imageUploadControl->getName();
+         $imageurl = null;
+         if(!empty($values[$uploadname])) { // upload value submitted
+            $imageurl = $values[$uploadname];
+         } else {
+            $imageurl = $values[$urlname];
+         }
+         
+         $values[$urlname] - $urlname;
+         $this->setValue($urlname);
+      });
    }
    
    protected function onPreRender(ArrayString $buffer) {
