@@ -2,9 +2,6 @@
 namespace oxide\helper;
 use oxide\helper\Html;
 use oxide\ui\html\Form;
-use oxide\ui\html\Control;
-use oxide\util\ArrayString;
-use oxide\ui\html\Element;
 use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
 
@@ -18,6 +15,9 @@ abstract class _ui {
       STYLE_DEFAULT = 0,
       STYLE_PRIMARY = 1,
       STYLE_ALERT = 2,
+      FORM_STANDARD = 10,
+      FORM_INLINE = 11,
+
       SIZE_DEFAULT = 0,
       SIZE_SMALL = 1,
       SIZE_LARGE = 2;
@@ -131,6 +131,7 @@ abstract class _ui {
       
       Html::start('form', $attrs);
       foreach($controls as $name => $control) {
+         
       }
       
       return Html::end();
@@ -142,6 +143,29 @@ abstract class _ui {
    }
    
    /**
+    * Prints heading
+    * @param string $main
+    * @param string $secondary
+    * @return string
+    */
+   public static function heading($main, $secondary = null) {
+      if($secondary) $h2 = Html::tag('h2', $secondary);
+      else $h2 = null;
+      
+      return Html::tag('h1', $main) . $h2;
+   }
+   
+   /**
+    * 
+    * @param type $link
+    * @param type $text
+    * @return type
+    */
+   public static function link($link, $text = null) {
+      return Html::a($link, $text);
+   }
+   
+   /**
     * 
     * @param type $href
     * @param type $text
@@ -150,8 +174,8 @@ abstract class _ui {
     * @param type $attribs
     * @return type
     */
-   public static function link_button($href, $text, $style = null, $size = null, $attribs = null) {
-      if(!$attribs) $attribs = [];
+   public static function link_button($href, $text, $style = null, $size = null) {
+      $attribs = [];
       if($size == self::SIZE_SMALL) {
          $cls_size = 'btn-sm';
       } else if($size == self::SIZE_LARGE) {
@@ -171,12 +195,16 @@ abstract class _ui {
       return Html::a($href, $text, $attribs);
    }
    
+   public static function css_class_from_style($style) {
+      
+   }
+   
    /**
     * 
     * @param Form $form
     * @return Form
     */
-   public static function form_element(Form $form) {
+   public static function form_element(Form $form, $style = null, $size = null) {
 //      return $form;
 //      $form->registerRenderCallback(function(Form $form, ArrayString $buffer) {
 //         
@@ -209,11 +237,18 @@ abstract class _ui {
       foreach($form->getControls() as $control) {
          if(!$control instanceof Fieldset) {
             $control->class = 'form-control';
+            $control->getLabelTag()->class = 'control-label';
          }
          
          if($control instanceof ButtonControl) {
             $control->class = 'btn btn-primary';
          }
+      }
+               
+      if($style == self::FORM_INLINE) {
+         $form->class = 'form-inline';
+      } else {
+         $form->class = 'form-horizontal';
       }
       
       $form->controlWrapperTag->setTag('div');

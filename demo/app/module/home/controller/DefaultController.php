@@ -62,7 +62,7 @@ class DefaultController extends ActionController
       
       $fieldset = new \oxide\ui\html\Fieldset('fieldset1', null, 'Fieldset Info');
       $fieldset->addControl(new \oxide\ui\html\InputControl('checkbox', 'checkbox', null, 'Select'));
-      $form->addFieldset($fieldset);
+      $form->addControl($fieldset);
       
       
       $form->addControl(new \oxide\ui\html\ButtonControl('submit', 'submit', 'Submit'));
@@ -75,6 +75,6 @@ class DefaultController extends ActionController
             print 'Valid';
          }
       }
-      echo $form;
+      echo \oxide\helper\_ui::form_element($form);
    }
 }
