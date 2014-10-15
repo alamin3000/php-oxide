@@ -346,15 +346,12 @@ class Form extends Element {
     * @return null|array
     */
    public function process(validation\ValidationResult &$result = null) {
-      
       // if form is disabled,
       // we will not process this
       if(isset($this->disabled)) {
          // this is an error
          throw new \Exception('Form is disabled, therefore cannot be processed.');
       }
-      
-      
       
 		if($result) {
 			$this->_result = $result;
@@ -487,12 +484,13 @@ class Form extends Element {
          }
 		}
       
+      // only wrap control is not block level
       $buffer->prepend($this->controlWrapperTag->renderOpenTag());
       $buffer->append($this->controlWrapperTag->renderCloseTag());
    }
  
    /**
-    * 
+    * Before rendering the form, we will need to add the form identification control
     * @return string
     */
    protected function onPreRender(ArrayString $buffer) {

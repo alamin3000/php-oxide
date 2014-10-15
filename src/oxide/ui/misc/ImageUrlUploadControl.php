@@ -50,14 +50,21 @@ class ImageUrlUploadControl extends InputControl {
       return $this->_imageUploadControl;
    }
    
+   /**
+    * Adds various validations
+    * @param Form $form
+    */
    public function setForm(Form $form = null) {
       parent::setForm($form);
       $imgcontrol = $this->getImageUploadControl();
-      $imgcontrol->setForm($form); // call the file controls set form manually, since it is not being added to the form
+      $imgcontrol->form = $form->id; // add the form 
+//      $imgcontrol->setForm($form); // call the file controls set form manually, since it is not being added to the form
       // add validation components for the image control
       $options = $this->_options;
       $validation = $form->getValidationProcessor();
       $validation->addValidationComponent(new ImageUploadValidation($options), $imgcontrol->getName());
+      
+      // make the uploaded url accessable from the web
       $replacefilter = new ReplaceFilterer(Util::value($options, 'document_root', null,  true), '');
       $validation->getProcessorContainer()->addProcessor(
               new FilterProcessor($replacefilter), $imgcontrol->getName());
@@ -73,7 +80,7 @@ class ImageUrlUploadControl extends InputControl {
             $imageurl = $values[$urlname];
          }
          
-//         unset($values[$uploadname]);
+         unset($values[$uploadname]);
          $values[$urlname] = $imageurl;
          $form->setValue($urlname, $imageurl);
       });

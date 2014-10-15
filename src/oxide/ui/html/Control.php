@@ -15,7 +15,6 @@ class Control extends Element {
       $labelTag = null;
    
    protected 
-      $_labelTag = null,
 		$_label = null,
       $_value = null,
       
@@ -181,6 +180,7 @@ class Control extends Element {
    
    /**
     * Notify form, if available, before rendering the control
+    * This will allow form to do any additional process/modifying
     * @param \oxide\util\ArrayString $buffer
     * @return boolean
     */

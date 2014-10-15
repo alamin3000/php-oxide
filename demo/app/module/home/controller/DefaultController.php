@@ -50,19 +50,22 @@ class DefaultController extends ActionController
    protected function executeTest(Context $context) {
       $this->_autoRender = false;
       
-      \oxide\helper\Util::dump($_POST);
       $options = [
           'document_root' => \oxide\helper\App::dir_public(),
           'upload_folder' => \oxide\helper\App::dir_upload()
       ];
       
-      var_dump($options);
       $form = new \oxide\ui\html\Form();
       $imgcontrol = new \oxide\ui\misc\ImageUrlUploadControl('imageurl', null, 'Image');
       $imgcontrol->setOptions($options);
       $form->addControl($imgcontrol);
-      $form->addControl(new \oxide\ui\html\ButtonControl('submit', 'submit', 'Submit'));
       
+      $fieldset = new \oxide\ui\html\Fieldset('fieldset1', null, 'Fieldset Info');
+      $fieldset->addControl(new \oxide\ui\html\InputControl('checkbox', 'checkbox', null, 'Select'));
+      $form->addFieldset($fieldset);
+      
+      
+      $form->addControl(new \oxide\ui\html\ButtonControl('submit', 'submit', 'Submit'));
       if($form->isSubmit()) {
          $values = $form->process($result);
          \oxide\helper\Util::dump($values);

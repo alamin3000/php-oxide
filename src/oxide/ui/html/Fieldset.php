@@ -18,16 +18,20 @@ class Fieldset extends Control {
     * @param Form $form
     */
    public function setForm(Form $form = null) {
-      parent::setForm($form);
+      parent::setForm($form); // set own
       // we will apply form value to all entries
       foreach($this->_t_array_storage as $control) {
-         if($control instanceof Control) {
+         if($control instanceof Control) { // this will also include fieldset, since it is also control
             $control->setForm($form);
          }
       }
    }
-   
-   protected function onRenderLabel(ArrayString $buffer) {
+ 
+   protected function onPreRender(ArrayString $buffer) {
       $this->prepend($this->renderLabel());
+   }
+   
+   protected function onPostRender(ArrayString $buffer) {
+      // don't do anything
    }
 }
