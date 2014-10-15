@@ -4,16 +4,29 @@ use oxide\ui\html\Form;
 use oxide\ui\html\InputControl;
 use oxide\ui\html\FileControl;
 use oxide\util\ArrayString;
+use oxide\validation\file\ImageUploadValidation;
 use oxide\validation\string\ReplaceFilterer;
 use oxide\validation\FilterProcessor;
-use oxide\validation\file\ImageUploadValidation;
 use oxide\helper\Util;
 
+/**
+ * ImageUrlUploadControl
+ * 
+ * Provides machanism for both image URL or uploading.  Internally it provides two
+ * controls, FileControl and InputControl.  
+ */
 class ImageUrlUploadControl extends InputControl {
    protected
       $_options = null,
       $_imageUploadControl = null;
    
+   /**
+    * 
+    * @param type $name
+    * @param type $value
+    * @param type $label
+    * @param type $attrbs
+    */
    public function __construct($name, $value = null, $label = null, $attrbs = null) {
       parent::__construct(self::TYPE_TEXT, $name, $value, $label, $attrbs);
       // now create the image upload control
@@ -60,7 +73,7 @@ class ImageUrlUploadControl extends InputControl {
             $imageurl = $values[$urlname];
          }
          
-         unset($values[$uploadname]);
+//         unset($values[$uploadname]);
          $values[$urlname] = $imageurl;
          $form->setValue($urlname, $imageurl);
       });

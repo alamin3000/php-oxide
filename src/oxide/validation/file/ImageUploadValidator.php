@@ -1,5 +1,6 @@
 <?php
 namespace oxide\validation\file;
+use oxide\validation\ValidationResult;
 
 /**
  * Image upload validator
@@ -7,8 +8,7 @@ namespace oxide\validation\file;
  * Extends file upload validator and provides additional validation checks such as
  * Image sizes
  */
-class ImageUploadValidator extends FileUploadValidator
-{
+class ImageUploadValidator extends FileUploadValidator {
    protected
            $_max_width = null,
            $_max_height = null,
@@ -19,8 +19,7 @@ class ImageUploadValidator extends FileUploadValidator
     * 
     * @param array $allowed_file_types
     */
-   public function __construct(array $allowed_file_types = null, $max_filesize = null, $min_filesize = null)
-   {
+   public function __construct(array $allowed_file_types = null, $max_filesize = null, $min_filesize = null) {
       parent::__construct($allowed_file_types, $max_filesize, $min_filesize);
    }
    
@@ -30,8 +29,7 @@ class ImageUploadValidator extends FileUploadValidator
     * @param int $width
     * @param int $height
     */
-   public function setMaxImageSize($width = null, $height = null)
-   {
+   public function setMaxImageSize($width = null, $height = null) {
       $this->_max_height = $height;
       $this->_max_width = $width;
    }
@@ -42,8 +40,7 @@ class ImageUploadValidator extends FileUploadValidator
     * @param int $width
     * @param int $height
     */
-   public function setMinImageSize($width = null, $height = null)
-   {
+   public function setMinImageSize($width = null, $height = null) {
       $this->_min_height = $height;
       $this->_min_width = $width;
    }
@@ -52,8 +49,7 @@ class ImageUploadValidator extends FileUploadValidator
     * generates validation error message.
     * @return string
     */
-   protected function sizeRequirementString()
-   {
+   protected function sizeRequirementString() {
       $str = '';
       if($this->_min_width) $str .= 'Width must be at least ' . $this->_min_width . 'px. ';
       if($this->_max_width) $str .= 'Width must be less than ' . $this->_max_width . 'px. ';
@@ -71,8 +67,7 @@ class ImageUploadValidator extends FileUploadValidator
     * @param \oxide\validation\ValidationResult $result
     * @return \oxide\validation\ValidationResult|boolean
     */
-   public function validate($value, \oxide\validation\ValidationResult &$result = null)
-   {
+   public function validate($value, ValidationResult &$result = null) {
       $return = parent::validate($value, $result);
       if($return) {
          $file = $value['tmp_name'];

@@ -20,9 +20,13 @@ class ImageUploadValidation implements ValidationComponent {
           'min_filesize' => null,
           'max_filesize' => null,
           'upload_folder' => null
-
       ];
    
+   
+   /**
+    * 
+    * @param array $options options for uploads
+    */
    public function __construct(array $options = null) {
       $this->_options = array_merge($this->_options, $options);
    }

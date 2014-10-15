@@ -9,14 +9,13 @@ use oxide\validation\Processor;
  * 
  * Handle the uploaded file process
  */
-class FileUploadProcessor implements Processor
-{
+class FileUploadProcessor implements Processor {
    protected 
-           $_chmod = 0644,
-           $_folder_chmod = 0755,
-           $_allow_override = true,
-           $_upload_dir = null,
-           $_makedir = false;
+      $_chmod = 0644,
+      $_folder_chmod = 0755,
+      $_allow_override = true,
+      $_upload_dir = null,
+      $_makedir = false;
    
    
    /**
@@ -27,8 +26,7 @@ class FileUploadProcessor implements Processor
     * @param bool $allow_file_override indicates if file should be overriden if alreay exists
     * @param bool $make_dir idicates if attempt to to create directory recursively
     */
-   public function __construct($upload_dir, $chmod = 0644, $allow_file_override = true, $make_dir = false)
-   {
+   public function __construct($upload_dir, $chmod = 0644, $allow_file_override = true, $make_dir = false) {
       $this->_upload_dir = $upload_dir;
       $this->_chmod = $chmod;
       $this->_allow_override = $allow_file_override;
@@ -44,8 +42,7 @@ class FileUploadProcessor implements Processor
     * @param \oxide\validation\ValidationResult $result
     * @return bool
     */
-   protected function processFileSave($source_file, $destination_file, ValidationResult &$result)
-   {
+   protected function processFileSave($source_file, $destination_file, ValidationResult &$result) {
       // preserve file from temporary directory
       $success = move_uploaded_file($source_file, $destination_file);     
       
@@ -58,8 +55,7 @@ class FileUploadProcessor implements Processor
     * @param type $dir
     * @return type
     */
-   protected function generateFileName($name, $dir)
-   {
+   protected function generateFileName($name, $dir) {
       $destination_file = "{$dir}/{$name}";
       return $destination_file;
    }
@@ -73,8 +69,7 @@ class FileUploadProcessor implements Processor
     * @param \oxide\validation\ValidationResult $result
     * @return null
     */
-   public function process($value, ValidationResult &$result = null)
-   {
+   public function process($value, ValidationResult &$result = null) {
       if(!$result) $result = new ValidationResult();
       
       // first we want to make sure that we have correct value type
@@ -90,7 +85,7 @@ class FileUploadProcessor implements Processor
          // folder doesn't exists
          // should we create it?
          if($this->_makedir) {
-            if(!mkdir($upload_dir, $this->_folder_chmod, true)) {
+            if(!mkdir($upload_dir, $this->_folder_chmod, true)) { // creates recursively
                $result->addError('Unable to create directory.');
                return NULL;
             }

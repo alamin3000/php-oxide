@@ -1,6 +1,5 @@
 <?php
 namespace oxide\ui;
-use oxide\util\Stringify;
 use oxide\validation\ValidationResult;
 
 
@@ -8,8 +7,7 @@ use oxide\validation\ValidationResult;
  * Image class to represent single supported image in memory
  * 
  */
-class Image
-{
+class Image {
 	private
       $_file = null,
 		$_image = null,
@@ -29,8 +27,7 @@ class Image
 	 * 
 	 * @param string $file
 	 */
-	public function  __construct($file)
-	{
+	public function  __construct($file) {
 		if(!is_file($file)) {
 			throw new \oxide\util\Exception("$file does not exists");
 		}
@@ -50,8 +47,7 @@ class Image
 		$this->_mimetype = image_type_to_mime_type($properties[2]);
 	}
    
-   public static function createFromFile($file)
-   {
+   public static function createFromFile($file) {
       return new Image($file);
    }
    
@@ -60,8 +56,7 @@ class Image
     * 
     * @return array
     */
-   public function getImageInfo()
-   {
+   public function getImageInfo() {
       return $this->_properties;
    }
    
@@ -71,8 +66,7 @@ class Image
     * @param ValidationResult $result Holds result of image loading
     * @return bool indicate if loading was successful or not
     */
-   public function load(ValidationResult $result = null)
-   {
+   public function load(ValidationResult $result = null) {
       if(!$result) $result = new ValidationResult();
       
       $properties = $this->_properties;
@@ -109,8 +103,7 @@ class Image
 	 *
 	 * @param int $quality
 	 */
-	public function setQuality($quality)
-	{
+	public function setQuality($quality) {
 		if($quality < 1 || $quality > 100) {
 			$quality = 75;
 		}
@@ -123,8 +116,7 @@ class Image
 	 * 
 	 * @return int
 	 */
-	public function getQuality()
-	{
+	public function getQuality() {
 		return $this->_quality;
 	}
 
@@ -134,8 +126,7 @@ class Image
 	 * This value will not reflect resized file size
 	 * @return int
 	 */
-	public function getInitialFileSize()
-	{
+	public function getInitialFileSize() {
 		return $this->_initsize;
 	}
 
@@ -144,19 +135,16 @@ class Image
 	 * 
 	 * @return string
 	 */
-	public function getMimeType()
-	{
+	public function getMimeType() {
 		return $this->_mimetype;
 	}
    
-   public function getHeight() 
-   {
+   public function getHeight() {
       return $this->_height;
    }
    
    
-   public function getWidth()
-   {
+   public function getWidth() {
       return $this->_width;
    }
    
@@ -168,8 +156,7 @@ class Image
     * @throws \Exception
     * @return boolean Indicates if resize was successful.
     */
-   public function resize($max_width = 0, $max_height = 0)
-   {
+   public function resize($max_width = 0, $max_height = 0) {
       if(!$this->_image) throw new \Exception('Image isn\'t loaded.');
       
       
@@ -218,8 +205,7 @@ class Image
 	 * 
 	 * @return int
 	 */
-	private function _getPngQuality()
-	{
+	private function _getPngQuality() {
 		$pngQuality = ($this->_quality - 100) / 11.111111;
 		$pngQuality = round(abs($pngQuality));
 		return $pngQuality;
@@ -237,9 +223,8 @@ class Image
 		 return $reduction;
 	}
    
-   public function save($file)
-   {
-      
+   public function save($file) {
+      throw new \Exception('Image save is not implemented.');
    }
    
    /**
@@ -247,8 +232,7 @@ class Image
     * @param type $file
     * @throws \Exception
     */
-   public function output($file = null)
-   {
+   public function output($file = null) {
       if(!$this->_image) throw new \Exception('Image isn\'t loaded.');   
       
       if(!$file) { // no file given, we will render right away
@@ -279,11 +263,9 @@ class Image
    /**
     * release memory + cleanup
     */
-	public function __destruct()
-	{
-    if(isset($this->_image)){
-        imagedestroy($this->_image);
-    }
+	public function __destruct() {
+      if(isset($this->_image)){
+         imagedestroy($this->_image);
+      }
 	}
-
 }

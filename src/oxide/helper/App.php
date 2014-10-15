@@ -36,16 +36,43 @@ abstract class App {
 		return $dir;
 	}
    
-   public static function dir_upload($dir = null) {
+   /**
+    * Get the public root directory for the current app
+    * @return string
+    */
+   public static function dir_public() {
+      return filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
+   }
+   
+   /**
+    * Get the main upload directory for the app
+    * @param string $subdir Subdirectory to be appended to the upload directory
+    * @return type
+    * @throws \Exception
+    */
+   public static function dir_upload($subdir = null) {
       $appconfig = App::config('app', null, true);
-      $updir = Util::value($appconfig, 'upload_dir', null, true);
+      $updir = trim(Util::value($appconfig, 'upload_dir', null, true), '/');
       if(empty($updir)) {
          throw new \Exception('Upload directory is not found.');
       }
       
-      return '/' . trim($updir, '/') . '/' . $dir;
+      $pubdir = self::dir_public();
+      $dir = "{$pubdir}/{$updir}";
+      if($subdir) {
+         $dir .= "/" . trim($subdir, '/');
+      }
+      
+      return $dir;
    }
    
+   /**
+    * Get the user current user's upload directory
+    * Basically uses dir_user_upload providing current identity.
+    * User must be logged in before calling this method, else exception will be thrown
+    * @return string
+    * @throws \Exception
+    */
    public static function dir_current_user_upload() {
       $identity = Auth::identity();
       if(!$identity) {
@@ -55,6 +82,11 @@ abstract class App {
       return self::dir_user_upload($identity);
    }
    
+   /**
+    * Get the upload directory for use given the $identity
+    * @param stdClass $identity
+    * @return string
+    */
    public static function dir_user_upload($identity) {
       $u = "{$identity->username}";
       $m1 = sha1($u);

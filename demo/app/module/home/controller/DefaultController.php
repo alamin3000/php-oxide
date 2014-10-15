@@ -52,9 +52,11 @@ class DefaultController extends ActionController
       
       \oxide\helper\Util::dump($_POST);
       $options = [
-          'upload_folder' => 'upload',
-          'document_root' => filter_input(INPUT_SERVER, 'DOCUMENT_ROOT')
+          'document_root' => \oxide\helper\App::dir_public(),
+          'upload_folder' => \oxide\helper\App::dir_upload()
       ];
+      
+      var_dump($options);
       $form = new \oxide\ui\html\Form();
       $imgcontrol = new \oxide\ui\misc\ImageUrlUploadControl('imageurl', null, 'Image');
       $imgcontrol->setOptions($options);
