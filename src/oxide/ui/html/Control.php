@@ -174,7 +174,7 @@ class Control extends Element {
     * @param ArrayString $buffer
     */
    protected function onRenderLabel(ArrayString $buffer) {
-      $buffer[] = $this->renderLabel();
+      $buffer->prepend($this->renderLabel());
    }
 
    
@@ -191,7 +191,7 @@ class Control extends Element {
          $this->_form->onPreControlRender($this, $buffer);
       }
       
-      $this->onRenderLabel($buffer);
+      
    }
   
    /**
@@ -202,5 +202,7 @@ class Control extends Element {
       if($this->_form) {
          $this->_form->onPostControlRender($this, $buffer);
       }
+      
+      $this->onRenderLabel($buffer);
    }
 }
