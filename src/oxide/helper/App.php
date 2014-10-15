@@ -43,7 +43,7 @@ abstract class App {
          throw new \Exception('Upload directory is not found.');
       }
       
-      return trim($updir, '/') . '/' . $dir;
+      return '/' . trim($updir, '/') . '/' . $dir;
    }
    
    public static function dir_current_user_upload() {
