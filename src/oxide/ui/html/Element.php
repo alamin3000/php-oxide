@@ -144,7 +144,8 @@ class Element extends Tag implements \ArrayAccess, \Countable {
             $callback($this, $buffer);
          }
 
-         if($this->onPreRender($buffer) === FALSE) return null;
+         $this->onPreRender($buffer);
+         
          if($renderer) {  $buffer[] =  $renderer->render($this->inner()); } 
          else {
             $buffer[] = $this->renderOpenTag();
@@ -202,7 +203,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
    }
    
    protected function onInnerRender(ArrayString $buffer) {}
-   protected function onPreRender(ArrayString $buffer) { return true; }
+   protected function onPreRender(ArrayString $buffer) { }
    protected function onPostRender(ArrayString $buffer) {}
    public function __toString() {
       return $this->render();

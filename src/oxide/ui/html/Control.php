@@ -192,7 +192,6 @@ class Control extends Element {
       }
       
       $this->onRenderLabel($buffer);
-      return true;
    }
   
    /**
