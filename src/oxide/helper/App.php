@@ -37,8 +37,8 @@ abstract class App {
 	}
    
    public static function dir_upload($dir = null) {
-      $dirs = App::config('dir', null, true);
-      $updir = Util::value($dirs, 'upload_dir', null, true);
+      $appconfig = App::config('app', null, true);
+      $updir = Util::value($appconfig, 'upload_dir', null, true);
       if(empty($updir)) {
          throw new \Exception('Upload directory is not found.');
       }
