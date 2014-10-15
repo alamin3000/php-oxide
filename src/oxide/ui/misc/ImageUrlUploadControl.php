@@ -1,21 +1,32 @@
 <?php
 namespace oxide\ui\misc;
+use oxide\ui\html\Form;
 use oxide\ui\html\InputControl;
-use oxide\ui\misc\ImageFileControlComponent;
+use oxide\ui\html\FileControl;
 use oxide\util\ArrayString;
 use oxide\validation\string\ReplaceFilterer;
 use oxide\validation\FilterProcessor;
+use oxide\validation\file\ImageUploadValidation;
+use oxide\helper\Util;
 
 class ImageUrlUploadControl extends InputControl {
    protected
+      $_options = null,
       $_imageUploadControl = null;
    
    public function __construct($name, $value = null, $label = null, $attrbs = null) {
       parent::__construct(self::TYPE_TEXT, $name, $value, $label, $attrbs);
-      
       // now create the image upload control
       $file_control_name = $this->getName().'_file';
-      $this->_imageUploadControl = new ImageFileControlComponent($file_control_name);
+      $this->_imageUploadControl = new FileControl($file_control_name);
+   }
+   
+   /**
+    * Set options for image uploading
+    * @param array $options
+    */
+   public function setOptions(array $options) {
+      $this->_options = $options;
    }
    
    /**
@@ -26,17 +37,20 @@ class ImageUrlUploadControl extends InputControl {
       return $this->_imageUploadControl;
    }
    
-   public function setForm(\oxide\ui\html\Form $form = null) {
+   public function setForm(Form $form = null) {
       parent::setForm($form);
+      $imgcontrol = $this->getImageUploadControl();
+      $imgcontrol->setForm($form); // call the file controls set form manually, since it is not being added to the form
+      // add validation components for the image control
+      $options = $this->_options;
       $validation = $form->getValidationProcessor();
-      $validation->addValidationComponent($this->_imageUploadControl);
-      // we need to make the upload file path relative to the root document, so it can be accessed by website
-      $replacefilter = new ReplaceFilterer(filter_input(INPUT_SERVER, 'DOCUMENT_ROOT'), '');
+      $validation->addValidationComponent(new ImageUploadValidation($options), $imgcontrol->getName());
+      $replacefilter = new ReplaceFilterer(Util::value($options, 'document_root', null,  true), '');
       $validation->getProcessorContainer()->addProcessor(
-              new FilterProcessor($replacefilter), $this->_imageUploadControl->getName());
-
-      $validation->addProcessCallbacks(null, function(&$values) {
-         print 'here';
+              new FilterProcessor($replacefilter), $imgcontrol->getName());
+      
+      // performing post processing
+      $validation->addProcessCallbacks(null, function(&$values) use($form) {
          $urlname = $this->getName();
          $uploadname = $this->_imageUploadControl->getName();
          $imageurl = null;
@@ -46,8 +60,9 @@ class ImageUrlUploadControl extends InputControl {
             $imageurl = $values[$urlname];
          }
          
+         unset($values[$uploadname]);
          $values[$urlname] = $imageurl;
-         $this->setValue($imageurl);
+         $form->setValue($urlname, $imageurl);
       });
    }
    

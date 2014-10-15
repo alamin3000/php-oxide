@@ -1,22 +1,16 @@
 <?php
-namespace oxide\ui\misc;
-use oxide\ui\html\FileControl;
+namespace oxide\validation\file;
+use oxide\validation\ValidationResult;
 use oxide\validation\ValidationComponent;
+use oxide\helper\Util;
 use oxide\validation\file\FileUploadFilterer;
 use oxide\validation\file\ImageUploadValidator;
 use oxide\validation\file\ImageUploadProcessor;
-use oxide\helper\Util;
-use oxide\validation\ValidationResult;
-use oxide\ui\html\Form;
 
-/**
- * Image file control compnent
- * 
- */
-class ImageFileControlComponent extends FileControl implements ValidationComponent {
+class ImageUploadValidation implements ValidationComponent {
    protected 
-      $_options = array(
-          'allowed_mimes' => "image/gif,image/jpeg,image/png",
+      $_options = [
+          'allowed_mimes' => ["image/gif", "image/jpeg", "image/png"],
           'image_width' => null,
           'image_height' => null,
           'image_min_width' => null,
@@ -26,35 +20,12 @@ class ImageFileControlComponent extends FileControl implements ValidationCompone
           'min_filesize' => null,
           'max_filesize' => null,
           'upload_folder' => null
-      );
-      
-   /**
-    * 
-    * @param type $name
-    * @param type $value
-    * @param type $label
-    * @param type $attrbs
-    */
-   public function __construct($name, $value = null, $label = null, $attrbs = null, array $options = null) {
-      parent::__construct($name, $value, $label, $attrbs);
-   }
+
+      ];
    
-   /**
-    * Set upload options
-    * @param array $options
-    */
-   public function setOptions(array $options) {
+   public function __construct(array $options = null) {
       $this->_options = array_merge($this->_options, $options);
    }
-   
-   
-   public function setForm(Form $form = null) {
-      parent::setForm($form);
-      if($form) {
-         $form->getValidationProcessor()->addValidationComponent($this, $this->getName());
-      }
-   }
-   
    /**
     * 
     * @param type $value
@@ -99,7 +70,7 @@ class ImageFileControlComponent extends FileControl implements ValidationCompone
     * @param \oxide\validation\ValidationResult $result
     * @return type
     */
-   public function process($value, ValidationResult &$result = null) {     
+   public function process($value, ValidationResult &$result = null) { 
       $options = $this->_options;
       $upload_dir = rtrim(Util::value($options, 'upload_folder', null, true), '/');      
       $width = $options['image_width'];

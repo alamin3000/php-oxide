@@ -89,7 +89,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
 	 * @return string
 	 */
 	public function text($text = null) {
-      if($text) $this->_t_array_storage = array(\strip_tags((string)$text));
+      if($text) $this->_t_array_storage = [\strip_tags((string)$text)];
       else {
          return \strip_tags($this->renderInnerTag ());
       }
@@ -161,8 +161,8 @@ class Element extends Tag implements \ArrayAccess, \Countable {
       }
       catch (\Exception $e) {
          echo 'Error in Element rendering: ' . get_called_class(),
-               '. (';
-               $e->getMessage();
+               '. (',
+               $e->getMessage(),
                ') ';
          die('Terminated due to exception.');
       }
