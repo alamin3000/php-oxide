@@ -150,22 +150,20 @@ class Element extends Tag implements \ArrayAccess, \Countable {
          else {
             $buffer[] = $this->renderOpenTag();
             $this->onInnerRender($buffer);
-            if($this->innerWrapTag) {  $buffer[] = self::renderTag($this->innerWrapTag, $this->renderInnerTag()); }
-            else $buffer[] = $this->renderInnerTag();
+            $buffer[] = $this->renderInnerTag();
             $buffer[] = $this->renderCloseTag();         
          }
 
          $this->onPostRender($buffer); // notifying internal post render event
          
-         if($this->outerWrapTag) return self::renderTag($this->outerWrapTag, $buffer);
-         else return (string) $buffer;
+         return (string) $buffer;
       }
       catch (\Exception $e) {
-         echo 'Error in Element rendering: ' . get_called_class(),
-               '. (',
-               $e->getMessage(),
+         $msg = 'Error in Element rendering: ' . get_called_class().
+               '. ('.
+               $e->getMessage().
                ') ';
-         die('Terminated due to exception.');
+         trigger_error($msg);
       }
    }
    
