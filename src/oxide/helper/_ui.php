@@ -237,7 +237,7 @@ abstract class _ui {
       foreach($form->getControls() as $control) {
          if(!$control instanceof Fieldset) {
             $control->class = 'form-control';
-            $control->outerWrapTag = new \oxide\ui\html\Tag('div', ['col-sm-10']);
+            $control->innerWrapTag = new \oxide\ui\html\Tag('div', ['col-sm-10']);
             $control->getLabelTag()->class = 'col-sm-2 control-label';
          }
          

@@ -190,8 +190,6 @@ class Control extends Element {
          // we will need to inform the form about rendering
          $this->_form->onPreControlRender($this, $buffer);
       }
-      
-      
    }
   
    /**
