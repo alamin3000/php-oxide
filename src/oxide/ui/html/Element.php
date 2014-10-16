@@ -122,7 +122,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
       $this->_renderer = $renderer;
    }
    
-   public function registerRenderCallbacks(\Closure $prerender, \Closure $postrender) {
+   public function registerRenderCallbacks(\Closure $prerender = null, \Closure $postrender = null) {
       $this->_callback_pre_render = $prerender;
       $this->_callback_post_render = $postrender;
    }
