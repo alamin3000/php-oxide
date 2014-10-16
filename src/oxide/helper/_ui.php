@@ -245,11 +245,11 @@ abstract class _ui {
          }
       }
                
-      if($style == self::FORM_INLINE) {
-         $form->class = 'form-inline';
-      } else {
-         $form->class = 'form-horizontal';
-      }
+//      if($style == self::FORM_INLINE) {
+//         $form->class = 'form-inline';
+//      } else {
+//         $form->class = 'form-horizontal';
+//      }
       
       $form->controlWrapperTag->setTag('div');
       $form->controlWrapperTag->class = 'form-group';
