@@ -14,14 +14,11 @@ use oxide\helper\Html;
 class Element extends Tag implements \ArrayAccess, \Countable {   
    use \oxide\util\pattern\ArrayFunctionsTrait;
    
-   public
-      $innerWrapTag = null,
-      $outerWrapTag = null;
-   
 	protected
       $_cache = null,
       $_renderer = null,
-      $_callback_render = null,
+      $_callback_pre_render = null,
+      $_callback_post_render = null,
       $_callback_render_inner = null;
       
    /**
@@ -125,6 +122,11 @@ class Element extends Tag implements \ArrayAccess, \Countable {
       $this->_renderer = $renderer;
    }
    
+   public function registerRenderCallbacks(\Closure $prerender, \Closure $postrender) {
+      $this->_callback_pre_render = $prerender;
+      $this->_callback_post_render = $postrender;
+   }
+   
    /**
     * renders the html tag
     *
@@ -138,13 +140,9 @@ class Element extends Tag implements \ArrayAccess, \Countable {
       try {
          $renderer = $this->getRenderer();
          $buffer = new ArrayString();
-
-         if($this->_callback_render) { 
-            $callback = $this->_callback_render;
-            $callback($this, $buffer);
-         }
-
+         
          $this->onPreRender($buffer);
+         if(($callback = $this->_callback_pre_render)) { $callback($this, $buffer); }
          
          if($renderer) {  $buffer[] =  $renderer->render($this->inner()); } 
          else {
@@ -155,6 +153,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
          }
 
          $this->onPostRender($buffer); // notifying internal post render event
+         if(($callback = $this->_callback_post_render)) { $callback($this, $buffer); }
          
          return (string) $buffer;
       }

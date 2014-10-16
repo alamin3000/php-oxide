@@ -4,6 +4,7 @@ use oxide\helper\Html;
 use oxide\ui\html\Form;
 use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
+use oxide\util\ArrayString;
 
 abstract class _ui {
    static protected
@@ -234,16 +235,20 @@ abstract class _ui {
 //         $form->prepend($ul);
 //      });
       
-      foreach($form->getControls() as $control) {
-         if(!$control instanceof Fieldset) {
-            $control->class = 'form-control';
-            $control->getLabelTag()->class = 'control-label';
+    
+      $form->registerRenderCallbacks(function(Form $form, ArrayString $buffer) {
+         foreach($form->getControls() as $control) {
+            if(!$control instanceof Fieldset) {
+               $control->class = 'form-control';
+               $control->getLabelTag()->class = 'control-label';
+            }
+
+            if($control instanceof ButtonControl) {
+               $control->class = 'btn btn-primary';
+            }
          }
          
-         if($control instanceof ButtonControl) {
-            $control->class = 'btn btn-primary';
-         }
-      }
+      });
                
 //      if($style == self::FORM_INLINE) {
 //         $form->class = 'form-inline';
