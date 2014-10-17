@@ -18,6 +18,7 @@ abstract class _ui {
       STYLE_ALERT = 2,
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
+    
 
       SIZE_DEFAULT = 0,
       SIZE_SMALL = 1,
@@ -259,5 +260,20 @@ abstract class _ui {
       $form->controlWrapperTag->setTag('div');
       $form->controlWrapperTag->class = 'form-group';
       return $form;
+   }
+   
+   
+   public static function nav_list($items, $active_index = -1, $style = null) {
+      Html::start('ul', ['class' => 'list-group']);
+      foreach($items as $key => $value) {
+         if(!$value) {
+            $text = Html::tag('a', $key, ['href' => $value]);
+         } else {
+            $text = $key;
+         }
+         echo Html::tag('li', $text, ['class' => 'list-group-item']);
+      }
+      
+      return Html::end();
    }
 }
