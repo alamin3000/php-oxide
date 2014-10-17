@@ -3,6 +3,7 @@ namespace oxide\ui\html;
 use oxide\ui\Renderer;
 use oxide\util\ArrayString;
 use oxide\helper\Html;
+use oxide\util\pattern\ArrayFunctionsTrait;
 
 /**
  * Html Element
@@ -12,14 +13,14 @@ use oxide\helper\Html;
  * @subpackage ui
  */
 class Element extends Tag implements \ArrayAccess, \Countable {   
-   use \oxide\util\pattern\ArrayFunctionsTrait;
+   use ArrayFunctionsTrait;
    
 	protected
       $_cache = null,
       $_renderer = null,
       $_callback_pre_render = null,
       $_callback_post_render = null,
-      $_callback_render_inner = null;
+      $_callback_inner_render = null;
       
    /**
 	 * construct the element
@@ -122,11 +123,29 @@ class Element extends Tag implements \ArrayAccess, \Countable {
       $this->_renderer = $renderer;
    }
    
-   public function registerRenderCallbacks(\Closure $prerender = null, \Closure $postrender = null) {
-      $this->_callback_pre_render = $prerender;
-      $this->_callback_post_render = $postrender;
+   /**
+    * Register callbacks for different part of the rendering process
+    * All callbacks will have following signature callback($this, ArrayString $buffer, $item = null)
+    * $item argument is only available in the inner callback
+    * @param \Closure $prerender
+    * @param \Closure $innerrender
+    * @param \Closure $postrender
+    */
+   public function registerRenderCallbacks(\Closure $prerender = null, \Closure $innerrender = null, \Closure $postrender = null ) {
+      if($prerender) 
+         if($this->_callback_pre_render) $this->_callback_pre_render[] = $prerender;
+         else $this->_callback_pre_render = [$prerender];
+         
+      if($postrender) 
+         if($this->_callback_post_render) $this->_callback_post_render[] = $prerender;
+         else $this->_callback_post_render = [$prerender];
+         
+      if($innerrender) 
+         if($this->_callback_inner_render) $this->_callback_inner_render[] = $prerender;
+         else $this->_callback_inner_render = [$prerender];
    }
-   
+
+
    /**
     * renders the html tag
     *
@@ -142,7 +161,9 @@ class Element extends Tag implements \ArrayAccess, \Countable {
          $buffer = new ArrayString();
          
          $this->onPreRender($buffer);
-         if(($callback = $this->_callback_pre_render)) { $callback($this, $buffer); }
+         if($this->_callback_pre_render) { // notify pre render callbacks
+            foreach($this->_callback_pre_render as $callback) { $callback($this, $buffer); }
+         }
          
          if($renderer) {  $buffer[] =  $renderer->render($this->inner()); } 
          else {
@@ -153,7 +174,9 @@ class Element extends Tag implements \ArrayAccess, \Countable {
          }
 
          $this->onPostRender($buffer); // notifying internal post render event
-         if(($callback = $this->_callback_post_render)) { $callback($this, $buffer); }
+         if($this->_callback_post_render) {
+            foreach($this->_callback_post_render as $callback) {$callback($this, $buffer); }
+         }
          
          return (string) $buffer;
       }
@@ -177,8 +200,9 @@ class Element extends Tag implements \ArrayAccess, \Countable {
       $buffer = '';
       foreach($this->inner() as $inner) {
          if($this->_callback_render_inner) {
-            $callback = $this->_callback_render_inner;
-            $callback($this, $inner, $buffer);
+            foreach($this->_callback_inner_render as $callback) {
+               $callback($this, $inner, $buffer);
+            }
          }
          
          $buffer .= Html::toString($inner);

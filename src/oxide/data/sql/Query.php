@@ -1,6 +1,7 @@
 <?php
 namespace oxide\data\sql;
 use oxide\data\Connection;
+use oxide\ui\Renderer;
 
 /**
  * Database Query Object
@@ -8,7 +9,7 @@ use oxide\data\Connection;
  * @package oxide
  * @subpackage data\sql
  */
-abstract class Query implements \oxide\ui\Renderer
+abstract class Query implements Renderer
 {
 	protected 
       $_id = null,
@@ -32,14 +33,12 @@ abstract class Query implements \oxide\ui\Renderer
 	 * @param string $table
  	 * @param Connection $db
 	 */
-	public function __construct($table = null, Connection $db = null)
-	{
+	public function __construct($table = null, Connection $db = null) {
 		if($db) $this->connection($db);
 		if($table) $this->table($table);
 
 		// generates unique id for the query
-		self::$_count++;
-		$this->_id = md5(self::$_count);
+		$this->_id = self::$_count++;
 	}
 	
   /**
@@ -49,15 +48,7 @@ abstract class Query implements \oxide\ui\Renderer
     * @param Connection $conn
     * @return Connection
     */
-   
-   /**
-    *
-    * @access public
-    * @param Connection $conn
-    * @return type 
-    */
-   public function connection(Connection $conn = null)
-   {
+   public function connection(Connection $conn = null) {
       if($conn != null) {
          $this->_db = $conn;
       }
@@ -75,15 +66,7 @@ abstract class Query implements \oxide\ui\Renderer
     * @param string $table
     * @return string
     */
-   
-   /**
-    *
-    * @access public
-    * @param type $table
-    * @return type 
-    */
-	public function table($table = null)
-	{
+	public function table($table = null) {
       if($table) $this->_table = $table;
       return $this->_table;
 	}
@@ -96,13 +79,12 @@ abstract class Query implements \oxide\ui\Renderer
     * @param mixed $arg1 fetch mode argument
     * @param array $arg2 object construction argument
     */
-	public function setFetchMode($mode, $arg1 = null, $arg2 = null) 
-	{
+	public function setFetchMode($mode, $arg1 = null, $arg2 = null) {
 		$this->_fetchMode = array($mode, $arg1, $arg2);
 	}
 		
 	/**
-	 * set sql params
+	 * Set sql params
 	 *
 	 * params must be named based placeholders.
 	 * all params will be merged if param already exists.
@@ -110,8 +92,7 @@ abstract class Query implements \oxide\ui\Renderer
 	 * @param mixed
 	 * @return null | array
 	 */
-   public function param($param = null, $reset = false) 
-	{
+   public function param($param = null, $reset = false) {
 		if($reset) {
 			$this->_param = $param;
 		}
@@ -125,29 +106,24 @@ abstract class Query implements \oxide\ui\Renderer
 
 	/**
 	 * alias to param
-	 *
-    * 
     * @access public
 	 * @see param
 	 * @param mixed $param
 	 * @param null|array $reset
 	 */
-	public function bind($param = null, $reset = false) 
-	{
+	public function bind($param = null, $reset = false) {
 		return $this->param($param, $reset);
 	}
 
 	/**
-	 * join a table
+	 * Join a table
 	 *
 	 * you can use following syntax
 	 * join('table', 'forieng_id') // this will use USING syntax
 	 * join('table', array('forieng_id' => 'primary_id')) // this will use ON syntax.
-	 *
-    * 
     * @access public
 	 * @param string $table
-	 * @param string $col1
+	 * @param string $join_col
 	 * @param string $type
 	 * @return void
 	 */
@@ -190,21 +166,20 @@ abstract class Query implements \oxide\ui\Renderer
     * @param string $op
     * @return void
     */
-   public function where($col, $val = null, $op = Connection::OP_EQ)
-	{
+   public function where($col, $val = null, $op = Connection::OP_EQ) {
       $this->_where('AND', $col, $val, $op);
    }
 
 	/**
-	 * add OR operated where clause 
+	 * Add OR operated where clause 
     * 
     * @access public
+    * @see where
 	 * @param string $col
 	 * @param <type> $val
 	 * @param <type> $op
 	 */
-   public function whereOr($col, $val = null, $op = Connection::OP_EQ)
-	{
+   public function whereOr($col, $val = null, $op = Connection::OP_EQ) {
    	$this->_where('OR', $col, $val,  $op);
    }
 
@@ -218,15 +193,12 @@ abstract class Query implements \oxide\ui\Renderer
 	 * @param array $param
 	 * @return \oxide\data\Statement
 	 */
-	public function execute($param = array()) 
-	{
+	public function execute($param = array()) {
 		$param = $this->param($param);
-		
       $stmt = $this->prepare();
 		
 		// execute with params
 		$stmt->execute($param);
-		
 		return $stmt;
 	}
 	
@@ -234,15 +206,7 @@ abstract class Query implements \oxide\ui\Renderer
 	 * executes and returns single column
 	 * @see execute();
 	 */
-   
-   /**
-    *
-    * @access public
-    * @param type $param
-    * @return type 
-    */
-	public function executeOne($param = array()) 
-	{
+	public function executeOne($param = array()) {
 		$smnt = $this->execute($param);
 		return $smnt->fetchColumn();
 	}
@@ -255,16 +219,7 @@ abstract class Query implements \oxide\ui\Renderer
 	 * @return \oxide\data\Statement
 	 * @todo complete setFetchMode setup
 	 */
-   
-   /**
-    *
-    * @access public
-    * @return Statement
-    * @throws \Exception 
-    */
-	public function prepare() 
-	{	
-		
+	public function prepare() {	
 		if(isset(self::$_pstmts[$this->_id])) {
 			$stmt = self::$_pstmts[$this->_id];
 		} else {
@@ -501,8 +456,7 @@ abstract class Query implements \oxide\ui\Renderer
     * @access protected
 	 * @return string
 	 */
-	protected function _joinSql()
-	{
+	protected function _joinSql() {
 		// check to see if any joins available
 		if(count($this->_join)) {
 			$_joinSql = ''; // holds the final join sql statement
@@ -544,36 +498,12 @@ abstract class Query implements \oxide\ui\Renderer
 	public function __toString() {
 		return $this->render($this);
 	}
-	
-//	/**
-//	 * allow direct access to local variables
-//	 */
-//	public function __set($key, $val)
-//	{
-//		$_key = "_{$key}";
-//		if(!isset($this->$_key)) {
-//			throw new \Exception("{$key} not found");
-//		}
-//
-//		$this->$_key = $val;
-//	}
-//
-//	public function __get($key)
-//	{
-//		$_key = "_{$key}";
-//      if(isset($this->$_key)) {
-//         return $this->$_key;
-//      }
-//	}
-
-
    
    /**
-    * 
+    * Remove the prepared statement for this object if exists
     * @access public
     */
-   public function __destruct()
-   {
+   public function __destruct() {
       if(isset(self::$_pstmts[$this->_id])) {
          unset(self::$_pstmts[$this->_id]);
       }

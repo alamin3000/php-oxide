@@ -19,8 +19,7 @@ class InsertQuery extends Query {
     * @access public
     * @param type $bool 
     */
-	public function setIgnoreMode($bool)
-	{
+	public function setIgnoreMode($bool) {
       $this->_ignore = $bool;	
 	}
 	
@@ -29,13 +28,6 @@ class InsertQuery extends Query {
 	 * @access public
 	 * @param array $row
 	 */
-   
-   /**
-    *
-    * @access public
-    * @param type $row
-    * @return string 
-    */
    public function set($row = null) {
       if($row) {
 			$this->_set = $row;
@@ -65,12 +57,12 @@ class InsertQuery extends Query {
 
    
    
-/**
- *
- * @access public
- * @param type $sender
- * @return string 
- */	
+   /**
+    *
+    * @access public
+    * @param type $sender
+    * @return string 
+    */	
    public function render($sender = null) {
 		/*
 		make sure multiple table is not allowed
@@ -87,24 +79,17 @@ class InsertQuery extends Query {
       return $sql;
    }
 	
-	/**
-	 * perform database insert query and returns the insert id
-	 *
-	 * @access public
-	 * @return int last insert id
-	 * @todo column and table quote for database
-	 * @todo verify if array is associative or vector
-	 */
-   
    /**
-    *
+    * Perform database insert query and returns the insert id
+    * 
+	 * If param is provided, then set the values
+	 * this is useful to run multiple execution on single prepared statement
     * @access public
     * @param type $params
     * @return type 
+    * @todo verify if array is associative or vector
     */
 	public function execute($params = null) {
-		// if param is provided, then set the values
-		// this is useful to run multiple execution on single prepared statement
 		if($params !== null) {
 		    $this->set($params);
 		}

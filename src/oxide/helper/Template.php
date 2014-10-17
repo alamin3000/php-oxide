@@ -2,9 +2,10 @@
 namespace oxide\helper;
 use oxide\ui\html\Element;
 use oxide\application\View;
+use oxide\util\ArrayString;
 
 /**
- * 
+ * All template related contents
  */
 abstract class Template {
    private static 
@@ -27,8 +28,8 @@ abstract class Template {
       if($offset == null) { $offset = self::DEFAULT_KEY; }
       
       if(!isset(self::$_links[$offset])) {
-         $element = new \oxide\util\ArrayString();
-         $element->registerStringifyCallback(function(\oxide\util\ArrayString $string) {
+         $element = new ArrayString();
+         $element->registerStringifyCallback(function(ArrayString $string) {
             if(count($string))
                return _html::ul($string->toArray(), null, _html::LIST_SMART_LINK);  
             else return '';
@@ -68,7 +69,6 @@ abstract class Template {
    
    /**
     * returns the main view
-    * 
     * @return oxide\application\View
     */
    public static function content($view = null) {
@@ -128,7 +128,7 @@ abstract class Template {
    }
    
    /**
-    * 
+    * Set 
     * @param type $key
     * @param type $value
     */
