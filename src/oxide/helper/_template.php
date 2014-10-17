@@ -39,8 +39,9 @@ abstract class _template {
     */
    public static function navigations($item = null, $link = null) {
       static $links = null;
-      if($links === null) $links = new ArrayString();
-      $links[$item] = $link;
+      if($links === null)  $links = new ArrayString();
+      if(!$item) return $links;
+      else $links[$item] = $link;
    }
    
    public static function actions($item = null, $link = null) {
