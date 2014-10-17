@@ -39,28 +39,28 @@ abstract class _template {
     */
    public static function navigations($item = null, $link = null) {
       static $links = null;
-      if($links === null)  $links = new ArrayString();
+      if($links === null)  $links = [];
       if(!$item) return $links;
       else $links[$item] = $link;
    }
    
    public static function actions($item = null, $link = null) {
       static $links = null;
-      if($links === null)  $links = new ArrayString();
+      if($links === null)  $links = [];
       if(!$item) return $links;
       else $links[$item] = $link;
    }
    
    public static function links($item = null, $link = null) {
       static $links = null;
-      if($links === null)  $links = new ArrayString();
+      if($links === null)  $links = [];
       if(!$item) return $links;
       else $links[$item] = $link;
    }
    
    public static function breadcrumb($item = null, $link = null) {
       static $links = null;
-      if($links === null)  $links = new ArrayString();
+      if($links === null)  $links = [];
       if(!$item) return $links;
       else $links[$item] = $link;
    }
