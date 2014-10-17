@@ -7,7 +7,7 @@ namespace oxide\util;
  * Provides all basic array access functionalities
  * It also provides various addeded functionalities for accessing and manupulatin the array
  */
-class ArrayContainer implements \ArrayAccess, \Countable {
+class ArrayContainer implements \ArrayAccess, \Countable, \IteratorAggregate {
    use pattern\ArrayFunctionsTrait;
    
    public function getIterator() {
