@@ -2,7 +2,7 @@
 namespace oxide\util;
 
 
-class ArrayString extends \ArrayObject implements Stringify
+class ArrayString extends ArrayContainer implements Stringify
 {   
    protected 
       $_stringify_callback = null;
