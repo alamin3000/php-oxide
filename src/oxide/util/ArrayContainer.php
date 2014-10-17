@@ -9,4 +9,10 @@ namespace oxide\util;
  */
 class ArrayContainer implements \ArrayAccess, \Countable {
    use pattern\ArrayFunctionsTrait;
+   
+   public function getIterator() {
+      foreach ($this->_t_array_storage as $item) {
+          yield $item;
+      }
+   }
 }

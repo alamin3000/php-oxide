@@ -5,8 +5,6 @@ namespace oxide\util\pattern;
  * Common Array storage/access functionalities
  * 
  * This trait provides some useful functionalities to access and manupulate array
- * 
- * 
  * This trait implements various interfaces related to array:
  *    ArrayAccess, Countable
  * In order to take advantages of these, the class using this trait must implement 
@@ -22,18 +20,15 @@ trait ArrayAccessTrait
     * @param mixed $offset
     * @throws \Exception
     */
-   protected function _t_array_modify($offset, $value)
-   {
+   protected function _t_array_modify($offset, $value) {
       return true;
    }
 
-   public function toArray()
-   {
+   public function toArray() {
       return $this->_t_array_storage;
    }
    
-   public function setArray(array $arr)
-   {
+   public function setArray(array $arr) {
       if($this->_t_array_modify(null, $arr)) {
          $this->_t_array_storage = $arr;
       }
@@ -46,8 +41,7 @@ trait ArrayAccessTrait
     * @param mixed $offset
     * @return bool
     */
-   public function offsetExists($offset ) 
-   {
+   public function offsetExists($offset )  {
       return isset($this->_t_array_storage[$offset]);
    }
    
@@ -55,8 +49,7 @@ trait ArrayAccessTrait
     * Get the reference to the array
     * @return array
     */
-   public function &ref()
-   {
+   public function &ref() {
       return $this->_t_array_storage;
    }
       
@@ -68,8 +61,7 @@ trait ArrayAccessTrait
     * @param mixed $offset
     * @return mixed
     */
-   public function offsetGet($offset) 
-   {
+   public function offsetGet($offset)  {
       if(isset($this->_t_array_storage[$offset])) {
          return $this->_t_array_storage[$offset];
       } else {
@@ -86,8 +78,7 @@ trait ArrayAccessTrait
     * @param mixed $offset
     * @param mixed $value
     */
-   public function offsetSet($offset , $value ) 
-   {
+   public function offsetSet($offset , $value )  {
       if(!$this->_t_array_modify($offset, $value)) return;      
       
       if (is_null($offset)) {
@@ -103,8 +94,7 @@ trait ArrayAccessTrait
     * Implements ArrayAccess interface
     * @param mixed $offset
     */
-   public function offsetUnset($offset)
-   {
+   public function offsetUnset($offset) {
       if(!$this->_t_array_modify($offset, null)) return;
       unset($this->_t_array_storage[$offset]);
    }
@@ -116,8 +106,7 @@ trait ArrayAccessTrait
     * Class using this trait should implement Countable in the declaration
     * @return int
     */
-   public function count()
-   {
+   public function count() {
       return count($this->_t_array_storage);
    }
 }
