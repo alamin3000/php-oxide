@@ -199,7 +199,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
    public function renderInnerTag() {      
       $buffer = '';
       foreach($this->inner() as $inner) {
-         if($this->_callback_render_inner) {
+         if($this->_callback_inner_render) {
             foreach($this->_callback_inner_render as $callback) {
                $callback($this, $inner, $buffer);
             }
