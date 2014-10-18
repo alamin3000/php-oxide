@@ -4,7 +4,7 @@ namespace oxide\helper;
 /**
  * 
  */
-abstract class Url
+abstract class _url
 {	
    
    /**
