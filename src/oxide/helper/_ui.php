@@ -70,6 +70,7 @@ abstract class _ui {
       
    }
    
+   
    /**
     * Text label
     * @param type $text
@@ -81,6 +82,15 @@ abstract class _ui {
           'class' => 'label ' . self::_css_style($style, 'label')
       ];
       return Html::tag('span', $text, $attrbs);
+   }
+   
+   /**
+    * Icon/glyphicon
+    * @param type $name
+    * @return type
+    */
+   public static function icon($name) {
+      return Html::tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
    }
 
    public static function input($type, $name, $value = null, $label = null, $attribs = []) {
