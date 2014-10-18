@@ -340,6 +340,6 @@ abstract class _ui {
     * 
     */
    public static function panel_end() {
-      Html::end();
+      return Html::end();
    }
 }
