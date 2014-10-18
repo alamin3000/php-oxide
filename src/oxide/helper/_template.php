@@ -57,7 +57,7 @@ abstract class _template {
       else $links[$item] = $link;
    }
    
-   public static function breadcrumb($item = null, $link = null) {
+   public static function breadcrumbs($item = null, $link = null) {
       static $links = null;
       if($links === null)  $links = [];
       if(!$item) return $links;
