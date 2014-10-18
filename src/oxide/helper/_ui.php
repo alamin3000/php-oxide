@@ -19,6 +19,10 @@ abstract class _ui {
       STYLE_SUCCESS = 3,
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
+           
+      TABLE_STRIPED = 1,
+      TABLE_HOVERED = 2,
+      TABLE_BORDERED = 4,
     
 
       SIZE_DEFAULT = 0,
@@ -138,8 +142,20 @@ abstract class _ui {
       return Html::end();
    }
    
-   public static function table_start() {
-      Html::start('table', ['class' => 'table']);
+   public static function table_start($style = null) {
+      $cls = ['table'];
+      if($style & self::TABLE_HOVERED) {
+         $cls[] = 'table-hover';
+      }
+      if($style & self::TABLE_STRIPED) {
+         $cls[] = 'table-striped';
+      }
+      
+      if($style & self::TABLE_BORDERED) {
+         $cls[] = 'table-bordered';
+      }
+      
+      Html::start('table', ['class' => implode(' ', $cls)]);
    }
    
    
