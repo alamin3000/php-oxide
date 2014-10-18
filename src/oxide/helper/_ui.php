@@ -16,6 +16,7 @@ abstract class _ui {
       STYLE_DEFAULT = 0,
       STYLE_PRIMARY = 1,
       STYLE_ALERT = 2,
+      STYLE_SUCCESS = 3,
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
     
@@ -45,6 +46,37 @@ abstract class _ui {
             $inner = [$inner];
          }
       };
+   }
+   
+   protected static function _css_style($style, $prefix) {
+      switch ($style) {
+         case self::STYLE_PRIMARY:
+            return "{$prefix}-primary";
+         case self::STYLE_ALERT:
+            return "{$prefix}-danger";
+         case self::STYLE_SUCCESS:
+            return "{$prefix}-success";
+         case self::STYLE_DEFAULT:
+         default:
+            return "{$prefix}-default";
+      }
+   }
+   
+   protected static function _css_size($size, $prefix) {
+      
+   }
+   
+   /**
+    * Text label
+    * @param type $text
+    * @param type $style
+    * @return type
+    */
+   public static function text_label($text, $style = null) {
+      $attrbs = [
+          'class' => 'label ' . self::_css_style($style, 'label')
+      ];
+      return Html::tag('span', $text, $attrbs);
    }
 
    public static function input($type, $name, $value = null, $label = null, $attribs = []) {
@@ -151,7 +183,7 @@ abstract class _ui {
     * @return string
     */
    public static function heading($main, $secondary = null) {
-      if($secondary) $h2 = ' '.Html::tag('small', $secondary);
+      if($secondary) $h2 = '<br/>'.Html::tag('small', $secondary);
       else $h2 = null;
       
       return Html::tag('h1', $main . $h2);
