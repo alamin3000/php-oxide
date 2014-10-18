@@ -151,7 +151,7 @@ abstract class _ui {
     * @return string
     */
    public static function heading($main, $secondary = null) {
-      if($secondary) $h2 = '<br/>'.Html::tag('small', $secondary);
+      if($secondary) $h2 = ' '.Html::tag('small', $secondary);
       else $h2 = null;
       
       return Html::tag('h1', $main . $h2);

@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e8e781c094d065b208a63eb7d3ab2aef",
+    "hash": "24b4c68df28d7d05b96c890247714838",
     "packages": [
         {
             "name": "zendframework/zend-authentication",
