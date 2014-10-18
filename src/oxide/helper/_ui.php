@@ -138,6 +138,17 @@ abstract class _ui {
       return Html::end();
    }
    
+   public static function table_start() {
+      Html::start('table', ['class' => 'table']);
+   }
+   
+   
+   public static function table_end() {
+      return Html::end();
+   }
+   
+   
+   
    public static function control($tag, $name, $value = null, $label = null, $type = null, $inner = null, array $attribs = null) {
       Html::start('div', ['class' => 'form-group']);
       if($label) {
