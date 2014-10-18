@@ -151,7 +151,7 @@ abstract class _ui {
     * @return string
     */
    public static function heading($main, $secondary = null) {
-      if($secondary) $h2 = Html::tag('small', $secondary);
+      if($secondary) $h2 = '<br/>'.Html::tag('small', $secondary);
       else $h2 = null;
       
       return Html::tag('h1', $main . $h2);
@@ -269,15 +269,15 @@ abstract class _ui {
       Html::start('nav');
    }
    
+   
    public static function nav_list($items, $active_index = -1, $style = null) {
-      Html::start('ul', ['class' => 'list-group']);
+      Html::start('div', ['class' => 'list-group']);
+      $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
-         if(!$value) {
-            $text = Html::tag('a', $key, ['href' => $value]);
-         } else {
-            $text = $key;
-         }
-         echo Html::tag('li', $text, ['class' => 'list-group-item']);
+         if($value) $attrs['href'] = $value;
+         else unset($value['href']);
+         
+         echo Html::tag('a', $key, $value);
       }
       
       return Html::end();
