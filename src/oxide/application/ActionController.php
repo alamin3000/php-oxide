@@ -7,7 +7,7 @@ use oxide\http\Context;
 use oxide\application\View;
 use oxide\application\ViewController;
 use oxide\helper\App;
-use oxide\helper\template;
+use oxide\helper\_template;
 use oxide\helper\Auth;
 use oxide\data\model\Cingle;
 use oxide\helper\Util;
@@ -154,8 +154,7 @@ abstract class ActionController extends CommandController {
       });
       
       // assing the view to the templet's content view
-      $view->setIdentifier(template::CONTENT_VIEW);
-		template::content($view);
+		_template::content($view);
       if($this->_autoRenderLayout) {
          // render and add to the respnose object
          $viewController = $this->getViewController();

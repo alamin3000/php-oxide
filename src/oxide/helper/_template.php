@@ -1,6 +1,5 @@
 <?php
 namespace oxide\helper;
-use oxide\util\ArrayString;
 use oxide\application\View;
 
 abstract class _template {
