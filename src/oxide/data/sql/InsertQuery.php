@@ -55,8 +55,6 @@ class InsertQuery extends Query {
       }
    }
 
-   
-   
    /**
     *
     * @access public

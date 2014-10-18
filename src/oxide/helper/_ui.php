@@ -151,10 +151,10 @@ abstract class _ui {
     * @return string
     */
    public static function heading($main, $secondary = null) {
-      if($secondary) $h2 = Html::tag('h2', $secondary);
+      if($secondary) $h2 = Html::tag('small', $secondary);
       else $h2 = null;
       
-      return Html::tag('h1', $main) . $h2;
+      return Html::tag('h1', $main . $h2);
    }
    
    /**
@@ -262,6 +262,12 @@ abstract class _ui {
       return $form;
    }
    
+   /**
+    * 
+    */
+   public static function nav_start() {
+      Html::start('nav');
+   }
    
    public static function nav_list($items, $active_index = -1, $style = null) {
       Html::start('ul', ['class' => 'list-group']);
@@ -275,5 +281,65 @@ abstract class _ui {
       }
       
       return Html::end();
+   }
+   
+   public static function nav_end() {
+      return Html::end();
+   }
+   
+   /**
+    * 
+    * @param string $body
+    * @param string $header
+    * @param string $footer
+    * @return string
+    */
+   public static function panel($body, $header = null, $footer = null) {
+      self::panel_start();
+      echo self::panel_header($header);
+      echo self::panel_body($body);
+      echo self::panel_footer($footer);
+      return self::panel_end();
+   }
+   
+   /**
+    * 
+    */
+   public static function panel_start() {
+      Html::start('div', ['class' => 'panel panel-default']);
+   }
+   
+   /**
+    * 
+    * @param type $title
+    * @return type
+    */
+   public static function panel_header($title) {
+      return Html::tag('div', $title, ['class' => 'panel-heading']);
+   }
+   
+   /**
+    * 
+    * @param type $body
+    * @return type
+    */
+   public static function panel_body($body) {
+      return Html::tag('div', $body, ['class' => 'panel-body']);
+   }
+   
+   /**
+    * 
+    * @param type $html
+    * @return type
+    */
+   public static function panel_footer($html) {
+      return Html::tag('div', $html, ['panel-footer']);
+   }
+   
+   /**
+    * 
+    */
+   public static function panel_end() {
+      Html::end();
    }
 }
