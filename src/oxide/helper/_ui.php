@@ -275,9 +275,9 @@ abstract class _ui {
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
          if($value) $attrs['href'] = $value;
-         else unset($value['href']);
+         else unset($attrs['href']);
          
-         echo Html::tag('a', $key, $value);
+         echo Html::tag('a', $key, $attrs);
       }
       
       return Html::end();
