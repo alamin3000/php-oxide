@@ -398,6 +398,21 @@ abstract class _ui {
    
    /**
     * 
+    */
+   public static function panel_body_start() {
+      Html::start('div',  ['class' => 'panel-body']);
+   }
+   
+   /**
+    * 
+    * @return string
+    */
+   public static function panel_body_end() {
+      return Html::end();
+   }
+   
+   /**
+    * 
     * @param type $html
     * @return type
     */
