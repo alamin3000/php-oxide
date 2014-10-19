@@ -271,7 +271,7 @@ abstract class _ui {
    }
    
    
-   public static function form_start($method = 'get', $action = null, $style = null) {
+   public static function form_start($style = null, $method = 'get', $action = null) {
       $attr = [
           'role' => 'form',
           'method' => $method,
