@@ -270,8 +270,68 @@ abstract class _ui {
       return Html::a($href, $text, $attribs);
    }
    
-   public static function css_class_from_style($style) {
+   
+   public static function form_start($method = 'get', $action = null, $style = null) {
+      $attr = [
+          'role' => 'form',
+          'method' => $method,
+          'action' => $action
+      ];
+      if($style == self::FORM_INLINE) {
+         $attr['class'] = 'form-inline';
+      } else if($style == self::FORM_STANDARD) {
+         $attr['class'] = 'form-horizontal';
+      }      
       
+      Html::start('form', $attr);
+   }
+   
+   public static function form_row_start() {
+      Html::start('div', ['class' => 'form-group']);
+   }
+   
+   public static function form_row_end() {
+      return Html::end();
+   }
+   
+   public static function form_control($type, $name, $value = null, $label = null, $items = null) {
+      $attrs = [
+          'class' => 'form-control'
+      ];
+      
+      $rendered = null;
+      
+      switch ($type) {
+         case (isset(Html::$inputTypes[$type])) :
+            $rendered = Html::input($type, $name, $value, null, $attrs);
+            break;
+         
+         case 'textfield':
+            $rendered = Html::textarea($name, $value, null, $attrs);
+            break;
+         
+         case 'select':
+            $rendered = Html::select($name, $value, null, $items, $attrs);
+            break;
+         
+         case 'button':
+            $rendered = Html::button($type, $name, $value, null, $attrs);
+            break;
+         
+         
+         default:
+      }
+      
+      
+      if($label) {
+         $rendered = Html::label($label, $name, ['class' => 'control-label']) . $rendered;
+      }
+      
+      return $rendered;
+   }
+   
+   public static function form_end() {
+      return Html::end();
    }
    
    /**
@@ -326,7 +386,7 @@ abstract class _ui {
                
       if($style == self::FORM_INLINE) {
          $form->class = 'form-inline';
-      } else {
+      } else if($style == self::FORM_STANDARD) {
          $form->class = 'form-horizontal';
       }
       
@@ -369,9 +429,11 @@ abstract class _ui {
     */
    public static function panel($body, $header = null, $footer = null) {
       self::panel_start();
-      echo self::panel_header($header);
+      if($header)
+         echo self::panel_header($header);
       echo self::panel_body($body);
-      echo self::panel_footer($footer);
+      if($footer)
+         echo self::panel_footer($footer);
       return self::panel_end();
    }
    

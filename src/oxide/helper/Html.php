@@ -395,7 +395,7 @@ abstract class Html
     * @param array $attrib
     * @return string
     */
-   public static function select($name, $value = null, $options = [], $label = null, $attribs = null) {
+   public static function select($name, $value = null, $label = null, $options = [], $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       
