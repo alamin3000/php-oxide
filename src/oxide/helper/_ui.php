@@ -211,6 +211,7 @@ abstract class _ui {
       return Html::end();
    }
    
+   
    public static function a($href, $text) {
       $attribs['class'] = "btn";
       return Html::a($href, $text, $attribs);
@@ -323,11 +324,11 @@ abstract class _ui {
          
       });
                
-//      if($style == self::FORM_INLINE) {
-//         $form->class = 'form-inline';
-//      } else {
-//         $form->class = 'form-horizontal';
-//      }
+      if($style == self::FORM_INLINE) {
+         $form->class = 'form-inline';
+      } else {
+         $form->class = 'form-horizontal';
+      }
       
       $form->controlWrapperTag->setTag('div');
       $form->controlWrapperTag->class = 'form-group';
