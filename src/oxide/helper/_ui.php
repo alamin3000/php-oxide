@@ -17,6 +17,7 @@ abstract class _ui {
       STYLE_PRIMARY = 1,
       STYLE_ALERT = 2,
       STYLE_SUCCESS = 3,
+      STYLE_INFO = 4,
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
            
@@ -60,6 +61,8 @@ abstract class _ui {
             return "{$prefix}-danger";
          case self::STYLE_SUCCESS:
             return "{$prefix}-success";
+         case self::STYLE_INFO:
+            return "{$prefix}-info";
          case self::STYLE_DEFAULT:
          default:
             return "{$prefix}-default";
