@@ -30,6 +30,7 @@ abstract class _template {
 		else $contentview = $view;
    }   
    
+   
    /**
     * 
     * @staticvar type $links
@@ -50,9 +51,17 @@ abstract class _template {
       else $links[$item] = $link;
    }
    
-   public static function links($item = null, $link = null) {
-      static $links = null;
-      if($links === null)  $links = [];
+   public static function links($offset, $item = null, $link = null) {
+      static $collection = null;
+      if($collection === null) {
+         $collection = [];
+      }
+      
+      if(!isset($collection[$offset])) {
+         $collection[$offset] = [];
+      }
+      
+      $links = &$collection[$offset];
       if(!$item) return $links;
       else $links[$item] = $link;
    }
