@@ -102,7 +102,7 @@ abstract class _url
 	public static function url($add = null, $remove = null)
 	{
 		$request = App::context()->getRequest();
-		$path = trim($request->getUriComponent('path'), '/');
+		$path = trim($request->getPath(), '/');
 		$query = $request->getQueryString($add, $remove);
 
 		if($query) {
@@ -112,6 +112,7 @@ abstract class _url
 		}
 	}
    
+      
    /**
     * Returns abosolute URL of the correct location
     * 
@@ -197,7 +198,7 @@ abstract class _url
       if($index) 
          return $request->getPathAtIndex($index);
       else 
-         return $request->getUriComponent(oxide\http\Request::URI_PATH);
+         return $request->getPath();
    }
    
 
