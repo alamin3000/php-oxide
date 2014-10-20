@@ -315,7 +315,7 @@ abstract class _ui {
          else $opt_attrib = [];
          
          $opt_attrib['value'] = $val;
-         echo self::tag('option', $text, $opt_attrib);
+         echo Html::tag('option', $text, $opt_attrib);
       }
       echo Html::end();
       return self::form_row_end();
