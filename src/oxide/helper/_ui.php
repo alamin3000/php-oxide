@@ -182,11 +182,16 @@ abstract class _ui {
     * @param string $secondary
     * @return string
     */
-   public static function heading($main, $secondary = null) {
+   public static function heading($main, $secondary = null, $outline_level = 1) {
       if($secondary) $h2 = '<br/>'.Html::tag('small', $secondary);
       else $h2 = null;
       
-      return Html::tag('h1', $main . $h2);
+      return Html::tag("h{$outline_level}", $main . $h2);
+   }
+   
+   
+   public static function heading_content($main, $sub = null) {
+      
    }
    
    /**
