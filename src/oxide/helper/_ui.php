@@ -464,6 +464,7 @@ abstract class _ui {
       foreach($items as $key => $value) {
          echo '<li>';
          if(is_array($value)) {
+            echo $key;
             echo self::nav_list($value, $style);
          } else {
             if($value) $attrs['href'] = $value;
