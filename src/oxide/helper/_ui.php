@@ -462,14 +462,18 @@ abstract class _ui {
       $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
-         if($value) $attrs['href'] = $value;
-         else unset($attrs['href']);
-         
-         if(stripos($value, $cpath)) {
-            $attrs['class'] .= ' active';
+         if(is_array($value)) {
+            echo self::nav_list($value, $style);
+         } else {
+            if($value) $attrs['href'] = $value;
+            else unset($attrs['href']);
+
+            if(stripos($value, $cpath)) {
+               $attrs['class'] .= ' active';
+            }
+
+            echo Html::tag('a', $key, $attrs);
          }
-         
-         echo Html::tag('a', $key, $attrs);
       }
       
       return Html::end();
