@@ -38,17 +38,11 @@ abstract class _template {
     * @param type $link
     */
    public static function navigations($item = null, $link = null) {
-      static $links = null;
-      if($links === null)  $links = [];
-      if(!$item) return $links;
-      else $links[$item] = $link;
+      return self::links('navigations', $item, $link);
    }
    
    public static function actions($item = null, $link = null) {
-      static $links = null;
-      if($links === null)  $links = [];
-      if(!$item) return $links;
-      else $links[$item] = $link;
+      return self::links('actions', $item, $link);
    }
    
    public static function links($offset, $item = null, $link = null) {
@@ -67,10 +61,7 @@ abstract class _template {
    }
    
    public static function breadcrumbs($item = null, $link = null) {
-      static $links = null;
-      if($links === null)  $links = ['home' => '/'];
-      if(!$item) return $links;
-      else $links[$item] = $link;
+      return self::links('breadcrumbs', $item, $link);
    }
    
    /**
