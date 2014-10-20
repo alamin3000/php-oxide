@@ -53,7 +53,7 @@ abstract class _ui {
       };
    }
    
-   protected static function _css_style($style, $prefix) {
+   protected static function _class_style($style, $prefix) {
       switch ($style) {
          case self::STYLE_PRIMARY:
             return "{$prefix}-primary";
@@ -69,8 +69,14 @@ abstract class _ui {
       }
    }
    
-   protected static function _css_size($size, $prefix) {
-      
+   protected static function _class_size($size, $prefix) {
+      if($size == self::SIZE_SMALL) {
+         return "{$prefix}-sm";
+      } else if($size == self::SIZE_LARGE) {
+         return "{$prefix}-lg";
+      } else {
+         return '';
+      }
    }
    
    
@@ -82,7 +88,7 @@ abstract class _ui {
     */
    public static function text_label($text, $style = null) {
       $attrbs = [
-          'class' => 'label ' . self::_css_style($style, 'label')
+          'class' => 'label ' . self::_class_style($style, 'label')
       ];
       return Html::tag('span', $text, $attrbs);
    }
@@ -94,27 +100,6 @@ abstract class _ui {
     */
    public static function icon($name) {
       return Html::tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
-   }
-
-   public static function input($type, $name, $value = null, $label = null, $attribs = []) {
-      $class = (isset($attribs['class'])) ? $attribs['class'] : null;
-      $attribs['class'] = 'form-control' . ' ' . $class;
-      return Html::tag('div', 
-              Html::input($type, $name, $value, $label, $attribs), 
-               ['class' => 'form-group']);
-   }
-   
-   public static function renderer($tag, \Closure $renderer) {
-      self::$_renderers[$tag] = $renderer;
-   }
-
-   public static function render($name, $inner = null, $attr = null) {
-      if(isset(self::$_renderers[$name])) {
-         $renderer = self::$_renderers[$name];
-         return $renderer($name, $inner, $attr);
-      } else {
-         return Html::tag($name, $inner, $attr);
-      }
    }
 
    /**
@@ -155,18 +140,15 @@ abstract class _ui {
       return Html::end();
    }
    
+   /**
+    * 
+    * @param type $style
+    */
    public static function table_start($style = null) {
       $cls = ['table'];
-      if($style & self::TABLE_HOVERED) {
-         $cls[] = 'table-hover';
-      }
-      if($style & self::TABLE_STRIPED) {
-         $cls[] = 'table-striped';
-      }
-      
-      if($style & self::TABLE_BORDERED) {
-         $cls[] = 'table-bordered';
-      }
+      if($style & self::TABLE_HOVERED) $cls[] = 'table-hover';
+      if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
+      if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
       
       Html::start('table', ['class' => implode(' ', $cls)]);
    }
@@ -174,24 +156,6 @@ abstract class _ui {
    
    public static function table_end() {
       return Html::end();
-   }
-   
-   
-   
-   public static function control($tag, $name, $value = null, $label = null, $type = null, $inner = null, array $attribs = null) {
-      Html::start('div', ['class' => 'form-group']);
-      if($label) {
-         echo self::tag('label', $label, ['for' => $name]);
-      }
-      
-      if($attribs) $attribs = [];
-      $attribs['name'] = $name;
-      $attribs['type'] = $type;
-      
-      
-      
-      
-      return end();
    }
    
    /**
@@ -211,11 +175,6 @@ abstract class _ui {
       return Html::end();
    }
    
-   
-   public static function a($href, $text) {
-      $attribs['class'] = "btn";
-      return Html::a($href, $text, $attribs);
-   }
    
    /**
     * Prints heading
@@ -251,26 +210,117 @@ abstract class _ui {
     */
    public static function link_button($href, $text, $style = null, $size = null) {
       $attribs = [];
-      if($size == self::SIZE_SMALL) {
-         $cls_size = 'btn-sm';
-      } else if($size == self::SIZE_LARGE) {
-         $cls_size = 'btn-lg';
-      } else {
-         $cls_size = '';
-      }
-      if($style == self::STYLE_PRIMARY) {
-         $cls_style = 'btn-primary';
-      } else if($style == self::STYLE_ALERT) {
-         $cls_style = 'btn-danger';
-      } else {
-         $cls_style = 'btn-default';
-      }
+      
+      $cls_size = self::_class_size($size, 'btn');
+      $cls_style = self::_class_style($style, 'btn');
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
       return Html::a($href, $text, $attribs);
    }
    
+   /**
+    * 
+    * @param type $type
+    * @param type $text
+    * @param type $style
+    * @param type $size
+    * @return type
+    */
+   public static function button($type, $text, $style = null, $size = null) {
+      $cls_size = self::_class_size($size, 'btn');
+      $cls_style = self::_class_style($style, 'btn');
+
+      $attr = [
+          'type' => $type,
+          'class' => "btn {$cls_size} {$cls_style}"
+      ];
+          
+      return Html::tag('button', $text,$attr);
+   }
    
+   /**
+    * 
+    * @param type $text
+    * @param type $for
+    */
+   public static function label($text, $for = null) {
+      echo Html::tag('label', $text, ['class' => 'form-label', 'for' => $for]);
+   }
+   
+   /**
+    * 
+    * @param type $type
+    * @param type $name
+    * @param type $value
+    * @param type $label
+    * @return type
+    */
+   public static function input($type, $name, $value = null, $label = null) {
+      $attribs = ['type' => $type, 
+                  'name' => $name, 
+                  'value' => Html::encode($value),
+                  'class' => 'form-control'];
+      self::form_row_start();
+      if($label) {
+         echo self::label($label, $name);
+      }
+      echo Html::tag('input', null, $attribs);
+      return self::form_row_end();
+   }
+   
+   /**
+    * 
+    * @param type $name
+    * @param type $value
+    * @param type $label
+    */
+   public static function textfield($name, $value = null, $label = null) {
+      $attribs = [
+          'class' => 'form-control',
+          'name' => $name];
+      self::form_row_start();
+      if($label) {
+         echo self::label($label, $name);
+      }
+      echo Html::tag('textarea', $value, $attribs);
+      return self::form_row_end();
+   }
+   
+   /**
+    * 
+    * @param type $name
+    * @param type $value
+    * @param type $label
+    * @param array $items
+    * @return type
+    */
+   public static function select($name, $value = null, $label = null, array $items = null) {
+      $attribs = [
+          'class' => 'form-control',
+          'name' => $name
+      ];
+      
+      self::form_row_start();
+      if($label) {
+         echo self::label($label, $name);
+      }
+      Html::start('select', $attribs);
+      foreach($items as $key => $val) {
+         if(is_int($key)) {
+            $text = $val;
+         } else {
+            $text = $key;
+         }
+         if($value == $val) $opt_attrib = ['selected' => 'selected'];
+         else $opt_attrib = [];
+         
+         $opt_attrib['value'] = $val;
+         echo self::tag('option', $text, $opt_attrib);
+      }
+      echo Html::end();
+      return self::form_row_end();
+   }
+
    public static function form_start($style = null, $method = 'get', $action = null) {
       $attr = [
           'role' => 'form',
@@ -300,7 +350,6 @@ abstract class _ui {
       ];
       
       $rendered = null;
-      
       switch ($type) {
          case (isset(Html::$inputTypes[$type])) :
             $rendered = Html::input($type, $name, $value, null, $attrs);
@@ -315,13 +364,13 @@ abstract class _ui {
             break;
          
          case 'button':
+         case 'submit':
+         case 'reset':
             $rendered = Html::button($type, $name, $value, null, $attrs);
             break;
          
-         
          default:
       }
-      
       
       if($label) {
          $rendered = Html::label($label, $name, ['class' => 'control-label']) . $rendered;
