@@ -542,7 +542,7 @@ abstract class _ui {
     * @return type
     */
    public static function panel_footer($html) {
-      return Html::tag('div', $html, ['panel-footer']);
+      return Html::tag('div', $html, ['class' => 'panel-footer']);
    }
    
    /**
