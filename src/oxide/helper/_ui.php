@@ -541,4 +541,12 @@ abstract class _ui {
    public static function panel_end() {
       return Html::end();
    }
+   
+   public static function breadcrumb($items) {
+      Html::start('ol', ['class' => 'breadcrumb']);
+      foreach($items as $key => $link) {
+         echo Html::tag('li', $key, ['href' => $link]);
+      }
+      return Html::end();
+   }
 }
