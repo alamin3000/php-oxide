@@ -545,7 +545,7 @@ abstract class _ui {
    public static function breadcrumb($items) {
       Html::start('ol', ['class' => 'breadcrumb']);
       foreach($items as $key => $link) {
-         echo Html::tag('li', $key, ['href' => $link]);
+         echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
       }
       return Html::end();
    }
