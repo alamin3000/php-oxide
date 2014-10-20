@@ -457,12 +457,17 @@ abstract class _ui {
    }
    
    
-   public static function nav_list($items, $active_index = -1, $style = null) {
+   public static function nav_list($items, $style = null) {
       Html::start('div', ['class' => 'list-group']);
+      $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
          if($value) $attrs['href'] = $value;
          else unset($attrs['href']);
+         
+         if(stripos($value, $cpath)) {
+            $attrs['class'] .= ' active';
+         }
          
          echo Html::tag('a', $key, $attrs);
       }
