@@ -475,7 +475,6 @@ abstract class _ui {
 
             echo Html::tag('a', $key, $attrs);
          }
-         echo '</div>';
       }
       
       return Html::end();
