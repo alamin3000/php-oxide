@@ -458,7 +458,7 @@ abstract class _ui {
    
    
    public static function nav_list($items, $style = null) {
-      Html::start('ul', ['class' => 'list-group']);
+      Html::start('div', ['class' => 'list-group']);
       $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
@@ -476,7 +476,7 @@ abstract class _ui {
 
             echo Html::tag('a', $key, $attrs);
          }
-         echo '</li>';
+         echo '</div>';
       }
       
       return Html::end();
