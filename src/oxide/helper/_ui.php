@@ -464,7 +464,7 @@ abstract class _ui {
       foreach($items as $key => $value) {
          if(is_array($value)) {
             unset($attrs['href']);
-            echo Html::tag('a', $key,$attrs);
+            echo Html::tag('span', $key,$attrs);
             echo self::nav_list($value, $style);
          } else {
             if($value) $attrs['href'] = $value;
