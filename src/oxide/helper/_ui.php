@@ -463,7 +463,7 @@ abstract class _ui {
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
          if(is_array($value)) {
-            echo Html::tag('a', $key);
+            echo Html::tag('a', $key,$attrs);
             echo self::nav_list($value, $style);
          } else {
             if($value) $attrs['href'] = $value;
