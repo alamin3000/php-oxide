@@ -462,7 +462,6 @@ abstract class _ui {
       $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
-         echo '<li>';
          if(is_array($value)) {
             echo $key;
             echo self::nav_list($value, $style);
