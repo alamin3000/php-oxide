@@ -458,10 +458,11 @@ abstract class _ui {
    
    
    public static function nav_list($items, $style = null) {
-      Html::start('div', ['class' => 'list-group']);
+      Html::start('ul', ['class' => 'list-group']);
       $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
+         echo '<li>';
          if(is_array($value)) {
             echo $key;
             echo self::nav_list($value, $style);
@@ -475,12 +476,31 @@ abstract class _ui {
 
             echo Html::tag('a', $key, $attrs);
          }
+         echo '</li>';
       }
       
       return Html::end();
    }
    
    public static function nav_end() {
+      return Html::end();
+   }
+   
+   public static function list_group($items, $style = null) {
+      Html::start('ul');
+      
+      foreach($items as $key => $value) {
+         echo '<li>';
+         if(is_array($value)) {
+            echo $key;
+            echo self::list_group($items);
+         } else {
+            
+         }
+         
+         echo '</li>';
+      }
+      
       return Html::end();
    }
    
