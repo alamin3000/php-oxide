@@ -448,7 +448,7 @@ abstract class _ui {
       }
       
       $form->controlWrapperTag->setTag('div');
-      $form->controlWrapperTag->class = 'form-group form-group-sm';
+      $form->controlWrapperTag->class = 'form-group form-group-lg';
       return $form;
    }
    
