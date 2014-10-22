@@ -448,7 +448,7 @@ abstract class _ui {
       }
       
       $form->controlWrapperTag->setTag('div');
-      $form->controlWrapperTag->class = 'form-group form-group-lg';
+      $form->controlWrapperTag->class = 'form-group form-group-sm';
       return $form;
    }
    
@@ -584,6 +584,18 @@ abstract class _ui {
       foreach($items as $key => $link) {
          echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
       }
+      return Html::end();
+   }
+   
+   
+   public static function pagination($pagecount, $querykey = 'p', $shownumbers = 5) {
+      $url = _url::url(null, $querykey);
+      Html::start('ul', ['class' => 'pagination']);
+      echo '<li><a href="#">&laquo;</a></li>';
+      for($i = 1; $i <= $pagecount; $i++) {
+         echo '<li>', self::link('', $i);
+      }
+      echo '<li><a href="#">&raquo;</a></li>';
       return Html::end();
    }
 }
