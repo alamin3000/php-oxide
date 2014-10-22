@@ -146,7 +146,7 @@ abstract class _ui {
     */
    public static function table_start($style = null) {
       $cls = ['table'];
-//      $cls[] = 'table'
+      $cls[] = 'table-condensed';
       if($style & self::TABLE_HOVERED) $cls[] = 'table-hover';
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
