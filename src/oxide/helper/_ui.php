@@ -610,8 +610,8 @@ abstract class _ui {
       $path = _url::path();
       $qparams = _url::query();
       
-      $linkmake = function($text, $link_page = null, $disabled = false) use ($path, $qparams, $querykey) {
-         if($disabled) echo '<li class="disabled">';
+      $linkmake = function($text, $link_page = null, $class = null) use ($path, $qparams, $querykey) {
+         if($class) echo '<li class="'.$class.'">';
          else echo '<li>';
          if($link_page) {
             $qparams[$querykey] = $link_page;
@@ -639,13 +639,13 @@ abstract class _ui {
 				
 		// page number links
 		for($i = $start; $i <= $end; $i++) {
-         if($i == $currentpage) $linkmake($i);
+         if($i == $currentpage) $linkmake($i, null, 'active');
          else $linkmake($i, $i);
 		}
       
       // last link
 		if($end < $pagecount) {
-         $linkmake('&hellip;', null, true);
+         $linkmake('&hellip;', null, 'disabled');
          $linkmake($pagecount,$pagecount);
 		}
       
