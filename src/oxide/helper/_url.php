@@ -6,26 +6,27 @@ namespace oxide\helper;
  */
 abstract class _url
 {	
+   /**
+    * Get GET
+    * @param type $key
+    * @param type $default
+    * @return type
+    */
+   public static function query($key, $default = null) {
+      return App::context()->getRequest()->getQuery($key, $default);
+   }
    
    /**
-    *
-    * @access public
-    * @param type $arr 
+    * Get post
+    * @param type $key
+    * @param type $default
+    * @return type
     */
-	public static function generate($arr) {
-		
-	}
-
-
-   /**
-    *
-    * @access public 
-    */
-	public static function buildQuery()
-	{
-		
-	}
-
+   public static function post($key, $default = null) {
+      return App::context()->getRequest()->getPost($key, $default);
+   }
+   
+  
    /**
     * Returns the current server absolute path
     *
