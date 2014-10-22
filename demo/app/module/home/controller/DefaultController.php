@@ -51,6 +51,6 @@ class DefaultController extends ActionController
       $this->_autoRender = false;
       $url = \oxide\helper\_url::path();
       
-      \oxide\helper\Util::dump($url);
+      echo \oxide\helper\_ui::pagination(10);
    }
 }

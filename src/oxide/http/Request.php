@@ -287,7 +287,7 @@ class Request {
 	 * returns raw value without any kind of filtering applied
 	 * @access public
 	 * @param string $key
-	 * @param mixed $default[ value to return if $key not found
+	 * @param mixed $default value to return if $key not found
 	 * @return string
 	 */
 	public static function getCookie($key, $default = null) {

@@ -146,6 +146,7 @@ abstract class _ui {
     */
    public static function table_start($style = null) {
       $cls = ['table'];
+//      $cls[] = 'table'
       if($style & self::TABLE_HOVERED) $cls[] = 'table-hover';
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
@@ -579,6 +580,11 @@ abstract class _ui {
       return Html::end();
    }
    
+   /**
+    * 
+    * @param type $items
+    * @return type
+    */
    public static function breadcrumb($items) {
       Html::start('ol', ['class' => 'breadcrumb']);
       foreach($items as $key => $link) {
@@ -587,15 +593,66 @@ abstract class _ui {
       return Html::end();
    }
    
-   
-   public static function pagination($pagecount, $querykey = 'p', $shownumbers = 5) {
-      $url = _url::url(null, $querykey);
+   /**
+    * 
+    * @param type $pagecount
+    * @param type $querykey
+    * @param type $printcount
+    * @return type
+    */
+   public static function pagination($pagecount, $querykey = 'p', $printcount = 5) {
+      if(!$querykey) $querykey = 'p';
+      $currentpage = _url::query($querykey, 1);
+      if($currentpage < 1) $currentpage = 1;
+      $start = -1;
+      $end = -1;
+		$mean = floor($printcount/2);
+      $path = _url::path();
+      $qparams = _url::query();
+      
+      $linkmake = function($text, $link_page = null, $disabled = false) use ($path, $qparams, $querykey) {
+         if($disabled) echo '<li class="disabled">';
+         else echo '<li>';
+         if($link_page) {
+            $qparams[$querykey] = $link_page;
+            $query = implode('&', $qparams);
+            echo self::link("/{$path}?{$query}", $text);
+         } else {
+            echo $text;
+         }
+         echo '</li>';
+      };
+		
+		if($currentpage <= $printcount) {
+			$start = 1;
+			if($pagecount < $printcount)  $end = $pagecount;
+			else $end = $printcount;
+		} elseif($currentpage > $printcount) {
+			$start = $currentpage - $mean;
+			if($pagecount < ($currentpage + $printcount))  $end = $pagecount;
+			else $end = $currentpage + $mean;
+		}	
+		
       Html::start('ul', ['class' => 'pagination']);
-      echo '<li><a href="#">&laquo;</a></li>';
-      for($i = 1; $i <= $pagecount; $i++) {
-         echo '<li>', self::link('', $i);
-      }
-      echo '<li><a href="#">&raquo;</a></li>';
+		// previous link.
+		if($currentpage > 1) $linkmake('&laquo;', $currentpage - 1);
+				
+		// page number links
+		for($i = $start; $i <= $end; $i++) {
+         if($i == $currentpage) $linkmake($i);
+         else $linkmake($i, $i);
+		}
+      
+      // last link
+		if($end < $pagecount) {
+         $linkmake('&hellip;', null, true);
+         $linkmake($pagecount,$pagecount);
+		}
+      
+		// next link
+		if($currentpage < $pagecount) {
+         $linkmake('&raquo;', $currentpage + 1);
+		}
       return Html::end();
    }
 }

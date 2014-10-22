@@ -12,7 +12,7 @@ abstract class _url
     * @param type $default
     * @return type
     */
-   public static function query($key, $default = null) {
+   public static function query($key = null, $default = null) {
       return App::context()->getRequest()->getQuery($key, $default);
    }
    
@@ -22,7 +22,7 @@ abstract class _url
     * @param type $default
     * @return type
     */
-   public static function post($key, $default = null) {
+   public static function post($key = null, $default = null) {
       return App::context()->getRequest()->getPost($key, $default);
    }
    
