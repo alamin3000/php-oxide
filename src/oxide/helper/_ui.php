@@ -267,7 +267,7 @@ abstract class _ui {
       $attribs = ['type' => $type, 
                   'name' => $name, 
                   'value' => Html::encode($value),
-                  'class' => 'form-control'];
+                  'class' => 'form-control input-sm'];
       self::form_row_start();
       if($label) {
          echo self::label($label, $name);
@@ -284,7 +284,7 @@ abstract class _ui {
     */
    public static function textfield($name, $value = null, $label = null) {
       $attribs = [
-          'class' => 'form-control',
+          'class' => 'form-control input-sm',
           'name' => $name];
       self::form_row_start();
       if($label) {
@@ -304,7 +304,7 @@ abstract class _ui {
     */
    public static function select($name, $value = null, $label = null, array $items = null) {
       $attribs = [
-          'class' => 'form-control',
+          'class' => 'form-control input-sm',
           'name' => $name
       ];
       
@@ -448,7 +448,7 @@ abstract class _ui {
       }
       
       $form->controlWrapperTag->setTag('div');
-      $form->controlWrapperTag->class = 'form-group';
+      $form->controlWrapperTag->class = 'form-group form-group-sm';
       return $form;
    }
    
