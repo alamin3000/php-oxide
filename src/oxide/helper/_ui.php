@@ -141,7 +141,7 @@ abstract class _ui {
    }
    
    /**
-    * 
+    * Start creating table
     * @param type $style
     */
    public static function table_start($style = null) {
@@ -153,7 +153,10 @@ abstract class _ui {
       Html::start('table', ['class' => implode(' ', $cls)]);
    }
    
-   
+   /**
+    * End table. Must be echoed.
+    * @return string
+    */
    public static function table_end() {
       return Html::end();
    }
@@ -342,7 +345,7 @@ abstract class _ui {
    }
    
    public static function form_row_start() {
-      Html::start('div', ['class' => 'form-group']);
+      Html::start('div', ['class' => 'form-group form-group-sm']);
    }
    
    public static function form_row_end() {
