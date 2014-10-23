@@ -58,6 +58,9 @@ abstract class _ui {
             $inner = [$inner];
          }
       };
+      
+      
+      
    }
    
    protected static function _class_style($style, $prefix) {
@@ -523,6 +526,8 @@ abstract class _ui {
       return Html::end();
    }
    
+//   public static function list_content($items)
+   
    /**
     * 
     * @param type $list
@@ -559,6 +564,7 @@ abstract class _ui {
          if(is_numeric($key)) {
             $key = "";
          }
+         
          echo Html::tag('dt', $key, array('title' => $key));
          
          if(!is_array($value)) {
@@ -653,8 +659,12 @@ abstract class _ui {
     */
    public static function breadcrumb($items) {
       Html::start('ol', ['class' => 'breadcrumb']);
-      foreach($items as $key => $link) {
-         echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
+      $count = count($items);
+      for($i = 1; $i <= $count; $i++) {
+         $item = $items[$i];
+         list($key, $link) = $item; 
+         if($i == $count) echo Html::tag('li', $key, ['class' => 'active']);
+         else echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
       }
       return Html::end();
    }
