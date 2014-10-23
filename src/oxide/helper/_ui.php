@@ -530,6 +530,8 @@ abstract class _ui {
     * @return type
     */
    public static function dl($list, $style = null) {
+      static $inline_enabled = false;
+      
       if(!$list) {return;}
       if(!is_array($list) && !is_object($list)) {
          return $list;
@@ -539,11 +541,14 @@ abstract class _ui {
       if($style & self::LIST_STANDARD) $cls = 'dl-horizontal';
       else if($style & self::LIST_INLINE) { 
          $cls = 'dl-inline';
-         _template::styles('.dl-inline dt, .dl-inline dd', [
-             'display' => 'inline-block',
-             'margin-right' => '4px',
-             'padding' => '2px;'
-         ]);
+         if(!$inline_enabled) {
+            _template::styles('.dl-inline dt, .dl-inline dd', [
+                'display' => 'inline-block',
+                'margin-right' => '4px',
+                'padding' => '2px;'
+            ]);
+            $inline_enabled = true;
+         }
       }
       
       $attrib = [
