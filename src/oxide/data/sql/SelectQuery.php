@@ -180,32 +180,9 @@ class SelectQuery extends Query
 	public function retriveRecordCount($cache = true)
 	{
 		$sql = $this->_renderWithoutLimit();
-
-      // check if session has the record count
-      if($cache) {
-			// print 'cached';
-			// check if we have the same query
-         if(isset($_SESSION[self::SESSION_KEY_LAST_QUERY_SQL])
-                  && $_SESSION[self::SESSION_KEY_LAST_QUERY_SQL] == md5($sql)
-                  && $_SESSION[self::SESSION_KEY_LAST_QUERY_PARAM] == md5(serialize($this->_param))) {
-
-            return (int) $_SESSION[self::SESSION_KEY_LAST_QUERY_COUNT];
-         }
-      }
-
-		// prepare execute
-      /*
-       * @note: we need to use
-       */
 		$smnt = $this->_db->prepare($sql);
 		$smnt->execute($this->_param);
 		$count = $smnt->fetchColumn();
-
-		// store info in session
-		$_SESSION[self::SESSION_KEY_LAST_QUERY_SQL] =  md5($sql);
-		$_SESSION[self::SESSION_KEY_LAST_QUERY_COUNT] = $count;
-		$_SESSION[self::SESSION_KEY_LAST_QUERY_PARAM] = md5(serialize($this->_param));
-
 		return $count;
 	}
 

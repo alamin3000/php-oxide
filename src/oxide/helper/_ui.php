@@ -24,7 +24,10 @@ abstract class _ui {
       TABLE_STRIPED = 1,
       TABLE_HOVERED = 2,
       TABLE_BORDERED = 4,
-    
+      
+      IMG_STANDARD = 1,
+      IMG_ROUNDED = 2,
+      IMG_THUMBNAIL = 4,
 
       SIZE_DEFAULT = 0,
       SIZE_SMALL = 1,
@@ -168,7 +171,7 @@ abstract class _ui {
     * @param array $attrs
     * @return type
     */
-   public static function form($controls, array $attrs = null) {  
+   public static function form($controls, array $attrs = null) {
       if($controls instanceof Form) return self::form_element ($controls);
       
       Html::start('form', $attrs);
@@ -654,5 +657,44 @@ abstract class _ui {
          $linkmake('&raquo;', $currentpage + 1);
 		}
       return Html::end();
+   }
+   
+   /**
+    * 
+    * @param type $src
+    * @param type $title
+    * @param type $size
+    * @param type $style
+    * @return type
+    */
+   public static function img($src, $title = null, $size = null, $style = null) {
+      $attr = [
+          'src' => $src,
+          'title' => $title
+      ];
+      
+      $cls = ['img-responsive'];
+      if($style & self::IMG_ROUNDED) $cls[] = 'img-rounded';
+      if($style & self::IMG_THUMBNAIL) $cls[] = 'img-thumbnail';
+      $attr['class'] = implode(' ', $cls);
+      
+      return Html::tag('img', null, $attr);
+   }
+   
+   
+   public static function grid_start() {
+      Html::start('div', null, ['class' => 'row']);
+   }
+   
+   public static function grid_item_start($lg_cols, $md_cols, $sm_cols = 1) {
+      Html::start('div', null, ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
+   }
+   
+   public static function grid_item_end() {
+      echo Html::end();
+   }
+   
+   public static function grid_end() {
+      echo Html::end();
    }
 }
