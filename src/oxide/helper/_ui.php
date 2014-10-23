@@ -537,7 +537,12 @@ abstract class _ui {
       
       $cls = null;
       if($style & self::LIST_STANDARD) $cls = 'dl-horizontal';
-      else if($style & self::LIST_INLINE) $cls = 'dl-inline';
+      else if($style & self::LIST_INLINE) { 
+         $cls = 'dl-inline';
+         _template::styles('.dl-inline dt, .dl-inline dl', [
+             'display' => 'inline-block'
+         ]);
+      }
       
       $attrib = [
           'class' => $cls
