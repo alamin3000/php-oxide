@@ -544,8 +544,7 @@ abstract class _ui {
          if(!$inline_enabled) {
             _template::styles('.dl-inline dt, .dl-inline dd', [
                 'display' => 'inline-block',
-                'margin-right' => '4px',
-                'padding' => '2px;'
+                'margin-right' => '4px'
             ]);
             $inline_enabled = true;
          }
