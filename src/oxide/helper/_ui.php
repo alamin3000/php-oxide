@@ -683,11 +683,11 @@ abstract class _ui {
    
    
    public static function grid_start() {
-      Html::start('div', null, ['class' => 'row']);
+      Html::start('div', ['class' => 'row']);
    }
    
    public static function grid_item_start($lg_cols, $md_cols, $sm_cols = 1) {
-      Html::start('div', null, ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
+      Html::start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
    }
    
    public static function grid_item_end() {
