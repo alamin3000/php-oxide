@@ -661,8 +661,7 @@ abstract class _ui {
       Html::start('ol', ['class' => 'breadcrumb']);
       $count = count($items);
       for($i = 0; $i < $count; $i++) {
-         $item = $items[$i];
-         list($key, $link) = $item; 
+         list($key, $link) = each($items); 
          if($i == $count - 1 || empty($link)) echo Html::tag('li', $key, ['class' => 'active']);
          else echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
       }
