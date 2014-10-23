@@ -3,8 +3,44 @@ namespace oxide\helper;
 use oxide\application\View;
 
 abstract class _template {
+   public static
+      $title = null,
+      $content = null,
+      $links = [],
+      $styles = [];
+      
    public static function initialize($args = null) {
       
+   }
+   
+   /**
+    * 
+    * @param array $styles
+    * @param type $media
+    * @return type
+    */
+   public static function styles($selector = null, array $attributes = null,  $media = null) {
+      if($selector == null) {
+         $attr = ['type' => 'text/css'];
+         Html::start('style', $attr);
+         foreach(self::$styles as $media => $styles) {
+            if($media) print "@media {$media} {";
+            foreach($styles as $selector => $styles) {
+               print $selector . "{";
+               foreach($styles as $key => $value) {
+                  print $key . ":" . $value . ";";
+               }
+               print "}";
+            }
+            if($media) print "}";
+         }
+
+         return Html::end();
+      }
+      
+      $styles = [$selector => $attributes];
+      if($media)  self::$styles[$media] = $styles;
+      else self::$styles[] = $styles;
    }
    
    /**
@@ -15,9 +51,8 @@ abstract class _template {
     * @return type
     */
    public static function title($str = FALSE) {
-      static $title = null;
-      if($str === FALSE) return $title;
-      else $title = $str;
+      if($str === FALSE) return self::$title;
+      else self::$title = $str;
    }
    
    /**
@@ -25,11 +60,9 @@ abstract class _template {
     * @return oxide\application\View
     */
    public static function content($view = FALSE) {
-      static $contentview = null;
-      if($view === FALSE) return $contentview;
-		else $contentview = $view;
+      if($view === FALSE) return self::$content;
+		else self::$content = $view;
    }   
-   
    
    /**
     * 
@@ -46,16 +79,15 @@ abstract class _template {
    }
    
    public static function links($offset, $item = null, $link = null) {
-      static $collection = null;
-      if($collection === null) {
-         $collection = [];
+      if(self::$links === null) {
+         self::$links = [];
       }
       
-      if(!isset($collection[$offset])) {
-         $collection[$offset] = [];
+      if(!isset(self::$links[$offset])) {
+         self::$links[$offset] = [];
       }
       
-      $links = &$collection[$offset];
+      $links = &self::$links[$offset];
       if(!$item) return $links;
       else $links[$item] = $link;
    }

@@ -263,28 +263,6 @@ abstract class Html
 
 		self::$scripts[] = array('script', $snippet, $attribs);
 	}
-   
-   public static function style($elementStylesArray = null, string $media = null) {
-      if($elementStylesArray == null) {
-         return self::tags(self::$styles);
-      }
-      
-      ob_start();
-      foreach($elementStylesArray as $element => $styles) {
-         print $element . "{";
-         foreach($styles as $key => $value) {
-            print $key . ":" . $value . ";";
-         }
-         print "}";
-      }
-      
-      $css_styles = ob_get_clean();
-      $attr = array('type' => 'text/css');
-      if($media) {
-         $attr['media'] = $media;
-      }
-      self::$styles[] = array('style', $css_styles, $attr);
-   }
 
    /**
     * Generates HTML tag attribute string from given array
@@ -503,10 +481,8 @@ abstract class Html
 	 * and value of the array entry is definition (DD)
 	 * @param array $list
 	 */
-   public static function dl($list, $attrib = null)
-   {
+   public static function dl($list, $attrib = null) {
       if(!$list) {return;}
-      
       if(!is_array($list) && !is_object($list)) {
          return $list;
       }

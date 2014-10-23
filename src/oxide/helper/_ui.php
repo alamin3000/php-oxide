@@ -28,6 +28,10 @@ abstract class _ui {
       IMG_STANDARD = 1,
       IMG_ROUNDED = 2,
       IMG_THUMBNAIL = 4,
+           
+      LIST_STANDARD = 1,
+      LIST_INLINE = 2,
+      LIST_LINK = 4,
 
       SIZE_DEFAULT = 0,
       SIZE_SMALL = 1,
@@ -495,6 +499,15 @@ abstract class _ui {
    public static function list_group($items, $style = null) {
       Html::start('ul');
       
+      $keyvaluelist = function($key, $value) {
+         echo '<span>'.$key.'</span>';
+         echo $value;
+      };
+      
+      $simplelist = function($key, $value) {
+         echo $value;
+      };
+      
       foreach($items as $key => $value) {
          echo '<li>';
          if(is_array($value)) {
@@ -502,13 +515,52 @@ abstract class _ui {
             echo self::list_group($items);
          } else {
             
-         }
+         }  
          
          echo '</li>';
       }
       
       return Html::end();
    }
+   
+   /**
+    * 
+    * @param type $list
+    * @param type $style
+    * @return type
+    */
+   public static function dl($list, $style = null) {
+      if(!$list) {return;}
+      if(!is_array($list) && !is_object($list)) {
+         return $list;
+      }
+      
+      $cls = null;
+      if($style & self::LIST_STANDARD) $cls = 'dl-horizontal';
+      else if($style & self::LIST_INLINE) $cls = 'dl-inline';
+      
+      $attrib = [
+          'class' => $cls
+      ];
+      
+      Html::start('dl', $attrib);
+      foreach($list as $key => $value) {
+         if(is_numeric($key)) {
+            $key = "";
+         }
+         echo Html::tag('dt', $key, array('title' => $key));
+         
+         if(!is_array($value)) {
+            $value = [$value];
+         }
+         
+         foreach($value as $val) {
+            echo Html::tag('dd', $val, array('title' => $key));
+         }
+      }
+      return Html::end();
+   }
+   
    
    /**
     * 

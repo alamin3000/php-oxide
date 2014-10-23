@@ -49,8 +49,14 @@ class DefaultController extends ActionController
    
    protected function executeTest(Context $context) {
       $this->_autoRender = false;
-      $url = \oxide\helper\_url::path();
       
-      echo \oxide\helper\_ui::pagination(10);
+      $styles = [
+          ['body' => [
+              'background' => 'red'
+          ]]
+      ];
+      
+      \oxide\helper\_template::styles('body', ['background' => 'blue'], 'screen');
+      echo \oxide\helper\_template::styles();
    }
 }
