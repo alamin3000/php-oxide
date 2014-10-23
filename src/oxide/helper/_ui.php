@@ -663,7 +663,7 @@ abstract class _ui {
       for($i = 0; $i < $count; $i++) {
          $item = $items[$i];
          list($key, $link) = $item; 
-         if($i == $count - 1) echo Html::tag('li', $key, ['class' => 'active']);
+         if($i == $count - 1 || empty($link)) echo Html::tag('li', $key, ['class' => 'active']);
          else echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
       }
       return Html::end();
