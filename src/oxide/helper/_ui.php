@@ -540,7 +540,9 @@ abstract class _ui {
       else if($style & self::LIST_INLINE) { 
          $cls = 'dl-inline';
          _template::styles('.dl-inline dt, .dl-inline dd', [
-             'display' => 'inline-block'
+             'display' => 'inline-block',
+             'margin-right' => '4px',
+             'padding' => '2px;'
          ]);
       }
       
