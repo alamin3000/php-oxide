@@ -93,6 +93,9 @@ abstract class _template {
    }
    
    public static function breadcrumbs($item = null, $link = null) {
+      if(!isset(self::$links['breadcrumbs'])) {
+         self::$links['breadcrumbs'] = ['Home' => '/'];
+      }
       return self::links('breadcrumbs', $item, $link);
    }
    
