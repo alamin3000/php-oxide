@@ -21,7 +21,6 @@ class ImageUrlUploadControl extends InputControl {
       $_imageUploadControl = null;
    
    /**
-    * 
     * @param type $name
     * @param type $value
     * @param type $label
@@ -56,34 +55,37 @@ class ImageUrlUploadControl extends InputControl {
     */
    public function setForm(Form $form = null) {
       parent::setForm($form);
-      $imgcontrol = $this->getImageUploadControl();
-      $imgcontrol->form = $form->id; // add the form 
-//      $imgcontrol->setForm($form); // call the file controls set form manually, since it is not being added to the form
-      // add validation components for the image control
-      $options = $this->_options;
-      $validation = $form->getValidationProcessor();
-      $validation->addValidationComponent(new ImageUploadValidation($options), $imgcontrol->getName());
-      
-      // make the uploaded url accessable from the web
-      $replacefilter = new ReplaceFilterer(Util::value($options, 'document_root', null,  true), '');
-      $validation->getProcessorContainer()->addProcessor(
-              new FilterProcessor($replacefilter), $imgcontrol->getName());
-      
-      // performing post processing
-      $validation->addProcessCallbacks(null, function(&$values) use($form) {
-         $urlname = $this->getName();
-         $uploadname = $this->_imageUploadControl->getName();
-         $imageurl = null;
-         if(!empty($values[$uploadname])) { // upload value submitted
-            $imageurl = $values[$uploadname];
-         } else {
-            $imageurl = $values[$urlname];
-         }
+      if($form) {
+         $imgcontrol = $this->getImageUploadControl();
+         $imgcontrol->form = $form->id; // add the form 
+         $form->enctype="multipart/form-data";
          
-         unset($values[$uploadname]);
-         $values[$urlname] = $imageurl;
-         $form->setValue($urlname, $imageurl);
-      });
+         // add validation components for the image control
+         $options = $this->_options;
+         $validation = $form->getValidationProcessor();
+         $validation->addValidationComponent(new ImageUploadValidation($options), $imgcontrol->getName());
+
+         // make the uploaded url accessable from the web
+         $replacefilter = new ReplaceFilterer(Util::value($options, 'document_root', null,  true), '');
+         $validation->getProcessorContainer()->addProcessor(
+                 new FilterProcessor($replacefilter), $imgcontrol->getName());
+
+         // performing post processing
+         $validation->addProcessCallbacks(null, function(&$values) use($form) {
+            $urlname = $this->getName();
+            $uploadname = $this->_imageUploadControl->getName();
+            $imageurl = null;
+            if(!empty($values[$uploadname])) { // upload value submitted
+               $imageurl = $values[$uploadname];
+            } else {
+               $imageurl = $values[$urlname];
+            }
+
+            unset($values[$uploadname]);
+            $values[$urlname] = $imageurl;
+            $form->setValue($urlname, $imageurl);
+         });
+      }
    }
    
    protected function onPreRender(ArrayString $buffer) {
