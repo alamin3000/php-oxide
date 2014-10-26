@@ -18,6 +18,7 @@ abstract class _ui {
       STYLE_ALERT = 2,
       STYLE_SUCCESS = 3,
       STYLE_INFO = 4,
+      STYLE_NONE = 5,
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
            
@@ -749,7 +750,14 @@ abstract class _ui {
       if($style & self::IMG_ROUNDED) $cls[] = 'img-rounded';
       if($style & self::IMG_THUMBNAIL) $cls[] = 'img-thumbnail';
       $attr['class'] = implode(' ', $cls);
-      
+      if($size) {
+         if(is_array($size)) {
+            $attr['width'] = $size[0];
+            $attr['height'] = $size[1];
+         } else {
+            $attr['width'] = $size;
+         }
+      }
       return Html::tag('img', null, $attr);
    }
    
