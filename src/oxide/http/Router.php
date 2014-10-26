@@ -10,11 +10,10 @@ namespace oxide\http;
  * @subpackage http
  * @todo provide in class rerouting.  complete addRoute and match() functions
  */
-class Router
-{
+class Router {
    public 
 		$defaultModule = 'home',
-		$defaultController = 'default',
+		$defaultController = null,
       $indexFile = 'index.php',
 		$defaultAction = null;
 	
