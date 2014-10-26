@@ -75,7 +75,7 @@ abstract class ActionController extends CommandController {
     * @final
 	 * @param Route $route
 	 */
-	protected final function  __construct(Route $route) {
+	public final function  __construct(Route $route) {
 		parent::__construct($route);
       
       // check if has access

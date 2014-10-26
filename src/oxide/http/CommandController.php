@@ -40,7 +40,7 @@ abstract class CommandController implements Command {
     * all sub classes MUST call this parent method when overriding.
     * @param Context $context
     */
-   protected function  __construct(Route $route) {
+   public function  __construct(Route $route) {
       $this->__command_notification_prefix = 'Command';
       $this->_route = $route;
       
