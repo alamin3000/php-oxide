@@ -29,6 +29,7 @@ abstract class _ui {
       IMG_STANDARD = 1,
       IMG_ROUNDED = 2,
       IMG_THUMBNAIL = 4,
+      IMG_RESPONSIVE = 8,
            
       LIST_STANDARD = 1,
       LIST_INLINE = 2,
@@ -746,9 +747,10 @@ abstract class _ui {
           'title' => $title
       ];
       
-      $cls = ['img-responsive'];
+      $cls = [];
       if($style & self::IMG_ROUNDED) $cls[] = 'img-rounded';
       if($style & self::IMG_THUMBNAIL) $cls[] = 'img-thumbnail';
+      if($style & self::IMG_RESPONSIVE) $cls[] = 'img-responsive';
       $attr['class'] = implode(' ', $cls);
       if($size) {
          if(is_array($size)) {
