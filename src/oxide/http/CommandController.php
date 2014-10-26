@@ -76,6 +76,8 @@ abstract class CommandController implements Command {
          return null;
       }
       
+      
+      
 		$module = $route->module;
       $controller = ucwords($route->controller);
       $class = "{$module}\controller\\{$controller}Controller";

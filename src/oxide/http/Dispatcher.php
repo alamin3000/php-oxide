@@ -3,6 +3,7 @@ namespace oxide\http;
 use oxide\Loader;
 use oxide\util\EventNotifier;
 use Exception;
+use oxide\http\CommandFactory;
 
 /**
  * dispatcher
@@ -51,7 +52,7 @@ class Dispatcher {
       }
       
 		$context->route = $route;
-		$command = CommandController::createWithRoute($route);
+		$command = CommandFactory::createWithRoute($route);
       
 		// if controller is not loaded, usaully means controller does not exits
 		// then we will attempt to send to default controller and adjust the Route
@@ -59,7 +60,7 @@ class Dispatcher {
          $router = $context->router;      
          $router->rerouteToDefaultController($route);
          // try again to crate command using new route info
-			$command = CommandController::createWithRoute($route);
+			$command = CommandFactory::createWithRoute($route);
 		}
 		
 		// if controller failed to load

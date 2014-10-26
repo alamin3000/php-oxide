@@ -3,6 +3,7 @@ namespace oxide\http;
 
 class CommandFactory {
    public static 
+      $defaultController = 'default',
       $classSuffix = 'Controller',
       $classPrefix = null;
            
@@ -22,6 +23,10 @@ class CommandFactory {
       // validate controller name if given
       if(!empty($route->controller) && !$validator->validate($route->controller)) {
          return null;
+      }
+      
+      if(empty($route->controller)) {
+         $route->controller = self::$defaultController;
       }
       
 		$module = $route->module;
