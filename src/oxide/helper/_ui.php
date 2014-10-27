@@ -36,8 +36,9 @@ abstract class _ui {
       LIST_LINK = 4,
 
       SIZE_DEFAULT = 0,
-      SIZE_SMALL = 1,
-      SIZE_LARGE = 2;
+      SIZE_EX_SMALL = 1,
+      SIZE_SMALL = 2,
+      SIZE_LARGE = 3;
    
    
    public static function initialize() {
@@ -82,7 +83,9 @@ abstract class _ui {
    }
    
    protected static function _class_size($size, $prefix) {
-      if($size == self::SIZE_SMALL) {
+      if($size == self::SIZE_EX_SMALL) {
+         return "{$prefix}-xs";
+      } else if($size == self::SIZE_SMALL) {
          return "{$prefix}-sm";
       } else if($size == self::SIZE_LARGE) {
          return "{$prefix}-lg";
