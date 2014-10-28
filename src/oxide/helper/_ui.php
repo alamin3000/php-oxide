@@ -31,6 +31,11 @@ abstract class _ui {
       IMG_THUMBNAIL = 4,
       IMG_RESPONSIVE = 8,
            
+      NAV_DEFAULT = 0,
+      NAV_TABS = 1,
+      NAV_PILLS = 2,
+      NAV_NAVBAR = 3,
+           
       LIST_STANDARD = 1,
       LIST_INLINE = 2,
       LIST_LINK = 4,
@@ -468,15 +473,8 @@ abstract class _ui {
       return $form;
    }
    
-   /**
-    * 
-    */
-   public static function nav_start() {
-      Html::start('nav');
-   }
-   
-   
-   public static function nav_list($items, $style = null) {
+
+   public static function list_group($items, $style = null) {
       Html::start('div', ['class' => 'list-group']);
       $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
@@ -500,39 +498,24 @@ abstract class _ui {
       return Html::end();
    }
    
-   public static function nav_end() {
-      return Html::end();
-   }
-   
-   public static function list_group($items, $style = null) {
-      Html::start('ul');
-      
-      $keyvaluelist = function($key, $value) {
-         echo '<span>'.$key.'</span>';
-         echo $value;
-      };
-      
-      $simplelist = function($key, $value) {
-         echo $value;
-      };
-      
-      foreach($items as $key => $value) {
-         echo '<li>';
-         if(is_array($value)) {
-            echo $key;
-            echo self::list_group($items);
-         } else {
-            
-         }  
-         
+   public static function nav_list($items, $active = null, $style = null) {
+      $cls = ['nav'];
+      if($style & self::NAV_NAVBAR) $cls[] = 'navbar-nav';
+      else if($style & self::NAV_PILLS) $cls[] = 'nav-pills';
+      else if($style & self::NAV_TABS) $cls[] = 'nav-tabs';
+      Html::start('ul', ['class' => implode(' ' , $cls)]);
+      foreach( $items as $key => $link) {
+         if($active && stristr($link, $active) !== FALSE) echo '<li class="active">';
+         else echo '<li>';
+         echo self::link($link, $key);
          echo '</li>';
       }
       
       return Html::end();
    }
+
    
-//   public static function list_content($items)
-   
+      
    /**
     * 
     * @param type $list
