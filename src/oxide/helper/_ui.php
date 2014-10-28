@@ -505,7 +505,7 @@ abstract class _ui {
       else if($style & self::NAV_TABS) $cls[] = 'nav-tabs';
       Html::start('ul', ['class' => implode(' ' , $cls)]);
       foreach( $items as $key => $link) {
-         if($active && stristr($link, $active) !== FALSE) echo '<li class="active">';
+         if($active && $key == $active) echo '<li class="active">';
          else echo '<li>';
          echo self::link($link, $key);
          echo '</li>';
