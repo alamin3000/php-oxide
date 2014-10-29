@@ -30,6 +30,7 @@ abstract class _ui {
       IMG_ROUNDED = 2,
       IMG_THUMBNAIL = 4,
       IMG_RESPONSIVE = 8,
+      IMG_MEDIA = 16,
            
       NAV_DEFAULT = 0,
       NAV_TABS = 1,
@@ -737,6 +738,7 @@ abstract class _ui {
       if($style & self::IMG_ROUNDED) $cls[] = 'img-rounded';
       if($style & self::IMG_THUMBNAIL) $cls[] = 'img-thumbnail';
       if($style & self::IMG_RESPONSIVE) $cls[] = 'img-responsive';
+      if($style & self::IMG_MEDIA) $cls[] = 'media-object';
       $attr['class'] = implode(' ', $cls);
       if($size) {
          if(is_array($size)) {
@@ -764,6 +766,16 @@ abstract class _ui {
    
    public static function grid_end() {
       echo Html::end();
+   }
+   
+   public static function media($src, $title, $description = null) {
+      Html::start('div', ['class' => 'media']);
+      echo Html::tag('a', self::img($src, $title, null, _ui::IMG_MEDIA), ['class' => 'pull-left']);
+      echo Html::tag('div', 
+         Html::tag('h4', $title, ['class' => 'media-heading']) .  
+         $description
+         , ['class' => 'media-body']);
+      return Html::end();
    }
    
 }
