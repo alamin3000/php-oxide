@@ -680,7 +680,7 @@ abstract class _ui {
          if($link_page) {
             $qparams[$querykey] = $link_page;
             $query = implode('&', $qparams);
-            echo self::link("/{$path}?{$query}", $text);
+            echo self::link("{$path}?{$query}", $text);
          } else {
             echo '<span>'.$text.'</span>';
          }
