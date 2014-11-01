@@ -132,7 +132,7 @@ abstract class App {
       static $instance = null;
       if($instance === null) {
          $dir = self::$_config_dir;
-         $file = $dir . '/pref.ini';
+         $file = $dir . '/pref.json';
          if(!is_file($file)) {
             throw new \Exception('Application preference file is not found in location: '. $file);
          }
