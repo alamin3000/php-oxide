@@ -58,4 +58,17 @@ abstract class AbstractClass {
       
       return $namespace;
    }
+   
+   public static function create($class, $args = null) {
+      $instance = null;
+      
+      if($args) {
+         $reflector = new \ReflectionClass($class);
+         $instance = $reflector->newInstanceArgs($args);
+      } else {
+         $instance = new $class();
+      }
+      
+      return $instance;
+   }
 }
