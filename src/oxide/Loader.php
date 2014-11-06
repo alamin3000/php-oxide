@@ -69,6 +69,7 @@ class Loader {
       http\FrontController::setDefaultInstance($fc);
       
       // bootstrap
+      // loads name space + call 
       $bootstraps = Util::value($config, 'bootstraps', null);
       if($bootstraps) {
          foreach($bootstraps as $namespace => $dir) {
@@ -82,6 +83,8 @@ class Loader {
          }
       }
       
+      // modules
+      // loads namespace + register modules with router
       $modules = Util::value($config, 'modules', null);
       $router = $fc->getRouter();
       if($modules) {
@@ -90,6 +93,8 @@ class Loader {
             $router->register($module, $module);
          }
       }
+      
+      
 		if($autorun) {
 			$fc->run();
 		}

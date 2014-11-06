@@ -6,6 +6,52 @@ use Zend\Mime\Part as MimePart;
 use Zend\Mail\Transport\Sendmail;
 
 
+class _mailer_message {
+   public
+      $bodyText = null,
+      $bodyHtml = null,
+      $subject = null;
+           
+   protected 
+      $emails = [];
+   
+   
+   public function add($type, $email, $name = null) {
+      $this->emails[$type][] = [$email, $name];
+   }
+   
+   public function addTo($email, $name = null) {
+      $this->add(_mailer::TO, $email, $name);
+   }
+   
+   public function addCC($email, $name = null) {
+      $this->add(_mailer::CC, $email, $name);
+   }
+   
+   public function addBCC($email, $name = null) {
+      $this->add(_mailer::BCC, $email, $name);
+   }
+   
+   public function getTos() {
+      return (isset($this->emails[_mailer::TO])) ? $this->emails[_mailer::TO] : null;
+   }
+   
+   public function getCCs() {
+      return (isset($this->emails[_mailer::CC])) ? $this->emails[_mailer::TO] : null;
+   }
+   
+   public function getBCCs() {
+      return (isset($this->emails[_mailer::BCC])) ? $this->emails[_mailer::TO] : null;      
+   }
+   
+   public function clear($type = null) {
+      if(isset($this->emails[$type])) {
+         $this->emails[$type] = null;
+         unset($this->emails[$type]);
+      }
+   }
+}
+
 /**
  * Helper class to send email
  *
@@ -20,18 +66,27 @@ abstract class _mailer
       BCC = 'Bcc',
       CC = 'Cc';
   
+   
    /**
-    * sends mail
-    * $to array keys 'to', 'bcc', 'cc'
-    *    each of these keys can have array as value
+    * Creates an empty email message object
+    * 
+    * @return \oxide\helper\_mailer_message
+    */
+   public static function create_message() {
+      return new _mailer_message();
+   }
+   
+   /**
+    * sends mail using Zend framework
     *
-    * @param mixed $from
-    * @param array $to
+    * 
+    * @param string|array $from Email address or associative array Name => Email
+    * @param string|array $to Email address or associative array Name => Email. Does not support 
     * @param string $subject
     * @param string $message
     * @param mixed $attach
     */
-   public static function send($from, $to, $subject, $message, $smtp_auth = null, $attach = null)
+   public static function send($from, $tos, $subject, $message, $smtp_auth = null, $attach = null)
    {      
       $text = new MimePart(strip_tags($message));
       $text->type = 'text/plain';
@@ -45,7 +100,22 @@ abstract class _mailer
       
       $mail = new MailMessage();
       $mail->setBody($body);
-      $mail->setTo($to);
+      
+      if(is_array($tos)) {
+         foreach($tos as $to) {
+            if(is_array($to)) {
+               list($temail, $tname) = $to;
+               $mail->addTo($temail, $tname);
+            } else {
+               $mail->addTo($to);
+            }
+         }
+      } else {
+         $mail->setTo($tos);
+      }
+      
+      
+      
       $mail->setFrom($from);
       $mail->setSubject($subject);
       $mail->setEncoding('UTF-8');
@@ -121,7 +191,7 @@ abstract class _mailer
    protected static function additionalToHeaders($tos, &$headers)
    {
       if(!is_array($tos)) {
-         return;
+         return $tos;
       }
       
       $tokeys = array(self::REPLY_TO, self::BCC, self::CC);
