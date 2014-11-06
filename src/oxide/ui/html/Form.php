@@ -457,7 +457,10 @@ class Form extends Element {
       
       if($validation->isRequired($name)) {
 			$control->required = "required"; // 'required' attribute is part of (HTML5)
-         $control->setLabel($control->getLabel().'*');
+         $label = $control->getLabel();
+         if($label) {
+            $control->setLabel($label.'*');
+         }
 		}
       
       if($value !== null) {
