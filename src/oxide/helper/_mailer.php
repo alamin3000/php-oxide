@@ -8,6 +8,8 @@ use Zend\Mail\Transport\Sendmail;
 
 class _mailer_message {
    public
+      $fromEmail = null,
+      $fromName = null,
       $bodyText = null,
       $bodyHtml = null,
       $subject = null;
@@ -18,6 +20,21 @@ class _mailer_message {
    
    public function add($type, $email, $name = null) {
       $this->emails[$type][] = [$email, $name];
+   }
+   
+   public function set($type, $emails) {
+      if(is_array($emails)) {
+         foreach($emails as $email) {
+            if(is_array($email)) {
+               list($email, $name) = $email;
+               $this->add($type, $email, $name);
+            } else {
+               $this->add($type, $email);
+            }
+         }
+      } else {
+         $this->add($type, $emails);
+      }
    }
    
    public function addTo($email, $name = null) {
