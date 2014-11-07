@@ -88,9 +88,11 @@ class Loader {
       $modules = Util::value($config, 'modules', null);
       $router = $fc->getRouter();
       if($modules) {
-         foreach($modules as $module => $dir) {
+         foreach($modules as $path => $info) {
+            $module = $info['namespace'];
+            $dir = $info['dir'];
             self::$namespaces[$module] = $dir;
-            $router->register($module, $module);
+            $router->register($path, $module);
          }
       }
       
