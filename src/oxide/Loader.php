@@ -72,6 +72,7 @@ class Loader {
       // loads name space + call 
       $bootstraps = Util::value($config, 'bootstraps', null);
       if($bootstraps) {
+         print 'here';
          foreach($bootstraps as $namespace => $dir) {
             self::$namespaces[$namespace] = $dir; // register the namespace
             $class = ucfirst($namespace);
@@ -88,6 +89,7 @@ class Loader {
       $modules = Util::value($config, 'modules', null);
       $router = $fc->getRouter();
       if($modules) {
+         print 'in';
          foreach($modules as $path => $info) {
             $module = $info['namespace'];
             $dir = $info['dir'];
