@@ -126,10 +126,11 @@ class Router {
    public function route(Request $request) {
       $registry = $this->_registry;
       if(empty($registry)) return NULL;
-      
+            
       $route = $this->urlToRoute($request->getPath());
       $path = $route->module;
       if(!isset($registry[$path])) return NULL;
+      $route->namespace = $registry[$path];
       $route->method = $request->getMethod();
       return $route;
    }

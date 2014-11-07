@@ -1,5 +1,5 @@
 <?php
-namespace home\controller;
+namespace app\module\home\controller;
 use oxide\application\ActionController;
 use oxide\http\Context;
 

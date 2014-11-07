@@ -8,4 +8,4 @@ define("PUBLIC_ROOT", dirname(__FILE__));
 
 
 
-$fc = oxide\Loader::bootstrap('../app/config', true);
+$fc = oxide\Loader::bootstrap('../config', true);

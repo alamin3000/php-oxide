@@ -32,8 +32,9 @@ class CommandFactory {
       }
       
 		$module = $route->module;
+      $namespace = $route->namespace;
       $controller = ucwords($route->controller);
-      $class = "{$module}\controller\\{$controller}Controller";
+      $class = "{$namespace}\controller\\{$controller}Controller";
       return $class;
    }
    

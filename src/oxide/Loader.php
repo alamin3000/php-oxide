@@ -72,37 +72,51 @@ class Loader {
       // loads name space + call 
       $bootstraps = Util::value($config, 'bootstraps', null);
       if($bootstraps) {
-         print 'here';
-         foreach($bootstraps as $namespace => $dir) {
+         foreach($bootstraps as $namespace => $info) {
+            $dir = $info['dir'];
             self::$namespaces[$namespace] = $dir; // register the namespace
-            $class = ucfirst($namespace);
-            $fullclass = "{$namespace}\\{$class}";
-            $method = "initialize";
-            if(method_exists($fullclass, $method)) {
-               $fullclass::{$method}($fc);
+            
+            $modules = Util::value($info, 'modules', null);
+            if($modules) {
+               $router = $fc->getRouter();
+               foreach($modules as $module => $dir) {
+                  $dirtoclass = str_replace('/', '\\', $dir);                  
+                  $dirtoclass = $namespace . '\\'. $dirtoclass;
+                  $router->register($module, $dirtoclass);
+               }
             }
+            
+            
+            
+//            $class = ucfirst($namespace);
+//            $fullclass = "{$namespace}\\{$class}";
+//            $method = "initialize";
+//            if(method_exists($fullclass, $method)) {
+//               $fullclass::{$method}($fc);
+//            }
          }
       }
       
       // modules
       // loads namespace + register modules with router
-      $modules = Util::value($config, 'modules', null);
-      $router = $fc->getRouter();
-      if($modules) {
-         print 'in';
-         foreach($modules as $path => $info) {
-            $module = $info['namespace'];
-            $dir = $info['dir'];
-            self::$namespaces[$module] = $dir;
-            $router->register($path, $module);
-         }
-      }
-      
+//      $modules = Util::value($config, 'modules', null);
+//      $router = $fc->getRouter();
+//      if($modules) {
+//         var_dump($modules);
+//         foreach($modules as $path => $info) {
+//            $module = $info['namespace'];
+//            $dir = $info['dir'];
+//            self::$namespaces[$module] = $dir;
+//            $router->register($path, $module);
+//         }
+//      }
       
 		if($autorun) {
 			$fc->run();
 		}
 		
+      
+      
 		return $fc;
    }
 }

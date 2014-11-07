@@ -1,0 +1,66 @@
+{
+    "app" : {
+        "domain" : "domain.com",
+        "name" : "Website name",
+        "title" : "A site powered by oxide",
+        "developer" : "phpoxide",
+        "timezone" : "America/New_York",
+        "upload_dir" : "/upload"
+    },
+    
+    "debug" : {
+        "display" : 1,
+        "email" : 0,
+        "email_to" : "webmaster@domain.com"
+    },
+    
+    "database" : {
+        "driver" : "mysql",
+        "host"   : "localhost",
+        "username" : "root",
+        "password" : "root",
+        "catalog" : "db_phpoxide"
+    },
+    
+    "bootstraps" : {
+        "app" : {
+            "dir" : "../src/app",
+            "modules" : {
+                "home" : "module/home"
+            },
+            
+            "plugins" : {
+                
+            }
+        }
+    },
+    
+    "modules" : {
+        "home"        : {
+            "namespace" : "app",
+            "dir" : "../app/home"
+        },
+        
+        "user" : {
+            "name" : "user",
+            "namespace" : "smp",
+            "dir" : ""
+        }
+    },
+    
+    "templates" : {
+        "v1"          : "template/v1/view"
+    },
+    
+    "roles" : {
+        "guest" : null,
+        "member" : "guest",
+        "admin" : null
+    },
+    
+    "rules" : {
+        "guest" : "+, -admin, +user,  -user/account, -content/manage",
+        "member" : "+user, +content, +admin",
+        "admin" : "+"
+    }
+}
