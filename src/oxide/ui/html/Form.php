@@ -3,6 +3,7 @@ namespace oxide\ui\html;
 use oxide\validation;
 use oxide\util\ArrayString;
 use oxide\helper\Html;
+use oxide\helper\_ui;
 
 /**
  * Form class
@@ -402,22 +403,18 @@ class Form extends Element {
          if(!$result->isValid()) {
             if($this->isSubmit()) {
                $errors = $result->getErrors();
-               $headerElement[] = self::renderTag($this->errorTag, $this->_submitErrorMessage);
+               $headerElement[] = _ui::alert($this->_submitErrorMessage, _ui::STYLE_ERROR);
                if(isset($errors[$this->getIdentifierValue()])) {
                   // now lists all form level errors
                   $formerrors = $errors[$this->getIdentifierValue()];
-                  $headerElement[] = '<ul>';
-                  foreach($formerrors as $error) {
-                     $headerElement[] = '<li><strong>'.$error.'</strong></li>';
-                  }
-                  $headerElement[] = '</ul>';
+                  $headerElement[] = _ui::listing($formerrors);
                }
             }
          } else {
             
             // for submission success
             if($this->isSubmit()) {
-               $headerElement[] = self::renderTag($this->successTag, $this->_submitSuccessMessage);
+               $headerElement[] = _ui::alert($this->_submitSuccessMessage, _ui::STYLE_SUCCESS);
             }
          }
       }
