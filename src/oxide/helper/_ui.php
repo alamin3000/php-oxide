@@ -40,9 +40,17 @@ abstract class _ui {
       NAV_PILLS = 2,
       NAV_NAVBAR = 3,
            
+      LIST_NONE = 0,
       LIST_STANDARD = 1,
       LIST_INLINE = 2,
       LIST_LINK = 4,
+      LIST_HORIZONTAL = 8,
+      LIST_VERTICAL = 16,
+      LIST_ORDERED = 32,
+      LIST_UNORDERED = 64,
+      LIST_LINK_KEY = 128,
+      LIST_LINK_VALUE = 256,
+      LIST_LINK_NONE = 512,
 
       SIZE_DEFAULT = 0,
       SIZE_EX_SMALL = 1,
@@ -475,6 +483,35 @@ abstract class _ui {
       $form->controlWrapperTag->setTag('div');
       $form->controlWrapperTag->class = 'form-group form-group-sm';
       return $form;
+   }
+   
+   public static function listing(array $items, $style = null) {
+      if($style) {
+         
+      } else {
+         $style = self::LIST_VERTICAL | self::LIST_UNORDERED;
+      }
+      
+      $tag = 'ul';
+      if($style & self::LIST_ORDERED) $tag = 'ol';
+      else if($style & self::LIST_UNORDERED) $tag = 'ul';
+      
+      
+      Html::start($tag);
+      foreach($items as $key => $value) {
+         echo "<li>";
+         if($style & self::LIST_LINK_KEY) {
+            echo self::link($key, $value);
+         } else if($style & self::LIST_LINK_VALUE) {
+            echo self::link($value, $key);
+         } else {
+            echo $value;
+         }
+         
+         echo "</li>";
+      }
+      
+      return Html::end();
    }
    
 
