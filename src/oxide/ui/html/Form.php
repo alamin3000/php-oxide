@@ -491,7 +491,7 @@ class Form extends Element {
          else $errmsg = null;
          
          if($errmsg) { // show error if available
-            $buffer[] = self::renderTag($this->errorTag, $errmsg);
+            $buffer[] = _ui::alert($errmsg, _ui::STYLE_ERROR);
          }
 		}
       
