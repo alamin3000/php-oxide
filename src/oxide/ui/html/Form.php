@@ -2,7 +2,7 @@
 namespace oxide\ui\html;
 use oxide\validation;
 use oxide\util\ArrayString;
-use oxide\helper\Html;
+use oxide\helper\_html;
 use oxide\helper\_ui;
 
 /**

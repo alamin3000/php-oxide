@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\Html;
+use oxide\helper\_html;
 use oxide\ui\Renderer;
 
 class Tag implements Renderer {

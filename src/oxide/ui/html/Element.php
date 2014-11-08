@@ -2,7 +2,7 @@
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
 use oxide\util\ArrayString;
-use oxide\helper\Html;
+use oxide\helper\_html;
 use oxide\util\pattern\ArrayFunctionsTrait;
 
 /**
