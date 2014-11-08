@@ -403,9 +403,9 @@ class Form extends Element {
             if($this->isSubmit()) {
                $errors = $result->getErrors();
                $headerElement[] = self::renderTag($this->errorTag, $this->_submitErrorMessage);
-               if(isset($errors[$form->getFormId()])) {
+               if(isset($errors[$this->getFormId()])) {
                   // now lists all form level errors
-                  $formerrors = $errors[$form->getFormId()];
+                  $formerrors = $errors[$this->getFormId()];
                   $headerElement[] = '<ul>';
                   foreach($formerrors as $error) {
                      $headerElement[] = '<li><strong>'.$error.'</strong></li>';
