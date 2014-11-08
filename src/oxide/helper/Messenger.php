@@ -85,7 +85,7 @@ abstract class Messenger
       $message = self::get($namespace);
       if(!$message) return;
       $class = 'template-' . $message->type;
-      return html::tag('mark', $message, array('class' => $class));
+      return _html::tag('mark', $message, array('class' => $class));
    }
    
 }

@@ -35,6 +35,6 @@ class TextareaControl extends Control {
 	 * @return string
 	 */
 	public function renderInnerTag() {
-		return Html::escape($this->getValue());
+		return _html::escape($this->getValue());
 	}	
 }

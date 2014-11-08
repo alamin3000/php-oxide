@@ -432,7 +432,7 @@ class Form extends Element {
 	public function renderFormFooter() {
 		$validator = $this->getValidationProcessor();
 		if($validator->isRequired()) {
-         $p = Html::tag('p', Html::tag('small', '* Indicates required field(s).'));
+         $p = _html::tag('p', _html::tag('small', '* Indicates required field(s).'));
          $this->footerElement[] = $p;
          return $this->footerElement->render();
 		}

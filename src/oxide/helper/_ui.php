@@ -64,13 +64,13 @@ abstract class _ui {
             $inner = [$inner];
          }
          
-         Html::start($tag, $attrib);
-         Html::start('tr');
+         _html::start($tag, $attrib);
+         _html::start('tr');
          foreach($inner as $title) {
-            echo Html::tag('th', $title);
+            echo _html::tag('th', $title);
          }
-         echo Html::end();
-         return Html::end();
+         echo _html::end();
+         return _html::end();
       };
       
       self::$_renderers['tbody'] = function($tag, $inner, $attrib) {
@@ -122,7 +122,7 @@ abstract class _ui {
       $attrbs = [
           'class' => 'label ' . self::_class_style($style, 'label')
       ];
-      return Html::tag('span', $text, $attrbs);
+      return _html::tag('span', $text, $attrbs);
    }
    
    /**
@@ -131,7 +131,7 @@ abstract class _ui {
     * @return type
     */
    public static function icon($name) {
-      return Html::tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
+      return _html::tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
    }
 
    /**
@@ -143,7 +143,7 @@ abstract class _ui {
     * @return type
     */
    public static function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null) {
-      Html::start('table', ['class' => 'table']);
+      _html::start('table', ['class' => 'table']);
       if(!$thcallback) { // default header callback
          $thcallback = function($key) {
             return ucwords(str_replace(['-', '_'], ' ', $key));
@@ -169,7 +169,7 @@ abstract class _ui {
       }
       echo '</tbody>';
       
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -183,7 +183,7 @@ abstract class _ui {
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
       
-      Html::start('table', ['class' => implode(' ', $cls)]);
+      _html::start('table', ['class' => implode(' ', $cls)]);
    }
    
    /**
@@ -191,7 +191,7 @@ abstract class _ui {
     * @return string
     */
    public static function table_end() {
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -203,12 +203,12 @@ abstract class _ui {
    public static function form($controls, array $attrs = null) {
       if($controls instanceof Form) return self::form_element ($controls);
       
-      Html::start('form', $attrs);
+      _html::start('form', $attrs);
       foreach($controls as $name => $control) {
          
       }
       
-      return Html::end();
+      return _html::end();
    }
    
    
@@ -219,10 +219,10 @@ abstract class _ui {
     * @return string
     */
    public static function heading($main, $secondary = null, $outline_level = 1) {
-      if($secondary) $h2 = '<br/>'.Html::tag('small', $secondary);
+      if($secondary) $h2 = '<br/>'._html::tag('small', $secondary);
       else $h2 = null;
       
-      return Html::tag("h{$outline_level}", $main . $h2);
+      return _html::tag("h{$outline_level}", $main . $h2);
    }
    
    
@@ -237,7 +237,7 @@ abstract class _ui {
     * @return type
     */
    public static function link($link, $text = null) {
-      return Html::a($link, $text);
+      return _html::a($link, $text);
    }
    
    /**
@@ -256,7 +256,7 @@ abstract class _ui {
       $cls_style = self::_class_style($style, 'btn');
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
-      return Html::a($href, $text, $attribs);
+      return _html::a($href, $text, $attribs);
    }
    
    /**
@@ -276,7 +276,7 @@ abstract class _ui {
           'class' => "btn {$cls_size} {$cls_style}"
       ];
           
-      return Html::tag('button', $text,$attr);
+      return _html::tag('button', $text,$attr);
    }
    
    /**
@@ -285,7 +285,7 @@ abstract class _ui {
     * @param type $for
     */
    public static function label($text, $for = null) {
-      echo Html::tag('label', $text, ['class' => 'form-label', 'for' => $for]);
+      echo _html::tag('label', $text, ['class' => 'form-label', 'for' => $for]);
    }
    
    /**
@@ -299,13 +299,13 @@ abstract class _ui {
    public static function input($type, $name, $value = null, $label = null) {
       $attribs = ['type' => $type, 
                   'name' => $name, 
-                  'value' => Html::encode($value),
+                  'value' => _html::encode($value),
                   'class' => 'form-control input-sm'];
       self::form_row_start();
       if($label) {
          echo self::label($label, $name);
       }
-      echo Html::tag('input', null, $attribs);
+      echo _html::tag('input', null, $attribs);
       return self::form_row_end();
    }
    
@@ -323,7 +323,7 @@ abstract class _ui {
       if($label) {
          echo self::label($label, $name);
       }
-      echo Html::tag('textarea', $value, $attribs);
+      echo _html::tag('textarea', $value, $attribs);
       return self::form_row_end();
    }
    
@@ -345,7 +345,7 @@ abstract class _ui {
       if($label) {
          echo self::label($label, $name);
       }
-      Html::start('select', $attribs);
+      _html::start('select', $attribs);
       foreach($items as $key => $val) {
          if(is_int($key)) {
             $text = $val;
@@ -356,9 +356,9 @@ abstract class _ui {
          else $opt_attrib = [];
          
          $opt_attrib['value'] = $val;
-         echo Html::tag('option', $text, $opt_attrib);
+         echo _html::tag('option', $text, $opt_attrib);
       }
-      echo Html::end();
+      echo _html::end();
       return self::form_row_end();
    }
 
@@ -374,15 +374,15 @@ abstract class _ui {
          $attr['class'] = 'form-horizontal';
       }      
       
-      Html::start('form', $attr);
+      _html::start('form', $attr);
    }
    
    public static function form_row_start() {
-      Html::start('div', ['class' => 'form-group form-group-sm']);
+      _html::start('div', ['class' => 'form-group form-group-sm']);
    }
    
    public static function form_row_end() {
-      return Html::end();
+      return _html::end();
    }
    
    public static function form_control($type, $name, $value = null, $label = null, $items = null) {
@@ -392,36 +392,36 @@ abstract class _ui {
       
       $rendered = null;
       switch ($type) {
-         case (isset(Html::$inputTypes[$type])) :
-            $rendered = Html::input($type, $name, $value, null, $attrs);
+         case (isset(_html::$inputTypes[$type])) :
+            $rendered = _html::input($type, $name, $value, null, $attrs);
             break;
          
          case 'textfield':
-            $rendered = Html::textarea($name, $value, null, $attrs);
+            $rendered = _html::textarea($name, $value, null, $attrs);
             break;
          
          case 'select':
-            $rendered = Html::select($name, $value, null, $items, $attrs);
+            $rendered = _html::select($name, $value, null, $items, $attrs);
             break;
          
          case 'button':
          case 'submit':
          case 'reset':
-            $rendered = Html::button($type, $name, $value, null, $attrs);
+            $rendered = _html::button($type, $name, $value, null, $attrs);
             break;
          
          default:
       }
       
       if($label) {
-         $rendered = Html::label($label, $name, ['class' => 'control-label']) . $rendered;
+         $rendered = _html::label($label, $name, ['class' => 'control-label']) . $rendered;
       }
       
       return $rendered;
    }
    
    public static function form_end() {
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -446,8 +446,8 @@ abstract class _ui {
 //               }
 //               $count++;
 //               $tabname = $inner->getName() . '-tab';
-//               $a = Html::a("#".$tabname, $inner->getLabel(),['role' => 'tab', 'data-toggle' => 'tab']);
-//               $ul->inner(Html::tag('li', $a, ['class' => $active]));
+//               $a = _html::a("#".$tabname, $inner->getLabel(),['role' => 'tab', 'data-toggle' => 'tab']);
+//               $ul->inner(_html::tag('li', $a, ['class' => $active]));
 //               $inner->wrapElement->tag('div');
 //               $inner->wrapElement->id = $tabname;
 //               $inner->wrapElement->class = 'tab-pane' . $active;
@@ -497,7 +497,7 @@ abstract class _ui {
       else if($style & self::LIST_UNORDERED) $tag = 'ul';
       
       
-      Html::start($tag);
+      _html::start($tag);
       foreach($items as $key => $value) {
          echo "<li>";
          if($style & self::LIST_LINK_KEY) {
@@ -511,18 +511,18 @@ abstract class _ui {
          echo "</li>";
       }
       
-      return Html::end();
+      return _html::end();
    }
    
 
    public static function list_group($items, $style = null) {
-      Html::start('div', ['class' => 'list-group']);
+      _html::start('div', ['class' => 'list-group']);
       $cpath = _url::path();
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
          if(is_array($value)) {
             unset($attrs['href']);
-            echo Html::tag('span', $key,$attrs);
+            echo _html::tag('span', $key,$attrs);
             echo self::nav_list($value, $style);
          } else {
             if($value) $attrs['href'] = $value;
@@ -532,11 +532,11 @@ abstract class _ui {
                $attrs['class'] .= ' active';
             }
 
-            echo Html::tag('a', $key, $attrs);
+            echo _html::tag('a', $key, $attrs);
          }
       }
       
-      return Html::end();
+      return _html::end();
    }
    
    public static function nav_list($items, $active = null, $style = null) {
@@ -544,7 +544,7 @@ abstract class _ui {
       if($style & self::NAV_NAVBAR) $cls[] = 'navbar-nav';
       else if($style & self::NAV_PILLS) $cls[] = 'nav-pills';
       else if($style & self::NAV_TABS) $cls[] = 'nav-tabs';
-      Html::start('ul', ['class' => implode(' ' , $cls)]);
+      _html::start('ul', ['class' => implode(' ' , $cls)]);
       foreach( $items as $key => $link) {
          if($active && $key == $active) echo '<li class="active">';
          else echo '<li>';
@@ -552,7 +552,7 @@ abstract class _ui {
          echo '</li>';
       }
       
-      return Html::end();
+      return _html::end();
    }
 
    
@@ -588,23 +588,23 @@ abstract class _ui {
           'class' => $cls
       ];
       
-      Html::start('dl', $attrib);
+      _html::start('dl', $attrib);
       foreach($list as $key => $value) {
          if(is_numeric($key)) {
             $key = "";
          }
          
-         echo Html::tag('dt', $key, array('title' => $key));
+         echo _html::tag('dt', $key, array('title' => $key));
          
          if(!is_array($value)) {
             $value = [$value];
          }
          
          foreach($value as $val) {
-            echo Html::tag('dd', $val, array('title' => $key));
+            echo _html::tag('dd', $val, array('title' => $key));
          }
       }
-      return Html::end();
+      return _html::end();
    }
    
    
@@ -629,7 +629,7 @@ abstract class _ui {
     * 
     */
    public static function panel_start() {
-      Html::start('div', ['class' => 'panel panel-default']);
+      _html::start('div', ['class' => 'panel panel-default']);
    }
    
    /**
@@ -638,7 +638,7 @@ abstract class _ui {
     * @return type
     */
    public static function panel_header($title) {
-      return Html::tag('div', $title, ['class' => 'panel-heading']);
+      return _html::tag('div', $title, ['class' => 'panel-heading']);
    }
    
    /**
@@ -647,14 +647,14 @@ abstract class _ui {
     * @return type
     */
    public static function panel_body($body) {
-      return Html::tag('div', $body, ['class' => 'panel-body']);
+      return _html::tag('div', $body, ['class' => 'panel-body']);
    }
    
    /**
     * 
     */
    public static function panel_body_start() {
-      Html::start('div',  ['class' => 'panel-body']);
+      _html::start('div',  ['class' => 'panel-body']);
    }
    
    /**
@@ -662,7 +662,7 @@ abstract class _ui {
     * @return string
     */
    public static function panel_body_end() {
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -671,14 +671,14 @@ abstract class _ui {
     * @return type
     */
    public static function panel_footer($html) {
-      return Html::tag('div', $html, ['class' => 'panel-footer']);
+      return _html::tag('div', $html, ['class' => 'panel-footer']);
    }
    
    /**
     * 
     */
    public static function panel_end() {
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -687,14 +687,14 @@ abstract class _ui {
     * @return type
     */
    public static function breadcrumb($items) {
-      Html::start('ol', ['class' => 'breadcrumb']);
+      _html::start('ol', ['class' => 'breadcrumb']);
       $count = count($items);
       for($i = 0; $i < $count; $i++) {
          list($key, $link) = each($items); 
-         if($i == $count - 1 || empty($link)) echo Html::tag('li', $key, ['class' => 'active']);
-         else echo Html::tag('li', Html::tag('a', $key, ['href' => $link]));
+         if($i == $count - 1 || empty($link)) echo _html::tag('li', $key, ['class' => 'active']);
+         else echo _html::tag('li', _html::tag('a', $key, ['href' => $link]));
       }
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -737,7 +737,7 @@ abstract class _ui {
 			else $end = $currentpage + $mean;
 		}	
 		
-      Html::start('ul', ['class' => 'pagination']);
+      _html::start('ul', ['class' => 'pagination']);
 		// previous link.
 		if($currentpage > 1) $linkmake('&laquo;', $currentpage - 1);
 				
@@ -757,7 +757,7 @@ abstract class _ui {
 		if($currentpage < $pagecount) {
          $linkmake('&raquo;', $currentpage + 1);
 		}
-      return Html::end();
+      return _html::end();
    }
    
    /**
@@ -788,40 +788,40 @@ abstract class _ui {
             $attr['width'] = $size;
          }
       }
-      return Html::tag('img', null, $attr);
+      return _html::tag('img', null, $attr);
    }
    
    
    public static function grid_start() {
-      Html::start('div', ['class' => 'row']);
+      _html::start('div', ['class' => 'row']);
    }
    
    public static function grid_item_start($lg_cols, $md_cols, $sm_cols = 1) {
-      Html::start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
+      _html::start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
    }
    
    public static function grid_item_end() {
-      echo Html::end();
+      echo _html::end();
    }
    
    public static function grid_end() {
-      echo Html::end();
+      echo _html::end();
    }
    
    public static function media($src, $title, $description = null) {
-      Html::start('div', ['class' => 'media']);
-      echo Html::tag('a', self::img($src, $title, null, _ui::IMG_MEDIA), ['class' => 'pull-left']);
-      echo Html::tag('div', 
-         Html::tag('h4', $title, ['class' => 'media-heading']) .  
+      _html::start('div', ['class' => 'media']);
+      echo _html::tag('a', self::img($src, $title, null, _ui::IMG_MEDIA), ['class' => 'pull-left']);
+      echo _html::tag('div', 
+         _html::tag('h4', $title, ['class' => 'media-heading']) .  
          $description
          , ['class' => 'media-body']);
-      return Html::end();
+      return _html::end();
    }
    
    public static function alert($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
       $cls = 'alert';
       $cls .= ' ' . self::_class_style($style, 'alert');
 
-      return Html::tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
+      return _html::tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
    }
 }

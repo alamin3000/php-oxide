@@ -10,25 +10,25 @@ namespace oxide\helper;
  * <code>
  * <?php
  * // store HTML page title
- * _html::title('Hello World Sample');
+ * __html::title('Hello World Sample');
  * ?>
  * <pre>
  *	<html>
  *		<head>
  *			<!-- print the title tag -->
- *			<?php _html::title() ?>
+ *			<?php __html::title() ?>
  *
  *		</head>
  *
  *		<body>
- *			<?php _html::h1('Hello World') ?>
- *			<?php _html::p('Example of using _html helper', array('style' => 'color:blue') ?>
+ *			<?php __html::h1('Hello World') ?>
+ *			<?php __html::p('Example of using _html helper', array('style' => 'color:blue') ?>
  *		</body>
  * </html>
  * </pre>
  * </code>
  */
-abstract class Html
+abstract class _html
 {
    public static
       $voidTags =  [
@@ -101,7 +101,7 @@ abstract class Html
 	 *		'This is third paragraph);
 	 * ?>
 	 *
-	 *	<?php echo _html::tag('p', $messages, array('style' => 'color:red')) ?>
+	 *	<?php echo __html::tag('p', $messages, array('style' => 'color:red')) ?>
 	 * </code>
 	 * @param string $tag
 	 * @param string $inner
@@ -148,7 +148,7 @@ abstract class Html
     * 
     * for example:
     * <code>
-    * _html::tags(array(array('p', 'First paragraph', null), array('div', 'Div', null)));
+    * __html::tags(array(array('p', 'First paragraph', null), array('div', 'Div', null)));
     * </code>
     * @access public
     * @param type $tags 

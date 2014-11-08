@@ -22,7 +22,7 @@ abstract class _template {
    public static function styles($selector = null, array $attributes = null,  $media = null) {
       if($selector == null) {
          $attr = ['type' => 'text/css'];
-         Html::start('style', $attr);
+         _html::start('style', $attr);
          foreach(self::$styles as $media => $styles) {
             if($media) print "@media {$media} {";
             foreach($styles as $selector => $styles) {
@@ -35,7 +35,7 @@ abstract class _template {
             if($media) print "}";
          }
 
-         return Html::end();
+         return _html::end();
       }
       
       $styles = [$selector => $attributes];

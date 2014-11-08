@@ -171,12 +171,12 @@ class SelectControl extends Control
             if($selected) $attrs['selected'] = 'selected';
             
             // render the option tag
-            $options .= Html::tag('option', $option_label, $attrs);
+            $options .= _html::tag('option', $option_label, $attrs);
 			}
          
 			if($grouplabel) {
             // render the optgorup with the items and add to buffer
-            $buffer->append(Html::tag('optgroup', $options, array('label' => $grouplabel)));
+            $buffer->append(_html::tag('optgroup', $options, array('label' => $grouplabel)));
 			} else {
             // add the rendered option to the buffer
 				$buffer->append($options);

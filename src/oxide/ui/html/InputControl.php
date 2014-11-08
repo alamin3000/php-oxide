@@ -32,7 +32,7 @@ class InputControl extends Control {
 		parent::__construct('input', $name, $value, $label,  $attrbs);
 		
 		// setup input type
-		if(isset(Html::$inputTypes[$type])) {
+		if(isset(_html::$inputTypes[$type])) {
 			$this->_type = $type;
 		} else {
 			throw new \Exception('Invalid input type provided: ' . $type);

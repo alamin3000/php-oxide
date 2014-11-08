@@ -205,7 +205,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
             }
          }
          
-         $buffer .= Html::toString($inner);
+         $buffer .= _html::toString($inner);
       }
       
       return $buffer;
@@ -219,7 +219,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
     */
    public static function renderTag(Tag $tag, $content = null) {
       return $tag->renderOpenTag() .
-         Html::toString($content).
+         _html::toString($content).
          $tag->renderCloseTag();     
    }
    
