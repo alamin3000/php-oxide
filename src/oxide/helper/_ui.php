@@ -19,6 +19,9 @@ abstract class _ui {
       STYLE_SUCCESS = 3,
       STYLE_INFO = 4,
       STYLE_NONE = 5,
+      STYLE_ERROR = 7,
+      STYLE_WARNING = 8,
+           
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
            
@@ -76,7 +79,7 @@ abstract class _ui {
       switch ($style) {
          case self::STYLE_PRIMARY:
             return "{$prefix}-primary";
-         case self::STYLE_ALERT:
+         case self::STYLE_ERROR:
             return "{$prefix}-danger";
          case self::STYLE_SUCCESS:
             return "{$prefix}-success";
@@ -778,4 +781,10 @@ abstract class _ui {
       return Html::end();
    }
    
+   public static function alert($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
+      $cls = 'alert';
+      $cls .= ' ' . self::_class_style($style, 'alert');
+
+      return Html::tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
+   }
 }
