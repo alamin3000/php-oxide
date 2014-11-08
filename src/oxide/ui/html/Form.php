@@ -407,7 +407,7 @@ class Form extends Element {
                if(isset($errors[$this->getIdentifierValue()])) {
                   // now lists all form level errors
                   $formerrors = $errors[$this->getIdentifierValue()];
-                  $headerElement[] = _ui::listing($formerrors);
+                  $headerElement[] = _ui::alert(_ui::listing($formerrors), _ui::STYLE_ERROR);
                }
             }
          } else {
