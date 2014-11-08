@@ -403,11 +403,12 @@ class Form extends Element {
          if(!$result->isValid()) {
             if($this->isSubmit()) {
                $errors = $result->getErrors();
-               $headerElement[] = _ui::alert($this->_submitErrorMessage, _ui::STYLE_ERROR);
                if(isset($errors[$this->getIdentifierValue()])) {
                   // now lists all form level errors
                   $formerrors = $errors[$this->getIdentifierValue()];
-                  $headerElement[] = _ui::alert(_ui::listing($formerrors), _ui::STYLE_ERROR);
+                  $headerElement[] = _ui::alert($this->_submitErrorMessage . _ui::listing($formerrors), _ui::STYLE_ERROR);
+               } else {
+                  $headerElement[] = _ui::alert($this->_submitErrorMessage, _ui::STYLE_ERROR);
                }
             }
          } else {
