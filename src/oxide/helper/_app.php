@@ -7,9 +7,9 @@ use oxide\util\EventNotifier;
 use oxide\data\model\DbKeyValueObject;
 use oxide\util\ConfigFile;
 use oxide\helper\_util;
-use oxide\helper\Auth;
+use oxide\helper\_auth;
 
-abstract class App {  
+abstract class _app {  
 	protected static
       $_config_dir = null,
 		$_dir = null;
@@ -51,7 +51,7 @@ abstract class App {
     * @throws \Exception
     */
    public static function dir_upload($subdir = null) {
-      $appconfig = App::config('app', null, true);
+      $appconfig = _app::config('app', null, true);
       $updir = trim(_util::value($appconfig, 'upload_dir', null, true), '/');
       if(empty($updir)) {
          throw new \Exception('Upload directory is not found.');
@@ -74,7 +74,7 @@ abstract class App {
     * @throws \Exception
     */
    public static function dir_current_user_upload() {
-      $identity = Auth::identity();
+      $identity = _auth::identity();
       if(!$identity) {
          throw new \Exception('User is not currently logged in.');
       }

@@ -7,7 +7,7 @@ use oxide\validation\ValidationResult;
 use oxide\application\exception\AuthAccessException;
 use oxide\util\EventNotifier;
 
-abstract class Auth {
+abstract class _auth {
    const
       EVENT_ACCESS_DENIED = 'AuthAccessDenied',
       EVENT_ACCESS_GRANTED = 'AuthAccessGranted';
@@ -21,12 +21,12 @@ abstract class Auth {
 	}
 	
 	public static function rules() {
-		$config = App::config();
+		$config = _app::config();
 		return $config->get('rules', null);
 	}
 	
 	public static function roles() {
-		$config = App::config();
+		$config = _app::config();
 		return $config->get('roles', null);
 	}
 	

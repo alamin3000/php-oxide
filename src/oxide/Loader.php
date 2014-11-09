@@ -1,7 +1,7 @@
 <?php
 namespace oxide;
 use oxide\helper\_util;
-use oxide\helper\App;
+use oxide\helper\_app;
 
 /**
 * 
@@ -56,8 +56,8 @@ class Loader {
    public static function bootstrap($appdir, $autorun = true) {
       // registering autoload for phpoxide
       self::register_autoload();
-      App::init($appdir); //initialize the App helper
-      $config = App::config(); 
+      _app::init($appdir); //initialize the _app helper
+      $config = _app::config(); 
       
       // creating the application context
       $context = new http\Context();

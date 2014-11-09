@@ -6,9 +6,9 @@ use oxide\http\Route;
 use oxide\http\Context;
 use oxide\application\View;
 use oxide\application\ViewController;
-use oxide\helper\App;
+use oxide\helper\_app;
 use oxide\helper\_template;
-use oxide\helper\Auth;
+use oxide\helper\_auth;
 use oxide\data\model\Cingle;
 use oxide\helper\_util;
 use Exception;
@@ -79,8 +79,8 @@ abstract class ActionController extends CommandController {
 		parent::__construct($route);
       
       // check if has access
-	   Auth::access($route);
-      $db = App::database();
+	   _auth::access($route);
+      $db = _app::database();
       Cingle::connection($db);
       
  		// setup view directory
@@ -313,7 +313,7 @@ abstract class ActionController extends CommandController {
 	 */
 	public function getViewController() {
       if(!ViewController::hasDefaultInstance()) {
-         $config = App::config();
+         $config = _app::config();
          $viewController = new ViewController($config->get('templates'), $this->getModuleName());
          ViewController::setDefaultInstance($viewController);
       }
@@ -364,7 +364,7 @@ abstract class ActionController extends CommandController {
 			} else {
 				throw new Exception('No Configuration is defined for: ' . $module);
 			}
-			$pref = App::pref($module);
+			$pref = _app::pref($module);
          if($pref) {
             $objConfig->merge($pref);
          }
