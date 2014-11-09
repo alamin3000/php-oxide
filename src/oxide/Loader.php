@@ -84,12 +84,12 @@ class Loader {
                   $dirtoclass = $namespace . '\\'. $dirtoclass;
                   $router->register($module, $dirtoclass);
                   
-//                  $moduleclass = ucfirst($module);
-//                  $fullclass = "{$dirtoclass}\\{$moduleclass}";
-//                  $method = 'initialize';
-//                  if(method_exists($fullclass, $method)) {
-//                     $fullclass::{$method}($fc);
-//                  }
+                  $moduleclass = ucfirst($module);
+                  $fullclass = "{$dirtoclass}\\{$moduleclass}";
+                  $method = 'initialize';
+                  if(method_exists($fullclass, $method)) {
+                     $fullclass::{$method}($fc);
+                  }
                }
             }
             
