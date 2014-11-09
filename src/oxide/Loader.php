@@ -86,8 +86,8 @@ class Loader {
                   
                   $moduleclass = ucfirst($module);
                   $fullclass = "{$dirtoclass}\\{$moduleclass}";
-                  $mehtod = 'initialize';
-                  if(method_exists($fullclass, $mehtod)) {
+                  $method = 'initialize';
+                  if(method_exists($fullclass, $method)) {
                      $fullclass::{$method}($fc);
                   }
                }
