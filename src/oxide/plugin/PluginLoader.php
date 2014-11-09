@@ -2,7 +2,7 @@
 namespace oxide\plugin;
 use oxide\http\Context;
 use oxide\util\Loader;
-use oxide\util\Notifier;
+use oxide\util\EventNotifier;
 
 
 /**
@@ -99,6 +99,10 @@ class PluginLoader
          }
 		}
 	}
+   
+   public function load($name) {
+      
+   }
    
    /**
     * 

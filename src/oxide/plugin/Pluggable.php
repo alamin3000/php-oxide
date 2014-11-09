@@ -1,7 +1,6 @@
 <?php
 namespace oxide\plugin;
 use oxide\http\Context;
-use oxide\util\Notifier;
 
 /*
  * To change this template, choose Tools | Templates
@@ -9,5 +8,5 @@ use oxide\util\Notifier;
  */
 
 interface Pluggable {
-   public function plug(Notifier $notifier, Context $context);
+   public function plug(Context $context);
 }
