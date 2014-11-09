@@ -68,6 +68,15 @@ class Loader {
       $fc = new http\FrontController($context);
       http\FrontController::setDefaultInstance($fc);
       
+      $classnamegenerator = function($name, $namespace = null) {
+         $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
+         if($namespace) {
+            $class = "{$namespace}\\{$class}";
+         }
+         
+         return $class;
+      };
+      
       $initializer = function($name, $namespace = null, $args = null) {
          $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
          if($namespace) {
@@ -108,7 +117,13 @@ class Loader {
                   $subnamespace = str_replace('/', '\\', $dir);
                   $subnamespace = $namespace . '\\'. $subnamespace;
                   
-                  $initializer($plugin, $subnamespace, $fc);
+                  $pluginclass = $classnamegenerator($plugin, $subnamespace);
+                  $instance = new $pluginclass();
+                  if($instance instanceof plugin\Pluggable) {
+                     $instance->plug($context);
+                  } else {
+                     throw new \Exception("Plugin ({$plugin}) is not Pluggable.");
+                  }
                }
             }
          }
