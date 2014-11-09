@@ -88,7 +88,7 @@ class Loader {
                   $fullclass = "{$dirtoclass}\\{$moduleclass}";
                   $method = 'initialize';
                   if(method_exists($fullclass, $method)) {
-//                     $fullclass::{$method}($fc);
+                     $fullclass::{$method}($fc);
                   }
                }
             }
