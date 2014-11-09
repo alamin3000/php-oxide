@@ -83,6 +83,21 @@ class Loader {
                   $dirtoclass = str_replace('/', '\\', $dir);                  
                   $dirtoclass = $namespace . '\\'. $dirtoclass;
                   $router->register($module, $dirtoclass);
+                  
+                  $moduleclass = ucfirst($module);
+                  $fullclass = "{$dirtoclass}\\{$moduleclass}";
+                  $mehtod = 'initialize';
+                  if(method_exists($fullclass, $mehtod)) {
+                     $fullclass::{$method}($fc);
+                  }
+               }
+            }
+            
+            $plugins = _util::value($info, 'plugins', null);
+            if($plugins) {
+               foreach($plugins as $plugin => $dir) {
+                  $subpackage = str_replace('/', '\\', $dir);
+                  $class = $namespace . '\\' . $subpackage;
                }
             }
             
