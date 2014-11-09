@@ -35,18 +35,6 @@
         }
     },
     
-    "modules" : {
-        "home"        : {
-            "namespace" : "app",
-            "dir" : "../app/home"
-        },
-        
-        "user" : {
-            "name" : "user",
-            "namespace" : "smp",
-            "dir" : ""
-        }
-    },
     
     "templates" : {
         "v1"          : "template/v1/view"

@@ -68,6 +68,20 @@ class Loader {
       $fc = new http\FrontController($context);
       http\FrontController::setDefaultInstance($fc);
       
+      $initializer = function($name, $namespace = null, $args = null) {
+         $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
+         if($namespace) {
+            $class = "{$namespace}\\{$class}";
+         }
+         $method = 'initialize';
+         if(method_exists($class, $method)) {
+            $class::{$method}($args);
+            return true;
+         } else {
+            return false;
+         }
+      };
+      
       // bootstrap
       $bootstraps = _util::value($config, 'bootstraps', null);
       if($bootstraps) {
@@ -84,31 +98,19 @@ class Loader {
                   $dirtoclass = $namespace . '\\'. $dirtoclass;
                   $router->register($module, $dirtoclass);
                   
-                  $moduleclass = ucfirst($module);
-                  $fullclass = "{$dirtoclass}\\{$moduleclass}";
-                  $method = 'initialize';
-                  if(method_exists($fullclass, $method)) {
-                     $fullclass::{$method}($fc);
-                  }
+                  $initializer($module, $dirtoclass, $fc);
                }
             }
             
             $plugins = _util::value($info, 'plugins', null);
             if($plugins) {
                foreach($plugins as $plugin => $dir) {
-                  $subpackage = str_replace('/', '\\', $dir);
-                  $class = $namespace . '\\' . $subpackage;
+                  $subnamespace = str_replace('/', '\\', $dir);
+                  $subnamespace = $namespace . '\\'. $subnamespace;
+                  
+                  $initializer($plugin, $subnamespace, $fc);
                }
             }
-            
-            
-            
-//            $class = ucfirst($namespace);
-//            $fullclass = "{$namespace}\\{$class}";
-//            $method = "initialize";
-//            if(method_exists($fullclass, $method)) {
-//               $fullclass::{$method}($fc);
-//            }
          }
       }
       
