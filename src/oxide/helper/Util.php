@@ -2,7 +2,7 @@
 namespace oxide\helper;
 
 
-abstract class Util {
+abstract class _util {
    /**
     * gets value from the given $from storage using dot path syntax to dig deep
     * @param type $from

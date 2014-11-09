@@ -10,7 +10,7 @@ use oxide\helper\App;
 use oxide\helper\_template;
 use oxide\helper\Auth;
 use oxide\data\model\Cingle;
-use oxide\helper\Util;
+use oxide\helper\_util;
 use Exception;
 use oxide\util\ConfigFile;
 
@@ -193,7 +193,7 @@ abstract class ActionController extends CommandController {
       if($index === null) return $this->_route->params;
       if(is_int($index)) {
          $params = $this->_route->params;
-         return Util::value($params, $index, $default);
+         return _util::value($params, $index, $default);
       } else {
          $params = $this->getParamsPairedBySlash();
          if(isset($params[$index])) return $params[$index];

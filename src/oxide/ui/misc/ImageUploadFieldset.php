@@ -3,7 +3,7 @@ namespace oxide\ui\misc;
 use oxide\ui\html\Form;
 use oxide\ui\html\Fieldset;
 use oxide\ui\html\InputControl;
-use oxide\helper\Util;
+use oxide\helper\_util;
 use oxide\validation\string\ReplaceFilterer;
 use oxide\validation\FilterProcessor;
 
@@ -47,24 +47,24 @@ class ImageUploadFieldset extends Fieldset {
     * @param array $options
     */
    protected function prepare(array $args = null) {
-      $upload_folder = Util::value($args, 'upload_folder', null);
+      $upload_folder = _util::value($args, 'upload_folder', null);
       $max_size = 1048576 * 2; // 2MB
       $options = array(
-          'allowed_mimes' => Util::value($args, 'allowed_mimes', 'image/gif,image/jpeg,image/png'),
-          'image_width' => Util::value($args, 'upload_image_width', null),
-          'image_height' => Util::value($args, 'upload_image_height', null),
+          'allowed_mimes' => _util::value($args, 'allowed_mimes', 'image/gif,image/jpeg,image/png'),
+          'image_width' => _util::value($args, 'upload_image_width', null),
+          'image_height' => _util::value($args, 'upload_image_height', null),
           'image_min_width' => null,
           'image_min_height' => null,
           'image_max_width' => null,
           'image_max_height' => null,
           'min_filesize' => null,
-          'max_filesize' => Util::value($args, 'upload_max_size',$max_size),
+          'max_filesize' => _util::value($args, 'upload_max_size',$max_size),
           'upload_folder' => $upload_folder,
           'current_image_url' => null
       );
       
-      $url_control_name = Util::value($args, 'url_control_name', $this->getName() . '_url');
-      $file_control_name = Util::value($args, 'file_control_name', $this->getName().'_file');
+      $url_control_name = _util::value($args, 'url_control_name', $this->getName() . '_url');
+      $file_control_name = _util::value($args, 'file_control_name', $this->getName().'_file');
             
       // create the image url control
       $this->_imageUrlControl = new ImageUrlControlComponent($url_control_name, $this->_value, 'Image Url');

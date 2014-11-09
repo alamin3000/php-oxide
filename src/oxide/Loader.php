@@ -1,6 +1,6 @@
 <?php
 namespace oxide;
-use oxide\helper\Util;
+use oxide\helper\_util;
 use oxide\helper\App;
 
 /**
@@ -69,14 +69,14 @@ class Loader {
       http\FrontController::setDefaultInstance($fc);
       
       // bootstrap
-      $bootstraps = Util::value($config, 'bootstraps', null);
+      $bootstraps = _util::value($config, 'bootstraps', null);
       if($bootstraps) {
          foreach($bootstraps as $namespace => $info) {
             if(isset($info['dir'])) {
                self::$namespaces[$namespace] = $info['dir']; // register the namespace
             }
             
-            $modules = Util::value($info, 'modules', null);
+            $modules = _util::value($info, 'modules', null);
             if($modules) {
                $router = $fc->getRouter();
                foreach($modules as $module => $dir) {

@@ -6,7 +6,7 @@ use oxide\http\Context;
 use oxide\util\EventNotifier;
 use oxide\data\model\DbKeyValueObject;
 use oxide\util\ConfigFile;
-use oxide\helper\Util;
+use oxide\helper\_util;
 use oxide\helper\Auth;
 
 abstract class App {  
@@ -52,7 +52,7 @@ abstract class App {
     */
    public static function dir_upload($subdir = null) {
       $appconfig = App::config('app', null, true);
-      $updir = trim(Util::value($appconfig, 'upload_dir', null, true), '/');
+      $updir = trim(_util::value($appconfig, 'upload_dir', null, true), '/');
       if(empty($updir)) {
          throw new \Exception('Upload directory is not found.');
       }
@@ -115,7 +115,7 @@ abstract class App {
 			$config = new ConfigFile($file);
 		}
 		
-		return Util::value($config, $key, $default, $throwerror);
+		return _util::value($config, $key, $default, $throwerror);
 	}
    
    /**
@@ -144,7 +144,7 @@ abstract class App {
       
       if(isset($instance[$namespace])) {
          $prefs = $instance[$namespace];
-         return Util::value($prefs, $key, $default, $required);
+         return _util::value($prefs, $key, $default, $required);
       } else {
          if($required) {
             throw new \Exception("No preferences found for namespace: $namespace");
