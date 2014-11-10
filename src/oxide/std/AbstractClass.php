@@ -36,7 +36,7 @@ abstract class AbstractClass {
    public static function classDir() {
       static $dir = null;
       if($dir === null) {
-         $dir = realpath(dirname(self::classReflector()->getFileName()));
+         $dir = realpath(dirname(static::classReflector()->getFileName()));
       }
       
       return $dir;
@@ -50,7 +50,7 @@ abstract class AbstractClass {
    public static function classNamespace() {
       static $namespace = null;
       if($namespace === null) {
-         $namespace = self::classReflector()->getNamespaceName();
+         $namespace = static::classReflector()->getNamespaceName();
       }
       
       return $namespace;
