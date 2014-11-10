@@ -83,6 +83,7 @@ class Loader {
             $class = "{$namespace}\\{$class}";
          }
          
+         
          if(class_exists($class)) {
             $instance = new $class();
             if($instance instanceof std\Initializer) {
