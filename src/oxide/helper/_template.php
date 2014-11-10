@@ -1,16 +1,51 @@
 <?php
 namespace oxide\helper;
 use oxide\application\View;
+use oxide\helper\_html;
 
 abstract class _template {
    public static
       $title = null,
       $content = null,
       $links = [],
+      $scripts = [],
+      $snippets = [],
       $styles = [];
       
    public static function initialize($args = null) {
       
+   }
+   
+   public static function scripts($src = null, $identifier = null) {
+      if($src == null) {
+         $buffer = '';
+         foreach(self::$scripts as $script) {
+            $buffer.= _html::tag('script', null, ['src' => $script, 'type' => 'text/javascript']);
+         }
+         return $buffer;
+      }
+      
+      if($identifier) {
+         self::$scripts[$identifier][] = $src;
+      } else {
+         self::$scripts[] = $src;
+      }
+   }
+   
+   public static function snippets($code = null, $identifier = null) {
+      if($code === null) {
+         $buffer = '';
+         foreach (self::$snippets as $snippet) {
+            $buffer.= _html::tag('script', $snippet, ['type' => 'text/javascript']);
+         }
+         return $buffer;
+      }
+      
+      if($identifier) {
+         self::$snippets[$identifier] = $identifier;
+      } else {
+         self::$snippets[] = $code;
+      }
    }
    
    /**
