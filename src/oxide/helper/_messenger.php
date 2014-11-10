@@ -2,7 +2,7 @@
 namespace oxide\helper;
 use oxide\http\Session;
 
-abstract class Messenger
+abstract class _messenger
 {
    const
       ERROR		= 'error',

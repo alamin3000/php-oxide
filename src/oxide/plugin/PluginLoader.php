@@ -112,7 +112,7 @@ class PluginLoader
    {
       if(isset($this->_plugins[$name])) {
          $plugin = $this->_plugins[$name];
-         $notifier = Notifier::defaultInstance();
+         $notifier = EventNotifier::defaultInstance();
          $notifier->unregisterListener($plugin);
          unset($this->_plugins[$name]);
       }
