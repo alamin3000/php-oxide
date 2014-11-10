@@ -26,7 +26,7 @@ abstract class _template {
       }
       
       if($identifier) {
-         self::$scripts[$identifier][] = $src;
+         self::$scripts[$identifier] = $src;
       } else {
          self::$scripts[] = $src;
       }
@@ -42,7 +42,7 @@ abstract class _template {
       }
       
       if($identifier) {
-         self::$snippets[$identifier][] = $code;
+         self::$snippets[$identifier] = $code;
       } else {
          self::$snippets[] = $code;
       }
