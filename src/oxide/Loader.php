@@ -77,17 +77,15 @@ class Loader {
          return $class;
       };
       
-      $initializer = function($name, $namespace = null, $args = null) {
+      $initializer = function($name, $namespace = null, $args = null) use ($context) {
          $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
          if($namespace) {
             $class = "{$namespace}\\{$class}";
          }
-         $method = 'initialize';
-         if(method_exists($class, $method)) {
-            $class::{$method}($args);
-            return true;
-         } else {
-            return false;
+         
+         $instance = new $class();
+         if($instance instanceof std\Initializer) {
+            $instance->initialize($args);
          }
       };
       
@@ -107,7 +105,7 @@ class Loader {
                   $dirtoclass = $namespace . '\\'. $dirtoclass;
                   $router->register($module, $dirtoclass);
                   
-                  $initializer($module, $dirtoclass, $fc);
+                  $initializer($module, $dirtoclass, $context);
                }
             }
             
@@ -117,13 +115,7 @@ class Loader {
                   $subnamespace = str_replace('/', '\\', $dir);
                   $subnamespace = $namespace . '\\'. $subnamespace;
                   
-                  $pluginclass = $classnamegenerator($plugin, $subnamespace);
-                  $instance = new $pluginclass();
-                  if($instance instanceof plugin\Pluggable) {
-                     $instance->plug($context);
-                  } else {
-                     throw new \Exception("Plugin ({$plugin}) is not Pluggable.");
-                  }
+                  $initializer($plugin, $subnamespace, $context);
                }
             }
          }
@@ -136,5 +128,13 @@ class Loader {
       
       
 		return $fc;
+   }
+   
+   public static function loadModules(array $modules, $namespace = null) {
+      
+   }
+   
+   public static function loadPlugins(array $plugins, $namespace = null) {
+      
    }
 }

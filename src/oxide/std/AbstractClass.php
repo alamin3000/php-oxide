@@ -13,9 +13,6 @@ use ReflectionClass;
  * @subpackage http
  */
 abstract class AbstractClass {
-   public static function initialize() {
-      
-   }
    
    /**
     * Get the class reflector
