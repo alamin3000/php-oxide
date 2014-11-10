@@ -42,7 +42,7 @@ abstract class _template {
       }
       
       if($identifier) {
-         self::$snippets[$identifier][] = $identifier;
+         self::$snippets[$identifier][] = $code;
       } else {
          self::$snippets[] = $code;
       }
