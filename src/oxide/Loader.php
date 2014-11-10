@@ -88,6 +88,8 @@ class Loader {
             $instance = new $class();
             if($instance instanceof std\Initializer) {
                $instance->initialize($args);
+            } else {
+               throw new \Exception("Class ({$name}) does not implement Initializer");
             }
          }
       };
