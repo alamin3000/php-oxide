@@ -8,12 +8,30 @@ abstract class _template {
       $title = null,
       $content = null,
       $links = [],
+      $stylesheets = [],
       $scripts = [],
       $snippets = [],
       $styles = [];
       
    public static function initialize($args = null) {
       
+   }
+   
+   public static function stylesheets($href = null, $identifier = null) {
+      if($href === null) {
+         $buffer = '';
+         foreach(self::$stylesheets as $stylesheet) {
+            $buffer .= _html::tag('link', null, ['rel' => 'stylesheet', 'href' => $href]);
+         }
+         
+         return $buffer;
+      }
+      
+      if($identifier) {
+         self::$stylesheets[$identifier] = $href;
+      } else {
+         self::$stylesheets[] = $href;
+      }
    }
    
    public static function scripts($src = null, $identifier = null) {
