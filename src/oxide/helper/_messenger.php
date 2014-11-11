@@ -2,8 +2,7 @@
 namespace oxide\helper;
 use oxide\http\Session;
 
-abstract class _messenger
-{
+abstract class _messenger {
    const
       ERROR		= 'error',
       WARNING	= 'warning',

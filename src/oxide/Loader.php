@@ -2,6 +2,7 @@
 namespace oxide;
 use oxide\helper\_util;
 use oxide\helper\_app;
+use oxide\helper\_notifier;
 
 /**
 * 
@@ -10,9 +11,15 @@ class Loader {
    /**
     * @var array stores namespaces and their directories
     */
-   static public $namespaces = [];
+   static public 
+      $resources = [],
+      $namespaces = [];
    
-   /**
+   const 
+      EVENT_BOOTSTRAP_START = 'LoaderBootstrapStart',
+      EVENT_BOOTSTRAP_END = 'LoaderBootstrapEnd';
+
+/**
     * Load given $classname using $dir if provided, else static::$namespaces 
     * @param type $classname
     * @param type $dir
@@ -40,6 +47,16 @@ class Loader {
       }
    }
    
+   public static function loadResource($path) {
+      $parts = explode('/', $path);
+      if(count($parts)) {
+         $namespace = $parts[0];
+         if(isset(self::$resources[$namespace])) {
+            
+         }
+      }
+   }
+   
    /**
     * register autoload for the framework
     */
@@ -59,6 +76,8 @@ class Loader {
       _app::init($appdir); //initialize the _app helper
       $config = _app::config(); 
       
+      _notifier::notify(self::EVENT_BOOTSTRAP_START, null);
+      
       // creating the application context
       $context = new http\Context();
       http\Context::setDefaultInstance($context);
@@ -67,15 +86,6 @@ class Loader {
       // create the front controller and set the default instance
       $fc = new http\FrontController($context);
       http\FrontController::setDefaultInstance($fc);
-      
-      $classnamegenerator = function($name, $namespace = null) {
-         $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
-         if($namespace) {
-            $class = "{$namespace}\\{$class}";
-         }
-         
-         return $class;
-      };
       
       $initializer = function($name, $namespace = null, $args = null) use ($context) {
          $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
@@ -126,6 +136,8 @@ class Loader {
          }
       }
       
+      
+      _notifier::notify(self::EVENT_BOOTSTRAP_END, null);
 		if($autorun) {
 			$fc->run();
 		}
