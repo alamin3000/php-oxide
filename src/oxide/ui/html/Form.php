@@ -105,6 +105,8 @@ class Form extends Element {
       $this->_values = $values;    // store the raw values
 		$this->_generateSubmitId($name);   // generating a unique id for the form
 	}
+   
+   
 
    /**
 	 * generate unique form id

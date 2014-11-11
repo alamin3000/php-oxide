@@ -111,7 +111,7 @@ class Loader {
             if(isset($info['dir'])) {
                self::$namespaces[$namespace] = $info['dir']; // register the namespace
             }
-            
+                        
             $modules = _util::value($info, 'modules', null);
             if($modules) {
                $router = $fc->getRouter();
