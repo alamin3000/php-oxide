@@ -21,7 +21,7 @@ abstract class _template {
       if($href === null) {
          $buffer = '';
          foreach(self::$stylesheets as $stylesheet) {
-            $buffer .= _html::tag('link', null, ['rel' => 'stylesheet', 'href' => $href]);
+            $buffer .= _html::tag('link', null, ['rel' => 'stylesheet', 'href' => $stylesheet]);
          }
          
          return $buffer;
