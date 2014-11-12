@@ -87,7 +87,7 @@ class Loader {
       $fc = new http\FrontController($context);
       http\FrontController::setDefaultInstance($fc);
       
-      $initializer = function($name, $namespace = null, $args = null) use ($context) {
+      $initializer = function($name, $namespace = null, $args = null) {
          $class = str_replace(' ', '', ucwords(str_replace('-', ' ', $name)));
          if($namespace) {
             $class = "{$namespace}\\{$class}";
