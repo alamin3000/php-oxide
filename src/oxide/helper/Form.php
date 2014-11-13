@@ -3,14 +3,14 @@ namespace oxide\helper;
 use oxide\ui\html;
 use oxide\std\AbstractClass;
 
-abstract class _form {
+abstract class Form {
    
    
    public static function create_control($name, $type, $value = null, $label = null, $options = null, $attributes = null) {
       $control = null;
       if($type == 'button' || $type == 'submit') {
          $control = new html\ButtonControl($type, $name, $value, $label);
-      }else if(isset(_html::$inputTypes[$type])) {
+      }else if(isset(Html::$inputTypes[$type])) {
          $control = new html\InputControl($type, $name, $value, $label);
       } else if($type == 'textarea') {
          $control = new html\TextareaControl($name, $value, $label);

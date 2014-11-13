@@ -1,4 +1,12 @@
 <?php
+/**
+ * Oxide Framework
+ * 
+ * @link https://github.com/alamin3000/php-oxide Git source code
+ * @copyright (c) 2014, Alamin Ahmed
+ * @license http://URL name 
+ */
+
 namespace oxide\helper;
 use oxide\http\FrontController;
 use oxide\data\Connection;
@@ -6,38 +14,39 @@ use oxide\http\Context;
 use oxide\util\EventNotifier;
 use oxide\data\model\DbKeyValueObject;
 use oxide\util\ConfigFile;
-use oxide\helper\_util;
-use oxide\helper\_auth;
+use oxide\helper\Util;
+use oxide\helper\Auth;
 
-abstract class _app {  
+/**
+ * Application helper class
+ * 
+ * Provides various application related resources such as:
+ * - Application front controller instance
+ * - Application context
+ * - Application metadata
+ * - Application database connection
+ * - Application notification
+ * - Application configuration 
+ * - Application preferences
+ * - Application directories
+ */
+abstract class App {  
 	protected static
       $_config_dir = null,
 		$_dir = null;
 		
    /**
     * Initialize the application
-    * @param type $config_dir
+    * 
+    * @param string $config_dir
     */
 	public static function init($config_dir) {
 		self::$_config_dir = $config_dir;
 	}
-	
-   /**
-    * Get application's directory
-    * @param string $name
-    * @return string
-    */
-	public static function dir($name = null) {
-      throw new \Exception('not implemented yet.');
-		$dir = self::$_dir;
-		if($name) {
-			return $dir . '/' . $name;
-		}
-		return $dir;
-	}
-   
+
    /**
     * Get the public root directory for the current app
+    * 
     * @return string
     */
    public static function dir_public() {
@@ -45,14 +54,15 @@ abstract class _app {
    }
    
    /**
-    * Get the main upload directory for the app
+    * Get the main upload directory for the app.
+    * 
     * @param string $subdir Subdirectory to be appended to the upload directory
-    * @return type
+    * @return string
     * @throws \Exception
     */
    public static function dir_upload($subdir = null) {
-      $appconfig = _app::config('app', null, true);
-      $updir = trim(_util::value($appconfig, 'upload_dir', null, true), '/');
+      $appconfig = App::config('settings', null, true);
+      $updir = trim(Util::value($appconfig, 'upload_dir', null, true), '/');
       if(empty($updir)) {
          throw new \Exception('Upload directory is not found.');
       }
@@ -68,13 +78,14 @@ abstract class _app {
    
    /**
     * Get the user current user's upload directory
+    * 
     * Basically uses dir_user_upload providing current identity.
     * User must be logged in before calling this method, else exception will be thrown
     * @return string
     * @throws \Exception
     */
    public static function dir_current_user_upload() {
-      $identity = _auth::identity();
+      $identity = Auth::identity();
       if(!$identity) {
          throw new \Exception('User is not currently logged in.');
       }
@@ -84,6 +95,7 @@ abstract class _app {
    
    /**
     * Get the upload directory for use given the $identity
+    * 
     * @param stdClass $identity
     * @return string
     */
@@ -96,10 +108,13 @@ abstract class _app {
    }
     		
 	/**
+    * Read from application configuration file.
+    * 
+    * If $key is not provided, it will return entire configuration.
     * @staticvar type $config
-    * @param type $key
-    * @param type $default
-    * @param type $throwerror
+    * @param string $key
+    * @param mixed $default
+    * @param boolean $throwerror
     * @return 
     * @throws \Exception
     */
@@ -115,11 +130,13 @@ abstract class _app {
 			$config = new ConfigFile($file);
 		}
 		
-		return _util::value($config, $key, $default, $throwerror);
+		return Util::value($config, $key, $default, $throwerror);
 	}
    
    /**
+    * Read from application preference file.
     * 
+    * If $key is not provided, complete application preferece is 
     * @staticvar type $instance
     * @param type $namespace
     * @param type $key
@@ -144,7 +161,7 @@ abstract class _app {
       
       if(isset($instance[$namespace])) {
          $prefs = $instance[$namespace];
-         return _util::value($prefs, $key, $default, $required);
+         return Util::value($prefs, $key, $default, $required);
       } else {
          if($required) {
             throw new \Exception("No preferences found for namespace: $namespace");

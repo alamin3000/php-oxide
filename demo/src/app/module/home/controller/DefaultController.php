@@ -56,7 +56,7 @@ class DefaultController extends ActionController
           ]]
       ];
       
-      \oxide\helper\_template::styles('body', ['background' => 'blue'], 'screen');
-      echo \oxide\helper\_template::styles();
+      \oxide\helper\Template::styles('body', ['background' => 'blue'], 'screen');
+      echo \oxide\helper\Template::styles();
    }
 }

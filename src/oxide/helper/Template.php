@@ -1,9 +1,9 @@
 <?php
 namespace oxide\helper;
 use oxide\application\View;
-use oxide\helper\_html;
+use oxide\helper\Html;
 
-abstract class _template {
+abstract class Template {
    public static
       $title = null,
       $content = null,
@@ -21,7 +21,7 @@ abstract class _template {
       if($href === null) {
          $buffer = '';
          foreach(self::$stylesheets as $stylesheet) {
-            $buffer .= _html::tag('link', null, ['rel' => 'stylesheet', 'href' => $stylesheet]);
+            $buffer .= Html::tag('link', null, ['rel' => 'stylesheet', 'href' => $stylesheet]);
          }
          
          return $buffer;
@@ -38,7 +38,7 @@ abstract class _template {
       if($src == null) {
          $buffer = '';
          foreach(self::$scripts as $script) {
-            $buffer.= _html::tag('script', null, ['src' => $script, 'type' => 'text/javascript']);
+            $buffer.= Html::tag('script', null, ['src' => $script, 'type' => 'text/javascript']);
          }
          return $buffer;
       }
@@ -54,7 +54,7 @@ abstract class _template {
       if($code === null) {
          $buffer = '';
          foreach (self::$snippets as $snippet) {
-            $buffer.= _html::tag('script', $snippet, ['type' => 'text/javascript']);
+            $buffer.= Html::tag('script', $snippet, ['type' => 'text/javascript']);
          }
          return $buffer;
       }
@@ -75,7 +75,7 @@ abstract class _template {
    public static function styles($selector = null, array $attributes = null,  $media = null) {
       if($selector == null) {
          $attr = ['type' => 'text/css'];
-         _html::start('style', $attr);
+         Html::start('style', $attr);
          foreach(self::$styles as $media => $styles) {
             if($media) print "@media {$media} {";
             foreach($styles as $selector => $styles) {
@@ -88,7 +88,7 @@ abstract class _template {
             if($media) print "}";
          }
 
-         return _html::end();
+         return Html::end();
       }
       
       $styles = [$selector => $attributes];

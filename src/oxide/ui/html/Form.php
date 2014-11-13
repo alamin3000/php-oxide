@@ -2,8 +2,8 @@
 namespace oxide\ui\html;
 use oxide\validation;
 use oxide\util\ArrayString;
-use oxide\helper\_html;
-use oxide\helper\_ui;
+use oxide\helper\Html;
+use oxide\helper\Ui;
 
 /**
  * Form class
@@ -409,16 +409,16 @@ class Form extends Element {
                if(isset($errors[$this->getIdentifierValue()])) {
                   // now lists all form level errors
                   $formerrors = $errors[$this->getIdentifierValue()];
-                  $headerElement[] = _ui::alert($this->_submitErrorMessage . _ui::listing($formerrors), _ui::STYLE_ERROR);
+                  $headerElement[] = Ui::alert($this->_submitErrorMessage . Ui::listing($formerrors), Ui::STYLE_ERROR);
                } else {
-                  $headerElement[] = _ui::alert($this->_submitErrorMessage, _ui::STYLE_ERROR);
+                  $headerElement[] = Ui::alert($this->_submitErrorMessage, Ui::STYLE_ERROR);
                }
             }
          } else {
             
             // for submission success
             if($this->isSubmit()) {
-               $headerElement[] = _ui::alert($this->_submitSuccessMessage, _ui::STYLE_SUCCESS);
+               $headerElement[] = Ui::alert($this->_submitSuccessMessage, Ui::STYLE_SUCCESS);
             }
          }
       }
@@ -435,7 +435,7 @@ class Form extends Element {
 	public function renderFormFooter() {
 		$validator = $this->getValidationProcessor();
 		if($validator->isRequired()) {
-         $p = _html::tag('p', _html::tag('small', '* Indicates required field(s).'));
+         $p = Html::tag('p', Html::tag('small', '* Indicates required field(s).'));
          $this->footerElement[] = $p;
          return $this->footerElement->render();
 		}
@@ -494,7 +494,7 @@ class Form extends Element {
          else $errmsg = null;
          
          if($errmsg) { // show error if available
-            $buffer[] = _ui::alert($errmsg, _ui::STYLE_ERROR);
+            $buffer[] = Ui::alert($errmsg, Ui::STYLE_ERROR);
          }
 		}
       

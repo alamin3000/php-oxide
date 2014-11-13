@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\_html;
+use oxide\helper\Html;
 
 /**
  * InputControl class
@@ -32,7 +32,7 @@ class InputControl extends Control {
 		parent::__construct('input', $name, $value, $label,  $attrbs);
 		
 		// setup input type
-		if(isset(_html::$inputTypes[$type])) {
+		if(isset(Html::$inputTypes[$type])) {
 			$this->_type = $type;
 		} else {
 			throw new \Exception('Invalid input type provided: ' . $type);

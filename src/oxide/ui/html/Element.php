@@ -2,7 +2,7 @@
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
 use oxide\util\ArrayString;
-use oxide\helper\_html;
+use oxide\helper\Html;
 use oxide\util\pattern\ArrayFunctionsTrait;
 
 /**
@@ -205,7 +205,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
             }
          }
          
-         $buffer .= _html::toString($inner);
+         $buffer .= Html::toString($inner);
       }
       
       return $buffer;
@@ -219,7 +219,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
     */
    public static function renderTag(Tag $tag, $content = null) {
       return $tag->renderOpenTag() .
-         _html::toString($content).
+         Html::toString($content).
          $tag->renderCloseTag();     
    }
    

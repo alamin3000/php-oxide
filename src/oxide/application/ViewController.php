@@ -17,7 +17,7 @@ use oxide\application\View;
 class ViewController {
    use \oxide\util\pattern\DefaultInstanceTrait;
    protected
-           $_templates = null,
+           $Templates = null,
            $_module = null,
            $_scriptname = 'layout.phtml',
            $_view = null;
@@ -31,7 +31,7 @@ class ViewController {
    public function __construct($templates, $module = null) {
       if (!is_array($templates))
          $templates = (array) $templates;
-      $this->_templates = $templates;
+      $this->Templates = $templates;
       $this->_module = $module;
    }
 
@@ -41,7 +41,7 @@ class ViewController {
     * @return string 
     */
    public function getTemplateDir() {
-      return (isset($this->_templates[$this->_module])) ? $this->_templates[$this->_module] : current($this->_templates);
+      return (isset($this->Templates[$this->_module])) ? $this->Templates[$this->_module] : current($this->Templates);
    }
 
    /**
@@ -50,7 +50,7 @@ class ViewController {
     * @param mixed $templates 
     */
    public function setTemplates($templates) {
-      $this->_templates = $templates;
+      $this->Templates = $templates;
    }
 
    /**

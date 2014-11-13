@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\_html;
+use oxide\helper\Html;
 use oxide\ui\Renderer;
 
 class Tag implements Renderer {
@@ -94,11 +94,11 @@ class Tag implements Renderer {
     * Render the opening tag
     * 
     * If the tag is void tag, then it will self close
-    * @see oxide\helper\_html::rstart()
+    * @see oxide\helper\Html::rstart()
     * @return type
     */
    public function renderOpenTag() {
-      return _html::rstart($this->_tag, $this->_attributes);
+      return Html::rstart($this->_tag, $this->_attributes);
    }
    
    /**
@@ -106,7 +106,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderCloseTag() {
-      return _html::rend($this->_tag);
+      return Html::rend($this->_tag);
    }
    
    public function render() {

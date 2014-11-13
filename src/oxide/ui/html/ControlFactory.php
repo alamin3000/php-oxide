@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\_html;
+use oxide\helper\Html;
 
 
 abstract class ControlFactory {
@@ -14,7 +14,7 @@ abstract class ControlFactory {
       $control = null;
       if($type == 'button' || $type == 'submit') {
          $control = new ButtonControl($type, $name, $value, $label);
-      }else if(isset(_html::$inputTypes[$type])) {
+      }else if(isset(Html::$inputTypes[$type])) {
          $control = new InputControl($type, $name, $value, $label);
       } else if($type == 'textarea') {
          $control = new TextareaControl($name, $value, $label);

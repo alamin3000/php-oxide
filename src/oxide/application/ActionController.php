@@ -6,11 +6,11 @@ use oxide\http\Route;
 use oxide\http\Context;
 use oxide\application\View;
 use oxide\application\ViewController;
-use oxide\helper\_app;
-use oxide\helper\_template;
-use oxide\helper\_auth;
+use oxide\helper\App;
+use oxide\helper\Template;
+use oxide\helper\Auth;
 use oxide\data\model\Cingle;
-use oxide\helper\_util;
+use oxide\helper\Util;
 use Exception;
 use oxide\util\ConfigFile;
 
@@ -79,8 +79,8 @@ abstract class ActionController extends CommandController {
 		parent::__construct($route);
       
       // check if has access
-	   _auth::access($route);
-      $db = _app::database();
+	   Auth::access($route);
+      $db = App::database();
       Cingle::connection($db);
       
  		// setup view directory
@@ -154,7 +154,7 @@ abstract class ActionController extends CommandController {
       });
       
       // assing the view to the templet's content view
-		_template::content($view);
+		Template::content($view);
       if($this->_autoRenderLayout) {
          // render and add to the respnose object
          $viewController = $this->getViewController();
@@ -193,7 +193,7 @@ abstract class ActionController extends CommandController {
       if($index === null) return $this->_route->params;
       if(is_int($index)) {
          $params = $this->_route->params;
-         return _util::value($params, $index, $default);
+         return Util::value($params, $index, $default);
       } else {
          $params = $this->getParamsPairedBySlash();
          if(isset($params[$index])) return $params[$index];
@@ -313,7 +313,7 @@ abstract class ActionController extends CommandController {
 	 */
 	public function getViewController() {
       if(!ViewController::hasDefaultInstance()) {
-         $config = _app::config();
+         $config = App::config();
          $viewController = new ViewController($config->get('templates'), $this->getModuleName());
          ViewController::setDefaultInstance($viewController);
       }
@@ -364,7 +364,7 @@ abstract class ActionController extends CommandController {
 			} else {
 				throw new Exception('No Configuration is defined for: ' . $module);
 			}
-			$pref = _app::pref($module);
+			$pref = App::pref($module);
          if($pref) {
             $objConfig->merge($pref);
          }

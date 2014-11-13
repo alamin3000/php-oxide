@@ -1,6 +1,6 @@
 <?php
-use oxide\helper\_html;
-use oxide\helper\_template;
+use oxide\helper\Html;
+use oxide\helper\Template;
 
 ?>
 <!DOCTYPE html>
@@ -11,7 +11,7 @@ use oxide\helper\_template;
       <link href="/template/v1/css/script.css" type="text/css" rel="stylesheet"/>
       <link href="/template/v1/css/template.css" type="text/css" rel="stylesheet"/>
       <script type="text/javascript" src="/template/v1/script/app.js"></script>
-		<?php echo _html::head() ?>
+		<?php echo Html::head() ?>
 	</head>
 	
 	<body>
@@ -32,7 +32,7 @@ use oxide\helper\_template;
       </aside>
       
       <div>
-         <?= _template::content() ?>
+         <?= Template::content() ?>
       </div>
       
       <footer>

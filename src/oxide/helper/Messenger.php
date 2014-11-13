@@ -2,7 +2,7 @@
 namespace oxide\helper;
 use oxide\http\Session;
 
-abstract class _messenger {
+abstract class Messenger {
    const
       ERROR		= 'error',
       WARNING	= 'warning',
@@ -55,7 +55,7 @@ abstract class _messenger {
 			$key .= "_{$namespace}";
 		}
 
-		$session->$key = serialize(new _messenger_message($value, $type, $namespace));
+		$session->$key = serialize(new Messenger_message($value, $type, $namespace));
 	}
 
    /**
@@ -64,10 +64,10 @@ abstract class _messenger {
     * @param type $message
     * @param type $type
     * @param type $namespace
-    * @return \_messenger_message 
+    * @return \Messenger_message 
     */
    public static function message($message, $type = self::ERROR,$namespace = null) {
-      $obj = new _messenger_message();
+      $obj = new Messenger_message();
       $obj->message = $message;
 		$obj->namespace = $namespace;
       $obj->type = $type;
@@ -84,12 +84,12 @@ abstract class _messenger {
       $message = self::get($namespace);
       if(!$message) return;
       $class = 'template-' . $message->type;
-      return _html::tag('mark', $message, array('class' => $class));
+      return Html::tag('mark', $message, array('class' => $class));
    }
    
 }
 
-class _messenger_message
+class Messenger_message
 {
    /**
     *

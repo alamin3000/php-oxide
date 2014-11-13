@@ -4,7 +4,7 @@ namespace oxide\helper;
 /**
  * 
  */
-abstract class _url
+abstract class Url
 {	
    /**
     * Get GET
@@ -13,7 +13,7 @@ abstract class _url
     * @return type
     */
    public static function query($key = null, $default = null) {
-      return _app::context()->getRequest()->getQuery($key, $default);
+      return App::context()->getRequest()->getQuery($key, $default);
    }
    
    /**
@@ -23,7 +23,7 @@ abstract class _url
     * @return type
     */
    public static function post($key = null, $default = null) {
-      return _app::context()->getRequest()->getPost($key, $default);
+      return App::context()->getRequest()->getPost($key, $default);
    }
    
   
@@ -37,7 +37,7 @@ abstract class _url
     */
    public static function serverUrl()
    {
-		$request = _app::context()->getRequest();
+		$request = App::context()->getRequest();
       return $request->getAbsoluteServerURL();
    }
    
@@ -47,7 +47,7 @@ abstract class _url
     */
    public static function base()
    {
-      $request = _app::context()->getRequest();
+      $request = App::context()->getRequest();
       return $request->getUriComponents('base');
    }
    
@@ -102,7 +102,7 @@ abstract class _url
     */
 	public static function url($add = null, $remove = null)
 	{
-		$request = _app::context()->getRequest();
+		$request = App::context()->getRequest();
 		$path = trim($request->getPath(), '/');
 		$query = $request->getQueryString($add, $remove);
 
@@ -122,7 +122,7 @@ abstract class _url
     */
    public static function current()
    {
-		$request = _app::context()->getRequest();
+		$request = App::context()->getRequest();
       $abs = $request->getAbsoluteURL();
       
       return $abs;
@@ -134,7 +134,7 @@ abstract class _url
     */
    public static function route()
    {
-      return _app::context()->route;
+      return App::context()->route;
    }
 
 
@@ -195,7 +195,7 @@ abstract class _url
     */
    public static function path($index = null)
    {
-      $request = _app::context()->getRequest();
+      $request = App::context()->getRequest();
       if($index) 
          return $request->getPathAtIndex($index);
       else 

@@ -6,7 +6,7 @@ use Zend\Mime\Part as MimePart;
 use Zend\Mail\Transport\Sendmail;
 
 
-class _mailer_message {
+class Mailer_message {
    public
       $fromEmail = null,
       $fromName = null,
@@ -38,27 +38,27 @@ class _mailer_message {
    }
    
    public function addTo($email, $name = null) {
-      $this->add(_mailer::TO, $email, $name);
+      $this->add(Mailer::TO, $email, $name);
    }
    
    public function addCC($email, $name = null) {
-      $this->add(_mailer::CC, $email, $name);
+      $this->add(Mailer::CC, $email, $name);
    }
    
    public function addBCC($email, $name = null) {
-      $this->add(_mailer::BCC, $email, $name);
+      $this->add(Mailer::BCC, $email, $name);
    }
    
    public function getTos() {
-      return (isset($this->emails[_mailer::TO])) ? $this->emails[_mailer::TO] : null;
+      return (isset($this->emails[Mailer::TO])) ? $this->emails[Mailer::TO] : null;
    }
    
    public function getCCs() {
-      return (isset($this->emails[_mailer::CC])) ? $this->emails[_mailer::TO] : null;
+      return (isset($this->emails[Mailer::CC])) ? $this->emails[Mailer::TO] : null;
    }
    
    public function getBCCs() {
-      return (isset($this->emails[_mailer::BCC])) ? $this->emails[_mailer::TO] : null;      
+      return (isset($this->emails[Mailer::BCC])) ? $this->emails[Mailer::TO] : null;      
    }
    
    public function clear($type = null) {
@@ -75,7 +75,7 @@ class _mailer_message {
  * @package oxide
  * @subpackage util
  */
-abstract class _mailer
+abstract class Mailer
 {   
    const
       TO = 'To',
@@ -87,10 +87,10 @@ abstract class _mailer
    /**
     * Creates an empty email message object
     * 
-    * @return \oxide\helper\_mailer_message
+    * @return \oxide\helper\Mailer_message
     */
    public static function create_message() {
-      return new _mailer_message();
+      return new Mailer_message();
    }
    
    /**

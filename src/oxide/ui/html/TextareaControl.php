@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\_html;
+use oxide\helper\Html;
 use oxide\util\ArrayString;
 
 /**
@@ -35,6 +35,6 @@ class TextareaControl extends Control {
 	 * @return string
 	 */
 	public function renderInnerTag() {
-		return _html::escape($this->getValue());
+		return Html::escape($this->getValue());
 	}	
 }

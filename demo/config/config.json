@@ -1,9 +1,10 @@
 {
-    "app" : {
-        "domain" : "domain.com",
-        "name" : "Website name",
-        "title" : "A site powered by oxide",
-        "developer" : "phpoxide",
+    "domain" : "domain.com",
+    "name" : "Website name",
+    "title" : "A site powered by oxide",
+    "developer" : "phpoxide",
+
+    "settings" : {
         "timezone" : "America/New_York",
         "upload_dir" : "/upload"
     },

@@ -1,7 +1,7 @@
 <?php
 namespace oxide\helper;
 
-abstract class _misc {
+abstract class Misc {
    
    public static function buildTreeFromFlatHierarchyArray($tags, $idkey, $parentkey, $childrenkey = 'children')
    {

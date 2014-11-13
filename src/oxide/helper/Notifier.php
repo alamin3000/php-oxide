@@ -2,7 +2,7 @@
 namespace oxide\helper;
 use oxide\util\EventNotifier;
 
-class _notifier {
+class Notifier {
    
    /**
     * 

@@ -2,7 +2,7 @@
 namespace oxide\validation\file;
 use oxide\validation\ValidationResult;
 use oxide\validation\ValidationComponent;
-use oxide\helper\_util;
+use oxide\helper\Util;
 use oxide\validation\file\FileUploadFilterer;
 use oxide\validation\file\ImageUploadValidator;
 use oxide\validation\file\ImageUploadProcessor;
@@ -76,7 +76,7 @@ class ImageUploadValidation implements ValidationComponent {
     */
    public function process($value, ValidationResult &$result = null) { 
       $options = $this->_options;
-      $upload_dir = rtrim(_util::value($options, 'upload_folder', null, true), '/');      
+      $upload_dir = rtrim(Util::value($options, 'upload_folder', null, true), '/');      
       $width = $options['image_width'];
       $height = $options['image_height'];
       
