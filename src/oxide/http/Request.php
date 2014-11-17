@@ -13,93 +13,140 @@ namespace oxide\http;
  * @subpackage http
  * @todo change _routeComponents to _moduleCompnonent
  * @todo better path components
+ * @todo utilize base
  */
 class Request {
    use \oxide\util\pattern\DefaultInstanceTrait;
    
+   protected 
+      /**
+       * @var string Holds the current request url
+       */
+      $_url = null,
+      $_base = '',
+      /**
+       * @var boolean Indicates if the request is secured or not
+       */
+      $_secured = false;
+
+
    protected
 		$_cookie_identifier = "__REQUEST_ID__",
       $_uriComponents = array(),
       $_routeComponents = array(),
       $_pathParams = array(),
-      $_pathParamsRaw = "",
       $_method = null,
-      $_vars = array();
+      $_queries = [],
+      $_posts = [],
+      $_vars = [];
 
    const
-      URI_SECURED = 'secured',
       URI_SCHEMA  = 'schema',
       URI_HOST    = 'host',
-      URI_URI     = 'uri',
       URI_PATH    = 'path',
       URI_BASE    = 'base',
       URI_SCRIPT  = 'script',
       URI_PORT    = 'port',
+      URI_PASS    = 'pass',
+      UIR_USER    = 'user',
       URI_QUERY   = 'query';
    
 	/**
 	 * constructor
 	 *
-	 * initializes Request object.  Parses the request URI into sevaral components
-	 * heavily replies on $_SERVER variable.
-	 * 
+	 * Cannot instanciate. Must use create methods instead.
 	 * @access private
 	 */
 	private function __construct() {
-      $uriComponents = array(
-         self::URI_BASE   => dirname(filter_input(INPUT_SERVER, 'SCRIPT_NAME')),
-         self::URI_HOST   => filter_input(INPUT_SERVER, 'SERVER_NAME'),
-         self::URI_PATH   => rtrim(substr(filter_input(INPUT_SERVER, 'PHP_SELF'), strlen(filter_input(INPUT_SERVER, 'SCRIPT_NAME'))), '/'),
-         self::URI_PORT   => filter_input(INPUT_SERVER, 'SERVER_PORT'),
-         self::URI_SCRIPT => basename(filter_input(INPUT_SERVER, 'SCRIPT_NAME')),
-         self::URI_URI    => filter_input(INPUT_SERVER, 'REQUEST_URI'),
-         self::URI_QUERY  => filter_input(INPUT_SERVER, 'QUERY_STRING')
-         );
-
-      $ssl = false;
-      $https = filter_input(INPUT_SERVER, 'HTTPS');
       
-      if($https && $https == 1) /* Apache */ {
-         $ssl = true;
-      } elseif ($https && $https == 'on') /* IIS */ {
-         $ssl = true;
-      } elseif (filter_input(INPUT_SERVER, 'SERVER_PORT') == 443) /* others */ {
-         $ssl = true;
-      }
-
-      if($ssl) {
-         $uriComponents[self::URI_SECURED] = true;
-         $uriComponents[self::URI_SCHEMA] = 'https';
-      } else {
-         $uriComponents[self::URI_SECURED] = false;
-         $uriComponents[self::URI_SCHEMA] = 'http';
-      }
-
-      $path = trim($uriComponents[self::URI_PATH], '/');
-      $params = explode('/', $path);
-         
-
-      $this->_uriComponents = $uriComponents;
-      $this->_pathParams = $params;
-      $this->_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
 	}
    
    /**
+    * Create a request from given $url
+    * 
+    * @param string $url
+    * @return \self
+    */
+   public static function createFromUrl($url) {
+      $request = new self();
+      $uris = parse_url($url);
+      $request->_url = $url;
+      $request->_uriComponents = $uris;
+      
+      if(isset($uris[self::URI_PATH])) {
+         $params = array_filter(explode('/', $uris[self::URI_PATH]));
+         $request->_pathParams = array_values($params);
+      }
+      
+      if(isset($uris[self::URI_SCHEMA]) && 
+              strtolower($uris[self::URI_SCHEMA]) == 'https') {
+         $request->_secured = true;
+      } else {
+         $request->_secured = false;
+      }
+      
+      if(isset($uris[self::URI_QUERY])) {
+         $query = $uris[self::URI_QUERY];
+         parse_str($query, $request->_queries);
+      }
+      
+      return $request;
+   }
+   
+   /**
+    * get the current server request
+    * 
+    * @return \self
+    */
+   public static function currentServerRequest() {
+      static $instance = null;
+      if($instance === null) {
+         $host = filter_input(INPUT_SERVER, 'HTTP_HOST');
+         $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
+         $schema = null;
+         $https = filter_input(INPUT_SERVER, 'HTTPS');
+         if($https && $https == 1) /* Apache */ {
+            $schema = 'https';
+         } elseif ($https && $https == 'on') /* IIS */ {
+            $schema = 'https';
+         } elseif (filter_input(INPUT_SERVER, 'SERVER_PORT') == 443) /* others */ {
+            $schema = 'https';
+         } else {
+            $schema = 'http';
+         }
+
+         $url = "{$schema}://{$host}{$uri}";
+
+         // create request from the url and setup the additional information
+         $instance = self::createFromUrl($url);
+         $instance->_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+         $instance->_posts = filter_input_array(INPUT_POST, FILTER_UNSAFE_RAW);
+         $instance->_headers = getallheaders();
+      }
+      
+      return $instance;
+   }
+   
+   /**
     * Get the HTTP method
-    * @return string
+    * 
+    * @return null|string
     */
    public function getMethod() {
       return $this->_method;
    }
    
    /**
-    * Get Path string
+    * Gets the full URL for the request.
+    * This may or may not have schema and host information, depending on whether
+    * those information was provided when creating the request or not.
     * @return string
     */
-   public function getPath() {
-      return $this->getUriComponents('path');
+   public function getUrl() {
+      return $this->_url;
    }
-   
+	
+      
    /**
     * Get HTTP Request Headers
     * @param string $key
@@ -107,40 +154,13 @@ class Request {
     * @return mixed
     */
    public function getHeaders($key = null, $default = null) {
-      if($this->_headers === null) {
-         $this->_headers = getallheaders();
-      }
-
+      if(!$key) return $this->_headers;
+      
       if($key)
          return (isset($this->_headers[$key])) ? $this->_headers[$key] : $default;
       else
          return $this->_headers;
    }
-   
-	/**
-	 * check if request is duplicate
-	 *
-	 * Simply compares hash values of $_GET & $_POST array against session key
-	 * @return bool
-	 */
-	public function isDuplicateRequest()
-	{
-		$result = false;
-		$session = Session::getInstance();
-		$key = $this->_cookie_identifier;
-		$hash = md5(serialize($_POST) . serialize($_GET));
-		if($session->read($key)) {
-			// check if values are identical
-			$cache = $session->read($key);
-			
-			if($cache == $hash) {
-				$result = true;
-			}
-		}
-
-		$session->write($key, $hash);
-		return $result;
-	}
 	
 	/**
 	 * Returns given value for requested $key from Uri component array.
@@ -149,57 +169,22 @@ class Request {
 	 * @param string $key
 	 * @return string|null
 	 **/
-	public function getUriComponents($key = null) {
+	public function getUriComponents($key = null, $default = null) {
       if($key === null) return $this->_uriComponents;
       
 		if(!isset($this->_uriComponents[$key])) {
-			return null;
+			return $default;
 		}
 		
 		return $this->_uriComponents[$key];
 	}
 
-	/**
-	 * Returns server url including host, schema port
-	 * 
-    * NOTE: this will only return the server portion, without the path and query
-	 * @return string
-	 */
-   public function getServerUrl() {
-      $server = $this->_uriComponents[self::URI_SCHEMA];
-      $server .= '://';
-      $server .= $this->_uriComponents[self::URI_HOST];
-
-		// if server has irregular port,
-		// we need to include it as well
-		$port = $this->_uriComponents[self::URI_PORT];
-		if($port != '' && $port != '80' && $port != '443') {
-			$server .= ':' . $this->_uriComponents[self::URI_PORT];
-		}
-      //$server .= $this->_uriComponents[self::URI_PATH];
-      
-      return $server;
-   }
-
-	/**
-	 * Get absolute URL including server and path information
-	 * 
-    * Please note, this will NOT include query string information
-	 * @return string
-	 */
-	public function getAbsoluteUrl()
-	{
-		$server = $this->getServerUrl();
-		$path = $this->getUriComponents(self::URI_PATH);
-
-		return "{$server}{$path}";
-	}
 	
 	/**
 	 * get a path from given index
 	 *
-	 * path is complete string after the domain name, ex domain.com/path/string
-	 * So path string is /path/string
+    * Example
+	 * from given path  /path/string
 	 * Accessing to index 1 in the above example will return 'string'
 	 * 
 	 * @access public
@@ -215,45 +200,6 @@ class Request {
 			return $default;
 		}
 	}
-   
-   /**
-    * Get input value from given $type
-    * 
-    * Simply used filter_input method
-    * @param type $type [INPUT_GET | INPUT_POST | INPUT_SERVER, etc]
-    * @param string $key
-    * @param mixed $default
-    * @param type $filter
-    * @param mixed $opitons
-    * @return type
-    */
-   public function getInput($type, $key = null, $default = null, $filter = FILTER_UNSAFE_RAW , $opitons = null) {
-		if($key === null) {
-			$vals = filter_input_array($type);
-         if(!$vals) {
-            return array();
-         } else {
-            return $vals;
-         }
-		}
-      
-      $val = filter_input($type, $key, $filter, $opitons);
-      
-      if($val === FALSE) {
-         // an error occured with filter processing
-         // we will just return the default value
-         return $default;
-      }
-      
-      if($val === NULL) {
-         // value is not set
-         // we will send the default
-         return $default;
-      }
-      
-      return $val;
-   }
-
 
    /**
 	 * gets a value post value
@@ -265,7 +211,9 @@ class Request {
 	 * @return mixed
 	 */
 	public function getPost($key = null, $default = null) {
-      return $this->getInput(INPUT_POST, $key, $default);
+      if(!$key) return $this->_posts;
+      if(isset($this->_posts[$key])) return $this->_post[$key];
+      return $default;
 	}
 	
 	/**
@@ -278,54 +226,61 @@ class Request {
 	 * @return string
 	 */
 	public function getQuery($key = null, $default = null) {
-      return $this->getInput(INPUT_GET, $key, $default);
-	}
-	
-	/**
-	 * return a value from the cookie
-	 *
-	 * returns raw value without any kind of filtering applied
-	 * @access public
-	 * @param string $key
-	 * @param mixed $default value to return if $key not found
-	 * @return string
-	 */
-	public static function getCookie($key, $default = null) {
-      return $this->getInput(INPUT_COOKIE, $key, $default);
-	}
-	
-	/**
-	 * sets a cookie value back to 
-	 * @access public
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public static function setCookie($key, $value, $exp = null) {
-      if(!$exp) {
-         $exp = time() * 60 * 60 * 24 * 30;
-      }
-		setcookie($key, $value, $exp);
+      if(!$key) return $this->_queries;
+      if(isset($this->_queries[$key])) return $this->_queries[$key];
+      return $default;
 	}
    
    /**
-    * returns the current full url including path and query string
-    * 
-    * if $relative is true then the url will be relative, else it will include full
-    * server address
-    * @param boolean $relative
-    */
-   public function getCurrentUrl($relative = true, $include_query = true)
-   {
-      $path = $this->getUriComponents(self::URI_PATH); 
-      $query = '';
-      if($include_query) {
-         $query = $this->getQueryString();
-         if($query) { $query = '?' . $query; }
+	 * convinent get method that checks for both get and post array
+	 * 
+	 * key will be scanned through $_GET, $_POST in order.
+	 * @return 
+	 * @param object $key
+	 * @param object $default value to return if not found
+	 */	
+	public function get($key, $default = null) {
+      $val = $this->getPost($key, NULL);
+      if($val === NULL) {
+         $val = $this->getQuery($key, NULL);
       }
-      if($relative) { $server = ''; }
-      else { $server = $this->getServerUrl (); }
       
-      return sprintf('%s%s%s', $server, $path, $query);
+      if($val === NULL) {
+         return $default;
+      } else {
+         return $val;
+      }
+	}
+   
+   /**
+    * Get input value from given $type
+    * 
+    * This will always return from user Input
+    * Simply used filter_input method
+    * @param type $type [INPUT_GET | INPUT_POST | INPUT_SERVER, etc]
+    * @param string $key
+    * @param mixed $default
+    * @param type $filter
+    * @param mixed $opitons
+    * @return type
+    */
+   public static function getInput($type, $key = null, $default = null, 
+           $filter = FILTER_UNSAFE_RAW , $opitons = null) {
+		if($key === null) {
+			$vals = filter_input_array($type);
+         if(!$vals) {
+            return [];
+         } else {
+            return $vals;
+         }
+		}
+      
+      $val = filter_input($type, $key, $filter, $opitons);
+      if($val === FALSE || $val === NULL) {
+         return $default;
+      }
+      
+      return $val;
    }
 	
 	/**
@@ -360,48 +315,11 @@ class Request {
 				unset($qparams[$remove]);
 			}
 		}
-		
-		// rebuilding the query string and returning it.
-		$qstring = '';
-		foreach($qparams as $key => $value) {
-			$qstring .= "{$key}={$value}&";
-		}
 
-		return rtrim($qstring, '&');
+		return http_build_query($qparams);
 	}
 	
-	/**
-	 * convinent get method that checks for both get and post array
-	 * 
-	 * key will be scanned through $_GET, $_POST in order.
-	 * @return 
-	 * @param object $key
-	 * @param object $default value to return if not found
-	 */	
-	public function get($key, $default = null) {
-      $val = $this->getPost($key, NULL);
-      if($val === NULL) {
-         $val = $this->getQuery($key, NULL);
-      }
-      
-      if($val === NULL) {
-         return $default;
-      } else {
-         return $val;
-      }
-	}
 	
-	/**
-	 * get client's browse info object
-	 * 
-	 * simply convinent function wraps get_browser method
-	 * @return 
-	 * @param object $agent
-	 */
-	public static function getBrowserObject($agent = null) {
-		return get_browser($agent, false);
-	}
-
 	/**
 	 * get current client IP address
 	 *

@@ -10,8 +10,7 @@ namespace oxide\http;
  * @package oxide
  * @subpackage http
  */
-class Route
-{
+class Route {
 	public
       /**
        * @var string HTTP method for this route
@@ -24,13 +23,6 @@ class Route
        */
       $path = null,
            
-		/**
-		 * exact module directory
-		 *
-		 * @var string
-		 */
-		$dir = null,
-
 		/**
 		 * module name
 		 * @var string
@@ -49,13 +41,16 @@ class Route
 		 */
 		$action = null,
            
+      /**
+       * @var string namespace for the module
+       */
       $namespace = null,
 
 		/**
 		 * array of param strings
 		 * @var array
 		 */
-		$params = array();
+		$params = [];
 
 	/**
 	 * construct a new Route object
@@ -66,18 +61,15 @@ class Route
 	 * @param mixed $params
 	 * @param string $dir
 	 */
-	public function __construct($module = null, $controller = null, $action = null, $params = null, $dir = null)
-	{
-		$this->module = $module;
-		$this->controller = $controller;
-		$this->action = $action;
-		$this->dir = $dir;
-
-      if(!is_array($params)) $params = [$params];
-		$this->params = $params;
+	public function __construct() {
 	}
    
    public function __toString() {
-      return $this->module . '/' . $this->controller . '/'. $this->action;
+      $path = $this->module . '/' . $this->controller . '/'. $this->action;
+      if($this->params) {
+         $path .= '/' . implode('/', $this->params);
+      }
+      
+      return $path;
    }
 }

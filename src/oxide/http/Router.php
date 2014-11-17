@@ -5,6 +5,7 @@ namespace oxide\http;
  * Router class.
  *
  * Primary objective of this class is to route given request using predefined routing schema.
+ * Also mananages routes registry
  * 
  * @package oxide
  * @subpackage http
@@ -13,9 +14,9 @@ namespace oxide\http;
 class Router {
    public 
 		$defaultModule = 'home',
-		$defaultController = null,
+		$defaultController = 'default',
       $indexFile = 'index.php',
-		$defaultAction = null;
+		$defaultAction = 'index';
 	
 	protected
       $_registry = [],
@@ -58,14 +59,12 @@ class Router {
 	 * @param string $url
 	 * @return Route
 	 */
-	public function urlToRoute($url) {
+	public function urlToRoute($path) {
       // some sanitizing
       // this needs to be done for some servers, specially with FastCGI enabled
-      $url = str_replace($this->indexFile, '', $url);
-      $url = str_replace('//', '/', $url);
+      $url = str_replace('//', '/', str_replace($this->indexFile, '', $path));
       
       $route = new Route();
-      $route->path = $url;
 		$schema = $this->_schema;
 		$parsed = \parse_url($url);
 		$parts = explode($this->_separator, trim($parsed['path'], '/'));
@@ -94,43 +93,24 @@ class Router {
 
 		return $route;
 	}
- 
-   /**
-	 * match if defined routes are available with given path.
-	 *
-	 * @access protected
-	 * @param $route route to be match
-	 * @return bool
-	 * @todo complete implement this method
-	 */
-	protected function match($path) {
-      $registry = $this->_registry;
-      if(empty($registry)) return FALSE;
-            
-      // sort with longer path first
-      $offsets = array_keys($registry);
-      rsort($offsets);
-      
-      foreach($offsets as $offset) {
-         $module = $registry[$offset];
-         if(($path == $offset) || ($offset === "" || strpos($path, rtrim($offset, '/') . '/') === 0)) {
-            // path matched with registry
-            $parampath = trim(substr($path, strlen($offset)), '/');
-            return $parampath;
-         }
-      }
-      
-		return FALSE;
-	}
    
+   /**
+    * Routes the given $request object into Route object
+    * 
+    * If unable to route, then NULL will be sent
+    * @param \oxide\http\Request $request
+    * @return null|Route
+    */
    public function route(Request $request) {
       $registry = $this->_registry;
       if(empty($registry)) return NULL;
-            
-      $route = $this->urlToRoute($request->getPath());
-      $path = $route->module;
-      if(!isset($registry[$path])) return NULL;
-      $route->namespace = $registry[$path];
+      
+      $path = $request->getUriComponents(Request::URI_PATH);
+      $route = $this->urlToRoute($path);
+      $route->path = $path;
+      $module = $route->module;
+      if(!isset($registry[$module])) return NULL;
+      $route->namespace = $registry[$module];
       $route->method = $request->getMethod();
       return $route;
    }
@@ -145,8 +125,7 @@ class Router {
     * 4) params 
     * @param \oxide\http\Route $route
     */
-   public function rerouteToDefaultController(Route $route)
-   {
+   public function rerouteToDefaultController(Route $route) {
       /*
        * we will also shift the routing parts to make space for the default module name
        */
@@ -161,8 +140,16 @@ class Router {
       }
    }
    
-   public function rerouteToDefaultAction(Route $route)
-   {
+   /**
+    * Reroutes the given $route into default action
+    * 
+    * Meaning:
+    *    - the current action, if any will be shifted as first param
+    *    - action name will be current $defaultAction name of the router
+    *    - everything else is unchanged.
+    * @param \oxide\http\Route $route
+    */
+   public function rerouteToDefaultAction(Route $route) {
       array_unshift($route->params, $route->action); 	# glue the action part as param
       $route->action = $this->defaultAction;
       

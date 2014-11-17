@@ -16,6 +16,11 @@ use ReflectionClass;
  * @subpackage http
  */
 abstract class CommandController implements Command {
+   public static 
+      $classNamespace = 'controller',
+      $classSuffix = 'Controller',
+      $classPrefix = null;
+
 	protected 
       /**
        * @var Route routing information for this controller
@@ -29,58 +34,48 @@ abstract class CommandController implements Command {
            
       $_controllerDir = null,
            
-      $_moduleName,
-      $_moduleDir;
+      $_controllerName = null;
 
    /**
-    * initialize the command controller based on given route
+    * Initialize the command controller based on given route
     * 
-    * direct creation of command is not allowed.  should use create method instead.
-    * 
-    * all sub classes MUST call this parent method when overriding.
-    * @param Context $context
+    * All sub classes MUST call this parent method when overriding.
+    * @param Route $route
     */
    public function  __construct(Route $route) {
-      $this->__command_notification_prefix = 'Command';
       $this->_route = $route;
       
  		// controller class will find out about its own information
 		// this important when forwarding occures.
       $reflector = new ReflectionClass(get_called_class());
      	$controllerdir = dirname($reflector->getFileName());
-      $moduledir = dirname($controllerdir);
      	
 		// setup controller information variables
-		$this->_moduleName 		= $route->module;
-		$this->_moduleDir 		= $moduledir;
 		$this->_controllerName	= $route->controller;
 		$this->_controllerDir	= $controllerdir;
    }
    
    /**
+    * Generate a full resolvable class name based on route
     * 
     * @param \oxide\http\Route $route
     * @return null
     */
-   public static function generateClassName(Route $route)
-   {
+   public static function generateClassName(Route $route) {
       $validator = new VariableNameValidator();
+      $module = $route->module;
+      $controller = $route->controller;
+      $namespace = $route->namespace;
       
-      // validate module name
-      if(!$validator->validate($route->module)) {
-         return null;
-      }
+      // make sure module and controller names are provided and are valid
+      if(empty($module) || !$validator->validate($module)) return NULL;
+      if(empty($controller) || !$validator->validate($controller)) return null;
       
-      // validate controller name if given
-      if(!empty($route->controller) && !$validator->validate($route->controller)) {
-         return null;
-      }
-      
-      
-      
-		$module = $route->module;
-      $controller = ucwords($route->controller);
-      $class = "{$module}\controller\\{$controller}Controller";
+      $controller = self::stringToName($controller);
+      $classnamespace = self::$classNamespace;
+      $classsuffix = self::$classSuffix;
+      $classprefix = self::$classPrefix;
+      $class = "{$namespace}\\{$classnamespace}\\{$classprefix}{$controller}{$classsuffix}";
       return $class;
    }
    
@@ -107,10 +102,8 @@ abstract class CommandController implements Command {
     * @param void
     * @return void
     */
-	public function execute(Context $context)
-	{
+	public function execute(Context $context) {
       $this->_context = $context; // store the context locally
-      
       $notifier = EventNotifier::defaultInstance();
       
       try {
@@ -149,15 +142,24 @@ abstract class CommandController implements Command {
 		$regex = '/[^a-z0-9\-_]+/i';
 		$replace = '';
 		return preg_replace($regex, $replace, $str);
-	}   
+	}
+   
+   /**
+    * Convert string to a controller/action name
+    * @param type $string
+    * @return type
+    */
+   public static function stringToName($string) {
+      return
+         str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
+   }
    
    /**
     * Current controller's context object
     * 
     * @return Context
     */
-   public function getContext()
-   {
+   public function getContext() {
       return $this->_context;
    }
    
@@ -165,38 +167,16 @@ abstract class CommandController implements Command {
     * 
     * @return Route
     */
-   public function getRoute()
-   {
+   public function getRoute() {
       return $this->_route;
    }
-   
-   /**
-	 * current module name
-	 * 
-	 * @return string
-	 */
-	public function getModuleName()
-	{
-		return $this->_moduleName;
-	}
-	
-	/**
-	 * directory for the current module
-	 * 
-	 * @return string
-	 */
-	public function getModuleDir()
-	{
-		return $this->_moduleDir;
-	}
 
    /**
     * get controller name
     * 
     * @return string
     */
-	public function getControllerName()
-	{
+	public function getControllerName() {
 		return $this->_controllerName;
 	}
    
@@ -210,7 +190,7 @@ abstract class CommandController implements Command {
    }
    
    protected function onInit(Context $context) {}
-   protected function onExecute(Context $context) {}
+   abstract protected function onExecute(Context $context);
    protected function onRender(Context $context) {}
    protected function onExit(Context $context) {}
    protected function onException(Context $context, Exception $exeption) {

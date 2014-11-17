@@ -1,6 +1,5 @@
 <?php
 namespace oxide\http;
-use oxide\util\Storage;
 
 /**
  * Session Object.
@@ -17,12 +16,11 @@ use oxide\util\Storage;
  * @author Alamin Ahmed <aahmed753@gmail.com>
  * @todo implement ArrayAccess
  */
-class Session implements Storage
-{
+class Session {
    use \oxide\util\pattern\SingletonTrait;
    
 	private 
-		$_namespace = 'oxide',
+		$_namespace = '',
 		$_id = '',
 		$_started = false;
 	
@@ -33,9 +31,9 @@ class Session implements Storage
 	 * use getInstance instead
 	 * @access private
 	 */
-	private function __construct()
-	{
+	private function __construct($namespace = null) {
       $this->start();
+      $this->_namespace = $namespace;
 	}
    	
 	/**
@@ -44,8 +42,7 @@ class Session implements Storage
 	 * @access private
 	 * @todo need to set options based on given configuration array in configure($config) method
 	 */
-   private static function _init() 
-	{
+   private static function _init() {
 		// path for cookies
       $cookie_path = "/";
       $session_dir = 'oxide_session';
@@ -90,8 +87,7 @@ class Session implements Storage
 	 * @throw HeaderAlreadySentException
 	 * @throw SessionAlreadyStartedException
 	 */
-	public function start()
-	{
+	public function start() {
       if($this->_started) {
         return;
       } 
@@ -122,8 +118,7 @@ class Session implements Storage
 	 * @access public
 	 * @return string
 	 */
-	public function getId()
-	{
+	public function getId() {
       return $this->_id;
 	}
 	
@@ -135,8 +130,7 @@ class Session implements Storage
 	 * @param $id string
 	 * @throws Oxide_Session_Exception_AlreadyStarted
 	 */
-	public function setId($id)
-	{
+	public function setId($id) {
       session_id($id);
 	}
 	
@@ -146,10 +140,19 @@ class Session implements Storage
 	 * this should be done after session is started.
 	 * @access public
 	 */
-	public function regenerateId($deleteold = true)
-	{
+	public function regenerateId($deleteold = true) {
       session_regenerate_id($deleteold);
 	}
+   
+   /**
+    * Returns the session namespace.
+    * 
+    * This name is prepended to every session keys.
+    * @return string
+    */
+   public function getNamespace() {
+      return $this->_namespace;
+   }
 	
 	
 	/**
@@ -159,8 +162,7 @@ class Session implements Storage
 	 * @param $key string
 	 * @return mixed
 	 */
-   public function read($key, $default = null)
-	{
+   public function read($key, $default = null) {
 		$key = "{$this->_namespace}.{$key}";
 		if(isset($_SESSION[$key])) {
 			return $_SESSION[$key];
@@ -176,8 +178,7 @@ class Session implements Storage
     * @param $key string
     * @param $value mixed
     */
-   public function write($key, $value)
-	{
+   public function write($key, $value) {
 		$key = "{$this->_namespace}.{$key}";
       $_SESSION[$key] = $value;
    }
@@ -187,8 +188,7 @@ class Session implements Storage
     * 
 	 * @access public
 	 */
-	public function delete($key)
-	{
+	public function delete($key) {
 		$key = "{$this->_namespace}.{$key}";
 		$_SESSION[$key] = '';
 		unset($_SESSION[$key]);
@@ -200,8 +200,7 @@ class Session implements Storage
 	 * @param string $key
 	 * @return bool
 	 */
-	public function has($key)
-	{
+	public function has($key) {
 		$key = "{$this->_namespace}.{$key}";
 		return isset($_SESSION[$key]);
 	}

@@ -1,26 +1,19 @@
 <?php
 namespace oxide\http;
-use oxide\Loader;
 use oxide\util\EventNotifier;
-use Exception;
-use oxide\http\CommandFactory;
 
 /**
  * dispatcher
  *
  *	dispatches request to proper module controller
- * provides dispatching looping machanism.   To start dispatching loop, use addRouteToQueue() to add request and startDispatchingQueue() to start the dispatch
+ * provides dispatching looping machanism.   To start dispatching loop, 
+ * use addRouteToQueue() to add request and startDispatchingQueue() to start the dispatch
  * 
  * @package oxide
  * @subpackage http
  */
 class Dispatcher {
    use \oxide\util\pattern\DefaultInstanceTrait;
-	protected
-		$_routes = array(),
-		$_modules  = array(),
-		$_default = array(),
-		$_controllerInstance = '\oxide\http\Command';
 
 	
 	/**
@@ -30,10 +23,12 @@ class Dispatcher {
 	 * to queue a route for next dispatch, use addRouteToQueue() method
 	 *  
 	 * Dispatching Rule: when controller is not found:
-	 * if given $route->controller is not found, then it will attempt to load Router::defaultController.
-	 * In that case, method will adjust the routing component - set the controller name to Router::defaultController,
-	 * action name to the $route->controller and $route->action will be prepanded to the $route->params array
-	 * 
+	 * if given $route->controller is not found, 
+    * then it will attempt to load Router::defaultController.
+	 * In that case, method will adjust the routing component 
+    *    - set the controller name to Router::defaultController,
+	 * action name to the $route->controller and $route->action will be 
+    * prepanded to the $route->params array
 	 * 
 	 * @return 
 	 * @param Route $route route where to dispatch
@@ -44,23 +39,20 @@ class Dispatcher {
 	public function dispatch(Route $route, Context $context) {
 		// retrive the routed module and action.
       $notifier = EventNotifier::defaultInstance();
-      $notifier->notify('DispatcherDispatch', $this, array('route' => $route));
+      $notifier->notify('DispatcherDispatch', $this, ['route' => $route]);
 
-      // we should update the route's directory info there
-      if(empty($route->dir)) {
-         if(isset(Loader::$namespaces[$route->module])) { $route->dir = Loader::$namespaces[$route->module]; }
-      }
-      
 		$context->route = $route;
-		$command = CommandFactory::createWithRoute($route);
+		$command = CommandController::createWithRoute($route);
       
 		// if controller is not loaded, usaully means controller does not exits
 		// then we will attempt to send to default controller and adjust the Route
 		if(!$command) {
-         $router = $context->router;      
-         $router->rerouteToDefaultController($route);
-         // try again to crate command using new route info
-			$command = CommandFactory::createWithRoute($route);
+         $router = $context->router;  
+         if($router) {
+            $router->rerouteToDefaultController($route);
+            // try again to crate command using new route info
+            $command = CommandController::createWithRoute($route);
+         }
 		}
 		
 		// if controller failed to load
@@ -68,15 +60,14 @@ class Dispatcher {
 		if(!$command) {
 			// requested module's controller file was not found
 			// this is basically an internal error.
-		  	throw new Exception("Unable dispatch. [Module: '{$route->module}', Controller: '{$route->controller}', Directory: '{$route->dir}']", 500);
+		  	throw new exception\HttpException("Unable dispatch. [Module: '{$route->module}', "
+         . "Controller: '{$route->controller}', Directory: '{$route->dir}']", 500);
       }
       
-      if(!$command instanceof $this->_controllerInstance) {
-         throw new Exception("Command is not instace of Command");
+      if(!$command instanceof Command) {
+         throw new exception\HttpException("Command is not instace of Command");
       }
-		
-		// finally executing the http request command
-      $context->set('controller', $command);
-		$command->execute($context);
+
+      $command->execute($context);
 	}
 }

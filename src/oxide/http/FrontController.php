@@ -40,7 +40,7 @@ class FrontController {
    }
    
    /**
-    * Get the context
+    * Get the application context
     * @return Context
     */
    public function getContext() {
@@ -91,7 +91,7 @@ class FrontController {
          $notifier->notify(self::EVENT_POST_ROUTE, $this, $router,  $route);      
          
          if(!$route) {
-            throw new \Exception("Unable to route requested path: {$request->getPath()}");
+            throw new exception\HttpException("Unable to route requested path: {$request->getPath()}");
          }
          
          // dispatch using the routing information

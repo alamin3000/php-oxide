@@ -8,18 +8,14 @@ namespace oxide\http;
  * @package oxide
  * @subpackage http
  */
-class Response
-{
+class Response {
    use \oxide\util\pattern\DefaultInstanceTrait;
    
    private 
 		$_headers = array(),
 		$_responseCode = 200,
-		$_charset = 'utf-8',
-		$_options = array(
-	     'Content-Type' => null
-			),
-		$_body = array(),
+		$_options = [ 'Content-Type' => null ],
+		$_body = [],
 		$_allowCaching,
 		$_cacheTime,
 		$_lastModified;
@@ -36,8 +32,7 @@ class Response
 	 * @param bool $bool
 	 * @param int $time[optional] if caching is set, provide number of seconds to keep cache alive
 	 */
-	public function setCachingHeaders($bool, $time = 86400, $lastModified = null)
-	{
+	public function setCachingHeaders($bool, $time = 86400, $lastModified = null) {
 		$this->_allowCaching = $bool;
 		$this->_cacheTime = $time;
 		$this->_lastModified = $lastModified;
@@ -51,10 +46,9 @@ class Response
 	 * @access public
 	 * @return 
 	 * @param string $type
-	 * @param string $charset[optional] charset is default to utf-8
+	 * @param string $charset charset is default to utf-8
 	 */
-   public function setContentType($type, $charset = 'utf-8')
-   {
+   public function setContentType($type, $charset = 'utf-8') {
    	if($charset) {
    		$type = "$type; charset=$charset";
    	}
@@ -68,8 +62,7 @@ class Response
     * @access public
     * @param string $url
     */
-   public function setRedirect($url)
-	{
+   public function setRedirect($url) {
       // if header is already sent, this will not work
 		if(headers_sent())
          trigger_error ('Cannot send response.  Headers already sent.', E_USER_WARNING);
@@ -80,8 +73,7 @@ class Response
    /**
     * set encoding for the page
     */
-   public function setEncoding($encoding)
-	{
+   public function setEncoding($encoding) {
       $this->_options['encoding'] = $encoding;
    }
 
@@ -92,9 +84,8 @@ class Response
 	 * @param string $value
 	 * @param bool $replace
 	 */
-   public function addHeader($name, $value = null, $replace = true)
-	{
-		$this->_headers[] = array('name' => $name, 'value' => $value, 'replace' => $replace);
+   public function addHeader($name, $value = null, $replace = true) {
+		$this->_headers[] = ['name' => $name, 'value' => $value, 'replace' => $replace];
 	}
 
 	/**
@@ -103,8 +94,7 @@ class Response
 	 * if $exit is set to true, then execution stops immidiately
 	 * @param bool $exit
 	 */
-   public function sendHeaders($exit = false)
-	{
+   public function sendHeaders($exit = false) {
       // main header
       header('HTTP/1.1 '. $this->_responseCode);
    
@@ -153,10 +143,9 @@ class Response
     * 
     * @return 
     * @param mixed $content
-    * @param int|string $index[optional]
+    * @param int|string $index
     */
-   public function addBody($content, $index = null)
-	{
+   public function addBody($content, $index = null) {
 		if($index === null) { 
          $this->_body[] = $content;
 		} else {
@@ -170,19 +159,17 @@ class Response
     * @return 
     * @param object $content
     */
-   public function setBody($content)
-	{
-      $this->_body = array($content);
+   public function setBody($content) {
+      $this->_body = [$content];
    }
 
 	/**
 	 * returns current body array
 	 * 
-	 * @param int|string $index[optional]
+	 * @param int|string $index
 	 * @return array|string
 	 */
-   public function getBody($index = null)
-	{
+   public function getBody($index = null) {
    	if($index === null) {
          return $this->_body;
 		} else {
@@ -195,8 +182,7 @@ class Response
 	 * 
 	 * @return string
 	 */
-	public function getBodyString()
-	{
+	public function getBodyString() {
 		$body = '';
 		foreach($this->_body as $content) {
 			$body .= (string) $content;
@@ -210,8 +196,7 @@ class Response
 	 *
 	 * it will remove all header and body information
 	 */
-	public function resetAll()
-	{
+	public function resetAll() {
 		$this->resetHeader();
 		$this->resetBody();
 	}
@@ -221,17 +206,15 @@ class Response
 	 *
 	 * This will not alter caching and response code
 	 */
-	public function resetHeader()
-	{
-		$this->_options = array();
-		$this->_headers = array();
+	public function resetHeader() {
+		$this->_options = [];
+		$this->_headers = [];
 	}
 
 	/**
 	 * reset all current body content
 	 */
-	public function resetBody()
-	{
+	public function resetBody() {
 		$this->setBody(null);
 	}
 
@@ -240,8 +223,7 @@ class Response
 	 *
 	 * this method will send both headers and body contents
 	 */
-	public function send($exit = true)
-	{
+	public function send($exit = true) {
 		print $this;
 		if($exit) exit();
 	}
@@ -251,8 +233,7 @@ class Response
 	 * 
 	 * @return string
 	 */
-   public function __toString()
-	{
+   public function __toString() {
 		if(!headers_sent()) $this->sendHeaders();
 //      else         trigger_error ('Cannot send response.  Headers already sent.', E_USER_ERROR);
       return $this->getBodyString();

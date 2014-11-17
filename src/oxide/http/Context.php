@@ -1,33 +1,35 @@
 <?php
 namespace oxide\http;
 use oxide\std\Object;
+use oxide\util\pattern\DefaultInstanceTrait;
 /**
  * Context class
  * 
- * Context is a simple concept of storing data and services for the current http session.
- * to access any data, simply use direct accessors ex. $context->someData = "something";
- * to access any service, use get/set method. ex $context->setService_Name($service_instance);
- * 
+ * Context a container of storing data and services for the current http session.
+ * Provides lazy loading functionality
  * @package oxide
  * @subpackage http
  */
-class Context extends Object
-{
+class Context extends Object {
    use
-      \oxide\util\pattern\DefaultInstanceTrait;
+      DefaultInstanceTrait;
    
    protected
       $_instances = [],
       $_services = [];
 
+   /**
+    * 
+    * @param type $data
+    */
 	public function __construct($data = null) {
 		parent::__construct($data);
-		$this->set('request', function() { return Request::defaultInstance(); });
+		$this->set('request', function() { return Request::currentServerRequest(); });
 		$this->set('response', function() { return Response::defaultInstance(); });
 	}
 
    /**
-    * 
+    * Current application request object
     * @return Request
     */
 	public function getRequest() {
@@ -35,7 +37,7 @@ class Context extends Object
 	}
 
    /**
-    * 
+    * Current application response object
     * @return Response
     */
 	public function getResponse() {
@@ -66,6 +68,12 @@ class Context extends Object
       }
    }
 
+   /**
+    * Checks id given $key exists, if not an exception will be through
+    * @param type $key
+    * @return type
+    * @throws \Exception
+    */
 	public function required($key) {
 		if($this->__isset($key)) {
 			return $this->__get($key);

@@ -25,7 +25,7 @@
     
     "bootstraps" : {
         "app" : {
-            "dir" : "../src/app",
+            "dir" : "../app",
             "modules" : {
                 "home" : "module/home"
             },

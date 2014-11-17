@@ -90,15 +90,6 @@ abstract class ActionController extends CommandController {
 	}
    
    /**
-    * Initializes the database
-    * 
-    * @param \oxide\http\Context $context
-    */
-   protected function onInit(Context $context) {
-      parent::onInit($context);
-   }
-
-   /**
 	 * this method determine which action method to call and the attempts to call
 	 *
 	 * override this to provide one action per controller design pattern
@@ -190,56 +181,20 @@ abstract class ActionController extends CommandController {
     * @return array
     */
    public function getParams($index = null, $default = null) {
-      if($index === null) return $this->_route->params;
+      $params = $this->_route->params;
+      if($index === null) return $params;
       if(is_int($index)) {
-         $params = $this->_route->params;
          return Util::value($params, $index, $default);
       } else {
-         $params = $this->getParamsPairedBySlash();
-         if(isset($params[$index])) return $params[$index];
-         else return $default;
-      }
-   }
-   
-   /**
-    * 
-    * @return string
-    */
-   public function getParamPath() {
-      $params = $this->getParams();
-      if($params) {
-         return implode('/', $params);
-      } else {
-         return '';
-      }
-   }
-   /**
-    * Get params using slash pair, where first part is the key and second part is value.
-    * ie., domain.com/module/controller/action/key/value
-    * @access public
-    * @return array 
-    */
-   public function getParamsPairedBySlash() {
-      static $pairs = null;
-      if($pairs == null) {
-         $params = $this->_route->params;
-         
-         for ($i = 0; $i < count($params);$i+=2) {
-            $key = $this->sanitize($params[$i]);
-            if(empty($key)) continue;
-            
-            // check if value exists
-            if(isset($params[$i+1])) { 
-               $value = $params[$i+1];
-            } else {
-               $value = null;
+         $keypos = array_search($index, $params);
+         if($keypos !== FALSE) {
+            if(isset($params[$keypos+1])) {
+               return $params[$keypos+1];
             }
-
-            $pairs[$key] = $value;
          }
       }
       
-      return $pairs;
+      return $default;
    }
 	
 	/**
@@ -314,7 +269,7 @@ abstract class ActionController extends CommandController {
 	public function getViewController() {
       if(!ViewController::hasDefaultInstance()) {
          $config = App::config();
-         $viewController = new ViewController($config->get('templates'), $this->getModuleName());
+         $viewController = new ViewController($config->get('templates'), $this->_route->module);
          ViewController::setDefaultInstance($viewController);
       }
       
@@ -375,38 +330,6 @@ abstract class ActionController extends CommandController {
 		return $this->_config;			
 	}
    
-   /**
-    * redirect to different page
-    * @param type $url
-    */
-   public function redirect($url) {
-      $context = $this->getContext();
-      $response = $context->getResponse();
-      $response->setRedirect($url);
-      $response->send(true);
-   }
-   
-   /**
-    * Redirect to a module
-    * 
-    * Current controller's rendering will be disabled
-    * Current controller's context will be used
-    * @param Route $route
-    */
-   public function dispatch(Route $route) {
-      // first we disable rendering on this action controller
-      $this->_autoRender = false;
-      
-      // get the default default dispatcher
-      $context = $this->getContext();
-      $dispatcher = $context->dispatcher;
-      if(!$dispatcher) {
-         throw new Exception('Dispatcher not found in the context.');
-      }
-      
-      $dispatcher->dispatch($route, $context);
-   }
-   
 	/**
 	 * forward to given $action immediately
 	 * 
@@ -438,42 +361,22 @@ abstract class ActionController extends CommandController {
          $this->_view->setScript($this->generateFullViewScriptPath($this->getActionName()));
       }
       
-      $method_pre = "{$method}_start";
-      if(method_exists($this, $method_pre)) {
-         call_user_func_array(array($this, $method_pre), $args);
-      }
+      $caller = function($method) use (&$args, &$handled) {
+         if(method_exists($this, $method)) {
+            call_user_func_array(array($this, $method), $args);
+            $handled = true;
+         }
+      };
       
-      // now call the http method version
-      // this is specific version, so will be called first
-      $http_method = "{$method}_{$httpmethod}";
-      if(method_exists($this, $http_method)) {
-         call_user_func_array(array($this, $http_method), $args);
-         $handled = true;
-      }
-      
-      // call the standard method if available execute{Actionname}
-		if(method_exists($this, $method)) {
-         call_user_func_array(array($this, $method), $args);
-         $handled = true;
-		} 
-      
+      $caller("{$method}_start");
+      $caller("{$method}_{$httpmethod}");
+      $caller($method);
+      $caller( "{$method}_end");
       if(!$handled) {
          // action doesn't exists
          $this->onUndefinedAction($context, $action);
 		}
-      
-      $method_post = "{$method}_end";
-      if(method_exists($this, $method_post)) {
-         call_user_func_array(array($this, $method_post), $args);
-      }
 	}
-   
-   protected function _generateFullRouteClassName($prefix = '', $suffix = '') {
-      $module = ucfirst($this->getModuleName());
-		$controller = ucfirst($this->getControllerName());
-		$action = ucfirst($this->getActionName());
-      return "{$prefix}{$module}{$controller}{$action}{$suffix}";
-   }
 
    /**
     * Calls when action provided is not defined in the class
@@ -484,8 +387,4 @@ abstract class ActionController extends CommandController {
    protected function onUndefinedAction(Context $context, $action) {
       throw new Exception("Action: [$action] is not found defined in: [" . $this->getControllerName() . "] controller.");
    }  
-   
-   protected function onExit(Context $context) {
-      parent::onExit($context);
-   }
 }

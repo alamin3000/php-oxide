@@ -49,14 +49,10 @@ class DefaultController extends ActionController
    
    protected function executeTest(Context $context) {
       $this->_autoRender = false;
+//      $default = $context->getRequest();
+      $request = \oxide\http\Request::createFromUrl('http://oxide-demo.local/home/default/test?hello=abc');
       
-      $styles = [
-          ['body' => [
-              'background' => 'red'
-          ]]
-      ];
-      
-      \oxide\helper\Template::styles('body', ['background' => 'blue'], 'screen');
-      echo \oxide\helper\Template::styles();
+      \oxide\helper\Util::dump($request);
+//      \oxide\helper\Util::dump($default);
    }
 }

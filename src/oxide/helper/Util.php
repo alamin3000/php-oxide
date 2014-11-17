@@ -3,6 +3,18 @@ namespace oxide\helper;
 
 
 abstract class Util {
+   public static function require_keys($from, $keys) {
+      if(!is_array($keys)) {
+         $keys = [$keys];
+      }
+      
+      foreach($keys as $key) {
+         if(!isset($from[$key])) {
+            
+         }
+      }
+   }
+   
    /**
     * gets value from the given $from storage using dot path syntax to dig deep
     * @param type $from
@@ -53,10 +65,12 @@ abstract class Util {
    
    /**
    * Attempt to read value from given $storage.  If not found, $default value is passed back.
+    * 
    * If key is not provided, the $storage is passed back.
    * @param array|stdClass $storage
    * @param string $key
    * @param mixed $default
+   * @param boolean $required 
    * @return mixed
    */
    public static function value($storage, $key = null, $default = null, $required = false) {

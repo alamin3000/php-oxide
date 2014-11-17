@@ -4,13 +4,11 @@ use ReflectionClass;
 
 
 /**
- * Command Controller
+ * AbstractClass
  * 
- * implements Command to comply with front controller engines specification
- * provides command execution life cycle events
  * 
  * @package oxide
- * @subpackage http
+ * @subpackage std
  */
 abstract class AbstractClass {
    
@@ -19,7 +17,7 @@ abstract class AbstractClass {
     * @staticvar type $reflector
     * @return ReflectionClass
     */
-   public static function classReflector() {
+   public function classReflector() {
       static $reflector = null;
       if($reflector === null) {
          $reflector = new ReflectionClass(get_called_class());
@@ -33,10 +31,10 @@ abstract class AbstractClass {
     * @staticvar type $dir
     * @return type
     */
-   public static function classDir() {
+   public function classDir() {
       static $dir = null;
       if($dir === null) {
-         $dir = realpath(dirname(static::classReflector()->getFileName()));
+         $dir = realpath(dirname($this->classReflector()->getFileName()));
       }
       
       return $dir;
@@ -47,10 +45,10 @@ abstract class AbstractClass {
     * @staticvar type $namespace
     * @return type
     */
-   public static function classNamespace() {
+   public function classNamespace() {
       static $namespace = null;
       if($namespace === null) {
-         $namespace = static::classReflector()->getNamespaceName();
+         $namespace = $this->classReflector()->getNamespaceName();
       }
       
       return $namespace;

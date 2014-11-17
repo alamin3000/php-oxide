@@ -1,10 +1,10 @@
 <?php
-namespace oxide\util;
+namespace oxide\std;
 
 /**
  * Storage interface
  * 
- * Provides basic interface for simple storage machanism
+ * Provides basic interface for simple persistent storage machanism
  */
 interface Storage {
    public function read($key, $default = null);
