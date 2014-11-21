@@ -42,10 +42,21 @@ class Route {
 		$action = null,
            
       /**
-       * @var string namespace for the module
+       * namespace for the module.
+       * @var string 
        */
       $namespace = null,
 
+           
+      /**
+       * Directory path for the module.
+       * This is useful to access the module directory in the various controllers.
+       * Template controller relies on this to access view scripts.
+       * @var string
+       */
+      $dir = null,
+           
+           
 		/**
 		 * array of param strings
 		 * @var array
@@ -53,13 +64,7 @@ class Route {
 		$params = [];
 
 	/**
-	 * construct a new Route object
-	 * 
-	 * @param string $module
-	 * @param string $controller
-	 * @param string $action
-	 * @param mixed $params
-	 * @param string $dir
+	 * construct a new empty Route object
 	 */
 	public function __construct() {
 	}

@@ -36,8 +36,8 @@ class Router {
     * @param string $path
     * @param string $module
     */
-   public function register($path, $module) {
-      $this->_registry[$path] = $module;
+   public function register($module, $dir, $namespace = null) {
+      $this->_registry[$module] = [$dir, $namespace];
    }
    
    /**
@@ -107,10 +107,14 @@ class Router {
       
       $path = $request->getUriComponents(Request::URI_PATH);
       $route = $this->urlToRoute($path);
-      $route->path = $path;
       $module = $route->module;
+      
       if(!isset($registry[$module])) return NULL;
-      $route->namespace = $registry[$module];
+      $moduleinfo = $registry[$module];
+      list($dir, $namespace) = $moduleinfo;
+      $route->path = $path;
+      $route->namespace = $namespace;
+      $route->dir = $dir;
       $route->method = $request->getMethod();
       return $route;
    }

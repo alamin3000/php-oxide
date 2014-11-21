@@ -63,15 +63,12 @@ abstract class CommandController implements Command {
     */
    public static function generateClassName(Route $route) {
       $validator = new VariableNameValidator();
-      $module = $route->module;
-      $controller = $route->controller;
       $namespace = $route->namespace;
+      $controller = self::stringToName($route->controller);
       
       // make sure module and controller names are provided and are valid
-      if(empty($module) || !$validator->validate($module)) return NULL;
       if(empty($controller) || !$validator->validate($controller)) return null;
       
-      $controller = self::stringToName($controller);
       $classnamespace = self::$classNamespace;
       $classsuffix = self::$classSuffix;
       $classprefix = self::$classPrefix;
