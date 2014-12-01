@@ -99,7 +99,7 @@ class Router {
     * 
     * If unable to route, then NULL will be sent
     * @param \oxide\http\Request $request
-    * @return null|Route
+    * @return Route|null
     */
    public function route(Request $request) {
       $registry = $this->_registry;
@@ -116,6 +116,7 @@ class Router {
       $route->namespace = $namespace;
       $route->dir = $dir;
       $route->method = $request->getMethod();
+      $request->setParams($route->params);
       return $route;
    }
 	   

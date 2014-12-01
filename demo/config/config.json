@@ -23,23 +23,22 @@
         "catalog" : "db_phpoxide"
     },
     
-    "bootstraps" : {
-        "app" : {
-            "dir" : "../app",
-            "modules" : {
-                "home" : "module/home"
-            },
-            
-            "plugins" : {
-                
-            }
+    "namespaces" : {
+        "app" : "../app"
+    },
+    
+    "modules" : [
+        {
+            "name" : "home",
+            "dir" : "../app/module/home",
+            "namespace" : "app\\module\\home"
         }
-    },
+    ],
     
     
-    "templates" : {
-        "v1"          : "template/v1/view"
-    },
+    "templates" : [
+        "template/v1/view"
+    ],
     
     "roles" : {
         "guest" : null,

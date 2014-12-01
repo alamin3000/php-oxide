@@ -1,5 +1,5 @@
 <?php
-namespace oxide\application\auth;
+namespace oxide\controller\auth;
 use Zend\Authentication\AuthenticationService;
 
 class Authentication extends AuthenticationService {

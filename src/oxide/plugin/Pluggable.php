@@ -1,5 +1,5 @@
 <?php
-namespace oxide\application;
+namespace oxide\plugin;
 use oxide\http\Context;
 
 interface Pluggable {

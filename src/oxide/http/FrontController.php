@@ -46,7 +46,16 @@ class FrontController {
    public function getContext() {
       return $this->_context;
    }
-				
+   
+   /**
+    * Sets the router for the front controller
+    * 
+    * @param Router $router
+    */
+   public function setRouter(Router $router) {
+      $this->_router = $router;
+   }
+   
    /**
     * Get the router for the front controller
     * @return Router
@@ -58,7 +67,20 @@ class FrontController {
 		
 		return $this->_router;
 	}
+   
+   /**
+    * 
+    * @param Dispatcher $dispatcher
+    */
+   public function setDispatcher(Dispatcher $dispatcher) {
+      $this->_dispatcher = $dispatcher;
+   }
 	
+   
+   /**
+    * Get the 
+    * @return Dispatcher
+    */
 	public function getDispatcher() {
 		if($this->_dispatcher === null) {
 			$this->_dispatcher = new Dispatcher();
@@ -66,6 +88,7 @@ class FrontController {
 		
 		return $this->_dispatcher;
 	}
+	
 	
    /**
     * Execute method, implementing the Command pattern
@@ -98,7 +121,9 @@ class FrontController {
          $dispatcher = $this->getDispatcher();
          $context->set('dispatcher', $dispatcher);
          $notifier->notify(self::EVENT_PRE_DISPTACH, $this, $dispatcher, $route);
-         $dispatcher->dispatch($route,$context);
+         if(!$route->completed) {
+            $dispatcher->dispatch($route,$context);
+         }
          $notifier->notify(self::EVENT_POST_DISPATCH, $this, $dispatcher, $route);
       }
       

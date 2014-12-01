@@ -1,5 +1,5 @@
 <?php
-namespace oxide\application\auth;
+namespace oxide\controller\auth;
 use oxide\validation\ValidatorAbstract;
 use oxide\http\Route;
 use oxide\http\Router;

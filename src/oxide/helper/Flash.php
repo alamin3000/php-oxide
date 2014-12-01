@@ -2,7 +2,7 @@
 namespace oxide\helper;
 use oxide\http\Session;
 
-abstract class Messenger {
+abstract class Flash {
    const
       ERROR		= 'error',
       WARNING	= 'warning',
@@ -16,7 +16,7 @@ abstract class Messenger {
     * @var type 
     */
 	private static
-      $_key		= "__phpoxide_helper_messager";
+      $_key		= "__oxide_helper_flash";
 
   
    /**
@@ -55,7 +55,7 @@ abstract class Messenger {
 			$key .= "_{$namespace}";
 		}
 
-		$session->$key = serialize(new Messenger_message($value, $type, $namespace));
+		$session->$key = serialize(new Flash_message($value, $type, $namespace));
 	}
 
    /**
@@ -89,7 +89,7 @@ abstract class Messenger {
    
 }
 
-class Messenger_message
+class Flash_message
 {
    /**
     *

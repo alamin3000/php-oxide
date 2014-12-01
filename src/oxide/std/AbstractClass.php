@@ -54,7 +54,7 @@ abstract class AbstractClass {
       return $namespace;
    }
    
-   public static function create($class, $args = null) {
+   public static function create($class, array $args = null) {
       $instance = null;
       
       if($args) {

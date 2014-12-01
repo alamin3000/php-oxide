@@ -12,7 +12,7 @@ use oxide\http\FrontController;
 use oxide\data\Connection;
 use oxide\http\Context;
 use oxide\util\EventNotifier;
-use oxide\data\model\DbKeyValueObject;
+use oxide\data\model\EAVModel;
 use oxide\util\ConfigFile;
 use oxide\helper\Util;
 use oxide\helper\Auth;
@@ -231,7 +231,7 @@ abstract class App {
       if($model == null) {
          $conn = self::database();
          $table = 'application_metadata';
-         $model = new DbKeyValueObject($conn, $table);
+         $model = new EAVModel($conn, $table);
          $model->configure(array('key' => 'data_key', 'value' => 'data_value'));
          $model->load();
       }

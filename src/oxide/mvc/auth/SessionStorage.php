@@ -1,9 +1,9 @@
 <?php
-namespace oxide\application\auth;
+namespace oxide\mvc\auth;
 use oxide\http\Session;
 use Zend\Authentication\Storage\StorageInterface;
 
-class AuthSessionStorage implements StorageInterface 
+class SessionStorage implements StorageInterface 
 {
 	private 
       $_session,

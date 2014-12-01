@@ -11,7 +11,7 @@ namespace oxide;
 use oxide\helper\Util;
 use oxide\helper\App;
 use oxide\helper\Notifier;
-
+use oxide\util\PSR4Autoloader;
 /**
  * Oxide Loader
  * 
@@ -27,17 +27,17 @@ use oxide\helper\Notifier;
  * Typical application initialized and started by calling the bootstrap() method.
  */
 class Loader {
-   static public 
-      /**
-       * @var array Application namespaces
-       */
-      $namespaces = [];
+   
+   static protected 
+      $namespaces = [],
+      $helpers = [],
+      $autoloader = null;
    
    const 
       EVENT_BOOTSTRAP_START = 'LoaderBootstrapStart',
       EVENT_BOOTSTRAP_END = 'LoaderBootstrapEnd';
 
-   /**
+    /**
     * Load given $classname using $dir if provided, else uses current $namespaes 
     * 
     * @param string $classname
@@ -68,11 +68,67 @@ class Loader {
    }
    
    /**
+    * 
+    * @param type $file
+    * @param type $dir
+    * @return boolean
+    */
+   public static function loadFile($file, $dir = null) {
+      $filename = null;
+      if($dir) {
+         $filename = "{$dir}/{$file}";
+      } else {
+         $filename = $file;
+      }
+      
+      if(file_exists($filename)) {
+         require_once $filename;
+         return true;
+      } else {
+         return false;
+      }
+   }
+   
+   /**
+    * 
+    * @param type $classname
+    */
+   static public function loadHelper($helper, $namespace = null) {
+      if(!$namespace) {
+         $namespace = 'oxide';
+      }
+      $classname = ucfirst($helper);
+      $class = "{$namespace}\\helper\\{$classname}";
+      return $class;
+   }
+   
+   
+   /**
     * Register autoload for the framework
     */
    static public function register_autoload() {
       self::$namespaces['oxide'] = dirname(__FILE__);
       spl_autoload_register(__NAMESPACE__ .'\Loader::load');
+   }
+   
+   
+   /**
+    * Get the PSR4 Autoloader class
+    * @return PSR4Autoloader
+    */
+   static public function getAutoloader() {
+      if(self::$autoloader === null) {
+         self::$autoloader = new PSR4Autoloader();
+      }
+      
+      return self::$autoloader;
+   }
+   
+   public static function register() {
+      // registering autoload for phpoxide
+      $autoloader = self::getAutoloader();
+      $autoloader->register();
+      self::register_autoload();
    }
    
    /**
@@ -84,8 +140,8 @@ class Loader {
     * @return http\FrontController
     */
    public static function bootstrap($config_dir, $autorun = true) {
-      // registering autoload for phpoxide
-      self::register_autoload();
+      self::register();
+      
       App::init($config_dir); //initialize the App helper
       $config = App::config(); 
       
@@ -95,11 +151,43 @@ class Loader {
       $context = new http\Context();
       http\Context::setDefaultInstance($context);
       $context->set('config', $config, true); // set the application config.
-      //
-      // create the front controller and set the default instance
       $fc = new http\FrontController($context);
       http\FrontController::setDefaultInstance($fc);
       
+      // load modules
+      $modules = Util::value($config, 'modules');
+      self::loadModules($modules, $fc->getRouter());
+      
+      Notifier::notify(self::EVENT_BOOTSTRAP_END, null);
+		if($autorun) {
+			$fc->run();
+		}
+		
+		return $fc;
+   }
+   
+   /**
+    * @param array $modules
+    * @param \oxide\http\Router $router
+    */
+   protected static function loadModules(array $modules, http\Router $router) {
+      $autoloader = self::getAutoloader();
+      if($modules) {
+         foreach($modules as $module) {
+            $name = Util::value($module, 'name', null, true);
+            $dir = Util::value($module, 'dir', null, true);
+            $namespace = Util::value($module, 'namespace', null, true);
+            
+            // register with autoloader
+            $autoloader->addNamespace($namespace, $dir);
+            
+            // register with router
+            $router->register($name, $dir, $namespace);
+         }
+      }
+   }
+   
+   protected static function loadPlugins(array $plugins) {
       $plugin = function($namespace, $required = false) use ($context) {
          $class = 'Plugin';
          $fullclass = "{$namespace}\{$class}";
@@ -117,43 +205,14 @@ class Loader {
          }
       };
       
-      // bootstrap
-      $bootstraps = Util::value($config, 'bootstraps', null);
-      if($bootstraps) {
-         foreach($bootstraps as $namespace => $info) {
-            if(isset($info['dir'])) {
-               self::$namespaces[$namespace] = $info['dir']; // register the namespace
-            }
-                        
-            $modules = Util::value($info, 'modules', null);
-            if($modules) {
-               $router = $fc->getRouter();
-               foreach($modules as $module => $dir) {
-                  $dirtoclass = str_replace('/', '\\', $dir);                  
-                  $dirtoclass = $namespace . '\\'. $dirtoclass;
-                  $router->register($module, $dirtoclass);
-                  
-                  $plugin($dirtoclass);
-               }
-            }
-            
-            $plugins = Util::value($info, 'plugins', null);
-            if($plugins) {
-               foreach($plugins as $plugin => $dir) {
-                  $subnamespace = str_replace('/', '\\', $dir);
-                  $subnamespace = $namespace . '\\'. $subnamespace;
-                  
-                  $plugin($subnamespace, true);
-               }
-            }
+      $plugins = Util::value($info, 'plugins', null);
+      if($plugins) {
+         foreach($plugins as $plugin => $dir) {
+            $subnamespace = str_replace('/', '\\', $dir);
+            $subnamespace = $namespace . '\\'. $subnamespace;
+
+            $plugin($subnamespace, true);
          }
       }
-      
-      Notifier::notify(self::EVENT_BOOTSTRAP_END, null);
-		if($autorun) {
-			$fc->run();
-		}
-		
-		return $fc;
    }
 }

@@ -42,18 +42,18 @@ class Dispatcher {
       $notifier->notify('DispatcherDispatch', $this, ['route' => $route]);
 
 		$context->route = $route;
-		$command = CommandController::createWithRoute($route);
+		$command = CommandFactory::createWithRoute($route);
       
 		// if controller is not loaded, usaully means controller does not exits
 		// then we will attempt to send to default controller and adjust the Route
-		if(!$command) {
-         $router = $context->router;  
-         if($router) {
-            $router->rerouteToDefaultController($route);
-            // try again to crate command using new route info
-            $command = CommandController::createWithRoute($route);
-         }
-		}
+//		if(!$command) {
+//         $router = $context->router;  
+//         if($router) {
+//            $router->rerouteToDefaultController($route);
+//            // try again to crate command using new route info
+//            $command = CommandFactory::createWithRoute($route);
+//         }
+//		}
 		
 		// if controller failed to load
 		// we will throw exception

@@ -13,6 +13,14 @@ namespace oxide\http;
 class Route {
 	public
       /**
+       * Indicates if the route object has been routed or not
+       * Usually Controller will mark this as true once action has been performed
+       * If it's marked completed, then further dispatch/forward will be aborted
+       * @var bool
+       */
+      $completed = false,
+           
+      /**
        * @var string HTTP method for this route
        */
       $method = 'get',

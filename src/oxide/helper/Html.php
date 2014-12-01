@@ -28,8 +28,7 @@ namespace oxide\helper;
  * </pre>
  * </code>
  */
-abstract class Html
-{
+abstract class Html {
    public static
       $voidTags =  [
           'area' => true,'base' => true, 'br' => true, 'col' => true, 'command' => true, 
@@ -55,7 +54,7 @@ abstract class Html
       $renderers = [];
    
 	private static
-		$metas = array(),
+		$metas = [],
 		$scripts = array(),
 		$links = array(),
 		$title = null,
@@ -70,22 +69,6 @@ abstract class Html
       LIST_VALUE_IGNORE = 0,
       LIST_KEY = 0,
       LIST_SMART_LINK = 5;
-
-   public static function renderer($tag, \Closure $renderer = null) {
-      self::$renderer[$tag] = $renderer;
-   }
-   
-   public static function render($tag, $inner = null, $attributes = null) {
-      if(isset(self::$renderers[$tag])) {
-         $renderer = self::$renderers[$tag];
-      } else {
-         $renderer = self::$renderers[self::DEFAULT_RENDERER_KEY];
-      }
-      
-      return $renderer($tag, $inner, $attributes);
-   }
-   
-   
 
 	/**
 	 * generate a html tag string based on given information

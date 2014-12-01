@@ -3,6 +3,7 @@ namespace oxide\helper;
 
 
 abstract class Util {
+   
    public static function require_keys($from, $keys) {
       if(!is_array($keys)) {
          $keys = [$keys];
@@ -153,17 +154,4 @@ abstract class Util {
           }
       }
   }
-      
-   /**
-   * @param mixed $args dumps for debug information with format 
-   */
-   public static function dump($args) {
-      $trace = debug_backtrace();
-      echo "<pre>";      
-      ob_start();
-      echo call_user_func_array('var_dump', func_get_args());
-      echo htmlentities(ob_get_clean());
-      echo "</pre>";     
-      echo "<p><strong>File:</strong> {$trace[0]["file"]} <strong>Line:</strong> {$trace[0]["line"]}</p>";
-   }
 }

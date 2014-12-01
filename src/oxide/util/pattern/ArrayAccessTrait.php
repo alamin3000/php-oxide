@@ -44,14 +44,6 @@ trait ArrayAccessTrait
    public function offsetExists($offset )  {
       return isset($this->_t_array_storage[$offset]);
    }
-   
-   /**
-    * Get the reference to the array
-    * @return array
-    */
-   public function &ref() {
-      return $this->_t_array_storage;
-   }
       
    
    /**

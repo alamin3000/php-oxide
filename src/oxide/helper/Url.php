@@ -4,8 +4,7 @@ namespace oxide\helper;
 /**
  * 
  */
-abstract class Url
-{	
+abstract class Url {	
    /**
     * Get GET
     * @param type $key

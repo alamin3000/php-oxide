@@ -2,105 +2,83 @@
 namespace oxide\std;
 
 /**
- * A Generic object with data 
+ * A Generic object
  * Supports readonly properties and modification tracking
  */
-class Object implements \IteratorAggregate {
-   use \oxide\util\pattern\PropertyAccessTrait;
-   protected
-      $_services = [],
-      $_readonly = [],
-      $_modified = [];
-
+class Object implements Stringify {
+   private
+      $_objectId = 0;
    
-   /**
-    * @see setData
-    * @param type $data
-    */
-   public function __construct($data = null) {
-      if($data) $this->setData ($data);
-   }
-
-   /**
-    * Set/initialize data.  If Closure passed, it will be called with scope set to this object.
-    * @param array|\Closure $data
-    */
-   public function setData($data) {
-      if($data instanceof \Closure) {
-         $data = $data->bindTo($this, $this);
-         $data($this);
-      } 
-      $this->_t_property_storage = (array) $data;
+   private static
+      $_objectsCount = 0;
+   
+   public function __construct() {
+      self::$_objectsCount++;
+      $this->_objectId = self::$_objectsCount;
    }
    
-   protected function _t_property_modify($offset, $value) {
-      if(isset($this->_readonly[$offset])) {
-         throw new \Exception("{$offset} is read-only; therefore, cannot be set.");
+   /**
+    * Get the class reflector
+    * @staticvar type $reflector
+    * @return ReflectionClass
+    */
+   public function classReflector() {
+      static $reflector = null;
+      if($reflector === null) {
+         $reflector = new ReflectionClass(get_called_class());
       }
       
-      $this->_modified[$offset] = $value;
-      return true;
+      return $reflector;
    }
-
+   
    /**
-    * Get element/property from the object
-    * @param string $key
-    * @param mixed $default if $key is not found, this value will be passed back
-    * @return mixed
-    */
-   public function get($key, $default = null) {
-      if($this->__isset($key))
-         return $this->__get($key);
-      else return $default;
-   }
-
-   /**
-    * Sets the $value for $key.  Optionally mark the key as $readonly.
-    * 
-    * If set to readonly, this cannot be undone for the lifetime of this object.
-    * @param string $key
-    * @param type $value
-    * @param bool $readonly
+    * Get the 
+    * @staticvar type $dir
     * @return type
-    * @throws \Exception
     */
-   public function set($key, $value, $readonly = false) {
-      $this->__set($key, $value);
-      if($readonly) $this->_readonly[$key] = true;
-   }
-
-   /**
-    * Checks to see if given $key exist in the data set
-    * @param string $key
-    * @return bool
-    */
-   public function exists($key) {
-      return $this->__isset($key);
-   }
-
-   /**
-    * Remove the given $key from the data
-    * @param string $key
-    */
-   public function remove($key) {
-      return $this->__unset($key);
-   }
-
-   /**
-    * Get an array of all modified keys.  Returns an empty array of nothing has changed since last instanciated.
-    * @access public
-    * @return array 
-   */
-   public function getModifiedKeys() {
-     return array_keys($this->_modified);
-   }
-
-   /**
-    * Get Iterators (implements IteratorAggregator).  Uses generator
-    */
-   public function getIterator() {
-      foreach($this->_t_property_storage as $value) {
-         yield $value;
+   public function classDir() {
+      static $dir = null;
+      if($dir === null) {
+         $dir = realpath(dirname($this->classReflector()->getFileName()));
       }
-   }      
+      
+      return $dir;
+   }
+   
+   /**
+    * Get the namespace
+    * @staticvar type $namespace
+    * @return type
+    */
+   public function classNamespace() {
+      static $namespace = null;
+      if($namespace === null) {
+         $namespace = $this->classReflector()->getNamespaceName();
+      }
+      
+      return $namespace;
+   }
+   
+   /**
+    * Create a new class
+    * @param type $class
+    * @param array $args
+    * @return \oxide\std\class
+    */
+   public static function create($class, array $args = null) {
+      $instance = null;
+      
+      if($args) {
+         $reflector = new \ReflectionClass($class);
+         $instance = $reflector->newInstanceArgs($args);
+      } else {
+         $instance = new $class();
+      }
+      
+      return $instance;
+   }
+   
+   public function __toString() {
+      return "[Object Id: " . $this->_objectId . "]";
+   }
 }

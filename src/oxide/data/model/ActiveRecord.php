@@ -4,9 +4,9 @@ use oxide\data;
 use oxide\data\sql;
 
 /**
- * simple data object model
- *
- * similar to active record model, model provides a single object to both retrive and manupulate
+ * Simple to active record model, 
+ * 
+ * model provides a single object to both retrive and manupulate
  * object from single database table.
  *
  * some rules and assumption of the database table design
@@ -14,10 +14,8 @@ use oxide\data\sql;
  * * table name is capitilized OR database is case insensative for table name, OR subclass defines table name
  * * default primary key field name is 'pk', however, this can be changed by subclassing
  * * default table name is the name of the sub class name, unless changed by subclass.
- *
- * provides very simplistic.
  */
-abstract class Cingle extends DataObject {
+abstract class ActiveRecord extends DataObject {
    protected static
       $_db = null;
 
@@ -43,10 +41,8 @@ abstract class Cingle extends DataObject {
     * @access public
     * @param type $param 
     */
-   public static function createFromParam($param) {
-      if(isset($param['pk'])) self::$_pk = $param['pk'];
-      if(isset($param['table'])) self::$_table = $param['table'];
-      if(isset($param['db'])) self::$_db = $param['db'];
+   public static function createUsingClouser(\Closure $call) {
+      
    }
 
    
@@ -319,17 +315,6 @@ abstract class Cingle extends DataObject {
          return $stmt;
       }
    }
-
-//
-//   public function serialize()
-//   {
-//
-//   }
-//
-//   public function unserialize($obj)
-//   {
-//
-//   }
 
    // hock functitons
 	protected static function onPreSelect(sql\SelectQuery $select) {}

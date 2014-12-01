@@ -1,42 +1,43 @@
 <?php
 use oxide\helper\Html;
-use oxide\helper\Template;
 
 ?>
 <!DOCTYPE html>
 <html lang="en-US">	
    <head>
 		<meta charset="utf-8" />
-      <link href="/template/v1/css/layout.css" type="text/css" rel="stylesheet"/>
-      <link href="/template/v1/css/script.css" type="text/css" rel="stylesheet"/>
-      <link href="/template/v1/css/template.css" type="text/css" rel="stylesheet"/>
-      <script type="text/javascript" src="/template/v1/script/app.js"></script>
-		<?php echo Html::head() ?>
+      <!-- using bootstrap framework -->
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+      <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>		
+         <?php echo Html::head() ?>
 	</head>
 	
-	<body>
+	<body class="container">
       <header>
-         <h1>Sample Website</h1>
-         <h2>Demonstrates phpoxide web application</h2>
+         <h1>Oxide framework <small>A modern PHP framework.</small></h1>
          <nav>
-            <ul>
-               <li><a href="/">Home</a></li>
-               <li><a href="/">About</a></li>
+            <ul class="nav nav-tabs">
+               <li role="presentation" class="active"><a href="/">Home</a></li>
+               <li role="presentation"><a href="/">Overview</a></li>
+               <li role="presentation"><a href="/">Quick start</a></li>
+               <li role="presentation"><a href="/">Architecture</a></li>
+               <li role="presentation"><a href="/">API</a></li>
+               <li role="presentation"><a href="/">Demo</a></li>
+               <li role="presentation"><a href="/">Download</a></li>
             </ul>
          </nav>
       </header>
-      <aside>
-         <p>
-				Welcome to sample phpoxide site.  This site demonstrate built-in modules at minimulistic fashion.
-			</p>
-      </aside>
       
       <div>
-         <?= Template::content() ?>
+         <?= $this->getPartial('content') ?>
       </div>
       
+      <br/>
       <footer>
+         <hr/>
          <p>copyright phpoxide @ <a href="http://phpoxide.googlecode.com">http://phpoxide.googlecode.com</a></p>
+         <p>Using <a href="http://getbootstrap.com">Bootstrap</a> CSS framework.</p>
       </footer>
 	</body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 namespace oxide\util;
-
+use oxide\std\Stringify;
 
 class ArrayString extends ArrayContainer implements Stringify
 {   

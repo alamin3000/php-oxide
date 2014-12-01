@@ -808,6 +808,13 @@ abstract class Ui {
       echo Html::end();
    }
    
+   /**
+    * Prints a a media component box
+    * @param type $src
+    * @param type $title
+    * @param type $description
+    * @return type
+    */
    public static function media($src, $title, $description = null) {
       Html::start('div', ['class' => 'media']);
       echo Html::tag('a', self::img($src, $title, null, Ui::IMG_MEDIA), ['class' => 'pull-left']);
@@ -818,6 +825,14 @@ abstract class Ui {
       return Html::end();
    }
    
+   /**
+    * Prints alert message box with given $message
+    * 
+    * @param string $message
+    * @param int $style
+    * @param boolean $allowdismiss
+    * @return string
+    */
    public static function alert($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
       $cls = 'alert';
       $cls .= ' ' . self::_class_style($style, 'alert');

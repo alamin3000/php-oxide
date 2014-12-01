@@ -4,6 +4,11 @@ use oxide\application\View;
 use oxide\helper\Html;
 
 abstract class Template {
+   
+   const 
+      CONTENT = 'content';
+
+
    public static
       $title = null,
       $content = null,

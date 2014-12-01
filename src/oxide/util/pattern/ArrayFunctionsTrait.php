@@ -4,29 +4,6 @@ namespace oxide\util\pattern;
 trait ArrayFunctionsTrait {
    use ArrayAccessTrait;
    
-   /**
-    * Get value by reference
-    * 
-    * @return mixed
-    */
-   public function &get($offset, $default = null) {
-      if(isset($this[$offset])) {
-         return $this->_t_array_storage[$offset];
-      } else {
-         return $default;
-      }
-   }
-   
-   /**
-    * set values by reference
-    * 
-    * @param mixed $offset
-    * @param mixed $value
-    */
-   public function set($offset, &$value) {
-      $this->_t_array_storage[$offset] = $value;      
-   }
-   
    
    /**
     * Add $content at the end of the array

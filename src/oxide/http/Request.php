@@ -211,7 +211,7 @@ class Request {
 	 * @return mixed
 	 */
 	public function getPost($key = null, $default = null) {
-      if(!$key) return $this->_posts;
+      if($key === null) return $this->_posts;
       if(isset($this->_posts[$key])) return $this->_post[$key];
       return $default;
 	}
@@ -226,31 +226,26 @@ class Request {
 	 * @return string
 	 */
 	public function getQuery($key = null, $default = null) {
-      if(!$key) return $this->_queries;
+      if($key === null) return $this->_queries;
       if(isset($this->_queries[$key])) return $this->_queries[$key];
       return $default;
 	}
    
+   public function setParams(array $params) {
+      $this->_vars = $params;
+   }
+   
    /**
-	 * convinent get method that checks for both get and post array
-	 * 
-	 * key will be scanned through $_GET, $_POST in order.
-	 * @return 
-	 * @param object $key
-	 * @param object $default value to return if not found
-	 */	
-	public function get($key, $default = null) {
-      $val = $this->getPost($key, NULL);
-      if($val === NULL) {
-         $val = $this->getQuery($key, NULL);
-      }
-      
-      if($val === NULL) {
-         return $default;
-      } else {
-         return $val;
-      }
-	}
+    * Get
+    * @param type $index
+    * @param type $default
+    * @return type
+    */
+   public function getParam($index = null, $default = null) {
+      if($index === null) return $this->_vars;
+      if(isset($this->_vars[$index])) return $this->_vars[$index];
+      return $default;
+   }
    
    /**
     * Get input value from given $type
