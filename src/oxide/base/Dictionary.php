@@ -8,8 +8,8 @@
  * @license http://URL name 
  */
 
-namespace oxide\std;
-use oxide\util\pattern\ArrayFunctionsTrait;
+namespace oxide\base;
+use oxide\base\pattern\ArrayAccessTrait;
 
 /**
  * Dictionary
@@ -17,16 +17,26 @@ use oxide\util\pattern\ArrayFunctionsTrait;
  * Standard dictionary object
  * Provides assoicative array interface for storing key/value data
  */
-class Dictionary implements \ArrayAccess, \Countable, \IteratorAggregate {
-   use ArrayFunctionsTrait;
+class Dictionary 
+   implements \ArrayAccess, \Countable, \IteratorAggregate {
+   use ArrayAccessTrait;
    
+   /**
+    * Construct the dictionary with given $data, if any
+    * 
+    * @param mixed $data
+    */
    public function __construct($data = null) {
-      
-      
-      if($data) $this->setData ($data);
+      if($data) $this->setArray ($data);
    }
    
-   public function setData($data) {
+   /**
+    * Overrides to add Dictionary $data param support
+    * 
+    * @param \oxide\base\Dictionary $data
+    * @throws \InvalidArgumentException
+    */
+   public function setArray($data) {
       if(is_array($data)) {
          $this->_t_array_storage = $data;
       } else if($data instanceof Dictionary) {
@@ -36,6 +46,10 @@ class Dictionary implements \ArrayAccess, \Countable, \IteratorAggregate {
       }
    }
    
+   /**
+    * Get the iterator
+    * Implementing
+    */
    public function getIterator() {
       foreach ($this->_t_array_storage as $item) {
           yield $item;

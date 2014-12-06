@@ -30,28 +30,6 @@ class Container
       }
    }
    
-   
-   public function get($obj, $key = null)
-   {
-//            if(empty($this->_filters[$name])) return;
-//      
-//      if($instanceof) {
-//         for($i = 0; $i < count($this->_filters[$name]); $i++) {
-//            $filter = $this->_filters[$name][$i];
-//            if($filter instanceof $instanceof) unset($this->_filters[$name][$i]);   
-//         }
-//         
-//      } else {
-//         unset($this->_filters[$name]);
-//      }
-
-   }
-   
-   public function remeve($obj, $key = null)
-   {
-      
-   }
-   
    public function toArray() {
       return $this->_chain;
    }

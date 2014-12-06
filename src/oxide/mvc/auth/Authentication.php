@@ -1,9 +1,9 @@
 <?php
-namespace oxide\controller\auth;
+namespace oxide\mvc\auth;
 use Zend\Authentication\AuthenticationService;
 
 class Authentication extends AuthenticationService {
-   use \oxide\util\pattern\DefaultInstanceTrait;
+   use \oxide\base\pattern\DefaultInstanceTrait;
    
    /**
     * Check if authentication storage has been set or not
@@ -20,7 +20,7 @@ class Authentication extends AuthenticationService {
     */
    public function getStorage() {
        if (null === $this->storage) {
-           $this->setStorage(new AuthSessionStorage());
+           $this->setStorage(new SessionStorage());
        }
 
        return $this->storage;

@@ -9,7 +9,7 @@
  */
 
 namespace oxide\ui;
-use oxide\std\Dictionary;
+use oxide\base\Dictionary;
 
 class Page implements Renderer {
    public
@@ -17,7 +17,6 @@ class Page implements Renderer {
       $title = null;
            
    protected 
-      $_scopeObject = null,
       $_cache = null,
       $_partials = [],
       $_data = null,
@@ -108,13 +107,6 @@ class Page implements Renderer {
 		return $this->_script;
 	}
    
-   public function setScriptObjectScope($object) {
-      
-   }
-   
-   public function getScriptObjectScope() {
-      
-   }
 
     /**
     * Executes the script in private scope

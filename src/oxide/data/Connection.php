@@ -20,7 +20,7 @@ use oxide\util\Exception;
  */
 class Connection
 {
-   use \oxide\util\pattern\DefaultInstanceTrait {
+   use \oxide\base\pattern\DefaultInstanceTrait {
       defaultInstance as public sharedInstance;
    }
    

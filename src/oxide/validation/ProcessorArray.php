@@ -1,9 +1,8 @@
 <?php
 namespace oxide\validation;
-use oxide\util\ArrayContainer;
+use oxide\base\Container;
 
-
-class ProcessorArray extends ArrayContainer implements Processor
+class ProcessorArray extends Container implements Processor
 {
    public 
            $breakOnFirstError = false;

@@ -4,14 +4,16 @@ namespace oxide\helper;
 /**
  * 
  */
-abstract class Url {	
+class Url {	
+   use \oxide\base\pattern\SingletonTrait;
+   
    /**
     * Get GET
     * @param type $key
     * @param type $default
     * @return type
     */
-   public static function query($key = null, $default = null) {
+   public function query($key = null, $default = null) {
       return App::context()->getRequest()->getQuery($key, $default);
    }
    
@@ -21,7 +23,7 @@ abstract class Url {
     * @param type $default
     * @return type
     */
-   public static function post($key = null, $default = null) {
+   public function post($key = null, $default = null) {
       return App::context()->getRequest()->getPost($key, $default);
    }
    
@@ -34,7 +36,7 @@ abstract class Url {
     * 
     * @return string
     */
-   public static function serverUrl()
+   public function serverUrl()
    {
 		$request = App::context()->getRequest();
       return $request->getAbsoluteServerURL();
@@ -44,7 +46,7 @@ abstract class Url {
     * 
     * @return string
     */
-   public static function base()
+   public function base()
    {
       $request = App::context()->getRequest();
       return $request->getUriComponents('base');
@@ -57,7 +59,7 @@ abstract class Url {
     * @param type $from
     * @param type $to
     */
-   public static function relative($from, $to)
+   public function relative($from, $to)
    {
       // some compatibility fixes for Windows paths
       $from = is_dir($from) ? rtrim($from, '\/') . '/' : $from;
@@ -99,8 +101,7 @@ abstract class Url {
     * @param mixed $remove
     * @return string
     */
-	public static function url($add = null, $remove = null)
-	{
+	public function url($add = null, $remove = null) {
 		$request = App::context()->getRequest();
 		$path = trim($request->getPath(), '/');
 		$query = $request->getQueryString($add, $remove);
@@ -119,8 +120,7 @@ abstract class Url {
     * Includes both server and path information.  Does not include Query param
     * @return type
     */
-   public static function current()
-   {
+   public function current() {
 		$request = App::context()->getRequest();
       $abs = $request->getAbsoluteURL();
       
@@ -131,8 +131,7 @@ abstract class Url {
     * 
     * @return \oxide\http\Route
     */
-   public static function route()
-   {
+   public function route() {
       return App::context()->route;
    }
 
@@ -142,8 +141,7 @@ abstract class Url {
     * 
     * @return string
     */
-   public static function module()
-   {
+   public function module() {
       return self::route()->module;
    }
    
@@ -152,8 +150,7 @@ abstract class Url {
     * 
     * @return string
     */
-   public static function controller()
-   {
+   public function controller() {
       return self::route()->controller;
    }
    
@@ -162,8 +159,7 @@ abstract class Url {
     * Uses route object for information
     * @return string
     */
-   public static function action()
-   {
+   public function action() {
       return self::route()->action;
    }
    
@@ -172,8 +168,7 @@ abstract class Url {
     * @param type $index
     * @return type
     */
-   public static function param($index = null)
-   {
+   public function param($index = null) {
       if($index == null) {
          return self::route()->params;
       } else {
@@ -192,8 +187,7 @@ abstract class Url {
     * @param int $index
     * @return string
     */
-   public static function path($index = null)
-   {
+   public function path($index = null) {
       $request = App::context()->getRequest();
       if($index) 
          return $request->getPathAtIndex($index);
@@ -209,8 +203,7 @@ abstract class Url {
     * will return /module
     * @return string
     */
-   public static function moduleUrl()
-   {
+   public function moduleUrl() {
       $route = self::route();
 		return "/{$route->module}";
    }
@@ -222,8 +215,7 @@ abstract class Url {
     * will return /module/controller
     * @return string
     */
-   public static function controllerUrl()
-   {
+   public function controllerUrl() {
       $route = self::route();
 		return "/{$route->module}/{$route->controller}";
    }
@@ -235,8 +227,7 @@ abstract class Url {
     * will return /module/controller/action
     * @return string
     */
-	public static function actionUrl()
-	{
+	public function actionUrl() {
       $route = self::route();
 		return "/{$route->module}/{$route->controller}/{$route->action}";
 	}

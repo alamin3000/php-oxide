@@ -1,13 +1,16 @@
 <?php
 
 namespace oxide\mvc;
+use oxide\base\AbstractClass;
 use oxide\http\Command;
+use oxide\http\CommandFactory;
 use oxide\http\Route;
 use oxide\http\Context;
+use oxide\mvc\auth\Authentication;
+use oxide\mvc\auth\AccessValidator;
 use oxide\mvc\ViewManager;
-use oxide\helper\App;
-use oxide\helper\Util;
-use oxide\http\CommandFactory;
+use oxide\util\EventNotifier;
+use oxide\helper\_util;
 
 /**
  * Action Controller
@@ -21,38 +24,21 @@ use oxide\http\CommandFactory;
  * @package oxide
  * @subpackage application
  */
-abstract class Controller implements Command {
+abstract class Controller 
+   extends AbstractClass 
+   implements Command {
+   
 	protected                     
       /**
        * @var Route
        */
       $_route = null,
            
-           
       /**
        * Http Context object
        * @var Context
        */
       $_context = null,
-           
-      /**
-       * 
-       */
-           
-      $_acceptedParamDef = [],     
-           
-           
-      /**
-       * Prefix to be used to create action method
-       * @var string
-       */
-      $_actionMethodPrefix = 'execute',
-           
-      /**
-       * Suffix to be used to create action method
-       * @var string
-       */
-      $_actionMethodSuffix = '',
            
       /**
        * Default action.  If no action provided, this action name will be used.
@@ -133,7 +119,7 @@ abstract class Controller implements Command {
       $params = $this->_route->params;
       if($index === null) return $params;
       if(is_int($index)) {
-         return Util::value($params, $index, $default);
+         return _util::value($params, $index, $default);
       } else {
          $keypos = array_search($index, $params);
          if($keypos !== FALSE) {
@@ -154,7 +140,6 @@ abstract class Controller implements Command {
 	 */
 	final public function execute(Context $context) {
       $this->_context = $context;
-      
       try {
          $this->onInit($context); // call initializer
          $route = $this->_route;
@@ -177,8 +162,9 @@ abstract class Controller implements Command {
 	 */
 	public function getViewManager() {
       if(!ViewManager::hasDefaultInstance()) {
+         $config = $this->_context->get('config');
          $route = $this->_route;
-         $templates = App::config('templates', null, true);
+         $templates = _util::value($config, 'templates', null, true);
          $viewController = new ViewManager($route, $templates);
          ViewManager::setDefaultInstance($viewController);
       }
@@ -186,6 +172,16 @@ abstract class Controller implements Command {
       return ViewManager::defaultInstance();
 	}
    
+   /**
+    * Generate action method name
+    * 
+    * Override this for different name
+    * @param string $action
+    * @return string
+    */
+   protected function generateActionMethod($action) {
+      return 'execute' . $action;
+   }
    
 	/**
 	 * forward to given $action immediately
@@ -209,7 +205,7 @@ abstract class Controller implements Command {
          throw new \BadMethodCallException("Invalid method: ".htmlentities($action_filtered));
       }
       
-		$method = $this->_actionMethodPrefix . $action_filtered . $this->_actionMethodSuffix;
+		$method = $this->generateActionMethod($action_filtered);
       
       // attempt to exectue http method action if avalable
       // store view if avalable
@@ -224,10 +220,46 @@ abstract class Controller implements Command {
 	}
    
    /**
+    * Subclassing controller must/should call parent::onInit if overriding
     * 
     * @param Context $context
     */
-   protected function onInit(Context $context) {}
+   protected function onInit(Context $context) {
+      $config = $context->get('config');
+      $context->set('database', function() use ($config) {
+         if(!Connection::hasDefaultInstance()) {
+            $dbconfig = (array) $config['database'];
+            $dboptions = array(
+                  \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
+                  'FETCH_MODE'			=> \PDO::FETCH_ASSOC
+                  );
+            $conn = new Connection($dbconfig, $dboptions);
+            Connection::setDefaultInstance($conn);
+         }
+
+         return Connection::defaultInstance();
+      });
+      
+      
+      $auth = Authentication::defaultInstance();
+      $route = $this->_route;
+      $identity = $auth->getIdentity();
+      $roles = _util::value($config, 'roles', null, true);
+      $rules = _util::value($config, 'rules', null, true);
+      $validator = new AccessValidator($route, $roles, $rules);
+      $notifier = EventNotifier::defaultInstance();
+      $result = null;
+      $validator->validate($identity, $result);      
+      if(!$result->isValid()) {
+         $notifier->notify('ControllerAccessDenied', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
+         $error_string = implode('. ', $result->getErrors());
+         throw new AuthAccessException($error_string);
+      } else {
+         $notifier->notify('ControllerAccessGranted', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
+      }
+      
+      $context->set('auth', $auth);
+   }
    
    /**
     * 
@@ -266,6 +298,8 @@ abstract class Controller implements Command {
          // no view is provided
          // we will use default view
          $data = $this->getViewData();
+         $data->setView($view);
+         $data->share('context', $context);
          $view = $viewManager->createView($data);
       }
       

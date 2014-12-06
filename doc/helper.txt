@@ -1,0 +1,21 @@
+Helper classes
+
+
+- In oxide framework, there is no such thing as View helpers, Action helpers.  There is just helpers
+- Helpers are there to help any component/layer of the application
+- Helpers utilizes Utility Pattern so they can't be instanciated, and all of the methods are static
+- oxide built in helpers are stored into oxide\helper namespace
+- To make the helpers special classes, all oxide helpers are stated with _ underscore
+- Helpers are stateless, perform same task regarding of the context, only based on the information provided to the method
+- View can access them using standard 'use' statement ie use oxide\helper\_html
+- View can also access these by using ViewData's helper method feature ie $data::helper('html')
+
+* It doesn't make any sense to make these object into standard class, instanciate them and pass them along.  Or even make them into singleton
+* It doesn't matter if static methods are harder to test.  That's not the problem with language feature or development.
+    That means we need to find/make better testing tools.
+* Helpers are still organized into logical classes
+* only limited sets of helpers are provided
+
++ for any other 'helper' that require instance, is called - services
++ services are any standard object
++ they can be attached to the ViewData model which provides lazy loading

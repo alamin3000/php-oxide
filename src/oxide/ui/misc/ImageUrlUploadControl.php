@@ -7,7 +7,7 @@ use oxide\util\ArrayString;
 use oxide\validation\file\ImageUploadValidation;
 use oxide\validation\string\ReplaceFilterer;
 use oxide\validation\FilterProcessor;
-use oxide\helper\Util;
+use oxide\helper\_util;
 
 /**
  * ImageUrlUploadControl
@@ -66,7 +66,7 @@ class ImageUrlUploadControl extends InputControl {
          $validation->addValidationComponent(new ImageUploadValidation($options), $imgcontrol->getName());
 
          // make the uploaded url accessable from the web
-         $replacefilter = new ReplaceFilterer(Util::value($options, 'document_root', null,  true), '');
+         $replacefilter = new ReplaceFilterer(_util::value($options, 'document_root', null,  true), '');
          $validation->getProcessorContainer()->addProcessor(
                  new FilterProcessor($replacefilter), $imgcontrol->getName());
 

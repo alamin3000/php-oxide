@@ -1,5 +1,5 @@
 <?php
-namespace oxide\util\pattern;
+namespace oxide\base\pattern;
 
 /**
  * Trait the provides default instance functionality

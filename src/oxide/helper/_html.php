@@ -28,7 +28,7 @@ namespace oxide\helper;
  * </pre>
  * </code>
  */
-abstract class Html {
+abstract class _html {
    public static
       $voidTags =  [
           'area' => true,'base' => true, 'br' => true, 'col' => true, 'command' => true, 
@@ -49,26 +49,6 @@ abstract class Html {
           'time' => true, 'datetime-local' => true, 'button' => true],
            
       $controls = ['input', 'textarea', 'select', 'button'];
-   
-   protected static
-      $renderers = [];
-   
-	private static
-		$metas = [],
-		$scripts = array(),
-		$links = array(),
-		$title = null,
-      $styles = array(),
-      $_tagStack = array();
-   
-   const
-      DEFAULT_RENDERER_KEY = '_',
-      LIST_VALUE = 1,
-      LIST_VALUE_LINK = 2,
-      LIST_VALUE_CONCAT = 3,
-      LIST_VALUE_IGNORE = 0,
-      LIST_KEY = 0,
-      LIST_SMART_LINK = 5;
 
 	/**
 	 * generate a html tag string based on given information
@@ -90,8 +70,7 @@ abstract class Html {
 	 * @param string $inner
 	 * @param array $attributes
 	 */
-	public static function tag($tag, $inner = null, $attributes = null)
-	{
+	public static function tag($tag, $inner = null, array $attributes = null) {
 		// create the attribute string from the $attributes
       $attribString = self::attributeString($attributes);
       if(is_array($tag)) {
@@ -110,6 +89,7 @@ abstract class Html {
 	}
    
    /**
+    * Make any content into a string
     * 
     * @param type $content
     * @return string
@@ -136,115 +116,13 @@ abstract class Html {
     * @access public
     * @param type $tags 
     */
-	public static function tags($tags)
-	{
+	public static function tags(array $tags) {
       $buffer = '';
 		foreach($tags as $tag) {
+         if(count($tag) !== 3) throw new \Exception('Tag array is malformed');
 			$buffer .= self::tag($tag[0], $tag[1], $tag[2]);
 		}
       return $buffer;
-	}
-
-   
-   /** 
-    *
-    * @access public 
-    */
-	/**
-	 * adds a meta name/content value pair
-	 * 
-	 * @staticvar array $metas
-	 * @param string $name
-	 * @param string $content
-	 */
-	public static function meta($name = null, $content = null, $name_key = 'name', $content_key = 'content')
-	{
-		if($name === null) {
-			return self::tags(self::$metas);
-		}
-
-		self::$metas[] = ['meta', null, [$name_key => $name, $content_key => $content]];
-	}
-
-   
-   /**
-    *
-    * @access public 
-    */
-	/**
-	 * sets the HTTP-EQUIV in the meta tag
-	 * 
-	 * @staticvar array $https
-	 * @param string $name
-	 * @param string $content
-	 * @return array
-	 */
-	public static function http($name = null, $content = null)
-	{
-		self::$metas[] = array('meta', null, array('http-equiv' => $name, 'content' => $content));
-	}
-   
-
-	/**
-	 * print/set current title for html title tag
-	 *
-	 * if $title is provided, then $title will be saved/stored
-	 * if $title is null, then it will return the current title string
-	 * @param string $str
-	 * @return string
-	 */
-	public static function title($str = null)
-	{
-		if($str) {
-         self::$title = $str;
-		}
-
-      return self::tag('title', self::$title);		
-	}
-
-
-   /**
-    * add or print css links for html HEAD tag
-    *
-    * if $link is given, then it will add the link to the storage
-    * if $link is empty, then it will print the links immidately
-    * @staticvar array $files
-    * @param string $link
-    * @param string $media
-    */
-   public static function link($link = null, $rel = 'stylesheet', $attribs = null)
-	{
-		if($link === null) {
-			return self::tags(self::$links);
-		}
-		
-		if(!$attribs) $attribs = array();
-		$attribs['href'] = $link;
-		$attribs['rel'] = $rel;
-		
-		self::$links[] = array('link', null, $attribs);
-	}
-
-   
-
-   /**
-    * add or print script tags
-    *
-    * if $src is given, then it will store the javascript link
-    * if $src is NOT given, then it will print all current javascript SCRIPT tags immediately
-    * @staticvar array $files
-    * @param string $src
-    * @param string $lang
-    */
-	public static function script($src = null, $snippet = null, $attribs = null) {      
-		if($src === null && $snippet == null) {
-			return self::tags(self::$scripts);
-		}
-
-		if(!$attribs) $attribs = array();
-      if($src) $attribs['src'] = $src;
-
-		self::$scripts[] = array('script', $snippet, $attribs);
 	}
 
    /**
@@ -269,9 +147,6 @@ abstract class Html {
    }
 	
 
-   
-   
-   
 	/**
     * creates HTML A tag
     *
@@ -316,34 +191,65 @@ abstract class Html {
       return self::_list($list, 'ol', $attrib, $opt);
    }
    
-   public static function label($text, $for = null, $attribs = null) {
+   /**
+    * Renders a Label tag
+    * 
+    * @param string $text
+    * @param string $for
+    * @param array $attribs
+    * @return string
+    */
+   public static function label($text, $for = null, array $attribs = null) {
       if(!$attribs) $attribs = [];
       if($for) $attribs['for'] = $for;
       return self::tag('label', $text, $attribs);
    }
    
-   public static function input($type, $name, $value = null, $label = null, $attribs = null) {
+   /**
+    * Renders a Input tag
+    * 
+    * @param type $type
+    * @param type $name
+    * @param type $value
+    * @param type $attribs
+    * @return type
+    */
+   public static function input($type, $name, $value = null, $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       $attribs['type'] = $type;
       if($value) $attribs['value'] = $value;
-      if($label) $label = self::label ($label, $name);
-      return $label.self::tag('input', null,  $attribs);
+      return self::tag('input', null,  $attribs);
    }
    
-   public static function button($type, $name, $value = null, $label = null, $attribs = null) {
+   /**
+    * Renderds a Button tag
+    * @param type $type
+    * @param type $name
+    * @param type $value
+    * @param type $attribs
+    * @return type
+    */
+   public static function button($type, $name, $value = null, $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       $attribs['type'] = $type;
       if($value) $attribs['value'] = $value;
-      return self::tag('button', $label,  $attribs);
+      return self::tag('button',  $attribs);
 	}
    
-   public static function textarea($name, $value = null,  $label = null, $attribs = null) {
+   /**
+    * Renders a textarea tag
+    * 
+    * @param type $name
+    * @param type $value
+    * @param array $attribs
+    * @return type
+    */
+   public static function textarea($name, $value = null,  $attribs = null) {
       if(!$attribs) $attribs = [];
       $attrib['name'] = $name;
-      if($label) $label = self::label ($label, $name);
-      return $label . self::tag('textarea', $value, $attrib);
+      return self::tag('textarea', $value, $attrib);
    }
    
    /**
@@ -356,13 +262,9 @@ abstract class Html {
     * @param array $attrib
     * @return string
     */
-   public static function select($name, $value = null, $label = null, $options = [], $attribs = null) {
+   public static function select($name, $value = null, $options = [], $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
-      
-      if($label) {
-         $label = self::label($label, $name);
-      }
       
       self::start('select', $attribs);
       foreach($options as $key => $val) {
@@ -377,7 +279,7 @@ abstract class Html {
          $opt_attrib['value'] = $val;
          echo self::tag('option', $text, $opt_attrib);
       }
-      return $label . self::end();
+      return self::end();
    }
    
    
@@ -391,7 +293,6 @@ abstract class Html {
     * @param int $opt
     * @return string
     */
-   
    private static function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE)
    {
       if(!$list) {return;}
@@ -523,8 +424,7 @@ abstract class Html {
     * @param string $tag name to start
     * @param array $attrib attributes for the tag
     */
-   public static function start($tag = '', $attrib = null) {
-      self::$_tagStack[] = $tag;
+   public static function start($tag = null, $attrib = null) {
       ob_start();
       if($tag)
          printf("<%s%s>", $tag, self::attributeString($attrib));
@@ -535,8 +435,7 @@ abstract class Html {
 	 * ends the last tag opened using start() method
 	 * @see start()
 	 */
-   public static function end() {
-      $tag = array_pop(self::$_tagStack);
+   public static function end($tag = null) {
       if($tag)
          printf("</%s>", $tag);
       return ob_get_clean();
@@ -552,6 +451,12 @@ abstract class Html {
       return htmlentities($str, ENT_QUOTES);
    }
    
+   /**
+    * 
+    * @param type $str
+    * @param type $encode
+    * @return type
+    */
    public static function encode($str, $encode = 'utf-8') {
       return utf8_encode(htmlentities($str,ENT_QUOTES, $encode));
    }   

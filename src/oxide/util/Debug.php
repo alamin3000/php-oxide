@@ -8,13 +8,18 @@
  * @license http://URL name 
  */
 
-namespace oxide\helper;
+namespace oxide\util;
 
 abstract class Debug {
    public 
       $enabled = false;
    
    
+   /**
+    * Log a string 
+    * 
+    * @param string $string
+    */
    public static function log($string) {
       $trace = debug_backtrace();
       if(isset($trace[1]['class'])) {
@@ -28,9 +33,14 @@ abstract class Debug {
       
       
       echo "<pre>[{$caller}:{$line}] {$string}</pre>";
-              
    }
    
+   /**
+    * Dumb a variable
+    * 
+    * @param mixed $var
+    * @param bool $returnString
+    */
    public static function dump($var, $returnString = false) {
       $trace = debug_backtrace();
       echo "<pre>";      

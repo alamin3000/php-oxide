@@ -5,6 +5,7 @@ use oxide\helper\Template;
 use oxide\http\Route;
 use oxide\http\Response;
 use oxide\ui\Page;
+use oxide\ui\MasterPage;
 
 /**
  * View Controller
@@ -17,7 +18,7 @@ use oxide\ui\Page;
  * @todo throw some events in global scope.
  */
 class ViewManager {
-   use \oxide\util\pattern\DefaultInstanceTrait;
+   use \oxide\base\pattern\DefaultInstanceTrait;
    
    public
       $disableLayout = false;
@@ -189,12 +190,12 @@ class ViewManager {
    /**
     * returns the main layout view
     * 
-    * @return Page 
+    * @return MasterPage 
     */
    public function getLayoutView() {
       if ($this->_layoutView == null) {
          $data = new ViewData();
-         $page = $this->createPage($this->getLayoutScript(),$data);
+         $page = new MasterPage($this->getLayoutScript(), $data);
          $view = new View($page);
          $this->_layoutView = $view;
          $data->setView($view);
@@ -215,11 +216,10 @@ class ViewManager {
       } else {
          $layoutView = $this->getLayoutView();
          $renderingView = $layoutView;
-         $layoutView->addPartial($view, Template::CONTENT);
-         Template::content($view);
+         $layoutView->addPartial($view, $layoutView->contentKey);
       }
             
       $response->setContentType($renderingView->getContentType(), $renderingView->getEncoding());
-      $response->addBody($renderingView->render(), Template::CONTENT);
+      $response->addBody($renderingView->render(), $layoutView->contentKey);
    }
 }

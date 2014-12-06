@@ -75,8 +75,9 @@ class Mailer_message {
  * @package oxide
  * @subpackage util
  */
-abstract class Mailer
-{   
+class Mailer {   
+   use \oxide\base\pattern\SingletonTrait;
+   
    const
       TO = 'To',
       REPLY_TO = 'Reply-To',
@@ -103,8 +104,7 @@ abstract class Mailer
     * @param string $message
     * @param mixed $attach
     */
-   public static function send($from, $tos, $subject, $message, $smtp_auth = null, $attach = null)
-   {      
+   public function send($from, $tos, $subject, $message, $smtp_auth = null, $attach = null) {      
       $text = new MimePart(strip_tags($message));
       $text->type = 'text/plain';
       
@@ -172,8 +172,7 @@ abstract class Mailer
     * @param type $attach
     * @return type
     */
-   public static function mail($from, $tos, $subject, $html = null, $plain = null)
-   {
+   public function mail($from, $tos, $subject, $html = null, $plain = null) {
       $boundary = md5(time());
       $plain_text = $plain;
       $html_text = $html;
@@ -205,8 +204,7 @@ abstract class Mailer
       return mail($to,$subject,implode("\r\n",$body),implode("\r\n",$headers));
    }
    
-   protected static function additionalToHeaders($tos, &$headers)
-   {
+   protected function additionalToHeaders($tos, &$headers) {
       if(!is_array($tos)) {
          return $tos;
       }
@@ -221,8 +219,7 @@ abstract class Mailer
    }
 
 
-   protected static function generateToAddressString($tos)
-   {
+   protected function generateToAddressString($tos) {
       $toarray = array();
       
       if(!is_array($tos)) {

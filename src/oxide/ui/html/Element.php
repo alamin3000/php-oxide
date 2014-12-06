@@ -1,9 +1,11 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
+use oxide\base\Stringify;
 use oxide\util\ArrayString;
-use oxide\helper\Html;
-use oxide\util\pattern\ArrayFunctionsTrait;
+use oxide\base\pattern\ArrayAccessTrait;
+use oxide\base\pattern\ArrayFunctionsTrait;
+use oxide\helper\_html;
 
 /**
  * Html Element
@@ -12,8 +14,10 @@ use oxide\util\pattern\ArrayFunctionsTrait;
  * @package oxide
  * @subpackage ui
  */
-class Element extends Tag implements \ArrayAccess, \Countable {   
-   use ArrayFunctionsTrait;
+class Element 
+   extends Tag 
+   implements \ArrayAccess, \Countable, Stringify {   
+   use ArrayAccessTrait, ArrayFunctionsTrait;
    
 	protected
       $_cache = null,
@@ -205,7 +209,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
             }
          }
          
-         $buffer .= Html::toString($inner);
+         $buffer .= _html::toString($inner);
       }
       
       return $buffer;
@@ -219,7 +223,7 @@ class Element extends Tag implements \ArrayAccess, \Countable {
     */
    public static function renderTag(Tag $tag, $content = null) {
       return $tag->renderOpenTag() .
-         Html::toString($content).
+         _html::toString($content).
          $tag->renderCloseTag();     
    }
    

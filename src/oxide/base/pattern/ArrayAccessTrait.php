@@ -1,5 +1,5 @@
 <?php
-namespace oxide\util\pattern;
+namespace oxide\base\pattern;
 
 /**
  * Common Array storage/access functionalities
@@ -10,28 +10,20 @@ namespace oxide\util\pattern;
  * In order to take advantages of these, the class using this trait must implement 
  * these interfaces in declaration
  */
-trait ArrayAccessTrait
-{
+trait ArrayAccessTrait {
    protected 
-           $_t_array_storage = [];
+      $_t_array_storage = [];
    
-   /**
-    * 
-    * @param mixed $offset
-    * @throws \Exception
-    */
-   protected function _t_array_modify($offset, $value) {
-      return true;
-   }
-
    public function toArray() {
       return $this->_t_array_storage;
    }
    
-   public function setArray(array $arr) {
-      if($this->_t_array_modify(null, $arr)) {
-         $this->_t_array_storage = $arr;
-      }
+   public function setArray($arr) {
+      $this->_t_array_storage = $arr;
+   }
+   
+   public function &arrayRef() {
+      return $this->_t_array_storage;
    }
 
    /**
@@ -71,8 +63,6 @@ trait ArrayAccessTrait
     * @param mixed $value
     */
    public function offsetSet($offset , $value )  {
-      if(!$this->_t_array_modify($offset, $value)) return;      
-      
       if (is_null($offset)) {
           $this->_t_array_storage[] = $value;
       } else {
@@ -87,7 +77,6 @@ trait ArrayAccessTrait
     * @param mixed $offset
     */
    public function offsetUnset($offset) {
-      if(!$this->_t_array_modify($offset, null)) return;
       unset($this->_t_array_storage[$offset]);
    }
    
@@ -98,7 +87,7 @@ trait ArrayAccessTrait
     * Class using this trait should implement Countable in the declaration
     * @return int
     */
-   public function count() {
-      return count($this->_t_array_storage);
+   public function count($mode = 'COUNT_NORMAL') {
+      return count($this->_t_array_storage, $mode);
    }
 }

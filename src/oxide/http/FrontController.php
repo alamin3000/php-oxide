@@ -4,7 +4,7 @@ use oxide\http\Context;
 use oxide\http\Router;
 use oxide\http\Dispatcher;
 use oxide\util\EventNotifier;
-use oxide\util\pattern\DefaultInstanceTrait;
+use oxide\base\pattern\DefaultInstanceTrait;
 /**
  * Front Controller.  
  * 

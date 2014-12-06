@@ -2,7 +2,9 @@
 namespace oxide\helper;
 use oxide\http\Session;
 
-abstract class Flash {
+class Flash {
+   use \oxide\base\pattern\SingletonTrait;
+   
    const
       ERROR		= 'error',
       WARNING	= 'warning',
@@ -25,7 +27,7 @@ abstract class Flash {
     * @param type $namespace
     * @return type 
     */
-   public static function get($namespace = null) {
+   public function get($namespace = null) {
 		$session = Session::getInstance();
 		$key = self::$_key;
 		if($namespace) {
@@ -48,7 +50,7 @@ abstract class Flash {
     * @param type $namespace
     * @param type $type 
     */
-	public static function set($value, $namespace = null, $type = self::INFO) {
+	public function set($value, $namespace = null, $type = self::INFO) {
 		$session = Session::getInstance();
 		$key = self::$_key;
 		if($namespace) {
@@ -66,7 +68,7 @@ abstract class Flash {
     * @param type $namespace
     * @return \Messenger_message 
     */
-   public static function message($message, $type = self::ERROR,$namespace = null) {
+   public function message($message, $type = self::ERROR,$namespace = null) {
       $obj = new Messenger_message();
       $obj->message = $message;
 		$obj->namespace = $namespace;
@@ -80,7 +82,7 @@ abstract class Flash {
     * @param type $namespace
     * @return type
     */
-   public static function render($namespace = null) {
+   public function render($namespace = null) {
       $message = self::get($namespace);
       if(!$message) return;
       $class = 'template-' . $message->type;

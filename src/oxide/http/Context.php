@@ -1,6 +1,6 @@
 <?php
 namespace oxide\http;
-use oxide\std\Container;
+use oxide\base\Container;
 
 /**
  * Context class
@@ -11,7 +11,7 @@ use oxide\std\Container;
  * @subpackage http
  */
 class Context extends Container {
-   use \oxide\util\pattern\DefaultInstanceTrait;
+   use \oxide\base\pattern\DefaultInstanceTrait;
    
    /**
     */

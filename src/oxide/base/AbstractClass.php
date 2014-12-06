@@ -1,21 +1,16 @@
 <?php
-namespace oxide\std;
+namespace oxide\base;
+use ReflectionClass;
+
 
 /**
- * A Generic object
- * Supports readonly properties and modification tracking
+ * AbstractClass
+ * 
+ * 
+ * @package oxide
+ * @subpackage base
  */
-class Object implements Stringify {
-   private
-      $_objectId = 0;
-   
-   private static
-      $_objectsCount = 0;
-   
-   public function __construct() {
-      self::$_objectsCount++;
-      $this->_objectId = self::$_objectsCount;
-   }
+abstract class AbstractClass {
    
    /**
     * Get the class reflector
@@ -59,12 +54,6 @@ class Object implements Stringify {
       return $namespace;
    }
    
-   /**
-    * Create a new class
-    * @param type $class
-    * @param array $args
-    * @return \oxide\std\class
-    */
    public static function create($class, array $args = null) {
       $instance = null;
       
@@ -76,9 +65,5 @@ class Object implements Stringify {
       }
       
       return $instance;
-   }
-   
-   public function __toString() {
-      return "[Object Id: " . $this->_objectId . "]";
    }
 }

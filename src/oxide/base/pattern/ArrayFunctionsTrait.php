@@ -1,8 +1,13 @@
 <?php
-namespace oxide\util\pattern;
+namespace oxide\base\pattern;
 
+/**
+ * Provides additional functionalities to the ArrayAccessTraits
+ * 
+ * Must have ArrayAccessTraits using.  The reason this trait doesn't use the 'use'
+ * statement for auto loading ArrayAccessTrait is because unneccessary method overloading
+ */
 trait ArrayFunctionsTrait {
-   use ArrayAccessTrait;
    
    
    /**
@@ -12,19 +17,17 @@ trait ArrayFunctionsTrait {
     *       before replacing the new content
     * @param mixed $content
     */
-   public function append($content, $offset = null) {
-      if(!$this->_t_array_modify($offset, $content)) return;
-      
+   public function append($content, $offset = null) {      
       if($offset !== null) {
          // first we need to check if item already exists in the array with current offset
          // if so, we will need to remove and then add in order to make it 'append'
-         if(isset($this[$offset])) {
-            unset($this[$offset]);
+         if(isset($this->_t_array_storage[$offset])) {
+            unset($this->_t_array_storage[$offset]);
          }
          
-         $this[$offset] = $content;
+         $this->_t_array_storage[$offset] = $content;
       } else {
-         $this[] = $content;
+         $this->_t_array_storage[] = $content;
       }
    }
    
@@ -35,14 +38,12 @@ trait ArrayFunctionsTrait {
     *       before replacing the new content
     * @param mixed $content
     */
-   public function prepend($content, $offset = null)  {
-      if(!$this->_t_array_modify($offset, $content)) return;
-      
+   public function prepend($content, $offset = null)  {      
       if($offset !== null) {
          // first we need to check if item already exists in the array with current offset
          // if so, we will need to remove and then add in order to make it 'prepend'
-         if(isset($this[$offset])) {
-            unset($this[$offset]);
+         if(isset($this->_t_array_storage[$offset])) {
+            unset($this->_t_array_storage[$offset]);
          }
          
          $arr = &$this->_t_array_storage;
@@ -57,18 +58,17 @@ trait ArrayFunctionsTrait {
     * @param type $value
     * @param int $index
     */
-   public function insert($value, $offset = null, $index = null) {
-      if(!$this->_t_array_modify($offset, $value)) return;
-      
+   public function insert($value, $offset = null, $index = null) {      
       if($index === null) {
          // this is same as normal insert
-         $this[$offset] = $value; // $offset's null case will be dealt by offsetSet method
+         $this->_t_array_storage[$offset] = $value; // $offset's null case will be dealt by offsetSet method
       } else {
          
          if($offset) {
             $value = [$offset => $value];
-            $this->_t_array_storage = array_slice($this->_t_array_storage, 0, $index, true) + $value +
-                        array_slice($this->_t_array_storage, $index, NULL, true);
+            $this->_t_array_storage = array_slice($this->_t_array_storage, 0, $index, true) 
+                     + $value 
+                     + array_slice($this->_t_array_storage, $index, NULL, true);
 
          } else {
             $value = [$value];
@@ -88,8 +88,8 @@ trait ArrayFunctionsTrait {
    public function iterate(callable $callback, $key = null) {
       $break = false;
       
-      if($key !== null && isset($this[$key])) {
-         $value = $this[$key];
+      if($key !== null && isset($this->_t_array_storage[$key])) {
+         $value = $this->_t_array_storage[$key];
          $callback($value, $key, $break);
       } else {
          foreach ($this->_t_array_storage as $key => $value) {

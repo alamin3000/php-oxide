@@ -17,7 +17,7 @@ namespace oxide\http;
  * @todo implement ArrayAccess
  */
 class Session {
-   use \oxide\util\pattern\SingletonTrait;
+   use \oxide\base\pattern\SingletonTrait;
    
 	private 
 		$_namespace = '',

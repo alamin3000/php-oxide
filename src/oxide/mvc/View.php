@@ -10,7 +10,7 @@
 
 namespace oxide\mvc;
 use oxide\ui\Renderer;
-use oxide\std\Stringify;
+use oxide\base\Stringify;
 use oxide\mvc\ViewData;
 use oxide\Loader;
 

@@ -1,12 +1,11 @@
 <?php
 namespace oxide\validation;
-use oxide\util\ArrayContainer;
-
+use oxide\base\Container;
 /**
  * Validator Array
  * Contains multiple validators for performing validation against single value
  */
-class ValidatorArray extends ArrayContainer implements Validator {
+class ValidatorArray extends Container implements Validator {
    public 
       /**
        * @var bool Indicate if validation process should add

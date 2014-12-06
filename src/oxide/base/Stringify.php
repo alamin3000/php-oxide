@@ -1,5 +1,5 @@
 <?php
-namespace oxide\std;
+namespace oxide\base;
 
 interface Stringify 
 {

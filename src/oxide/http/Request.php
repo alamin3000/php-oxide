@@ -16,7 +16,7 @@ namespace oxide\http;
  * @todo utilize base
  */
 class Request {
-   use \oxide\util\pattern\DefaultInstanceTrait;
+   use \oxide\base\pattern\DefaultInstanceTrait;
    
    protected 
       /**

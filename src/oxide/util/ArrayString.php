@@ -1,9 +1,11 @@
 <?php
 namespace oxide\util;
-use oxide\std\Stringify;
+use oxide\base\Stringify;
+use oxide\base\Container;
 
-class ArrayString extends ArrayContainer implements Stringify
-{   
+class ArrayString 
+   extends Container 
+   implements Stringify {   
    protected 
       $_stringify_callback = null;
 
@@ -11,10 +13,6 @@ class ArrayString extends ArrayContainer implements Stringify
       $this->_stringify_callback = $callback;
    }
    
-   public function clear($content = null) {
-      $this->_t_array_storage = [$content];
-   }
-
    public function __toString() {
       if($this->_stringify_callback) {
          $callback = $this->_stringify_callback;

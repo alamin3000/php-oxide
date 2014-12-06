@@ -8,10 +8,11 @@
  */
 
 namespace oxide;
-use oxide\helper\Util;
-use oxide\helper\App;
-use oxide\helper\Notifier;
+use oxide\helper\_util;
 use oxide\util\PSR4Autoloader;
+use oxide\util\ConfigManager;
+use oxide\util\EventNotifier;
+
 /**
  * Oxide Loader
  * 
@@ -88,7 +89,7 @@ class Loader {
          return false;
       }
    }
-   
+      
    /**
     * 
     * @param type $classname
@@ -99,7 +100,8 @@ class Loader {
       }
       $classname = ucfirst($helper);
       $class = "{$namespace}\\helper\\{$classname}";
-      return $class;
+      $instance = $class::getInstance();
+      return $instance;
    }
    
    
@@ -107,7 +109,9 @@ class Loader {
     * Register autoload for the framework
     */
    static public function register_autoload() {
-      self::$namespaces['oxide'] = dirname(__FILE__);
+      $dir = dirname(__FILE__);
+      self::$namespaces['oxide'] = $dir;
+      self::$helpers[] = $dir . '/helper';
       spl_autoload_register(__NAMESPACE__ .'\Loader::load');
    }
    
@@ -142,23 +146,28 @@ class Loader {
    public static function bootstrap($config_dir, $autorun = true) {
       self::register();
       
-      App::init($config_dir); //initialize the App helper
-      $config = App::config(); 
-      
-      Notifier::notify(self::EVENT_BOOTSTRAP_START, null);
-      
       // creating the application context
+      // and setup some services
       $context = new http\Context();
       http\Context::setDefaultInstance($context);
-      $context->set('config', $config, true); // set the application config.
+      $notifier = EventNotifier::defaultInstance();
+      $context->set('notifier', $notifier);
+      $configManager = new ConfigManager($config_dir);
+      $config = $configManager->getConfig();
+      $context->set('configManager', $configManager);
+      $context->set('config', $config); // set the application config.
+      
+      
+      $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
+      
       $fc = new http\FrontController($context);
       http\FrontController::setDefaultInstance($fc);
       
       // load modules
-      $modules = Util::value($config, 'modules');
+      $modules = _util::value($config, 'modules');
       self::loadModules($modules, $fc->getRouter());
       
-      Notifier::notify(self::EVENT_BOOTSTRAP_END, null);
+      $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
 		if($autorun) {
 			$fc->run();
 		}
@@ -174,9 +183,9 @@ class Loader {
       $autoloader = self::getAutoloader();
       if($modules) {
          foreach($modules as $module) {
-            $name = Util::value($module, 'name', null, true);
-            $dir = Util::value($module, 'dir', null, true);
-            $namespace = Util::value($module, 'namespace', null, true);
+            $name = _util::value($module, 'name', null, true);
+            $dir = _util::value($module, 'dir', null, true);
+            $namespace = _util::value($module, 'namespace', null, true);
             
             // register with autoloader
             $autoloader->addNamespace($namespace, $dir);
@@ -205,7 +214,7 @@ class Loader {
          }
       };
       
-      $plugins = Util::value($info, 'plugins', null);
+      $plugins = _util::value($info, 'plugins', null);
       if($plugins) {
          foreach($plugins as $plugin => $dir) {
             $subnamespace = str_replace('/', '\\', $dir);

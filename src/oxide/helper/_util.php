@@ -2,7 +2,7 @@
 namespace oxide\helper;
 
 
-abstract class Util {
+abstract class _util {
    
    public static function require_keys($from, $keys) {
       if(!is_array($keys)) {

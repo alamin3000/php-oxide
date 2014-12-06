@@ -8,7 +8,7 @@
  * @license http://URL name 
  */
 
-namespace oxide\std;
+namespace oxide\base;
 
 interface Cacheable {
    

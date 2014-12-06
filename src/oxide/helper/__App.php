@@ -14,7 +14,7 @@ use oxide\http\Context;
 use oxide\util\EventNotifier;
 use oxide\data\model\EAVModel;
 use oxide\util\ConfigFile;
-use oxide\helper\Util;
+use oxide\helper\_util;
 use oxide\helper\Auth;
 
 /**
@@ -30,7 +30,7 @@ use oxide\helper\Auth;
  * - Application preferences
  * - Application directories
  */
-abstract class App {  
+class App {  
 	protected static
       $_config_dir = null,
 		$_dir = null;
@@ -40,7 +40,7 @@ abstract class App {
     * 
     * @param string $config_dir
     */
-	public static function init($config_dir) {
+	public function init($config_dir) {
 		self::$_config_dir = $config_dir;
 	}
 
@@ -49,7 +49,7 @@ abstract class App {
     * 
     * @return string
     */
-   public static function dir_public() {
+   public function dir_public() {
       return filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
    }
    
@@ -60,9 +60,9 @@ abstract class App {
     * @return string
     * @throws \Exception
     */
-   public static function dir_upload($subdir = null) {
+   public function dir_upload($subdir = null) {
       $appconfig = App::config('settings', null, true);
-      $updir = trim(Util::value($appconfig, 'upload_dir', null, true), '/');
+      $updir = trim(_util::value($appconfig, 'upload_dir', null, true), '/');
       if(empty($updir)) {
          throw new \Exception('Upload directory is not found.');
       }
@@ -84,7 +84,7 @@ abstract class App {
     * @return string
     * @throws \Exception
     */
-   public static function dir_current_user_upload() {
+   public function dir_current_user_upload() {
       $identity = Auth::identity();
       if(!$identity) {
          throw new \Exception('User is not currently logged in.');
@@ -99,39 +99,13 @@ abstract class App {
     * @param stdClass $identity
     * @return string
     */
-   public static function dir_user_upload($identity) {
+   public function dir_user_upload($identity) {
       $u = "{$identity->username}";
       $m1 = sha1($u);
       $user_dir = "{$u}{$m1}";
       
       return self::dir_upload($user_dir);
    }
-    		
-	/**
-    * Read from application configuration file.
-    * 
-    * If $key is not provided, it will return entire configuration.
-    * @staticvar type $config
-    * @param string $key
-    * @param mixed $default
-    * @param boolean $throwerror
-    * @return 
-    * @throws \Exception
-    */
-	public static function config($key = null, $default = null, $throwerror = false) {
-		static $config = null;
-		if($config === null) {
-			$dir = self::$_config_dir;
-			$file = $dir . '/config.json';
-			if(!is_file($file)) {
-				throw new \Exception('Application Config file not found in location: ' . $file);
-			}
-			
-			$config = new ConfigFile($file);
-		}
-		
-		return Util::value($config, $key, $default, $throwerror);
-	}
    
    /**
     * Read from application preference file.
@@ -145,7 +119,7 @@ abstract class App {
     * @return type
     * @throws \Exception
     */
-   public static function pref($namespace = null, $key = null, $default = null, $required = false) {
+   public function pref($namespace = null, $key = null, $default = null, $required = false) {
       static $instance = null;
       if($instance === null) {
          $dir = self::$_config_dir;
@@ -161,7 +135,7 @@ abstract class App {
       
       if(isset($instance[$namespace])) {
          $prefs = $instance[$namespace];
-         return Util::value($prefs, $key, $default, $required);
+         return _util::value($prefs, $key, $default, $required);
       } else {
          if($required) {
             throw new \Exception("No preferences found for namespace: $namespace");
@@ -170,55 +144,7 @@ abstract class App {
          }
       }
    }
-	
-	/**
-    * Returns default front controller instance
-    * @return FrontController
-    */
-	public static function instance() {
-      if(!FrontController::hasDefaultInstance()) {
-         throw new \Exception("Deafult Front Controller instance not found.");
-      }
-		return FrontController::defaultInstance();
-	}
 
-   /**
-    * Get the main/default application context object
-    * @return Context
-    */
-   public static function context() {
-      if(!Context::hasDefaultInstance()) {
-         throw new \Exception("Deafult Context instance not found.");
-      }
-      return Context::defaultInstance();
-   }
-   
-   /**
-    * Get default application notifier
-    * @return EventNotifier
-    */
-   public static function notifier() {
-      return EventNotifier::defaultInstance();
-   }
-   
-   /**
-    * Returns main/default application's database connection
-    * @return Connection
-    */
-   public static function database() {
-	   if(!Connection::hasDefaultInstance()) {
-		   $config = self::config();
-		   $dbconfig = (array) $config['database'];
-		  	$dboptions = array(
-					\PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
-					'FETCH_MODE'			=> \PDO::FETCH_ASSOC
-					);
-			$conn = new Connection($dbconfig, $dboptions);
-			Connection::setDefaultInstance($conn);
-		}
-	
-		return Connection::defaultInstance();
-   }
       
    /**
     * Application metadata
@@ -226,7 +152,7 @@ abstract class App {
     * @param type $key
     * @param type $value
     */
-   public static function metadata($key = null, $value = null)  {
+   public function metadata($key = null, $value = null)  {
       static $model = null;
       if($model == null) {
          $conn = self::database();

@@ -1,37 +1,45 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\Html;
 use oxide\ui\Renderer;
+use oxide\helper\_html;
 
 class Tag implements Renderer {
    protected 
       $_tag,
       $_attributes = [];
    
+   /**
+    * Create a new Html $tag
+    * 
+    * @param string $tag
+    * @param array $attributes
+    */
    public function __construct($tag, $attributes = null) {
       $this->_tag = $tag;
       if($attributes) $this->_attributes = $attributes;
    }
    
+   /**
+    * Get the Html tag name
+    * 
+    * @return type
+    */
    public function getTag() {
       return $this->_tag;
    }
    
-   public function setTag($tag) {
-      if(!$tag) {
-         throw new \Exception('Tag name cannot be empty');
-      }
-      
-      $this->_tag = $tag;
-   }
-   
+   /**
+    * Sets an attribute for the tag
+    * 
+    * @param string $attrib
+    * @param string $value
+    */
    public function setAttribute($attrib, $value) {
       $this->_attributes[$attrib] =  $value;
    }
    
    /**
     * get an attribute from the element
-    * @access public
     * @param string $attrib
     * @param string $default_value if attribute is not found, this value will be returned
     * @return string
@@ -44,13 +52,17 @@ class Tag implements Renderer {
       }
    }
    
+   /**
+    * Gets all current attributes for the tag
+    * 
+    * @return array
+    */
    public function getAttributes() {
       return $this->_attributes;
    }
 
 	/**
 	 * add multiple attributes at once
-	 * @access public
 	 * @param array $attributes
 	 */
    public function setAttributes(array $attributes) {
@@ -98,7 +110,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpenTag() {
-      return Html::rstart($this->_tag, $this->_attributes);
+      return _html::rstart($this->_tag, $this->_attributes);
    }
    
    /**
@@ -106,9 +118,9 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderCloseTag() {
-      return Html::rend($this->_tag);
+      return _html::rend($this->_tag);
    }
-   
+      
    public function render() {
       return $this->renderOpenTag() .
         $this->renderCloseTag();

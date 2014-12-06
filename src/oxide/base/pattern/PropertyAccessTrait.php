@@ -1,5 +1,5 @@
 <?php
-namespace oxide\util\pattern;
+namespace oxide\base\pattern;
 
 trait PropertyAccessTrait
 {

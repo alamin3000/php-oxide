@@ -1,16 +1,13 @@
 <?php
 namespace oxide\validation;
-use oxide\util\ArrayContainer;
+use oxide\base\Container;
 
-
-class FiltererArray extends ArrayContainer implements Filterer
-{
+class FiltererArray extends Container implements Filterer {
    /**
     * 
     * @param type $value
     */
-   public function filter($value)
-   {
+   public function filter($value) {
       $callback = function(Filterer $filter, $key, &$break) use (&$value) {
          $value = $filter->filter($value);
       };
