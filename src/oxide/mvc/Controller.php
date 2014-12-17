@@ -298,9 +298,9 @@ abstract class Controller
          // no view is provided
          // we will use default view
          $data = $this->getViewData();
-         $data->setView($view);
          $data->share('context', $context);
          $view = $viewManager->createView($data);
+         $data->setView($view);
       }
       
       $response = $context->getResponse();

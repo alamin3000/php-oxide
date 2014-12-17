@@ -11,8 +11,8 @@ use oxide\mvc\ViewData;
  */
 class DefaultController extends Controller {
    protected function executeIndex(Context $context) {
-      $el = new \oxide\ui\html\Element('p', 'This is a paragraph');
-      return new \oxide\mvc\View($el);
+
+
    }
    
    

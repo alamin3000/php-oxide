@@ -104,18 +104,6 @@ class Loader {
       return $instance;
    }
    
-   
-   /**
-    * Register autoload for the framework
-    */
-   static public function register_autoload() {
-      $dir = dirname(__FILE__);
-      self::$namespaces['oxide'] = $dir;
-      self::$helpers[] = $dir . '/helper';
-      spl_autoload_register(__NAMESPACE__ .'\Loader::load');
-   }
-   
-   
    /**
     * Get the PSR4 Autoloader class
     * @return PSR4Autoloader
@@ -132,7 +120,8 @@ class Loader {
       // registering autoload for phpoxide
       $autoloader = self::getAutoloader();
       $autoloader->register();
-      self::register_autoload();
+      $dir = dirname(__FILE__);
+		$autoloader->addNamespace('oxide',$dir);
    }
    
    /**
