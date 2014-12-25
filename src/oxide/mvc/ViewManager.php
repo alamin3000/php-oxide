@@ -215,8 +215,9 @@ class ViewManager {
 		$dir = dirname($script);
 		$codefile = $dir . '/' . $base . '.php';
       
-      if($script != $codefile) return $codefile;
-      else return null;
+      if(($script != $codefile) && file_exists($codefile)) {
+         return $codefile;
+      } else return null;
    }
    
    /**
