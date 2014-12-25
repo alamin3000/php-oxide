@@ -20,17 +20,19 @@ class Page implements Renderer {
       $_cache = null,
       $_partials = [],
       $_data = null,
+      $_codeScript = null,
       $_script = null;
    
    /**
     * 
     * @param string $script
     */
-   public function __construct($script = null, Dictionary $data = null) {
+   public function __construct($script = null, Dictionary $data = null, $codeScript = null) {
       $this->_script = $script;
       if($data) {
          $this->setData($data);
       }
+      if($codeScript) $this->setCodeScript ($codeScript);
    }
    
    /**
@@ -48,6 +50,14 @@ class Page implements Renderer {
     */
    public function getData() {
       return $this->_data;
+   }
+   
+   /**
+    * Set the behind the page code script
+    * @param string $script
+    */
+   public function setCodeScript($script) {
+      $this->_codeScript = $script;
    }
    
       
@@ -126,6 +136,13 @@ class Page implements Renderer {
       if($this->_cache === null) {
          $script = $this->getScript();
          $data = $this->_data;
+         
+         
+         // first execute the behind the page code if available
+         if($this->_codeScript) {
+            $this->renderPage($this->_codeScript, $data); // not expected to rener
+         }
+         
 
          // prerender partials
          foreach($this->_partials as $partial) {

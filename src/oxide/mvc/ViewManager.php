@@ -1,7 +1,6 @@
 <?php
 
 namespace oxide\mvc;
-use oxide\helper\Template;
 use oxide\http\Route;
 use oxide\http\Response;
 use oxide\ui\Page;
@@ -195,13 +194,29 @@ class ViewManager {
    public function getLayoutView() {
       if ($this->_layoutView == null) {
          $data = new ViewData();
-         $page = new MasterPage($this->getLayoutScript(), $data);
+         $script = $this->getLayoutScript();
+         $codefile = $this->getCodeScriptForScript($script);
+         $page = new MasterPage($this->getLayoutScript(), $data, $codefile);
          $view = new View($page);
          $this->_layoutView = $view;
          $data->setView($view);
       }
 
       return $this->_layoutView;
+   }
+   
+   /**
+    * 
+    * @param type $script
+    * @return string
+    */
+   public function getCodeScriptForScript($script) {
+      		$base = basename($script, '.' . $this->_viewScriptExt);
+		$dir = dirname($script);
+		$codefile = $dir . '/' . $base . '.php';
+      
+      if($script != $codefile) return $codefile;
+      else return null;
    }
    
    /**
