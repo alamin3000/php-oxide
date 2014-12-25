@@ -146,7 +146,6 @@ abstract class _html {
       return ' ' . trim($str);
    }
 	
-
 	/**
     * creates HTML A tag
     *
@@ -166,7 +165,6 @@ abstract class _html {
 
 		return self::tag('a', ($text) ? $text: $link, $attrib);
 	}
-
 
    /**
     * builds and prints UL tag

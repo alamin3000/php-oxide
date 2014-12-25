@@ -24,6 +24,7 @@ class ViewData extends Container {
       $_context = null,
       $_view = null;
    
+   
    /**
     * Share data accross all view
     * 
@@ -59,6 +60,21 @@ class ViewData extends Container {
       else if(self::$_shared[$key]) return self::$_shared[$key];
       else return $default;
    }
+   
+   public function breadcrumb($title = null, $link = null) {
+      $breadcrumb = $this->shared('breadcrumb');
+      if(!$breadcrumb) {
+         $breadcrumb = [];
+         $this->share('breadcrumb', $breadcrumb);
+      }
+      
+      if(!$title) {
+         return $breadcrumb;
+      } else {
+         $breadcrumb[$title] = $link;
+      }
+   }
+   
    
    /**
     * Loads the given $helper and returns
