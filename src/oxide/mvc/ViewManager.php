@@ -233,6 +233,9 @@ class ViewManager {
          $layoutView = $this->getLayoutView();
          $renderingView = $layoutView;
          $layoutView->addPartial($view, $layoutView->contentKey);
+         if($view->getRenderer() instanceof Page) {
+            $view->setParent($layoutView);
+         }
       }
             
       $response->setContentType($renderingView->getContentType(), $renderingView->getEncoding());

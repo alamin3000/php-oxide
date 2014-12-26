@@ -59,22 +59,7 @@ class ViewData extends Container {
       if($this->offsetExists($key)) return $this->offsetGet($key);
       else if(self::$_shared[$key]) return self::$_shared[$key];
       else return $default;
-   }
-   
-   public function breadcrumb($title = null, $link = null) {
-      $breadcrumb = $this->shared('breadcrumb');
-      if(!$breadcrumb) {
-         $breadcrumb = [];
-         $this->share('breadcrumb', $breadcrumb);
-      }
-      
-      if(!$title) {
-         return $breadcrumb;
-      } else {
-         $breadcrumb[$title] = $link;
-      }
-   }
-   
+   }   
    
    /**
     * Loads the given $helper and returns
