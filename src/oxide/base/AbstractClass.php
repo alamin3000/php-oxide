@@ -56,7 +56,7 @@ abstract class AbstractClass {
    public function classBaseNamespace() {
       $namespace = $this->classNamespace();
       if($namespace) {
-         $base = explode('\\', $namespace, 1);
+         $base = explode('\\', $namespace, 2);
          return $base;
       }
       
