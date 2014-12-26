@@ -95,10 +95,8 @@ class Request {
       }
       
       $relatives = [$uris[self::URI_PATH]];
-      $query = $uris[self::URI_QUERY];
-      $fragment = $uris[self::URI_FRAGMENT];
-      if($query) $relatives[] = '?' . $query;
-      if($fragment) $relatives[] = '#' . $fragment;
+      if(isset($uris[self::URI_QUERY])) $relatives[] = '?' . $uris[self::URI_QUERY];
+      if(isset($uris[self::URI_FRAGMENT])) $relatives[] = '#' . $uris[self::URI_FRAGMENT];
       $this->_relativeUrl = implode('', $relatives);
       return $request;
    }
