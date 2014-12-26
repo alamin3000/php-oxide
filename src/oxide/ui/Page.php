@@ -17,6 +17,7 @@ class Page implements Renderer {
       $title = null;
            
    protected 
+      $_parent = null,
       $_cache = null,
       $_partials = [],
       $_data = null,
@@ -60,6 +61,23 @@ class Page implements Renderer {
       $this->_codeScript = $script;
    }
    
+   /**
+    * Set the parent container for the page
+    * 
+    * @param \oxide\ui\Renderer $parent
+    */
+   public function setParent(Renderer $parent) {
+      $this->_parent = $parent;
+   }
+   
+   /**
+    * Get the parent container for the page if any
+    * 
+    * @return type
+    */
+   public function getParent() {
+      return $this->_parent;
+   }
       
    /**
     * 
@@ -68,6 +86,9 @@ class Page implements Renderer {
     */
    public function addPartial(Renderer $renderer, $key) {
       $this->_partials[$key] = $renderer;
+      if(method_exists($renderer, 'setParent')) {
+         $renderer->setParent($this);
+      }
    }
    
    /**
@@ -137,12 +158,10 @@ class Page implements Renderer {
          $script = $this->getScript();
          $data = $this->_data;
          
-         
          // first execute the behind the page code if available
          if($this->_codeScript) {
             $this->renderPage($this->_codeScript, $data); // not expected to rener
          }
-         
 
          // prerender partials
          foreach($this->_partials as $partial) {
