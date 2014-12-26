@@ -50,7 +50,7 @@ class ConfigManager {
          $dir = $this->_dir;
          $file = $dir . '/' . $filename;
          if(!is_file($file)) {
-            throw new \Exception('Application Config file not found in location: ' . $file);
+            throw new \Exception('Config file not found in location: ' . $file);
          }
          $data = self::parse($file);
          $config = new Container($data); 

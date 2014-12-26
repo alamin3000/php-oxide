@@ -24,6 +24,9 @@ class Request {
        */
       $_url = null,
       $_base = '',
+           
+      $_relativeUrl = null,
+           
       /**
        * @var boolean Indicates if the request is secured or not
        */
@@ -48,7 +51,8 @@ class Request {
       URI_SCRIPT  = 'script',
       URI_PORT    = 'port',
       URI_PASS    = 'pass',
-      UIR_USER    = 'user',
+      URI_USER    = 'user',
+      URI_FRAGMENT = 'fragment',
       URI_QUERY   = 'query';
    
 	/**
@@ -90,6 +94,13 @@ class Request {
          parse_str($query, $request->_queries);
       }
       
+      $relatives = [$uris[self::URI_PATH]];
+      $base = $this->_base;
+      $query = $uris[self::URI_QUERY];
+      $fragment = $uris[self::URI_FRAGMENT];
+      if($query) $relatives[] = '?' . $query;
+      if($fragment) $relatives[] = '#' . $fragment;
+      $this->_relativeUrl = implode('', $relatives);
       return $request;
    }
    
@@ -142,11 +153,11 @@ class Request {
     * those information was provided when creating the request or not.
     * @return string
     */
-   public function getUrl() {
-      return $this->_url;
+   public function getUrl($relative = false) {
+      if($relative) return $this->_relativeUrl;
+      else return $this->_url;
    }
-	
-      
+   
    /**
     * Get HTTP Request Headers
     * @param string $key
@@ -155,7 +166,6 @@ class Request {
     */
    public function getHeaders($key = null, $default = null) {
       if(!$key) return $this->_headers;
-      
       if($key)
          return (isset($this->_headers[$key])) ? $this->_headers[$key] : $default;
       else
@@ -171,7 +181,6 @@ class Request {
 	 **/
 	public function getUriComponents($key = null, $default = null) {
       if($key === null) return $this->_uriComponents;
-      
 		if(!isset($this->_uriComponents[$key])) {
 			return $default;
 		}

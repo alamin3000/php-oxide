@@ -1,12 +1,19 @@
 <?php
 namespace oxide\helper;
-
+use oxide\http\Request;
+use oxide\http\Route;
 /**
  * 
  */
 class Url {	
-   use \oxide\base\pattern\SingletonTrait;
+   protected 
+      $_route = null,
+      $_request = null;
    
+   public function __construct(Request $request, Route $route) {
+      $this->_request = $request;
+      $this->_route = $route;
+   }
    /**
     * Get GET
     * @param type $key
@@ -14,7 +21,7 @@ class Url {
     * @return type
     */
    public function query($key = null, $default = null) {
-      return App::context()->getRequest()->getQuery($key, $default);
+      return $this->_request->getQuery($key, $default);
    }
    
    /**
@@ -24,7 +31,7 @@ class Url {
     * @return type
     */
    public function post($key = null, $default = null) {
-      return App::context()->getRequest()->getPost($key, $default);
+      return $this->_request->getPost($key, $default);
    }
    
   
@@ -59,8 +66,7 @@ class Url {
     * @param type $from
     * @param type $to
     */
-   public function relative($from, $to)
-   {
+   public function relative($from, $to) {
       // some compatibility fixes for Windows paths
       $from = is_dir($from) ? rtrim($from, '\/') . '/' : $from;
       $to   = is_dir($to)   ? rtrim($to, '\/') . '/'   : $to;
