@@ -60,6 +60,12 @@ class ConfigManager {
       return $this->_configs[$filename];
    }
    
+   public function getConfigByDirectory($relative_dir, $name = 'config.json') {
+      $dir = trim($relative_dir, '/');
+      $filename = "{$dir}/{$name}";
+      return $this->getConfigByFilename($filename);
+   }
+   
    
    /**
     * Parse the given file into an array
