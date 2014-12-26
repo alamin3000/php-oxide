@@ -130,26 +130,7 @@ abstract class Controller
       }
       
       return $default;
-   } 
-   
-   /**
-	 * this method determine which action method to call and the attempts to call
-	 *
-	 * override this to provide one action per controller design pattern
-	 * @param Context $context
-	 */
-	final public function execute(Context $context) {
-      $this->_context = $context;
-      try {
-         $this->onInit($context); // call initializer
-         $route = $this->_route;
-         $view = $this->onExecute($context, $route);
-         $this->onRender($context, $view);
-         $this->onExit($context);
-      } catch(\Exception $e) {
-         $this->onException($context, $e);
-      }
-	}
+   }
    
    public function getAcceptedParams($cardinality, $names = null) {
       
@@ -183,8 +164,7 @@ abstract class Controller
       return 'execute' . $action;
    }
    
-   
-	/**
+/**
 	 * forward to given $action immediately
 	 * 
     * @access public
@@ -218,6 +198,25 @@ abstract class Controller
       } else { // no method is provided
          return $this->onUndefinedAction($context, $action);
       }
+	}   
+   
+   /**
+	 * this method determine which action method to call and the attempts to call
+	 *
+	 * override this to provide one action per controller design pattern
+	 * @param Context $context
+	 */
+	final public function execute(Context $context) {
+      $this->_context = $context;
+      try {
+         $this->onInit($context); // call initializer
+         $route = $this->_route;
+         $view = $this->onExecute($context, $route);
+         $this->onRender($context, $view);
+         $this->onExit($context);
+      } catch(\Exception $e) {
+         $this->onException($context, $e);
+      }
 	}
    
    /**
@@ -240,7 +239,6 @@ abstract class Controller
 
          return Connection::defaultInstance();
       });
-      
       
       $auth = Authentication::defaultInstance();
       $route = $this->_route;
@@ -268,8 +266,7 @@ abstract class Controller
     * @param Route $route
     * @return type
     */
-   protected function onExecute(Context $context) {
-      $route = $this->getRoute();
+   protected function onExecute(Context $context, Route $route) {
       $action_name = $route->action;		
       if($this->_catchAll) {
          array_unshift($route->params, $action_name);

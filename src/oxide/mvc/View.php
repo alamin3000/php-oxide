@@ -12,7 +12,6 @@ namespace oxide\mvc;
 use oxide\ui\Renderer;
 use oxide\base\Stringify;
 use oxide\mvc\ViewData;
-use oxide\Loader;
 
 class View implements Renderer, Stringify {
    public
@@ -145,10 +144,6 @@ class View implements Renderer, Stringify {
       }
       
       return null;
-   }
-   
-   public static function helper($helper, $namespace = null) {
-      return Loader::loadHelper($helper, $namespace);
    }
    
    /**

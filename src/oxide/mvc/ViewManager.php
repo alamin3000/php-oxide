@@ -109,7 +109,6 @@ class ViewManager {
       $templateScript = $this->getTemplateScript($script); // get templatized script
       $page = $this->createPage($templateScript, $data);
       $view = new View($page);
-      $data->setView($view); // set the view
       
       return $view;
    }
@@ -158,7 +157,6 @@ class ViewManager {
       return $script;
    }
 
-
    /**
     * get the layout script file
     *
@@ -199,7 +197,6 @@ class ViewManager {
          $page = new MasterPage($this->getLayoutScript(), $data, $codefile);
          $view = new View($page);
          $this->_layoutView = $view;
-         $data->setView($view);
       }
 
       return $this->_layoutView;

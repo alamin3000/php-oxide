@@ -1,10 +1,8 @@
 <?php
 namespace oxide\helper;
-use oxide\http\Session;
+use oxide\http\Context;
 
 class Flash {
-   use \oxide\base\pattern\SingletonTrait;
-   
    const
       ERROR		= 'error',
       WARNING	= 'warning',
@@ -20,6 +18,12 @@ class Flash {
 	private static
       $_key		= "__oxide_helper_flash";
 
+   protected
+      $_session = null;
+   
+   public function __construct(Context $context) {
+      $this->_session = $context->getSession();
+   }
   
    /**
     * get the current flash message based on the namespace
@@ -28,7 +32,7 @@ class Flash {
     * @return type 
     */
    public function get($namespace = null) {
-		$session = Session::getInstance();
+		$session = $this->_session;
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";
@@ -51,13 +55,13 @@ class Flash {
     * @param type $type 
     */
 	public function set($value, $namespace = null, $type = self::INFO) {
-		$session = Session::getInstance();
+		$session = $this->_session;
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";
 		}
 
-		$session->$key = serialize(new Flash_message($value, $type, $namespace));
+		$session->$key = serialize(new Flash_sessage($value, $type, $namespace));
 	}
 
    /**
@@ -69,7 +73,7 @@ class Flash {
     * @return \Messenger_message 
     */
    public function message($message, $type = self::ERROR,$namespace = null) {
-      $obj = new Messenger_message();
+      $obj = new Flash_message();
       $obj->message = $message;
 		$obj->namespace = $namespace;
       $obj->type = $type;
