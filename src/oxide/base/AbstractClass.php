@@ -11,49 +11,64 @@ use ReflectionClass;
  * @subpackage base
  */
 abstract class AbstractClass {
-   
+   private
+      $_classDir = null,
+      $_reflector = null,
+      $_namespace = null;
    /**
     * Get the class reflector
-    * @staticvar type $reflector
     * @return ReflectionClass
     */
    public function classReflector() {
-      static $reflector = null;
-      if($reflector === null) {
-         $reflector = new ReflectionClass(get_called_class());
+      if($this->_reflector === null) {
+         $this->_reflector = new ReflectionClass(get_called_class());
       }
       
-      return $reflector;
+      return $this->_reflector;
    }
    
    /**
-    * Get the 
-    * @staticvar type $dir
-    * @return type
+    * Get the directory for the class
+    * 
+    * @return string
     */
    public function classDir() {
-      static $dir = null;
-      if($dir === null) {
-         $dir = realpath(dirname($this->classReflector()->getFileName()));
+      if($this->_classDir === null) {
+         $this->_classDir = realpath(dirname($this->classReflector()->getFileName()));
       }
       
-      return $dir;
+      return $this->_classDir;
    }
    
    /**
-    * Get the namespace
-    * @staticvar type $namespace
-    * @return type
+    * Get the namespace for the class
+    * 
+    * @return string
     */
    public function classNamespace() {
-      static $namespace = null;
-      if($namespace === null) {
-         $namespace = $this->classReflector()->getNamespaceName();
+      if($this->_namespace === null) {
+         $this->_namespace = $this->classReflector()->getNamespaceName();
       }
       
-      return $namespace;
+      return $this->_namespace;
    }
    
+   public function classBaseNamespace() {
+      $namespace = $this->classNamespace();
+      if($namespace) {
+         $base = explode('\\', $namespace, 1);
+         return $base;
+      }
+      
+      return null;
+   }
+   
+   /**
+    * 
+    * @param string $class
+    * @param array $args
+    * @return \oxide\base\class
+    */
    public static function create($class, array $args = null) {
       $instance = null;
       
