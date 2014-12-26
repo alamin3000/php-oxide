@@ -95,7 +95,6 @@ class Request {
       }
       
       $relatives = [$uris[self::URI_PATH]];
-      $base = $this->_base;
       $query = $uris[self::URI_QUERY];
       $fragment = $uris[self::URI_FRAGMENT];
       if($query) $relatives[] = '?' . $query;
