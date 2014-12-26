@@ -298,7 +298,6 @@ abstract class Controller
          $data = $this->getViewData();
          $data->share('context', $context);
          $view = $viewManager->createView($data);
-         $data->setView($view);
       }
       
       $response = $context->getResponse();
