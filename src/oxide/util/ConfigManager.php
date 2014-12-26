@@ -17,15 +17,15 @@ class ConfigManager {
    protected 
       $_configFilename = 'config.json',
       $_configs = [],
-      $_dir = null,
-      $_appConfig = null;
+      $_dir = null;
    
    /**
     * 
     * @param string $dir
     */
-   public function __construct($dir) {
+   public function __construct($dir, $filename = null) {
       $this->_dir =  $dir;
+      if($filename) $this->_configFilename = $filename;
    }
    
    /**
@@ -35,11 +35,7 @@ class ConfigManager {
     * @throws \Exception
     */
    public function getConfig() {
-      if($this->_appConfig === null) {
-			$this->_appConfig = $this->getConfigByFilename($this->_configFilename);
-		}
-      
-      return $this->_appConfig;
+      return $this->getConfigByFilename($this->_configFilename);
    }
    
    /**
@@ -50,13 +46,18 @@ class ConfigManager {
     * @throws \Exception
     */
    public function getConfigByFilename($filename) {
-      $dir = $this->_dir;
-      $file = $dir . '/' . $filename;
-      if(!is_file($file)) {
-         throw new \Exception('Application Config file not found in location: ' . $file);
+      if(!isset($this->_configs[$filename])) {
+         $dir = $this->_dir;
+         $file = $dir . '/' . $filename;
+         if(!is_file($file)) {
+            throw new \Exception('Application Config file not found in location: ' . $file);
+         }
+         $data = self::parse($file);
+         $config = new Container($data); 
+         $this->_configs[$filename] = $config;
       }
-      $data = self::parse($file);
-      return new Container($data);      
+           
+      return $this->_configs[$filename];
    }
    
    

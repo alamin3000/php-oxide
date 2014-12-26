@@ -183,6 +183,10 @@ abstract class Controller
       return 'execute' . $action;
    }
    
+   public function getConfig() {
+      
+   }
+   
 	/**
 	 * forward to given $action immediately
 	 * 
