@@ -150,7 +150,7 @@ class Request {
     * those information was provided when creating the request or not.
     * @return string
     */
-   public function getUrl($relative = false) {
+   public function getUrl($relative = true) {
       if($relative) return $this->_relativeUrl;
       else return $this->_url;
    }
