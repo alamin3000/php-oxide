@@ -135,9 +135,6 @@ class Tag implements Renderer {
       
    }
    
-   public static function renderTag($tag, $content = null) {
-      
-   }
    
    /**
     * Render the opening tag
