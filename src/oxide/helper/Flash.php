@@ -1,15 +1,8 @@
 <?php
 namespace oxide\helper;
-use oxide\http\Context;
 
 class Flash {
-   const
-      ERROR		= 'error',
-      WARNING	= 'warning',
-      ALERT		= 'alert',
-      INFO		= 'info';
-
-   
+   use \oxide\base\pattern\SingletonTrait;
    /**
     *
     * @access private
@@ -17,12 +10,14 @@ class Flash {
     */
 	private static
       $_key		= "__oxide_helper_flash";
-
-   protected
-      $_session = null;
    
-   public function __construct(Context $context) {
-      $this->_session = $context->getSession();
+   public function has($namespace = null) {
+      $key = self::$_key;
+      if($namespace) {
+			$key .= "_{$namespace}";
+		}
+      
+      return isset($_SESSION[$key]);
    }
   
    /**
@@ -32,16 +27,15 @@ class Flash {
     * @return type 
     */
    public function get($namespace = null) {
-		$session = $this->_session;
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";
 		}
 
 		$value = null;
-		if(isset($session->$key)) {
-			$value = unserialize($session->$key);
-			unset($session->$key);
+		if(isset($_SESSION[$key])) {
+			$value = unserialize($_SESSION[$key]);
+			unset($_SESSION[$key]);
 		}
 
 		return $value;
@@ -54,81 +48,14 @@ class Flash {
     * @param type $namespace
     * @param type $type 
     */
-	public function set($value, $namespace = null, $type = self::INFO) {
-		$session = $this->_session;
+	public function set($value, $namespace = null) {
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";
 		}
 
-		$session->$key = serialize(new Flash_sessage($value, $type, $namespace));
+		$_SESSION[$key] = $value;
 	}
-
-   /**
-    *
-    * @access public
-    * @param type $message
-    * @param type $type
-    * @param type $namespace
-    * @return \Messenger_message 
-    */
-   public function message($message, $type = self::ERROR,$namespace = null) {
-      $obj = new Flash_message();
-      $obj->message = $message;
-		$obj->namespace = $namespace;
-      $obj->type = $type;
-      $obj->timestamp = now();
-
-      return $obj;
-   }
-   
-   /**
-    * @param type $namespace
-    * @return type
-    */
-   public function render($namespace = null) {
-      $message = self::get($namespace);
-      if(!$message) return;
-      $class = 'template-' . $message->type;
-      return Html::tag('mark', $message, array('class' => $class));
-   }
-   
-}
-
-class Flash_message
-{
-   /**
-    *
-    * @access public
-    * @var type 
-    */
-   public
-      $message,
-      $type,
-		$namespace,
-      $timestamp;
-
-   
-   /**
-    *
-    * @access public
-    * @param type $message
-    * @param type $type
-    * @param type $namespace 
-    */
-   public function  __construct($message = null, $type = null, $namespace = null) {
-      $this->message= $message;
-      $this->type = $type;
-      $this->timestamp = time();
-   }
-   
-   /**
-    * 
-    * @access public
-    */
-   public function  __toString() {
-      return (string) $this->message;
-   }
 }
 
 
