@@ -2,7 +2,7 @@
 namespace oxide\ui\html;
 use oxide\validation;
 use oxide\util\ArrayString;
-use oxide\helper\Html;
+use oxide\helper\_html;
 use oxide\helper\Ui;
 
 /**
@@ -435,7 +435,7 @@ class Form extends Element {
 	public function renderFormFooter() {
 		$validator = $this->getValidationProcessor();
 		if($validator->isRequired()) {
-         $p = Html::tag('p', Html::tag('small', '* Indicates required field(s).'));
+         $p = _html::tag('p', _html::tag('small', '* Indicates required field(s).'));
          $this->footerElement[] = $p;
          return $this->footerElement->render();
 		}
@@ -447,10 +447,10 @@ class Form extends Element {
     * We will render the header and footer for the form in addition to the inner tag (controls)
 	 * @param /oxide/ui/Element $element
 	 */
-	public function renderInnerTag() {
+	public function renderInner() {
 		return 
             $this->renderFormHeader() .
-            parent::renderInnerTag() .
+            parent::renderInner() .
             $this->renderFormFooter();
 	}
 

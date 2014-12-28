@@ -1,7 +1,6 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
-use oxide\helper\_html;
 
 class Tag implements Renderer {
    protected 
@@ -102,6 +101,44 @@ class Tag implements Renderer {
       unset($this->_attributes[$key]);
    }
    
+   public static function escape($string) {
+      return htmlentities($string, ENT_QUOTES);
+   }
+   
+   /**
+    * Generates HTML tag attribute string from given array
+    *
+    * @param array $attributes
+    * @return string
+    */
+   public static function renderAttributes(array $attributes = null) {
+  		if(!$attributes) return '';
+		
+      $str = '';
+      foreach ($attributes as $key => $value) {
+         if(!empty($value) && !is_scalar($value)) {
+            trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
+         }
+         $value = self::escape($value);
+         $str .= "{$key}=\"{$value}\" ";
+      }
+      
+      return ' ' . trim($str);
+   }
+   
+   
+   public static function openTag($tag, array $attributes = null) {
+      
+   }
+   
+   public static function closeTag($tag) {
+      
+   }
+   
+   public static function renderTag($tag, $content = null) {
+      
+   }
+   
    /**
     * Render the opening tag
     * 
@@ -109,7 +146,7 @@ class Tag implements Renderer {
     * @see oxide\helper\Html::rstart()
     * @return type
     */
-   public function renderOpenTag() {
+   public function renderOpen() {
       return _html::rstart($this->_tag, $this->_attributes);
    }
    
@@ -117,7 +154,7 @@ class Tag implements Renderer {
     * 
     * @return type
     */
-   public function renderCloseTag() {
+   public function renderClose() {
       return _html::rend($this->_tag);
    }
       

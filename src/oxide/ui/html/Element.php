@@ -171,10 +171,10 @@ class Element
          
          if($renderer) {  $buffer[] =  $renderer->render($this->inner()); } 
          else {
-            $buffer[] = $this->renderOpenTag();
+            $buffer[] = $this->renderOpen();
             $this->onInnerRender($buffer);
-            $buffer[] = $this->renderInnerTag();
-            $buffer[] = $this->renderCloseTag();         
+            $buffer[] = $this->renderInner();
+            $buffer[] = $this->renderClose();         
          }
 
          $this->onPostRender($buffer); // notifying internal post render event
@@ -200,7 +200,7 @@ class Element
     * @param ArrayString $buffer Current rendering string buffer 
 	 * @return void
     */
-   public function renderInnerTag() {      
+   public function renderInner() {      
       $buffer = '';
       foreach($this->inner() as $inner) {
          if($this->_callback_inner_render) {

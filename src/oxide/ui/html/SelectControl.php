@@ -140,7 +140,7 @@ class SelectControl extends Control
 	 * 
 	 * @return string
 	 */
-	public function renderInnerTag() {
+	public function renderInner() {
       if(empty($this->_groups)) return;
       
       if(!is_array($values = $this->getValue())) {
