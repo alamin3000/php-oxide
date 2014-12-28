@@ -5,7 +5,6 @@ use oxide\base\Stringify;
 use oxide\util\ArrayString;
 use oxide\base\pattern\ArrayAccessTrait;
 use oxide\base\pattern\ArrayFunctionsTrait;
-use oxide\helper\_html;
 
 /**
  * Html Element
@@ -209,22 +208,10 @@ class Element
             }
          }
          
-         $buffer .= _html::toString($inner);
+         $buffer .= $inner;
       }
       
       return $buffer;
-   }
-   
-   /**
-    * Allows to render an element based on given $tag and $content
-    * 
-    * @param \oxide\ui\html\Tag $tag
-    * @param type $content
-    */
-   public static function renderTag(Tag $tag, $content = null) {
-      return $tag->renderOpen() .
-         _html::toString($content).
-         $tag->renderClose();     
    }
    
    protected function onInnerRender(ArrayString $buffer) {}

@@ -103,6 +103,30 @@ class Tag implements Renderer {
    }
    
    /**
+    * Render the opening tag
+    * 
+    * If the tag is void tag, then it will self close
+    * @see oxide\helper\Html::rstart()
+    * @return type
+    */
+   public function renderOpen() {
+      return self::openTag($this->_tag, $this->_attributes);
+   }
+   
+   /**
+    * 
+    * @return type
+    */
+   public function renderClose() {
+      return self::closeTag($this->_tag);
+   }
+      
+   public function render() {
+      return $this->renderOpenTag() .
+        $this->renderCloseTag();
+   }
+   
+   /**
     * 
     * @param type $string
     * @return type
@@ -161,26 +185,20 @@ class Tag implements Renderer {
    
    
    /**
-    * Render the opening tag
+    * Allows to render an element based on given $tag and $content
     * 
-    * If the tag is void tag, then it will self close
-    * @see oxide\helper\Html::rstart()
-    * @return type
+    * @param \oxide\ui\html\Tag $tag
+    * @param type $content
     */
-   public function renderOpen() {
-      return self::openTag($this->_tag, $this->_attributes);
-   }
-   
-   /**
-    * 
-    * @return type
-    */
-   public function renderClose() {
-      return self::closeTag($this->_tag);
-   }
+   public static function renderTag($tag, $content = null, array $attributes = null) {
+      if($tag instanceof self) 
+         return $tag->renderOpen() .
+            $content.
+            $tag->renderClose();    
+      else
+         return self::openTag ($tag, $attributes) .
+              $content .
+              self::closeTag ($tag);
+   }   
       
-   public function render() {
-      return $this->renderOpenTag() .
-        $this->renderCloseTag();
-   }
 }
