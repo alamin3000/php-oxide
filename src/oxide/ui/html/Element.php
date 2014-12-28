@@ -222,9 +222,9 @@ class Element
     * @param type $content
     */
    public static function renderTag(Tag $tag, $content = null) {
-      return $tag->renderOpenTag() .
+      return $tag->renderOpen() .
          _html::toString($content).
-         $tag->renderCloseTag();     
+         $tag->renderClose();     
    }
    
    protected function onInnerRender(ArrayString $buffer) {}
