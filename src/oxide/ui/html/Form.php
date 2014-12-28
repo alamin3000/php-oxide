@@ -499,8 +499,8 @@ class Form extends Element {
 		}
       
       // only wrap control is not block level
-      $buffer->prepend($this->controlWrapperTag->renderOpenTag());
-      $buffer->append($this->controlWrapperTag->renderCloseTag());
+      $buffer->prepend($this->controlWrapperTag->renderOpen());
+      $buffer->append($this->controlWrapperTag->renderClose());
    }
  
    /**
