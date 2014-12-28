@@ -1,7 +1,7 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
-use oxide\helper\_html;
+use oxide\ui\html\TagInfo;
 
 class Tag implements Renderer {
    protected 
@@ -102,6 +102,11 @@ class Tag implements Renderer {
       unset($this->_attributes[$key]);
    }
    
+   /**
+    * 
+    * @param type $string
+    * @return type
+    */
    public static function escape($string) {
       return htmlentities($string, ENT_QUOTES);
    }
@@ -127,13 +132,31 @@ class Tag implements Renderer {
       return ' ' . trim($str);
    }
    
-   
+   /**
+    * 
+    * @param type $tag
+    * @param array $attributes
+    * @return type
+    */
    public static function openTag($tag, array $attributes = null) {
-      
+      $close_tag = '';
+      if(isset(TagInfo::$voidTags[$tag]))  $close_tag = " /";
+
+      // rendering the markup
+      return sprintf('<%s%s%s>', 
+         $tag, 
+         self::renderAttributes($attributes),
+         $close_tag);
    }
    
+   /**
+    * 
+    * @param type $tag
+    */
    public static function closeTag($tag) {
-      
+      if(isset(TagInfo::$voidTags[$tag])) return '';
+
+      return "</{$tag}>";
    }
    
    
@@ -145,7 +168,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpen() {
-      return _html::rstart($this->_tag, $this->_attributes);
+      return self::openTag($this->_tag, $this->_attributes);
    }
    
    /**
@@ -153,7 +176,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderClose() {
-      return _html::rend($this->_tag);
+      return self::closeTag($this->_tag);
    }
       
    public function render() {
