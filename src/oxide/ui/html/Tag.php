@@ -110,7 +110,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpen() {
-      return self::openTag($this->_tag, $this->_attributes, $this->_void);
+      return self::renderOpenTag($this->_tag, $this->_attributes, $this->_void);
    }
    
    /**
@@ -118,7 +118,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderClose() {
-      return self::closeTag($this->_tag);
+      return self::renderCloseTag($this->_tag, $this->_void);
    }
       
    public function render() {
