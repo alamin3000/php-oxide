@@ -24,6 +24,15 @@ class Element
       $_callback_pre_render = null,
       $_callback_post_render = null,
       $_callback_inner_render = null;
+   
+   public static 
+      $blockTags = [
+         'address' => true, 'figcaption' => true, 'ol' => true, 'article' => true, 'figure' => true, 
+         'output' => true, 'aside' => true, 'footer' => true, 'p' => true, 'audio' => true, 'form' => true, 
+         'pre' => true, 'blockquote' => true, 'h1' => true,'h2' => true,'h3' => true,'h4' => true,'h5' => true,'h6' =>true,
+         'section' => true, 'canvas' => true, 'header' => true, 'table' => true, 'dd' => true, 'hgroup' => true, 
+         'ul' => true, 'div' => true, 'hr' => true, 'dl' => true, 'video' => true, 'fieldset' => true, 'noscript' => true, 'li' => true];
+
       
    /**
 	 * construct the element

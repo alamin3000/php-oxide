@@ -1,5 +1,6 @@
 <?php
 namespace oxide\helper;
+
 /** 
  * html helper class
  *

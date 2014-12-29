@@ -2,8 +2,6 @@
 namespace oxide\ui\html;
 use oxide\validation;
 use oxide\util\ArrayString;
-use oxide\helper\_html;
-use oxide\helper\Ui;
 
 /**
  * Form class
@@ -409,16 +407,21 @@ class Form extends Element {
                if(isset($errors[$this->getIdentifierValue()])) {
                   // now lists all form level errors
                   $formerrors = $errors[$this->getIdentifierValue()];
-                  $headerElement[] = Ui::alert($this->_submitErrorMessage . Ui::listing($formerrors), Ui::STYLE_ERROR);
+                  $headerElement[] = self::renderOpenTag('ul');
+                  foreach($formerrors as $error) {
+                     $headerElement[] = self::renderTag('strong', $error);
+                  }
+                  $headerElement[] = self::renderCloseTag('ul');
+                  
                } else {
-                  $headerElement[] = Ui::alert($this->_submitErrorMessage, Ui::STYLE_ERROR);
+                  $headerElement[] = self::renderTag('strong', $this->_submitErrorMessage);
                }
             }
          } else {
             
             // for submission success
             if($this->isSubmit()) {
-               $headerElement[] = Ui::alert($this->_submitSuccessMessage, Ui::STYLE_SUCCESS);
+               $headerElement[] = self::renderTag('strong', $this->_submitSuccessMessage);
             }
          }
       }
@@ -435,7 +438,7 @@ class Form extends Element {
 	public function renderFormFooter() {
 		$validator = $this->getValidationProcessor();
 		if($validator->isRequired()) {
-         $p = _html::tag('p', _html::tag('small', '* Indicates required field(s).'));
+         $p = self::renderTag('p', self::renderTag('small', '* Indicates required field(s).'));
          $this->footerElement[] = $p;
          return $this->footerElement->render();
 		}
@@ -494,7 +497,7 @@ class Form extends Element {
          else $errmsg = null;
          
          if($errmsg) { // show error if available
-            $buffer[] = Ui::alert($errmsg, Ui::STYLE_ERROR);
+            $buffer[] = self::renderTag('strong', $errmsg);
          }
 		}
       

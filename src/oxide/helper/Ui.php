@@ -179,7 +179,7 @@ class Ui {
     * @return type
     */
    public static function form($controls, array $attrs = null) {
-      if($controls instanceof Form) return self::form_element ($controls);
+      if($controls instanceof Form) return self::form_element($controls);
       
       Html::start('form', $attrs);
       foreach($controls as $name => $control) {
@@ -340,6 +340,12 @@ class Ui {
       return self::form_row_end();
    }
 
+   /**
+    * 
+    * @param type $style
+    * @param type $method
+    * @param type $action
+    */
    public static function form_start($style = null, $method = 'get', $action = null) {
       $attr = [
           'role' => 'form',

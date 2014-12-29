@@ -5,9 +5,8 @@ use oxide\helper\Html;
 
 abstract class ControlFactory {
    protected static
-      $controls = [
-          
-      ];
+      $controls = ['input', 'textarea', 'select', 'button'];
+
    
    
    public static function create($name, $type, $value = null, $label = null, $options = null, $attributes = null) {

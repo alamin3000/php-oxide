@@ -1,6 +1,5 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\_html;
 
 /**
  * InputControl class
@@ -12,6 +11,14 @@ use oxide\helper\_html;
 class InputControl extends Control {
    protected
 		$_type = null;
+   
+   public static
+      $inputTypes = ['text' => true, 'submit' => true, 'button' => true, 'password' => true, 
+       'hidden' => true, 'radio' => true, 'image' => true, 'checkbox' => true, 'file' => true ,
+       'email' => true, 'url' => true, 'tel' => true, 'number' => true, 'range' => true, 'search' => true, 
+       'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 
+       'time' => true, 'datetime-local' => true, 'button' => true];
+
 
    const 
       TYPE_TEXT = 'text',
@@ -32,12 +39,13 @@ class InputControl extends Control {
 		parent::__construct('input', $name, $value, $label,  $attrbs);
 		
 		// setup input type
-		if(isset(_html::$inputTypes[$type])) {
+		if(isset(self::$inputTypes[$type])) {
 			$this->_type = $type;
 		} else {
 			throw new \Exception('Invalid input type provided: ' . $type);
 		}
 		
+      $this->_void = true;
       $this->type = $type;
       $this->setName($name);
 	}

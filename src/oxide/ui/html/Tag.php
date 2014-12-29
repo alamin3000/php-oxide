@@ -1,11 +1,11 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
-use oxide\ui\html\TagInfo;
 
 class Tag implements Renderer {
    protected 
       $_tag,
+      $_void = false,
       $_attributes = [];
    
    /**
@@ -110,7 +110,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpen() {
-      return self::openTag($this->_tag, $this->_attributes);
+      return self::openTag($this->_tag, $this->_attributes, $this->_void);
    }
    
    /**
@@ -162,9 +162,9 @@ class Tag implements Renderer {
     * @param array $attributes
     * @return type
     */
-   public static function openTag($tag, array $attributes = null) {
+   public static function renderOpenTag($tag, array $attributes = null, $void = fasle) {
       $close_tag = '';
-      if(isset(TagInfo::$voidTags[$tag]))  $close_tag = " /";
+      if($void)  $close_tag = " /";
 
       // rendering the markup
       return sprintf('<%s%s%s>', 
@@ -177,8 +177,8 @@ class Tag implements Renderer {
     * 
     * @param type $tag
     */
-   public static function closeTag($tag) {
-      if(isset(TagInfo::$voidTags[$tag])) return '';
+   public static function renderCloseTag($tag, $void = false) {
+      if($void) return '';
 
       return "</{$tag}>";
    }
@@ -190,15 +190,15 @@ class Tag implements Renderer {
     * @param \oxide\ui\html\Tag $tag
     * @param type $content
     */
-   public static function renderTag($tag, $content = null, array $attributes = null) {
-      if($tag instanceof self) 
+   public static function renderTag($tag, $content = null, array $attributes = null, $void = false) {
+      if($tag instanceof self) {
          return $tag->renderOpen() .
             $content.
             $tag->renderClose();    
-      else
-         return self::openTag ($tag, $attributes) .
+      } else {
+         return self::openTag ($tag, $attributes, $void) .
               $content .
-              self::closeTag ($tag);
-   }   
-      
+              self::closeTag ($tag, $void);
+      }
+   }     
 }

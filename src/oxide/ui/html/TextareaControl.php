@@ -1,6 +1,5 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\Html;
 
 /**
  * TextareaControl
@@ -34,6 +33,6 @@ class TextareaControl extends Control {
 	 * @return string
 	 */
 	public function renderInner() {
-		return Html::escape($this->getValue());
+		return self::escape($this->getValue());
 	}	
 }
