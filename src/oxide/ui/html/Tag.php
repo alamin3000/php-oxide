@@ -196,9 +196,9 @@ class Tag implements Renderer {
             $content.
             $tag->renderClose();    
       } else {
-         return self::openTag ($tag, $attributes, $void) .
+         return self::renderOpenTag ($tag, $attributes, $void) .
               $content .
-              self::closeTag ($tag, $void);
+              self::renderCloseTag ($tag, $void);
       }
    }     
 }
