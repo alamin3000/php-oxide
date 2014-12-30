@@ -469,6 +469,8 @@ abstract class _html {
       } else {
          $inner = array_shift($arguments);
          $attributes = (!empty($arguments)) ? array_shift($arguments) : null;
+         echo $name;
+         var_dump($arguments);
          return self::tag($name, $inner, $attributes);
       }
    }
