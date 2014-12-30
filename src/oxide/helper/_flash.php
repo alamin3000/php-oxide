@@ -1,7 +1,7 @@
 <?php
 namespace oxide\helper;
 
-class FlashHelper  extends HelperAbstract {
+class _flash  {
    /**
     *
     * @access private
@@ -10,7 +10,7 @@ class FlashHelper  extends HelperAbstract {
 	private static
       $_key		= "__oxide_helper_flash";
    
-   public function has($namespace = null) {
+   public static function has($namespace = null) {
       $key = self::$_key;
       if($namespace) {
 			$key .= "_{$namespace}";
@@ -25,7 +25,7 @@ class FlashHelper  extends HelperAbstract {
     * @param type $namespace
     * @return type 
     */
-   public function get($namespace = null) {
+   public static function get($namespace = null) {
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";
@@ -33,7 +33,7 @@ class FlashHelper  extends HelperAbstract {
 
 		$value = null;
 		if(isset($_SESSION[$key])) {
-			$value = unserialize($_SESSION[$key]);
+			$value = $_SESSION[$key];
 			unset($_SESSION[$key]);
 		}
 
@@ -47,7 +47,7 @@ class FlashHelper  extends HelperAbstract {
     * @param type $namespace
     * @param type $type 
     */
-	public function set($value, $namespace = null) {
+	public static function set($value, $namespace = null) {
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";

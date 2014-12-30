@@ -1,7 +1,7 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
-use oxide\helper\HtmlHelper;
+use oxide\helper\_html;
 
 
 class Tag implements Renderer {
@@ -129,7 +129,7 @@ class Tag implements Renderer {
    }
    
    public static function renderOpenTag($tag, array $attributes = null, $void = false) {
-      return HtmlHelper::openTag($tag, $attributes, $void);
+      return _html::openTag($tag, $attributes, $void);
    }
    
    public static function renderCloseTag($tag, $void = false) {
@@ -152,10 +152,9 @@ class Tag implements Renderer {
             $content.
             $tag->renderClose();    
       } else {
-         $helper = HtmlHelper::getInstance();
-         return $helper->openTag($tag, $attributes, $void) .
+         return self::renderOpenTag($tag, $attributes, $void) .
               $content .
-              $helper->closeTag($tag, $void);
+              self::renderCloseTag($tag, $void);
 
       }
    }     

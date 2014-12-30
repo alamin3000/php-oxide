@@ -6,7 +6,7 @@ use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
 use oxide\util\ArrayString;
 
-class Ui {
+class _ui {
    use \oxide\base\pattern\SingletonTrait;
    
    protected

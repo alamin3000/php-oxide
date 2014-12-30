@@ -51,6 +51,29 @@ abstract class _html {
            
       $controls = ['input', 'textarea', 'select', 'button'];
 
+   
+   /**
+    * 
+    * @param type $tag
+    * @param array $attributes
+    * @param type $void
+    * @return type
+    */
+   public static function open($tag, array $attributes = null, $void = false) {
+      if($void) $close = ' /';
+      else $close = '';
+      return '<'. $tag . self::attributeString($attributes) . $close . '>';
+   }
+   
+   /**
+    * 
+    * @param type $tag
+    * @return type
+    */
+   public static function close($tag, $void = false) {
+      if($void) return '';
+      return "</{$tag}>";
+   }
 	/**
 	 * generate a html tag string based on given information
 	 *
@@ -71,22 +94,24 @@ abstract class _html {
 	 * @param string $inner
 	 * @param array $attributes
 	 */
-	public static function tag($tag, $inner = null, array $attributes = null) {
+	public static function tag($tag, $inner = null, array $attributes = null, $void = null) {
 		// create the attribute string from the $attributes
-      $attribString = self::attributeString($attributes);
       if(is_array($tag)) {
          list($tag, $inner, $attributes) = $tag;
       }
       
-      if(isset(self::$voidTags[$tag]) && empty($inner)) {
-         // will self close
-         return "<{$tag}{$attribString} />" . self::toString($inner);
-      } else {
-         // full close
-         return "<{$tag}{$attribString}>".
-                 self::toString($inner).
-                 "</{$tag}>";
+      if($void === null) {
+         if(isset(self::$voidTags[$tag])) {
+            $void = true;
+         } else {
+            $void = false;
+         }
       }
+      
+      return self::open($tag, $attributes, $void) .
+              self::toString($inner) .
+              self::close($tag, $void);
+      
 	}
    
    /**
@@ -292,8 +317,7 @@ abstract class _html {
     * @param int $opt
     * @return string
     */
-   private static function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE)
-   {
+   private static function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE) {
       if(!$list) {return;}
       
       if(!is_array($list)) {
@@ -387,35 +411,7 @@ abstract class _html {
       }
       return self::end();
    }
-   
-   /**
-    * Renders and output the start tag
-    * 
-    * @param type $tag
-    * @param type $attrib
-    * @return type
-    */
-   public static function rstart($tag, $attrib = null) {
-      // if tag is empty,
-      // we will self close it.
-      // this way it is HTML5 and XML valid at the same time
-      $close_tag = '';
-      if(isset(self::$voidTags[$tag]))  $close_tag = " /";
-
-      // rendering the markup
-      return sprintf('<%s%s%s>', 
-         $tag, 
-         self::attributeString($attrib),
-         $close_tag);
-
-   }
-   
-   public static function rend($tag) {
-      if(isset(self::$voidTags[$tag])) return '';
-
-      return "</{$tag}>";
-   }
-
+ 
    /**
     * this will output tag start HTML code and stack the tag
     * must call end() to output tag end HTML and balance
@@ -426,7 +422,7 @@ abstract class _html {
    public static function start($tag = null, $attrib = null) {
       ob_start();
       if($tag)
-         printf("<%s%s>", $tag, self::attributeString($attrib));
+         echo self::open ($tag, $attrib, false);
 
    }
 
@@ -436,7 +432,8 @@ abstract class _html {
 	 */
    public static function end($tag = null) {
       if($tag)
-         printf("</%s>", $tag);
+         echo self::close ($tag);
+      
       return ob_get_clean();
    }
 
