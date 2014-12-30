@@ -112,7 +112,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpen() {
-      return _html::open($this->_tag, $this->_attributes, $this->_void);
+      return _html::openTag($this->_tag, $this->_attributes, $this->_void);
    }
    
    /**
@@ -120,7 +120,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderClose() {
-      return _html::close($this->_tag, $this->_void);
+      return _html::closeTag($this->_tag, $this->_void);
    }
       
    public function render() {
@@ -129,11 +129,11 @@ class Tag implements Renderer {
    }
    
    public static function renderOpenTag($tag, array $attributes = null, $void = false) {
-      return _html::open($tag, $attributes, $void);
+      return _html::openTag($tag, $attributes, $void);
    }
    
    public static function renderCloseTag($tag, $void = false) {
-      return _html::close($tag, $void);
+      return _html::closeTag($tag, $void);
    }
    
    public static function escape($string) {

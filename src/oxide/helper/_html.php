@@ -31,27 +31,11 @@ namespace oxide\helper;
  */
 abstract class _html {
    public static
-      $voidTags =  [
-          'area' => true,'base' => true, 'br' => true, 'col' => true, 'command' => true, 
-          'embed' => true, 'hr' => true, 'img' => true, 'input' => true, 'keygen' => true, 
-          'link' => true, 'meta' => true, 'param' => true, 'source' => true, 'track' => true, 'wbr' => true],
-           
-      $blockTags = [
-          'address' => true, 'figcaption' => true, 'ol' => true, 'article' => true, 'figure' => true, 
-          'output' => true, 'aside' => true, 'footer' => true, 'p' => true, 'audio' => true, 'form' => true, 
-          'pre' => true, 'blockquote' => true, 'h1' => true,'h2' => true,'h3' => true,'h4' => true,'h5' => true,'h6' =>true,
-          'section' => true, 'canvas' => true, 'header' => true, 'table' => true, 'dd' => true, 'hgroup' => true, 
-          'ul' => true, 'div' => true, 'hr' => true, 'dl' => true, 'video' => true, 'fieldset' => true, 'noscript' => true, 'li' => true],
-   
-      $inputTypes = ['text' => true, 'submit' => true, 'button' => true, 'password' => true, 
-          'hidden' => true, 'radio' => true, 'image' => true, 'checkbox' => true, 'file' => true ,
-			 'email' => true, 'url' => true, 'tel' => true, 'number' => true, 'range' => true, 'search' => true, 
-          'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 
-          'time' => true, 'datetime-local' => true, 'button' => true],
-           
+      $voidTags =  ['area' => true,'base' => true, 'br' => true, 'col' => true, 'command' => true, 'embed' => true, 'hr' => true, 'img' => true, 'input' => true, 'keygen' => true, 'link' => true, 'meta' => true, 'param' => true, 'source' => true, 'track' => true, 'wbr' => true],
+      $blockTags = ['address' => true, 'figcaption' => true, 'ol' => true, 'article' => true, 'figure' => true, 'output' => true, 'aside' => true, 'footer' => true, 'p' => true, 'audio' => true, 'form' => true, 'pre' => true, 'blockquote' => true, 'h1' => true,'h2' => true,'h3' => true,'h4' => true,'h5' => true,'h6' =>true, 'section' => true, 'canvas' => true, 'header' => true, 'table' => true, 'dd' => true, 'hgroup' => true, 'ul' => true, 'div' => true, 'hr' => true, 'dl' => true, 'video' => true, 'fieldset' => true, 'noscript' => true, 'li' => true],
+      $inputTypes = ['text' => true, 'submit' => true, 'button' => true, 'password' => true, 'hidden' => true, 'radio' => true, 'image' => true, 'checkbox' => true, 'file' => true , 'email' => true, 'url' => true, 'tel' => true, 'number' => true, 'range' => true, 'search' => true, 'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 'time' => true, 'datetime-local' => true, 'button' => true],
       $controls = ['input', 'textarea', 'select', 'button'];
 
-   
    /**
     * 
     * @param type $tag
@@ -59,7 +43,7 @@ abstract class _html {
     * @param type $void
     * @return type
     */
-   public static function open($tag, array $attributes = null, $void = false) {
+   public static function openTag($tag, array $attributes = null, $void = false) {
       if($void) $close = ' /';
       else $close = '';
       return '<'. $tag . self::attributeString($attributes) . $close . '>';
@@ -70,7 +54,7 @@ abstract class _html {
     * @param type $tag
     * @return type
     */
-   public static function close($tag, $void = false) {
+   public static function closeTag($tag, $void = false) {
       if($void) return '';
       return "</{$tag}>";
    }
@@ -108,18 +92,17 @@ abstract class _html {
          }
       }
       
-      return self::open($tag, $attributes, $void) .
+      return self::openTag($tag, $attributes, $void) .
               self::toString($inner) .
-              self::close($tag, $void);
+              self::closeTag($tag, $void);
       
 	}
    
    /**
     * Make any content into a string
     * 
-    * @param type $content
+    * @param mixed $content
     * @return string
-    * @throws \Exception
     */
    public static function toString($content) {
       if(is_scalar($content)) return (string) $content;
@@ -185,7 +168,7 @@ abstract class _html {
 			if($attrib) {
 				$attrib['href'] = $link;
 			} else {
-				$attrib = array('href' => $link);
+				$attrib = ['href' => $link];
 			}
 		}
 
@@ -307,7 +290,6 @@ abstract class _html {
    }
    
    
-   
    /**
     * build html list (UL/OL)
     * 
@@ -318,11 +300,11 @@ abstract class _html {
     * @return string
     */
    private static function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE) {
-      if(!$list) {return;}
+      if(!$list) return;
       
       if(!is_array($list)) {
-         // first we will check for some special object those are recognized by the phpoxide
-         if($list instanceof oxide\util\ArrayContainer) {
+         // first we will check for some special object those are recognized by the oxide
+         if($list instanceof oxide\base\Dictionary) {
             $list = $list->toArray();
          }
          
@@ -331,12 +313,9 @@ abstract class _html {
       
       self::start($type, $attrib);
       foreach($list as $name => $value) {
-         if(is_int($name)) {
-            // simple indexed array
-            $name = "";
-         }
+         if(is_int($name)) $name = "";
 
-         self::start('li');
+         echo self::openTag('li');
          if(is_array($value)) {
 				if($opt == self::LIST_VALUE_LINK)
 					echo self::a(null, $name);
@@ -375,7 +354,7 @@ abstract class _html {
             }
          }
 
-         echo self::end();
+         echo self::closeTag('li');
       }
       return self::end();
 
@@ -422,7 +401,7 @@ abstract class _html {
    public static function start($tag = null, $attrib = null) {
       ob_start();
       if($tag)
-         echo self::open ($tag, $attrib, false);
+         echo self::openTag($tag, $attrib, false);
 
    }
 
@@ -432,7 +411,7 @@ abstract class _html {
 	 */
    public static function end($tag = null) {
       if($tag)
-         echo self::close ($tag);
+         echo self::closeTag ($tag);
       
       return ob_get_clean();
    }
