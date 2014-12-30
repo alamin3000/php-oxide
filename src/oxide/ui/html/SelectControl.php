@@ -1,6 +1,7 @@
 <?php
 namespace oxide\ui\html;
 use oxide\util\ArrayString;
+use oxide\helper\Html;
 
 /**
  * SelectControl class
@@ -175,7 +176,7 @@ class SelectControl extends Control
          
 			if($grouplabel) {
             // render the optgorup with the items and add to buffer
-            $buffer->append(self::renderTag('optgroup', $options, array('label' => $grouplabel)));
+            $buffer->append(self::renderTag('optgroup', $options, ['label' => $grouplabel]));
 			} else {
             // add the rendered option to the buffer
 				$buffer->append($options);

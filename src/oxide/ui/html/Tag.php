@@ -1,6 +1,8 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
+use oxide\helper\HtmlHelper;
+
 
 class Tag implements Renderer {
    protected 
@@ -110,7 +112,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpen() {
-      return self::renderOpenTag($this->_tag, $this->_attributes, $this->_void);
+      return HtmlHelper::openTag($this->_tag, $this->_attributes, $this->_void);
    }
    
    /**
@@ -118,71 +120,25 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderClose() {
-      return self::renderCloseTag($this->_tag, $this->_void);
+      return HtmlHelper::closeTag($this->_tag, $this->_void);
    }
       
    public function render() {
-      return $this->renderOpenTag() .
-        $this->renderCloseTag();
+      return $this->renderOpen() .
+        $this->renderClose();
    }
    
-   /**
-    * 
-    * @param type $string
-    * @return type
-    */
-   public static function escape($string) {
-      return htmlentities($string, ENT_QUOTES);
+   public static function renderOpenTag($tag, array $attributes = null, $void = false) {
+      return HtmlHelper::openTag($tag, $attributes, $void);
    }
    
-   /**
-    * Generates HTML tag attribute string from given array
-    *
-    * @param array $attributes
-    * @return string
-    */
-   public static function renderAttributes(array $attributes = null) {
-  		if(!$attributes) return '';
-		
-      $str = '';
-      foreach ($attributes as $key => $value) {
-         if(!empty($value) && !is_scalar($value)) {
-            trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
-         }
-         $value = self::escape($value);
-         $str .= "{$key}=\"{$value}\" ";
-      }
-      
-      return ' ' . trim($str);
-   }
-   
-   /**
-    * 
-    * @param type $tag
-    * @param array $attributes
-    * @return type
-    */
-   public static function renderOpenTag($tag, array $attributes = null, $void = fasle) {
-      $close_tag = '';
-      if($void)  $close_tag = " /";
-
-      // rendering the markup
-      return sprintf('<%s%s%s>', 
-         $tag, 
-         self::renderAttributes($attributes),
-         $close_tag);
-   }
-   
-   /**
-    * 
-    * @param type $tag
-    */
    public static function renderCloseTag($tag, $void = false) {
-      if($void) return '';
-
-      return "</{$tag}>";
+      return HtmlHelper::closeTag($tag, $void);
    }
    
+   public static function escape($string) {
+      return HtmlHelper::escape($string);
+   }
    
    /**
     * Allows to render an element based on given $tag and $content
@@ -196,9 +152,11 @@ class Tag implements Renderer {
             $content.
             $tag->renderClose();    
       } else {
-         return self::renderOpenTag ($tag, $attributes, $void) .
+         $helper = HtmlHelper::getInstance();
+         return $helper->openTag($tag, $attributes, $void) .
               $content .
-              self::renderCloseTag ($tag, $void);
+              $helper->closeTag($tag, $void);
+
       }
    }     
 }

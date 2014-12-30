@@ -24,4 +24,10 @@ class HelperAbstract {
    public function getContext() {
       return $this->_context;
    }
+   
+   
+   public static function __callStatic($name, $arguments) {
+      $instance = self::getInstance();
+      return call_user_func_array([$instance, $name], $arguments);
+   }
 }

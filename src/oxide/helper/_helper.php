@@ -17,20 +17,7 @@ class _helper {
       $_invokers = [];
    
    private function __construct() {
-      
-      // flash()
-      self::extend('flash', function($message = null) {
-         static $key = 'oxide.helper.messenger';
-         if($message) {
-            $_SESSION[$key] = $message;
-         } else {
-            if(isset($_SESSION[$key])) {
-               return $_SESSION[$key];
-            } else {
-               return null;
-            }
-         }
-      });
+
    }
    
    /**
@@ -51,8 +38,16 @@ class _helper {
     * @param type $name
     * @param \Closure $function
     */
-   public static function extend($name, \Closure $function) {
+   public static function extendClosure($name, \Closure $function) {
       self::$_invokers[$name] = $function;
+   }
+   
+   public static function extendClass($class) {
+      $reflector = new \ReflectionClass($class);
+      $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
+      foreach($methods as $method) {
+         $this->_t_methods[$method] = $object;
+      }
    }
    
    public static function __callStatic($name, $arguments) {

@@ -1,8 +1,7 @@
 <?php
 namespace oxide\helper;
 
-class Flash {
-   use \oxide\base\pattern\SingletonTrait;
+class FlashHelper  extends HelperAbstract {
    /**
     *
     * @access private
