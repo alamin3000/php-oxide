@@ -133,11 +133,11 @@ class Tag implements Renderer {
    }
    
    public static function renderCloseTag($tag, $void = false) {
-      return HtmlHelper::close($tag, $void);
+      return _html::close($tag, $void);
    }
    
    public static function escape($string) {
-      return HtmlHelper::escape($string);
+      return _html::escape($string);
    }
    
    /**
