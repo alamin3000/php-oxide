@@ -112,7 +112,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderOpen() {
-      return HtmlHelper::openTag($this->_tag, $this->_attributes, $this->_void);
+      return _html::openTag($this->_tag, $this->_attributes, $this->_void);
    }
    
    /**
@@ -120,7 +120,7 @@ class Tag implements Renderer {
     * @return type
     */
    public function renderClose() {
-      return HtmlHelper::closeTag($this->_tag, $this->_void);
+      return _html::closeTag($this->_tag, $this->_void);
    }
       
    public function render() {
