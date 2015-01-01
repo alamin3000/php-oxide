@@ -24,7 +24,7 @@ class ConnectionManager {
     * @param array $config
     * @param array $options
     */
-   public function __construct(array $config, array $options = null) {
+   public function __construct(array $config = null, array $options = null) {
       $this->_config = $config;
       $this->_options = $options;
    }
@@ -39,6 +39,9 @@ class ConnectionManager {
    public function getConnection() {
       if($this->_connection === null) {
          $config = $this->_config;
+         if(!$config) {
+            throw new \Exception("Database configuration not found.");
+         }
          $options = $this->_options;
          if(!$options) {
             $options = [
