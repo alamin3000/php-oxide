@@ -49,7 +49,7 @@ class Context extends Container {
     */
    public function getSession() {
       if($this->_session === null) {
-         $this->_session = Session::getInstance();
+         $this->_session = new Session();
       }
       
       return $this->_session;
