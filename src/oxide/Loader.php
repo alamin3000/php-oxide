@@ -109,6 +109,8 @@ class Loader {
       app\ConfigManager::setSharedInstance($configManager);
       $config = $configManager->getConfig();
       
+      var_dump($config);
+      
       $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
       
       // set shared database connection manager

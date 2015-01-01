@@ -15,7 +15,7 @@ class ConfigManager {
    
    protected 
       $_defaultConfigFilename = 'config.json',
-      $_configs = [],
+      $_config = null,
       $_dir = null;
    
    /**
@@ -37,11 +37,12 @@ class ConfigManager {
     * @return Container
     * @throws \Exception
     */
-   public function getConfig($filename = null) {
-      if($filename == null) {
-         $filename = $this->_defaultConfigFilename;
+   public function getConfig() {
+      if($this->_config === null) {
+         $this->_config = $this->createConfigByFilename($this->_defaultConfigFilename);
       }
-      return $this->getConfigByFilename($filename);
+      
+      return $this->_config;
    }
    
    /**
@@ -52,18 +53,14 @@ class ConfigManager {
     * @return DataFile
     * @throws \Exception
     */
-   public function getConfigByFilename($filename) {
-      if(!isset($this->_configs[$filename])) {
-         $dir = $this->_dir;
-         $file = $dir . '/' . $filename;
-         if(!is_file($file)) {
-            throw new \Exception('Config file not found in location: ' . $file);
-         }
-         $config = new DataFile($file);
-         $this->_configs[$filename] = $config;
+   public function createConfigByFilename($filename) {
+      $dir = $this->_dir;
+      $file = $dir . '/' . $filename;
+      if(!is_file($file)) {
+         throw new \Exception('Config file not found in location: ' . $file);
       }
-           
-      return $this->_configs[$filename];
+      
+      return new DataFile($file);
    }
    
    /**
@@ -73,9 +70,9 @@ class ConfigManager {
     * @param string $name
     * @return DataFile
     */
-   public function getConfigByDirectory($relative_dir, $name = 'config.json') {
+   public function createConfigByDirectory($relative_dir, $name = 'config.json') {
       $dir = trim($relative_dir, '/');
       $filename = "{$dir}/{$name}";
-      return $this->getConfigByFilename($filename);
+      return $this->createConfigByFilename($filename);
    }
 }
