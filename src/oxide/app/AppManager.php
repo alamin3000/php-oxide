@@ -59,7 +59,7 @@ class AppManager {
     */
    public function getConfig() {
       if($this->_config === null) {
-         $this->_config = $this->_configfile;
+         $this->_config = $this->openConfig($this->_configfile);
       }
             
       return $this->_config;
