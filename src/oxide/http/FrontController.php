@@ -4,7 +4,6 @@ use oxide\http\Context;
 use oxide\http\Router;
 use oxide\http\Dispatcher;
 use oxide\util\EventNotifier;
-use oxide\base\pattern\DefaultInstanceTrait;
 /**
  * Front Controller.  
  * 
@@ -16,7 +15,7 @@ use oxide\base\pattern\DefaultInstanceTrait;
  * @subpackage http
  */
 class FrontController {
-   use DefaultInstanceTrait;
+   use \oxide\base\pattern\SharedInstanceTrait;
    const
       EVENT_START = 'FrontControllerStart',
       EVENT_END = 'FrontControllerEnd',

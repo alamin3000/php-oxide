@@ -11,15 +11,18 @@ use oxide\base\Container;
  * @subpackage http
  */
 class Context extends Container {
-   use \oxide\base\pattern\DefaultInstanceTrait;
-   
+   use \oxide\base\pattern\SharedInstanceTrait;
+   protected
+      $_request = null,
+      $_response = null,
+      $_session = null;
+
+
    /**
     */
-	public function __construct() {
+	public function __construct(Request $request) {
 		parent::__construct();
-		$this->set('request', function() { return Request::currentServerRequest(); });
-		$this->set('response', function() { return Response::defaultInstance(); });
-      $this->set('session', function() { return Session::getInstance(); });
+      $this->_request = $request;
 	}
   
    /**
@@ -27,7 +30,7 @@ class Context extends Container {
     * @return Request
     */
 	public function getRequest() {
-		return $this->get('request');
+		return $this->_request;
 	}
 
    /**
@@ -35,13 +38,21 @@ class Context extends Container {
     * @return Response
     */
 	public function getResponse() {
-		return $this->get('response');
+      if($this->_response == null) {
+         $this->_response = new Response();
+      }
+      
+		return $this->_response;
 	}
    
    /**
     * @return Session
     */
    public function getSession() {
-      return $this->get('session');
+      if($this->_session === null) {
+         $this->_session = Session::getInstance();
+      }
+      
+      return $this->_session;
    }
 }

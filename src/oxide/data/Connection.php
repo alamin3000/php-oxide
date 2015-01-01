@@ -11,19 +11,7 @@ use oxide\util\Exception;
  * @subpackage data
  * @author Alamin Ahmed <aahmed753@gmail.com>
  */
-
-
-/**
- * Database connection object
- * 
- * based on PDO extension
- */
-class Connection
-{
-   use \oxide\base\pattern\DefaultInstanceTrait {
-      defaultInstance as public sharedInstance;
-   }
-   
+class Connection {
    /**
     *
     * @access protected
@@ -34,9 +22,6 @@ class Connection
 		$_config  = array(),
 		$_options = array(),
 		$_dsn = '';
-	
-	static protected
-		$_sharedInstance = null;
 	
 	const 
 		OP_EQ				= '=',
@@ -74,15 +59,9 @@ class Connection
 	 * @todo fix dsn for other drivers, or put dsn string on ini file
 	 * @access public
 	 * @param $config array
-	 * @param $options[optional] array
+	 * @param $options array
 	 */	
-	public function __construct($config, $options = NULL)
-	{
-	  // make sure configuration array is provided.
-      if(!is_array($config)) {
-         throw new Exception("construction argument must be an array");
-      }
-      
+	public function __construct(array $config, array $options = NULL) {      
       // storing the config array locally.
 		// _connect() function will use this to perform actual connection
       $this->_config = $config;
@@ -95,8 +74,7 @@ class Connection
     * @access public
 	 * @return \PDO
 	 */
-   public function getPDO()
-   {
+   public function getPDO() {
       return $this->_pdo;
    }
 	
@@ -107,8 +85,7 @@ class Connection
 	 * @access private
 	 * @return string
 	 */
-	private function _generateDSN()
-   {
+	private function _generateDSN() {
 		// get the driver name
       if(!isset($this->_config['driver'])) {
          $driver = 'mysql';
@@ -139,8 +116,7 @@ class Connection
 	 * this function will check for active connection, if not attempts to connect.
     * @access private
     */
-   private function _connect()
-   {
+   private function _connect() {
       if($this->_pdo === NULL) {
 			$dsn			= $this->_generateDSN();
 			$username	= $this->_config['username'];
@@ -166,8 +142,7 @@ class Connection
 	 * @param $value mixed
 	 * @return bool
 	 */
-   public function setAttribute($attr, $value)
-   {
+   public function setAttribute($attr, $value) {
    	$this->_connect();
 		return $this->_pdo->setAttribute($attr, $value);
    }
@@ -180,8 +155,7 @@ class Connection
 	 * @param $sql string
 	 * @return Statement
 	 */
-   public function prepare($sql)
-   {
+   public function prepare($sql) {
 		$this->_connect();
 		return $this->_pdo->prepare($sql);
 	}
@@ -197,13 +171,7 @@ class Connection
 	 * @param $sql
 	 * @return Statement
 	 */
-   public function query($sql)
-   {
-		if($sql instanceof data\sql\Query) {
-         $sql->db($this);
-			return $sql->execute();
-		}
-		
+   public function query($sql) {
 		$this->_connect();
 		return $this->_pdo->query($sql);
 	}
@@ -216,8 +184,7 @@ class Connection
 	 * @param $sql
 	 * @return int
 	 */
-   public function exec($sql)
-   {
+   public function exec($sql) {
 		$this->_connect();
 		return $this->_pdo->exec($sql);
 	}
@@ -232,60 +199,9 @@ class Connection
 	 * @param $str string
 	 * @return string
 	 */
-   public function quote($str)
-   {
+   public function quote($str) {
 		$this->_connect();
 		return $this->_pdo->quote($str);
-	}
-
-	/**
-	 * special utility method to find number of records found from given sql
-	 *
-	 * the query must be a SELECT query.
-    * @access public
-	 * @param string $sql
-	 * @param array $param
-	 * @param bool $cache
-	 * @todo check for valid select query
-	 */
-	public function queryCount($sql, $param = null, $cache = true)
-   {
-      // create sql count statement
-      $frompos = strripos($sql, "from ");
-      if($frompos === false) {
-         throw new \PDOException("bad sql provided");
-      }
-
-      $endpos = stripos($sql, "limit");
-      if(!$endpos) {
-         $sql_count = "select count(*) as count " . substr($sql, $frompos);
-      } else {
-         $sql_count = "select count(*) as count " . substr($sql, $frompos, $endpos - $frompos);
-      }
-
-      // check if session has the record count
-      if($cache) {
-			// print 'cached';
-			// check if we have the same query
-         if(isset($_SESSION[self::SESSION_KEY_LAST_QUERY_SQL])
-                  && $_SESSION[self::SESSION_KEY_LAST_QUERY_SQL] == md5($sql_count)
-                  && $_SESSION[self::SESSION_KEY_LAST_QUERY_PARAM] == md5(serialize($this->bindArray))) {
-
-            return (int) $_SESSION[self::SESSION_KEY_LAST_QUERY_COUNT];
-         }
-      }
-
-		// prepare execute
-		$smnt = $this->prepare($sql_count);
-		$smnt->execute($param);
-		$count = $smnt->fetchColumn();
-
-		// store info in session
-		$_SESSION[self::SESSION_KEY_LAST_QUERY_SQL] =  md5($sql_count);
-		$_SESSION[self::SESSION_KEY_LAST_QUERY_COUNT] = $count;
-		$_SESSION[self::SESSION_KEY_LAST_QUERY_PARAM] = md5(serialize($this->bindArray));
-
-		return $count;
 	}
 
 	/**
@@ -295,14 +211,7 @@ class Connection
 	 * the table where INSERT is performed, must have primary key column
 	 * @return int
 	 */
-   
-   /**
-    *
-    *@access public
-    * @return type 
-    */
-	public function lastInsertId()
-   {
+	public function lastInsertId() {
 		return $this->_pdo->lastInsertId();
 	}
 
@@ -312,24 +221,9 @@ class Connection
     * @access public
 	 * @return
 	 */
-	public function errorInfo()
-   {
+	public function errorInfo() {
 		return $this->_pdo->errorInfo();
 	}
-	
-   /**
-    * disconnects from the database
-    */
-   
-   /**
-    *
-    * @access public 
-    */
-   public function close() { }
-   
-
-	/**
-	 */
    
    /**
     *
@@ -338,8 +232,7 @@ class Connection
     * @param type $param
     * @param type $smnt 
     */
-	public function select($table, $param, &$smnt = null)
-   {
+	public function select($table, $param, &$smnt = null) {
 		if(array_key_exists('select', $param)) {
          //$select =
       }
@@ -352,8 +245,7 @@ class Connection
 	 * @param array $row must be an assoicative array 
 	 * @return Oxide_Db_Statement
 	 */
-	public function insert($table, $row, Statement &$smnt = null )
-	{
+	public function insert($table, $row, Statement &$smnt = null ) {
 		// prepare columns to be inserted
 		$columns = implode(',', array_keys($row));
 		$values = implode(',', array_fill(0, count($row), '?'));
@@ -385,9 +277,9 @@ class Connection
 	 * @param array $binds additional parameters to be binded for where clause
 	 * @return DbStatement
 	 */
-	public function update($table, $row, $where, $binds = array(), Statement &$smnt = null)
-   {
-		$where = (array) $where;
+	public function update($table, $row, $where, array $binds = null, Statement &$smnt = null) {
+		if(!is_array($where)) { $where = [$where]; }
+      
 		// prepare columns to be updated
 		foreach($row as $key => $value) {
 			/**
@@ -403,7 +295,6 @@ class Connection
 			}
 		}
 		
-		
 		if(!$smnt) {
 			// build the sql query
 			$sql = "update {$table} set " . implode(',', $set) . " where " . implode(' AND ', $where);
@@ -413,7 +304,7 @@ class Connection
 		}
 		
 		// execute
-		$smnt->execute(array_merge($row, (array) $binds));
+		$smnt->execute(array_merge($row, $binds));
 	
 		// return statement for 
 		return $smnt->rowCount();
@@ -426,8 +317,7 @@ class Connection
 	 * @param array $binds
 	 * @return Oxide_Db_Statement
 	 */
-	public function delete($table, $where, $binds = array(), Statement &$smnt = null)
-	{
+	public function delete($table, $where, array $binds = null, Statement &$smnt = null) {
 		// reuse statement if maintained by the caller
 		if(!$smnt) {
 			// build the sql query
@@ -451,8 +341,7 @@ class Connection
 	 * @param string $table
 	 * @return array
 	 */
-	public function columnsForTable($table)
-	{
+	public function columnsForTable($table) {
 		// performs database query
       $columns = $this->query("SHOW COLUMNS FROM {$table}")->fetchAll();
 		$schema = array();
@@ -479,23 +368,11 @@ class Connection
       // return the schema
       return $schema;
 	}
-
+   	
    /**
-    * converts given time into Database DateTime format
-    *
-    * YYYY-MM-DD HH:MM:SS
-    * 2004-01-01 13:00:00
-    *
-    * @access public
-    * @param int|string
-	 * @return string
+    * disconnects from the database
+    * @access public 
     */
-   public static function toDateTime($time)
-   {
-      if(is_int($time)) {
-         return date('Y-m-d H:i:s', $time);
-      } else {
-         return date('Y-m-d H:i:s', strtotime($time));
-      }
-   }
+   public function close() { }
+
 }

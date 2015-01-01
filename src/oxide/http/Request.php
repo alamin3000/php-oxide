@@ -15,9 +15,7 @@ namespace oxide\http;
  * @todo better path components
  * @todo utilize base
  */
-class Request {
-   use \oxide\base\pattern\DefaultInstanceTrait;
-   
+class Request {   
    protected 
       /**
        * @var string Holds the current request url

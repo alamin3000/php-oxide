@@ -8,9 +8,7 @@ namespace oxide\http;
  * @package oxide
  * @subpackage http
  */
-class Response {
-   use \oxide\base\pattern\DefaultInstanceTrait;
-   
+class Response {   
    private 
 		$_headers = array(),
 		$_responseCode = 200,

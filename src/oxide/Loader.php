@@ -10,8 +10,9 @@
 namespace oxide;
 use oxide\helper\_util;
 use oxide\util\PSR4Autoloader;
-use oxide\util\ConfigManager;
 use oxide\util\EventNotifier;
+use oxide\http\Request;
+use oxide\http\Response;
 
 /**
  * Oxide Loader
@@ -69,42 +70,6 @@ class Loader {
    }
    
    /**
-    * 
-    * @param type $file
-    * @param type $dir
-    * @return boolean
-    */
-   public static function loadFile($file, $dir = null) {
-      $filename = null;
-      if($dir) {
-         $filename = "{$dir}/{$file}";
-      } else {
-         $filename = $file;
-      }
-      
-      if(file_exists($filename)) {
-         require_once $filename;
-         return true;
-      } else {
-         return false;
-      }
-   }
-      
-   /**
-    * 
-    * @param type $classname
-    */
-   static public function loadHelper($helper, $namespace = null) {
-      if(!$namespace) {
-         $namespace = 'oxide';
-      }
-      $classname = ucfirst($helper);
-      $class = "{$namespace}\\helper\\{$classname}";
-      $instance = $class::getInstance();
-      return $instance;
-   }
-   
-   /**
     * Get the PSR4 Autoloader class
     * @return PSR4Autoloader
     */
@@ -135,28 +100,38 @@ class Loader {
    public static function bootstrap($config_dir, $autorun = true) {
       self::register();
       
-      // creating the application context
-      // and setup some services
-      $context = new http\Context();
-      http\Context::setDefaultInstance($context);
-      $notifier = EventNotifier::defaultInstance();
-      $context->set('notifier', $notifier);
-      $configManager = new ConfigManager($config_dir);
+      // create the event notifier and share it
+      $notifier = new EventNotifier();
+      EventNotifier::setSharedInstance($notifier);      
+            
+      // create the config manager and get the application config
+      $configManager = new app\ConfigManager($config_dir);
+      app\ConfigManager::setSharedInstance($configManager);
       $config = $configManager->getConfig();
-      $context->set('configManager', $configManager);
-      $context->set('config', $config); // set the application config.
-      
       
       $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
       
+      // set shared database connection manager
+      // this will not connect to database.
+      $connectionManager = new app\ConnectionManager($config['database']);
+      app\ConnectionManager::setSharedInstance($connectionManager);
+      
+      // creating the http context and share it
+      $request = Request::currentServerRequest();
+      $context = new http\Context($request);
+      http\Context::setSharedInstance($context);
+
+      // create the front controller and share it
       $fc = new http\FrontController($context);
-      http\FrontController::setDefaultInstance($fc);
+      http\FrontController::setSharedInstance($fc);
       
       // load modules
       $modules = _util::value($config, 'modules');
       self::loadModules($modules, $fc->getRouter());
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
+      
+      // if autorun, run the front controller
 		if($autorun) {
 			$fc->run();
 		}

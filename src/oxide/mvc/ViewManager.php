@@ -17,7 +17,7 @@ use oxide\ui\MasterPage;
  * @todo throw some events in global scope.
  */
 class ViewManager {
-   use \oxide\base\pattern\DefaultInstanceTrait;
+   use \oxide\base\pattern\SharedInstanceTrait;
    
    public
       $disableLayout = false;
@@ -45,6 +45,8 @@ class ViewManager {
       $this->_templates = $templates;
       $this->_route = $route;
    }
+   
+   
    
    /**
     * Set the default script extension

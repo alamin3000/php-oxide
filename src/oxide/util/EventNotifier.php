@@ -1,7 +1,6 @@
 <?php
 namespace oxide\util;
 use oxide\util\Exception;
-use oxide\base\pattern\DefaultInstanceTrait;
 
 /**
  * Event Notifier class
@@ -11,7 +10,7 @@ use oxide\base\pattern\DefaultInstanceTrait;
  * @subpackage engine
  */
 class EventNotifier {
-   use DefaultInstanceTrait;
+   use \oxide\base\pattern\SharedInstanceTrait;
    
    protected
 		$_listeners = array();

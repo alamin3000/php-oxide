@@ -30,7 +30,7 @@ use oxide\helper\Auth;
  * - Application preferences
  * - Application directories
  */
-class App {  
+class _app {  
 	protected static
       $_config_dir = null,
 		$_dir = null;
@@ -77,29 +77,12 @@ class App {
    }
    
    /**
-    * Get the user current user's upload directory
-    * 
-    * Basically uses dir_user_upload providing current identity.
-    * User must be logged in before calling this method, else exception will be thrown
-    * @return string
-    * @throws \Exception
-    */
-   public function dir_current_user_upload() {
-      $identity = Auth::identity();
-      if(!$identity) {
-         throw new \Exception('User is not currently logged in.');
-      }
-      
-      return self::dir_user_upload($identity);
-   }
-   
-   /**
     * Get the upload directory for use given the $identity
     * 
     * @param stdClass $identity
     * @return string
     */
-   public function dir_user_upload($identity) {
+   public function dir_upload_user($identity) {
       $u = "{$identity->username}";
       $m1 = sha1($u);
       $user_dir = "{$u}{$m1}";
@@ -107,44 +90,6 @@ class App {
       return self::dir_upload($user_dir);
    }
    
-   /**
-    * Read from application preference file.
-    * 
-    * If $key is not provided, complete application preferece is 
-    * @staticvar type $instance
-    * @param type $namespace
-    * @param type $key
-    * @param type $default
-    * @param type $required
-    * @return type
-    * @throws \Exception
-    */
-   public function pref($namespace = null, $key = null, $default = null, $required = false) {
-      static $instance = null;
-      if($instance === null) {
-         $dir = self::$_config_dir;
-         $file = $dir . '/pref.json';
-         if(!is_file($file)) {
-            throw new \Exception('Application preference file is not found in location: '. $file);
-         }
-         
-         $instance = new ConfigFile($file);
-      }
-      
-      if($namespace === null) return $instance;
-      
-      if(isset($instance[$namespace])) {
-         $prefs = $instance[$namespace];
-         return _util::value($prefs, $key, $default, $required);
-      } else {
-         if($required) {
-            throw new \Exception("No preferences found for namespace: $namespace");
-         } else {
-            return $default;
-         }
-      }
-   }
-
       
    /**
     * Application metadata

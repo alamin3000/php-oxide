@@ -6,8 +6,7 @@ namespace oxide\base\pattern;
  * 
  * Provides abiity to set and access default instance for any object using it.
  */
-trait DefaultInstanceTrait
-{
+trait SharedInstanceTrait {
    protected static
         $_t_defaultinstance = null;
 
@@ -16,12 +15,11 @@ trait DefaultInstanceTrait
     * 
     * If you need to simply check if there is default instance, use hasDefaultInstance()
     * This method will create new instance if instance isn't available
-    * @return object
+    * @return self
 	 */
-	final public static function defaultInstance()
-	{
+	final public static function sharedInstance() {
 		if(self::$_t_defaultinstance == null) {
-			self::$_t_defaultinstance = new static();
+			throw new \Exception('Default Instance not found for: ' . get_called_class());
 		}
 		return self::$_t_defaultinstance;
 	}
@@ -30,8 +28,7 @@ trait DefaultInstanceTrait
     * Checks if there is any default instance
     * @return bool
     */
-   final public static function hasDefaultInstance()
-   {
+   final public static function hasSharedInstance() {
       return (self::$_t_defaultinstance != null);
    }
    
@@ -42,8 +39,7 @@ trait DefaultInstanceTrait
     * @param object $instance
     * @return null
     */
-   final public static function setDefaultInstance($instance)
-   {
+   final public static function setSharedInstance($instance) {
       if(!is_null($instance) && 
          !is_a($instance, get_called_class())) {
          throw new \Exception('Given instance is not a class type of: ' . get_called_class());

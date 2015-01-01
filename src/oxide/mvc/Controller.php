@@ -142,15 +142,15 @@ abstract class Controller
 	 * @return ViewManager
 	 */
 	public function getViewManager() {
-      if(!ViewManager::hasDefaultInstance()) {
+      if(!ViewManager::hasSharedInstance()) {
          $config = $this->_context->get('config');
          $route = $this->_route;
          $templates = _util::value($config, 'templates', null, true);
          $viewController = new ViewManager($route, $templates);
-         ViewManager::setDefaultInstance($viewController);
+         ViewManager::setSharedInstance($viewController);
       }
       
-      return ViewManager::defaultInstance();
+      return ViewManager::sharedInstance();
 	}
    
    /**

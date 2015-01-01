@@ -16,9 +16,7 @@ namespace oxide\http;
  * @author Alamin Ahmed <aahmed753@gmail.com>
  * @todo implement ArrayAccess
  */
-class Session {
-   use \oxide\base\pattern\SingletonTrait;
-   
+class Session {   
 	private 
 		$_namespace = '',
 		$_id = '',
@@ -31,9 +29,10 @@ class Session {
 	 * use getInstance instead
 	 * @access private
 	 */
-	private function __construct($namespace = null) {
+	private function __construct($namespace = null, array $options = null) {
+      $this->_namespace = $namespace;      
+      $this->init($options);
       $this->start();
-      $this->_namespace = $namespace;
 	}
    	
 	/**
@@ -42,7 +41,7 @@ class Session {
 	 * @access private
 	 * @todo need to set options based on given configuration array in configure($config) method
 	 */
-   private static function _init() {
+   protected function init(array $options = null) {
 		// path for cookies
       $cookie_path = "/";
       $session_dir = 'oxide_session';
@@ -87,7 +86,7 @@ class Session {
 	 * @throw HeaderAlreadySentException
 	 * @throw SessionAlreadyStartedException
 	 */
-	public function start() {
+	protected function start() {
       if($this->_started) {
         return;
       } 
@@ -103,9 +102,6 @@ class Session {
       if(session_id()) {
          throw new exception\SessionAlreadyStartedException();
       }
-
-      // configure php session.
-      self::_init();
 
       // starting the sesion.
       session_start();
