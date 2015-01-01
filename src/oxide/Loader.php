@@ -102,22 +102,13 @@ class Loader {
       
       // create the event notifier and share it
       $notifier = new EventNotifier();
-      EventNotifier::setSharedInstance($notifier);      
-            
-      // create the config manager and get the application config
-      $configManager = new app\ConfigManager($config_dir);
-      app\ConfigManager::setSharedInstance($configManager);
-      $config = $configManager->getConfig();
-      
-      var_dump($config);
-      
+      EventNotifier::setSharedInstance($notifier);   
       $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
       
-      // set shared database connection manager
-      // this will not connect to database.
-      $connectionManager = new app\ConnectionManager($config['database']);
-      app\ConnectionManager::setSharedInstance($connectionManager);
-      
+      // create the application manager
+      $appManager = app\AppManager::createWithConfigDirectory($config_dir);
+      $config = $appManager->getConfig();
+                  
       // creating the http context and share it
       $request = Request::currentServerRequest();
       $context = new http\Context($request);
@@ -132,7 +123,6 @@ class Loader {
       self::loadModules($modules, $fc->getRouter());
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
-      
       // if autorun, run the front controller
 		if($autorun) {
 			$fc->run();

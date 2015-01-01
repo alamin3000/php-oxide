@@ -27,12 +27,17 @@ trait SingletonTrait {
    
    /**
 	 * returns the single instance of this object.
+    * @return self
 	 */
 	final public static function getInstance() {
 		if(self::$_t_instance == null) {
-         $class = get_called_class();
-			self::$_t_instance = AbstractClass::create($class, self::$_t_params);
-         self::$_t_params = null;
+         if(self::$_tparams) {
+            $class = get_called_class();
+            self::$_t_instance = AbstractClass::create($class, self::$_t_params);
+            self::$_t_params = null;
+         } else {
+            self::$_t_instance = new static();
+         }
 		}
 		return self::$_t_instance;
 	}   

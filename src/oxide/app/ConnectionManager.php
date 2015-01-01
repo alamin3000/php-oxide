@@ -29,6 +29,19 @@ class ConnectionManager {
       $this->_options = $options;
    }
    
+   public static function sharedManager() {
+      if(!self::hasSharedInstance()) {
+         $config = ConfigManager::sharedInstance()->getConfig();
+         $instance = new self($config['database'], [
+            \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
+            'FETCH_MODE'			=> \PDO::FETCH_ASSOC
+         ]);
+         self::setSharedInstance($instance);
+      }
+      
+      return self::sharedManager();
+   }
+   
    /**
     * Get the managed connection
     * 
@@ -43,12 +56,6 @@ class ConnectionManager {
             throw new \Exception("Database configuration not found.");
          }
          $options = $this->_options;
-         if(!$options) {
-            $options = [
-               \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
-               'FETCH_MODE'			=> \PDO::FETCH_ASSOC
-               ];
-         }
          $this->_connection = new Connection($config, $options);
       }
 

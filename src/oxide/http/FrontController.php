@@ -31,6 +31,14 @@ class FrontController {
 		$_dispatcher = null;
    
    /**
+    * 
+    * @return self
+    */
+   public static function sharedController() {
+      return self::sharedInstance();
+   }
+   
+   /**
     * Initializes the front controller
     * @param Context $context
     */
@@ -101,7 +109,7 @@ class FrontController {
       $context = $this->getContext();
       $request = $context->getRequest();
 		$response = $context->getResponse();
-		$notifier = EventNotifier::defaultInstance();
+		$notifier = EventNotifier::sharedInstance();
       try {
          $notifier->notify(self::EVENT_START, $this);
          

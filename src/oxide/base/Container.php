@@ -30,10 +30,14 @@ class Container
     * @param mixed $default
     * @return mixed
     */
-   public function get($key, $default = null) {
+   public function get($key, $default = null, $required = false) {
       if(isset($this->_instances[$key])) return $this->_instances[$key]; 
       if(!isset($this->_t_array_storage[$key]))  {
-         return $default;
+         if($required) {
+            throw new \Exception("Key: {$key} is required, but not found in the container.");
+         } else {
+            return $default;
+         }
       }
       
       $value = $this->_t_array_storage[$key];

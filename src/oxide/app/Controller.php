@@ -8,6 +8,7 @@ use oxide\http\Route;
 use oxide\http\Context;
 use oxide\util\EventNotifier;
 use oxide\helper\_util;
+use oxide\data\Connection;
 
 /**
  * Action Controller
@@ -149,7 +150,7 @@ abstract class Controller
       
       return ViewManager::sharedInstance();
 	}
-   
+
    /**
     * Generate action method name
     * 
@@ -161,7 +162,31 @@ abstract class Controller
       return 'execute' . $action;
    }
    
-/**
+   /**
+    * 
+    * @throws auth\AccessException
+    */
+   protected function performAccessValidation() {
+      $notifier = EventNotifier::sharedNotifier();
+      $config = AppManager::mainConfig();
+      $identity = AppManager::currentIdentity();
+      $roles = $config->get('roles', null, true);
+      $rules = $config->get('rules', null, true);
+      $route = $this->getRoute();
+      $result = null;
+      $validator = new auth\AccessValidator($route, $roles, $rules);
+      $validator->validate($identity, $result);
+      
+      if(!$result->isValid()) {
+         $notifier->notify('ControllerAccessDenied', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
+         $error_string = implode('. ', $result->getErrors());
+         throw new auth\AccessException($error_string);
+      } else {
+         $notifier->notify('ControllerAccessGranted', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
+      }
+   }
+
+   /**
 	 * forward to given $action immediately
 	 * 
     * @access public
@@ -222,39 +247,7 @@ abstract class Controller
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      $config = $context->get('config');
-      $context->set('database', function() use ($config) {
-         if(!Connection::hasDefaultInstance()) {
-            $dbconfig = (array) $config['database'];
-            $dboptions = array(
-                  \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
-                  'FETCH_MODE'			=> \PDO::FETCH_ASSOC
-                  );
-            $conn = new Connection($dbconfig, $dboptions);
-            Connection::setDefaultInstance($conn);
-         }
-
-         return Connection::defaultInstance();
-      });
-      
-      $auth = Authentication::defaultInstance();
-      $route = $this->_route;
-      $identity = $auth->getIdentity();
-      $roles = _util::value($config, 'roles', null, true);
-      $rules = _util::value($config, 'rules', null, true);
-      $validator = new AccessValidator($route, $roles, $rules);
-      $notifier = EventNotifier::defaultInstance();
-      $result = null;
-      $validator->validate($identity, $result);      
-      if(!$result->isValid()) {
-         $notifier->notify('ControllerAccessDenied', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
-         $error_string = implode('. ', $result->getErrors());
-         throw new AuthAccessException($error_string);
-      } else {
-         $notifier->notify('ControllerAccessGranted', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
-      }
-      
-      $context->set('auth', $auth);
+      $this->performAccessValidation();
    }
    
    /**

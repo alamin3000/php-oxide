@@ -2,9 +2,7 @@
 namespace oxide\app\auth;
 use Zend\Authentication\AuthenticationService;
 
-class Authentication extends AuthenticationService {
-   use \oxide\base\pattern\DefaultInstanceTrait;
-   
+class Authenticator extends AuthenticationService {   
    /**
     * Check if authentication storage has been set or not
     * 

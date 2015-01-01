@@ -30,6 +30,10 @@ class Router {
 		ACTION      = 'action',
 		PARAMS      = 'params';
    
+   public function __construct() {
+      ;
+   }
+   
    /**
     * Register given path with the module
     * 

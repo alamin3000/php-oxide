@@ -23,6 +23,14 @@ class EventNotifier {
 	}
    
    /**
+    * 
+    * @return self
+    */
+   public static function sharedNotifier() {
+      return self::sharedInstance();
+   }
+   
+   /**
     * Register a $callable for an $event broadcast
     * @param string $event
     * @param callable $callback
