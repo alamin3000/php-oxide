@@ -108,6 +108,8 @@ class Loader {
       // create the application manager
       $appManager = app\AppManager::createWithConfigDirectory($config_dir);
       $config = $appManager->getConfig();
+      
+      
                   
       // creating the http context and share it
       $request = Request::currentServerRequest();
