@@ -11,6 +11,7 @@
 namespace oxide\app;
 use oxide\util\DataFile;
 use oxide\data\Connection;
+use oxide\data\model\EAVModel;
 
 class AppManager {
    use \oxide\base\pattern\SingletonTrait;
@@ -118,6 +119,67 @@ class AppManager {
       }
       
       return $this->_auth;
+   }
+   
+   public function configDirectory() {
+      return $this->_dir;
+   }
+   
+   public function publicDirectory() {
+      return filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
+   }
+   
+   /**
+    * Get the main upload directory for the app.
+    * 
+    * @param string $subdir Subdirectory to be appended to the upload directory
+    * @return string
+    * @throws \Exception
+    */
+   public function uploadDirectory($subdir = null) {
+      $config = $this->getConfig();
+      $appconfig = App::config('settings', null, true);
+      $updir = trim(_util::value($appconfig, 'upload_dir', null, true), '/');
+      if(empty($updir)) {
+         throw new \Exception('Upload directory is not found.');
+      }
+      
+      $pubdir = self::dir_public();
+      $dir = "{$pubdir}/{$updir}";
+      if($subdir) {
+         $dir .= "/" . trim($subdir, '/');
+      }
+      
+      return $dir;
+   }
+   
+   
+   /**
+    * Application metadata
+    * 
+    * @param type $key
+    * @param type $value
+    */
+   public function metadata($key = null, $value = null)  {
+      static $model = null;
+      if($model == null) {
+         $conn = $this->getConnection();
+         $table = 'application_metadata';
+         $model = new EAVModel($conn, $table);
+         $model->configure(array('key' => 'data_key', 'value' => 'data_value'));
+         $model->load();
+      }
+      
+      if($key) {
+         if($value) {
+            $model->set($key, $value);
+            $model->save();
+         } else {
+            return $model->get($key);
+         }
+      } else {
+         return $model;
+      }
    }
    
    
