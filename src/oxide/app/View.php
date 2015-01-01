@@ -8,10 +8,9 @@
  * @license http://URL name 
  */
 
-namespace oxide\mvc;
+namespace oxide\app;
 use oxide\ui\Renderer;
 use oxide\base\Stringify;
-use oxide\mvc\ViewData;
 
 class View implements Renderer, Stringify {
    public

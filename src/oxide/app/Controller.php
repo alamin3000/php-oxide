@@ -1,14 +1,11 @@
 <?php
 
-namespace oxide\mvc;
+namespace oxide\app;
 use oxide\base\AbstractClass;
 use oxide\http\Command;
 use oxide\http\CommandFactory;
 use oxide\http\Route;
 use oxide\http\Context;
-use oxide\mvc\auth\Authentication;
-use oxide\mvc\auth\AccessValidator;
-use oxide\mvc\ViewManager;
 use oxide\util\EventNotifier;
 use oxide\helper\_util;
 
@@ -287,7 +284,7 @@ abstract class Controller
     * Perform rendering to the response object
     * 
     * @param Context $context
-    * @param \oxide\mvc\View $view
+    * @param \oxide\app\View $view
     * @throws Exception
     */
    protected function onRender(Context $context, View $view = null) {

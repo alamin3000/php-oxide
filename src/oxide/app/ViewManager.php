@@ -1,6 +1,6 @@
 <?php
 
-namespace oxide\mvc;
+namespace oxide\app;
 use oxide\http\Route;
 use oxide\http\Response;
 use oxide\ui\Page;

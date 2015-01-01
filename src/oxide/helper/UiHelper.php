@@ -12,5 +12,4 @@
 namespace oxide\helper;
 
 class UiHelper extends HelperAbstract {
-   public function setDelegate()
 }

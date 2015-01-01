@@ -1,5 +1,5 @@
 <?php
-namespace oxide\mvc\auth;
+namespace oxide\app\auth;
 use oxide\http\Session;
 use Zend\Authentication\Storage\StorageInterface;
 

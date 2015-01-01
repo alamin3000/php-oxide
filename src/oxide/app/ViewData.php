@@ -8,7 +8,7 @@
  * @license http://URL name 
  */
 
-namespace oxide\mvc;
+namespace oxide\app;
 use oxide\base\Container;
 
 /**
