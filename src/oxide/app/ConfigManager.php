@@ -60,7 +60,10 @@ class ConfigManager {
          throw new \Exception('Config file not found in location: ' . $file);
       }
       
-      return new DataFile($file);
+      $config = new DataFile($file);
+      $config->load();
+      
+      return $config;
    }
    
    /**
