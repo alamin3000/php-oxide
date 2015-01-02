@@ -29,8 +29,7 @@ class Session {
          'session_dir' => 'oxide_session'
       ],
 		$_namespace = '',
-		$_id = '',
-		$_started = false;
+		$_id = '';
    
 	
 	/**
