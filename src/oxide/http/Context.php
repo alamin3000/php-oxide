@@ -12,15 +12,12 @@ use oxide\base\Container;
  */
 class Context extends Container {
    use \oxide\base\pattern\SharedInstanceTrait;
-   protected
-      $_request = null,
-      $_response = null,
-      $_session = null;
 
    
-	public function __construct(Request $request) {
+	public function __construct(Request $request, Response $response) {
 		parent::__construct();
-      $this->_request = $request;
+      $this->setRequest($request); 
+      $this->setResponse($response);
 	}
   
    /**
@@ -28,7 +25,7 @@ class Context extends Container {
     * @return Request
     */
 	public function getRequest() {
-		return $this->_request;
+		return $this->get('Request');
 	}
 
    /**
@@ -36,21 +33,6 @@ class Context extends Container {
     * @return Response
     */
 	public function getResponse() {
-      if($this->_response == null) {
-         $this->_response = new Response();
-      }
-      
-		return $this->_response;
+      return $this->get('Response');
 	}
-   
-   /**
-    * @return Session
-    */
-   public function getSession() {
-      if($this->_session === null) {
-         $this->_session = new Session();
-      }
-      
-      return $this->_session;
-   }
 }

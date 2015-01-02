@@ -105,20 +105,29 @@ class Loader {
       EventNotifier::setSharedInstance($notifier);   
       $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
       
-      // create the application manager
-      $appManager = app\AppManager::createWithConfigDirectory($config_dir);
-      $config = $appManager->getConfig();
+      // create the config manager and share it
+      $configManager = new app\ConfigManager($config_dir);
+      $config = $configManager->getConfig();
+      app\ConfigManager::setSharedInstance($configManager);
       
-      // creating the http context and share it
-      $context = new http\Context(Request::currentServerRequest());
+      // creating the http context
+      // set some default services
+      // share the context
+      $context = new http\Context(
+            Request::currentServerRequest(), 
+            function() {
+               return new \oxide\http\Response();
+            });
       http\Context::setSharedInstance($context);
+      $context->setNotifier($notifier);
+      $context->setConfig($config);
 
       // create the front controller and share it
       $fc = new http\FrontController($context);
       http\FrontController::setSharedInstance($fc);
       
       // load modules
-      $modules = _util::value($config, 'modules');
+      $modules = $config->getRequired('modules');
       self::loadModules($modules, $fc->getRouter());
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);

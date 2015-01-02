@@ -31,6 +31,34 @@ class Dictionary
    }
    
    /**
+    * 
+    * @param type $key
+    * @return type
+    * @throws \Exception
+    */
+   public function getRequired($key) {
+      if($this->offsetExists($key)) {
+         return $this->offsetGet($key);
+      } else {
+         throw new \Exception('Required key: ' . $key . ' not found.');
+      }
+   }
+   
+   /**
+    * 
+    * @param type $key
+    * @param type $default
+    * @return type
+    */
+   public function getOptional($key, $default = null) {
+      if($this->offsetExists($key)) {
+         return $this->offsetGet($key);
+      } else {
+         return $default;
+      }
+   }
+   
+   /**
     * Overrides to add Dictionary $data param support
     * 
     * @param \oxide\base\Dictionary $data

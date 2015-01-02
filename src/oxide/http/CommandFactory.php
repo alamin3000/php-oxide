@@ -1,6 +1,7 @@
 <?php
 namespace oxide\http;
 use oxide\validation\misc\VariableNameValidator;
+use oxide\base\Container;
 
 
 /**
@@ -13,11 +14,13 @@ use oxide\validation\misc\VariableNameValidator;
  * @subpackage http
  */
 abstract class CommandFactory {
-   public static 
+   public 
       $classNamespace = 'controller',
       $classSuffix = 'Controller',
       $classPrefix = null;
 
+   protected
+      $_config = null;
    
    /**
     * Generate a full resolvable class name based on route
@@ -45,10 +48,10 @@ abstract class CommandFactory {
     * @param \oxide\http\Route $route
     * @return null|\oxide\http\class
     */
-   public static function createWithRoute(Route $route) {
+   public static function create(Route $route, Container $config = null) {
       $class = self::generateClassName($route);
       if($class) {
-         $instance = new $class($route);
+         $instance = new $class($route, $config);
       } else {
          $instance = null;
       }

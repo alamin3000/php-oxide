@@ -9,13 +9,11 @@
  */
 
 namespace oxide\base;
-use oxide\base\pattern\ArrayFunctionsTrait;
 
 class Container 
    extends Dictionary {
-   use ArrayFunctionsTrait;
    
-   private           
+   protected           
       /**
        * @var array Stores manually managed object instances from clousers
        */
@@ -79,5 +77,23 @@ class Container
    
    public function offsetGet($offset) {
       return $this->get($offset);
+   }
+   
+   public function __call($name, $arguments) {
+      $action = substr($name, 0, 3);
+		$service = substr($name, 3);
+		
+		if(!$service) {
+         throw new \Exception("Invalid method called");
+		}
+      
+      if($action == 'get') {
+         return $this->get($service);
+      } else if($action == 'set') {
+         $param = current($arguments);
+         return $this->set($service, $param);
+      } else {
+			throw new \Exception("Invalid method called: \"$name\"");
+		}
    }
 }

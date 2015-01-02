@@ -1,6 +1,7 @@
 <?php
 namespace oxide\http;
 use oxide\util\EventNotifier;
+use oxide\base\Container;
 
 /**
  * dispatcher
@@ -13,6 +14,13 @@ use oxide\util\EventNotifier;
  * @subpackage http
  */
 class Dispatcher {
+   protected 
+      $_config = null;
+   
+   public function __construct(Container $config = null) {
+      if($config) $this->_config = $config;
+   }
+   
 	/**
 	 * dispatch given $context  to the controller via given $route
 	 * 
@@ -39,7 +47,7 @@ class Dispatcher {
       $notifier->notify('DispatcherDispatch', $this, ['route' => $route]);
 
 		$context->route = $route;
-		$command = CommandFactory::createWithRoute($route);
+		$command = CommandFactory::createWithRoute($route,);
       
 		// if controller is not loaded, usaully means controller does not exits
 		// then we will attempt to send to default controller and adjust the Route

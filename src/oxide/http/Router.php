@@ -1,5 +1,6 @@
 <?php
 namespace oxide\http;
+use oxide\base\Container;
 
 /**
  * Router class.
@@ -19,6 +20,7 @@ class Router {
 		$defaultAction = 'index';
 	
 	protected
+      $_config = null,
       $_registry = [],
       $_routes = [],
 		$_schema = ['module', 'controller', 'action', 'params'],
@@ -30,8 +32,9 @@ class Router {
 		ACTION      = 'action',
 		PARAMS      = 'params';
    
-   public function __construct() {
-      ;
+   public function __construct(Container $config = null) {
+      if($config)
+         $this->_config = $config;
    }
    
    /**

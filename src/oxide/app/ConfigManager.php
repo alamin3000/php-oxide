@@ -39,7 +39,7 @@ class ConfigManager {
     */
    public function getConfig() {
       if($this->_config === null) {
-         $this->_config = $this->createConfigByFilename($this->_defaultConfigFilename);
+         $this->_config = $this->openConfigByFilename($this->_defaultConfigFilename);
       }
       
       return $this->_config;
@@ -53,7 +53,7 @@ class ConfigManager {
     * @return DataFile
     * @throws \Exception
     */
-   public function createConfigByFilename($filename) {
+   public function openConfigByFilename($filename) {
       $dir = $this->_dir;
       $file = $dir . '/' . $filename;
       if(!is_file($file)) {
@@ -73,7 +73,7 @@ class ConfigManager {
     * @param string $name
     * @return DataFile
     */
-   public function createConfigByDirectory($relative_dir, $name = 'config.json') {
+   public function openConfigByDirectory($relative_dir, $name = 'config.json') {
       $dir = trim($relative_dir, '/');
       $filename = "{$dir}/{$name}";
       return $this->createConfigByFilename($filename);

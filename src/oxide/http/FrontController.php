@@ -4,6 +4,7 @@ use oxide\http\Context;
 use oxide\http\Router;
 use oxide\http\Dispatcher;
 use oxide\util\EventNotifier;
+use oxide\base\Container;
 
 /**
  * Front Controller.  
@@ -27,6 +28,7 @@ class FrontController {
       EVENT_EXCEPTION = 'FrontControllerException';
    
 	protected
+      $_config = null,
       $_context = null,
 		$_router = null,
 		$_dispatcher = null;
@@ -43,8 +45,9 @@ class FrontController {
     * Initializes the front controller
     * @param Context $context
     */
-   public function __construct(Context $context) {
+   public function __construct(Context $context, Container $config = null) {
       $this->_context = $context;
+      if($config) $this->_config = $config;
    }
    
    /**
