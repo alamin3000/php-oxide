@@ -25,7 +25,7 @@ class ViewManager {
    protected
       $_viewDirName = 'view',
       $_viewScriptExt = 'phtml',
-      $_templates = null,
+      $_templateDir = null,
       $_route = null,
       $_scriptExt = 'phtml',
       $_scriptname = 'layout.phtml',
@@ -38,15 +38,22 @@ class ViewManager {
     * Construction
     * 
     * @access public
+    * @param string $template
     * @param Route $route
-    * @param array $templates 
     */
-   public function __construct(Route $route, array $templates) {
-      $this->_templates = $templates;
-      $this->_route = $route;
+   public function __construct($template, Route $route = null) {
+      $this->setTemplateDir($template);
+      if($route) $this->setRoute ($route);
    }
    
-   
+   /**
+    * Set the route that will be used for generating templates and scripts
+    * 
+    * @param Route $route
+    */
+   public function setRoute(Route $route) {
+      $this->_route = $route;
+   }
    
    /**
     * Set the default script extension
@@ -122,7 +129,16 @@ class ViewManager {
     * @return string 
     */
    public function getTemplateDir() {
-      return $this->_templates[$this->_defaultTemplateKey];
+      return $this->_templateDir;
+   }
+   
+   /**
+    * 
+    * @param string $dir
+    */
+   public function setTemplateDir($dir) {
+      if(is_array($dir)) $dir = current($dir);
+      $this->_templateDir = $dir;
    }
    
    

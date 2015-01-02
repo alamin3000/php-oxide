@@ -9,65 +9,83 @@
  */
 
 namespace oxide\app\auth;
-use oxide\validation\Validator;
 use oxide\validation\ValidationResult;
+use oxide\base\Dictionary;
+use Zend\Authentication\Storage\StorageInterface;
+use oxide\util\EventNotifier;
+use oxide\http\Route;
 
-class AuthManager implements Validator {
+class AuthManager  {
    use \oxide\base\pattern\SharedInstanceTrait;
+   
+   const
+      EVENT_ACCESS_DENIED = 'AuthAccessDenied',
+      EVENT_ACCESS_GRANTED = 'AuthAcessGranted';
    
    protected
       $_authenticator = null,
-      $_roles = null,
-      $_rules = null;
+      $_config = null,
+      $_storage = null;
    
-   public function __construct(array $roles = null, array $rules = null) {
-      $this->_roles = $roles;
-      $this->_rules = $rules;
+   public function __construct(Dictionary $config, Authenticator $auth) {
+      $this->_config = $config;
+      $this->_authenticator = $auth;
+      $this->_storage = $auth->getStorage();
    }
    
-   
    /**
-    * Get the authenticator
+    * Get the authenticator for this manager
     * 
     * @return Authenticator
     */
-   public function getAuthenticator() {
-      if($this->_authenticator === null) {
-         $this->_authenticator = new Authenticator();
-      }
-      
+   public function getAuth() {
       return $this->_authenticator;
    }
    
    /**
-    * Get the current user identity
-    * 
-    * @return type
+    * Get the authentication roles
+    * @return array
     */
-   public function getIdentity() {
-      return $this->getAuthenticator()->getIdentity();
+   public function getRoles() {
+      return $this->_config->getRequired('roles');
    }
    
    /**
-    * 
-    * @param Route $route
-    * @param ValidationResult $result
-    * @throws \Exception
+    * Get the authentication rules
+    * @return array
     */
-   public function validate($route, ValidationResult &$result = null) {
-      $auth = $this->getAuthenticator();
-      $identity = $auth->getIdentity();
-      $roles = $this->_roles;
-      $rules = $this->_rules;
-      if(!$roles || !$rules) {
-         throw new \Exception('Both roles and rules must be set in configuration.');
+   public function getRules() {
+      return $this->_config->getRequired('rules');
+   }
+   
+   /**
+    * Validate access for given $route using current $identity
+    * 
+    * If validation passes, it will return the $identity, else null
+    * It will also notify events to default event notifier
+    * @param Route $route
+    * @throws \Exception
+    * @return ValidationResult Description
+    */
+   public function validateAccess(Route $route, EventNotifier $notifier = null, $throwException = false) {
+      $result = new ValidationResult();
+      $identity = $this->getAuth()->getIdentity();
+      $validator = new AccessValidator($route, $this->getRoles(), $this->getRules());
+      $args = ['route' => $route, 'identity' => $identity, 'result' => $result];
+      
+      $validator->validate($identity, $result);
+      if($notifier) {
+         if($result->isValid()) {
+            $notifier->notify(self::EVENT_ACCESS_GRANTED, $this, $args);
+         } else {
+            $notifier->notify(self::EVENT_ACCESS_DENIED, $this, $args);
+            if($throwException) {
+               throw new AccessException(implode('. ', $result->getErrors()));
+            }
+         }
       }
-      $validator = new AccessValidator($route, $roles, $rules);
-      if($validator->validate($identity, $result)) {
-         return $route;
-      } else {
-         return null;
-      }
+      
+      return $validator;
    }
    
 }

@@ -10,9 +10,6 @@
 namespace oxide;
 use oxide\helper\_util;
 use oxide\util\PSR4Autoloader;
-use oxide\util\EventNotifier;
-use oxide\http\Request;
-use oxide\http\Response;
 
 /**
  * Oxide Loader
@@ -30,7 +27,7 @@ use oxide\http\Response;
  */
 class Loader {
    
-   static protected 
+   protected 
       $namespaces = [],
       $helpers = [],
       $autoloader = null;
@@ -46,13 +43,13 @@ class Loader {
     * @param string $dir
     * @throws \Exception
     */
-   static public function load($classname, $dir = null) {
+   public function load($classname, $dir = null) {
       $parts = explode('\\', $classname);
       if(!$dir) {
          if(count($parts) > 1) {
             $namespace = $parts[0]; // first part is namespace/package
-            if(isset(self::$namespaces[$namespace])) {
-               $dir = rtrim(self::$namespaces[$namespace], '/');
+            if(isset($this->namespaces[$namespace])) {
+               $dir = rtrim($this->namespaces[$namespace], '/');
                $parts[0] = $dir; // replace the first entry with this directory
             }
          }
@@ -73,17 +70,17 @@ class Loader {
     * Get the PSR4 Autoloader class
     * @return PSR4Autoloader
     */
-   static public function getAutoloader() {
-      if(self::$autoloader === null) {
-         self::$autoloader = new PSR4Autoloader();
+   public function getAutoloader() {
+      if($this->autoloader === null) {
+         $this->autoloader = new PSR4Autoloader();
       }
       
-      return self::$autoloader;
+      return $this->autoloader;
    }
    
-   public static function register() {
+   public function register() {
       // registering autoload for phpoxide
-      $autoloader = self::getAutoloader();
+      $autoloader = $this->getAutoloader();
       $autoloader->register();
       $dir = dirname(__FILE__);
 		$autoloader->addNamespace('oxide',$dir);
@@ -97,12 +94,13 @@ class Loader {
     * @param boolean $autorun Whether or not application should start 
     * @return http\FrontController
     */
-   public static function bootstrap($config_dir, $autorun = true) {
-      self::register();
+   public function bootstrap($config_dir, $autorun = true) {
+      $loader = new self();
+      $loader->register();
       
       // create the event notifier and share it
-      $notifier = new EventNotifier();
-      EventNotifier::setSharedInstance($notifier);   
+      $notifier = new util\EventNotifier();
+      util\EventNotifier::setSharedInstance($notifier);   
       $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
       
       // create the config manager and share it
@@ -114,13 +112,31 @@ class Loader {
       // set some default services
       // share the context
       $context = new http\Context(
-            Request::currentServerRequest(), 
+            http\Request::currentServerRequest(), 
             function() {
-               return new \oxide\http\Response();
+               return new http\Response();
             });
       http\Context::setSharedInstance($context);
       $context->setNotifier($notifier);
       $context->setConfig($config);
+      
+      // set session
+      $context->setSession(function() {
+         return new http\Session();
+      });
+      
+      // setup the authentication
+      $context->setAuth(function($container) {
+         return new app\auth\Authenticator($container->getSession());
+      });
+      
+      // setup the connection
+      $context->setConnection(function() use ($config) {
+         return new Connection($config->getRequired('database'), [
+            \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
+            'FETCH_MODE'			=> \PDO::FETCH_ASSOC
+         ]);
+      });
 
       // create the front controller and share it
       $fc = new http\FrontController($context);
@@ -128,7 +144,7 @@ class Loader {
       
       // load modules
       $modules = $config->getRequired('modules');
-      self::loadModules($modules, $fc->getRouter());
+      $loader->loadModules($modules, $fc->getRouter());
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
       // if autorun, run the front controller
@@ -143,8 +159,8 @@ class Loader {
     * @param array $modules
     * @param \oxide\http\Router $router
     */
-   protected static function loadModules(array $modules, http\Router $router) {
-      $autoloader = self::getAutoloader();
+   protected function loadModules(array $modules, http\Router $router) {
+      $autoloader = $this->getAutoloader();
       if($modules) {
          foreach($modules as $module) {
             $name = _util::value($module, 'name', null, true);
@@ -160,7 +176,7 @@ class Loader {
       }
    }
    
-   protected static function loadPlugins(array $plugins) {
+   protected function loadPlugins(array $plugins) {
       $plugin = function($namespace, $required = false) use ($context) {
          $class = 'Plugin';
          $fullclass = "{$namespace}\{$class}";

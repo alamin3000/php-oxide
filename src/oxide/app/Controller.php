@@ -141,11 +141,9 @@ abstract class Controller
 	 */
 	public function getViewManager() {
       if(!ViewManager::hasSharedInstance()) {
-         $config = $this->_context->get('config');
-         $route = $this->_route;
-         $templates = _util::value($config, 'templates', null, true);
-         $viewController = new ViewManager($route, $templates);
-         ViewManager::setSharedInstance($viewController);
+         $config = $this->getContext()->getConfig();
+         $viewManager = new ViewManager($config->getRequired('template'));
+         ViewManager::setSharedInstance($viewManager);
       }
       
       return ViewManager::sharedInstance();
@@ -160,30 +158,6 @@ abstract class Controller
     */
    protected function generateActionMethod($action) {
       return 'execute' . $action;
-   }
-   
-   /**
-    * 
-    * @throws auth\AccessException
-    */
-   protected function performAccessValidation() {
-      $notifier = EventNotifier::sharedNotifier();
-      $config = AppManager::mainConfig();
-      $identity = AppManager::currentIdentity();
-      $roles = $config->get('roles', null, true);
-      $rules = $config->get('rules', null, true);
-      $route = $this->getRoute();
-      $result = null;
-      $validator = new auth\AccessValidator($route, $roles, $rules);
-      $validator->validate($identity, $result);
-      
-      if(!$result->isValid()) {
-         $notifier->notify('ControllerAccessDenied', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
-         $error_string = implode('. ', $result->getErrors());
-         throw new auth\AccessException($error_string);
-      } else {
-         $notifier->notify('ControllerAccessGranted', $this, ['route' => $route, 'identity' => $identity, 'result' => $result]);
-      }
    }
 
    /**
@@ -247,7 +221,13 @@ abstract class Controller
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      $this->performAccessValidation();
+      $config = $context->getConfig();
+      
+      // perform access validation
+      $authManager = new auth\AuthManager($config, $context->getAuth());
+      $authManager->validateAccess($this->getRoute(), 
+              EventNotifier::sharedInstance(), true); // throws exception if denied
+      
    }
    
    /**
@@ -282,11 +262,11 @@ abstract class Controller
     */
    protected function onRender(Context $context, View $view = null) {
       $viewManager = $this->getViewManager();
+      $viewManager->setRoute($this->getRoute());
       if($view === NULL) {
          // no view is provided
          // we will use default view
          $data = $this->getViewData();
-         $data->share('context', $context);
          $view = $viewManager->createView($data);
       }
       
