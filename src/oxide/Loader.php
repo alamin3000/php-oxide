@@ -109,11 +109,8 @@ class Loader {
       $appManager = app\AppManager::createWithConfigDirectory($config_dir);
       $config = $appManager->getConfig();
       
-      
-                  
       // creating the http context and share it
-      $request = Request::currentServerRequest();
-      $context = new http\Context($request);
+      $context = new http\Context(Request::currentServerRequest());
       http\Context::setSharedInstance($context);
 
       // create the front controller and share it

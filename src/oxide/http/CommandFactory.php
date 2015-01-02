@@ -1,7 +1,6 @@
 <?php
 namespace oxide\http;
 use oxide\validation\misc\VariableNameValidator;
-use Exception;
 
 
 /**
@@ -13,7 +12,7 @@ use Exception;
  * @package oxide
  * @subpackage http
  */
-abstract class CommandFactory implements Command {
+abstract class CommandFactory {
    public static 
       $classNamespace = 'controller',
       $classSuffix = 'Controller',
@@ -45,7 +44,6 @@ abstract class CommandFactory implements Command {
     * 
     * @param \oxide\http\Route $route
     * @return null|\oxide\http\class
-    * @throws Exception
     */
    public static function createWithRoute(Route $route) {
       $class = self::generateClassName($route);

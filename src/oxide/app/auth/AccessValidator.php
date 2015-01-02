@@ -34,6 +34,7 @@ class AccessValidator extends ValidatorAbstract
     */
    public function __construct($route, $roles, $rules)
    {
+      parent::__construct();
       $this->_route = $route;
       $this->_roles = (array)$roles;
       $this->_rules = (array)$rules;

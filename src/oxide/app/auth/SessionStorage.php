@@ -9,9 +9,9 @@ class SessionStorage implements StorageInterface
       $_session,
       $_namespace;
 	
-	public function __construct() 
+	public function __construct(Session $session) 
    {
-		$this->_session = Session::getInstance();
+		$this->_session = $session;
 		$this->_namespace = 'OXIDE_AUTH';
 	}
 	

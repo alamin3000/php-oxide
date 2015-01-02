@@ -17,7 +17,6 @@ class Context extends Container {
       $_response = null,
       $_session = null;
 
-
    
 	public function __construct(Request $request) {
 		parent::__construct();

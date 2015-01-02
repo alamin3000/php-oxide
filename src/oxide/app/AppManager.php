@@ -12,7 +12,12 @@ namespace oxide\app;
 use oxide\util\DataFile;
 use oxide\data\Connection;
 use oxide\data\model\EAVModel;
+use oxide\http\Session;
 
+
+/**
+ * Application Resource Manager
+ */
 class AppManager {
    use \oxide\base\pattern\SingletonTrait;
    
@@ -24,6 +29,13 @@ class AppManager {
       $_auth = null;
 
 
+   /**
+    * Construct the app manager using app config directory
+    * 
+    * Construct is private
+    * @see createWithConfigDirectory
+    * @param string $configDirectory
+    */
    private function __construct($configDirectory) {
       $this->_dir = $configDirectory;
    }
@@ -46,6 +58,7 @@ class AppManager {
    }
    
    /**
+    * Typed verison of getInstance()
     * 
     * @return self
     */
@@ -114,7 +127,8 @@ class AppManager {
     */
    public function getAuth() {
       if($this->_auth === null) {
-         $auth = new auth\Authenticator(new auth\SessionStorage());
+         $namespace = 'oxide.app.auth';
+         $auth = new auth\Authenticator(new auth\SessionStorage(new Session($namespace)));
          $this->_auth = $auth;
       }
       
@@ -205,5 +219,9 @@ class AppManager {
     */
    public static function currentIdentity() {
       return self::getInstance()->getAuth()->getIdentity();
+   }
+   
+   public function __destruct() {
+      
    }
 }

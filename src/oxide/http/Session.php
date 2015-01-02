@@ -16,11 +16,22 @@ namespace oxide\http;
  * @author Alamin Ahmed <aahmed753@gmail.com>
  * @todo implement ArrayAccess
  */
-class Session {   
-	private 
+class Session { 
+   protected static
+      $_started = false;
+   
+	protected 
+      $_options = [
+         'session_id' => null,
+         'cookie_path' => '/',
+         'cookie_timeout' => 60 * 60 * 6,
+         'garbage_timeout' => 60 * 60 * 60 + 600,
+         'session_dir' => 'oxide_session'
+      ],
 		$_namespace = '',
 		$_id = '',
 		$_started = false;
+   
 	
 	/**
 	 * constructor
@@ -29,84 +40,44 @@ class Session {
 	 * use getInstance instead
 	 * @access private
 	 */
-	private function __construct($namespace = null, array $options = null) {
+	public function __construct($namespace = null, array $options = null) {
       $this->_namespace = $namespace;      
-      $this->init($options);
-      $this->start();
+      $this->_id = self::start($options);
 	}
-   	
-	/**
-	 * initializes the session.
-    * 
-	 * @access private
-	 * @todo need to set options based on given configuration array in configure($config) method
-	 */
-   protected function init(array $options = null) {
-		// path for cookies
-      $cookie_path = "/";
-      $session_dir = 'oxide_session';
-      
-      // timeout value for the cookie
-      $cookie_timeout = 60 * 60 * 6; // in seconds to one hour
-      
-      // timeout value for the garbage collector
-      //   we add 300 seconds, just in case the user's computer clock
-      //   was synchronized meanwhile; 600 secs (10 minutes) should be
-      //   enough - just to ensure there is session data until the
-      //   cookie expires
-      $garbage_timeout = $cookie_timeout + 600; // in seconds
-      
-      // set the PHP session id (PHPSESSID) cookie to a custom value
-      session_set_cookie_params($cookie_timeout, $cookie_path);
-      
-      // set the garbage collector - who will clean the session files -
-      //   to our custom timeout
-      ini_set('session.gc_maxlifetime', $garbage_timeout);
-
-      session_cache_limiter("must-revalidate");
-
-		/*
-      // we need a distinct directory for the session files,
-      //   otherwise another garbage collector with a lower gc_maxlifetime
-      //   will clean our files aswell - but in an own directory, we only
-      //   clean sessions with our "own" garbage collector (which has a
-      //   custom timeout/maxlifetime set each time one of our scripts is
-      //   executed)
-      strstr(strtoupper(substr($_SERVER["OS"], 0, 3)), "WIN") ?
-      	$sep = "\\" : $sep = "/";
-      $sessdir = ini_get('session.save_path').$sep.$session_dir;
-      if (!is_dir($sessdir)) { mkdir($sessdir, 0777); }
-      ini_set('session.save_path', $sessdir);
-		*/
-   }
-	
+ 
 	/**
 	 * start the session
 	 * @access public
 	 * @throw HeaderAlreadySentException
 	 * @throw SessionAlreadyStartedException
 	 */
-	protected function start() {
-      if($this->_started) {
-        return;
-      } 
+	protected static function start(array $options = null) {
+      if(self::$_started) {
+         // check if header is already sent.  if so throw an exception.
+        $file = null;
+        $line = null;
+        if(headers_sent($file,$line)) {
+           throw new exception\HeaderAlreadySentException();
+        }
+
+        // check if session has started automatically.
+        if(session_id()) {
+           throw new exception\SessionAlreadyStartedException();
+        }
+
+        $cookie_path = $options['cookie_path'];
+        $cookie_timeout = $options['cookie_timeout'];
+        $garbage_timeout = $options['garbage_timeout']; // in seconds
+        session_set_cookie_params($cookie_timeout, $cookie_path);
+        ini_set('session.gc_maxlifetime', $garbage_timeout);
+        session_cache_limiter("must-revalidate");
+
+        // starting the sesion.
+        session_start(); 
+        self::$_started = true;
+      }
       
-      // check if header is already sent.  if so throw an exception.
-      $file = null;
-      $line = null;
-      if(headers_sent($file,$line)) {
-         throw new exception\HeaderAlreadySentException();
-      }
-
-      // check if session has started automatically.
-      if(session_id()) {
-         throw new exception\SessionAlreadyStartedException();
-      }
-
-      // starting the sesion.
-      session_start();
-      $this->_id = session_id();
-      $this->_started = true;
+      return session_id();
 	}
 		
 	/**
