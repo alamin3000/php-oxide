@@ -124,7 +124,8 @@ class Loader {
       
       // setup the authentication
       $context->setAuth(function($container) {
-         return new app\auth\Authenticator($container->getSession());
+         return new app\auth\Authenticator(
+                 new app\auth\SessionStorage($container->getSession()));
       });
       
       // setup the connection
