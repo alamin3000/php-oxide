@@ -38,7 +38,7 @@ class Dispatcher {
 	 */
 	public function dispatch(Route $route, Context $context) {
 		// retrive the routed module and action.
-      $notifier = EventNotifier::defaultInstance();
+      $notifier = EventNotifier::sharedInstance();
       $notifier->notify('DispatcherDispatch', $this, ['route' => $route]);
 
 		$context->route = $route;
