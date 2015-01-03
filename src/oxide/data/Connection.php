@@ -75,6 +75,10 @@ class Connection {
 	 * @return \PDO
 	 */
    public function getPDO() {
+      if(!$this->_pdo) {
+         throw new exception\ConnectionException('Connection is not established.');
+      }
+      
       return $this->_pdo;
    }
 	
@@ -116,7 +120,7 @@ class Connection {
 	 * this function will check for active connection, if not attempts to connect.
     * @access private
     */
-   private function _connect() {
+   public function connect() {
       if($this->_pdo === NULL) {
 			$dsn			= $this->_generateDSN();
 			$username	= $this->_config['username'];
@@ -143,8 +147,7 @@ class Connection {
 	 * @return bool
 	 */
    public function setAttribute($attr, $value) {
-   	$this->_connect();
-		return $this->_pdo->setAttribute($attr, $value);
+		return $this->getPDO()->setAttribute($attr, $value);
    }
    
 	/**
@@ -156,8 +159,8 @@ class Connection {
 	 * @return Statement
 	 */
    public function prepare($sql) {
-		$this->_connect();
-		return $this->_pdo->prepare($sql);
+		$this->connect();
+		return $this->getPDO()->prepare($sql);
 	}
    
 	/**
@@ -172,8 +175,8 @@ class Connection {
 	 * @return Statement
 	 */
    public function query($sql) {
-		$this->_connect();
-		return $this->_pdo->query($sql);
+		$this->connect();
+		return $this->getPDO()->query($sql);
 	}
    
 	/**
@@ -185,8 +188,8 @@ class Connection {
 	 * @return int
 	 */
    public function exec($sql) {
-		$this->_connect();
-		return $this->_pdo->exec($sql);
+		$this->connect();
+		return $this->getPDO()->exec($sql);
 	}
 	
 	   
@@ -200,8 +203,7 @@ class Connection {
 	 * @return string
 	 */
    public function quote($str) {
-		$this->_connect();
-		return $this->_pdo->quote($str);
+		return $this->getPDO()->quote($str);
 	}
 
 	/**
@@ -212,7 +214,7 @@ class Connection {
 	 * @return int
 	 */
 	public function lastInsertId() {
-		return $this->_pdo->lastInsertId();
+		return $this->getPDO()->lastInsertId();
 	}
 
 	/**
@@ -222,7 +224,7 @@ class Connection {
 	 * @return
 	 */
 	public function errorInfo() {
-		return $this->_pdo->errorInfo();
+		return $this->getPDO()->errorInfo();
 	}
    
    /**
@@ -373,6 +375,8 @@ class Connection {
     * disconnects from the database
     * @access public 
     */
-   public function close() { }
+   public function close() {
+      $this->_pdo = NULL;
+   }
 
 }

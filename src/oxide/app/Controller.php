@@ -55,7 +55,14 @@ abstract class Controller
        * 
        * @var ViewData 
        */
-      $_viewData = null;
+      $_viewData = null,
+           
+      /**
+       * View manager responsible for rendering view and layout
+       * 
+       * @var ViewManager
+       */
+      $_viewManager = null;
       
 	/**
 	 * initialize the controller
@@ -140,14 +147,23 @@ abstract class Controller
 	 * @return ViewManager
 	 */
 	public function getViewManager() {
-      if(!ViewManager::hasSharedInstance()) {
-         $config = $this->getContext()->getConfig();
+      if(!$this->_viewManager) {
+         $config = $context->getConfig();
          $viewManager = new ViewManager($config->getRequired('template'));
-         ViewManager::setSharedInstance($viewManager);
+         $this->_viewManager = $viewManager;
       }
       
-      return ViewManager::sharedInstance();
+      return $this->_viewManager;
 	}
+   
+   /**
+    * Set the view manager for this controller
+    * 
+    * @param ViewManager $viewManager
+    */
+   public function setViewManager(ViewManager $viewManager) {
+      $this->_viewManager = $viewManager;
+   }
 
    /**
     * Generate action method name

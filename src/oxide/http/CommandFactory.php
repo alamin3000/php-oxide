@@ -13,7 +13,7 @@ use oxide\base\Container;
  * @package oxide
  * @subpackage http
  */
-abstract class CommandFactory {
+class CommandFactory {
    public 
       $classNamespace = 'controller',
       $classSuffix = 'Controller',
@@ -22,13 +22,17 @@ abstract class CommandFactory {
    protected
       $_config = null;
    
+   public function __construct() {
+      
+   }
+   
    /**
     * Generate a full resolvable class name based on route
     * 
     * @param \oxide\http\Route $route
     * @return null
     */
-   public static function generateClassName(Route $route) {
+   public function generateClassName(Route $route) {
       $validator = new VariableNameValidator();
       $namespace = $route->namespace;
       $controller = self::stringToName($route->controller);
@@ -36,9 +40,9 @@ abstract class CommandFactory {
       // make sure module and controller names are provided and are valid
       if(empty($controller) || !$validator->validate($controller)) return null;
       
-      $classnamespace = self::$classNamespace;
-      $classsuffix = self::$classSuffix;
-      $classprefix = self::$classPrefix;
+      $classnamespace = $this->classNamespace;
+      $classsuffix = $this->classSuffix;
+      $classprefix = $this->classPrefix;
       $class = "{$namespace}\\{$classnamespace}\\{$classprefix}{$controller}{$classsuffix}";
       return $class;
    }
@@ -48,8 +52,8 @@ abstract class CommandFactory {
     * @param \oxide\http\Route $route
     * @return null|\oxide\http\class
     */
-   public static function create(Route $route, Container $config = null) {
-      $class = self::generateClassName($route);
+   public function create(Route $route, Container $config = null) {
+      $class = $this->generateClassName($route);
       if($class) {
          $instance = new $class($route, $config);
       } else {

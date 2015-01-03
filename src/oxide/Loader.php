@@ -132,10 +132,13 @@ class Loader {
       
       // setup the connection
       $context->setConnection(function() use ($config) {
-         return new Connection($config->getRequired('database'), [
+         $conn = \oxide\data\Connection($config->getRequired('database'), [
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
+         
+         $conn->connect();
+         return $conn;
       });
 
       // create the front controller and share it
