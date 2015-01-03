@@ -13,7 +13,7 @@ use oxide\util\EventNotifier;
  * @subpackage http
  */
 class Dispatcher {
-   use \oxide\base\pattern\DefaultInstanceTrait;
+   use \oxide\base\pattern\SharedInstanceTrait;
 
 	
 	/**
