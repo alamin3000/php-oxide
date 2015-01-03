@@ -76,7 +76,7 @@ class ConfigManager {
    public function openConfigByDirectory($relative_dir, $name = 'config.json') {
       $dir = trim($relative_dir, '/');
       $filename = "{$dir}/{$name}";
-      return $this->createConfigByFilename($filename);
+      return $this->openConfigByFilename($filename);
    }
    
    
