@@ -94,7 +94,7 @@ class Loader {
     * @param boolean $autorun Whether or not application should start 
     * @return http\FrontController
     */
-   public function bootstrap($config_dir, $autorun = true) {
+   public static function bootstrap($config_dir, $autorun = true) {
       $loader = new self();
       $loader->register();
       
