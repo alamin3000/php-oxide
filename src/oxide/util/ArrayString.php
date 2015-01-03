@@ -5,7 +5,9 @@ use oxide\base\Container;
 
 class ArrayString 
    extends Container 
-   implements Stringify {   
+   implements Stringify { 
+   use \oxide\base\pattern\ArrayFunctionsTrait;
+   
    protected 
       $_stringify_callback = null;
 
