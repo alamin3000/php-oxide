@@ -43,7 +43,7 @@ class Dispatcher {
 
 		$context->route = $route;
       $factory = new CommandFactory();
-		$command = $factory->createWithRoute($route);
+		$command = $factory->create($route);
       
 		// if controller is not loaded, usaully means controller does not exits
 		// then we will attempt to send to default controller and adjust the Route
