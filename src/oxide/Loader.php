@@ -113,10 +113,7 @@ class Loader {
       // share the context
       $context = new http\Context(
             http\Request::currentServerRequest(), 
-            function() {
-               return new http\Response();
-            });
-      http\Context::setSharedInstance($context);
+            new http\Response());
       $context->setNotifier($notifier);
       $context->setConfig($config);
       
