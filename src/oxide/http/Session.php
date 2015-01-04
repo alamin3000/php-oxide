@@ -51,7 +51,7 @@ class Session {
 	 * @throw SessionAlreadyStartedException
 	 */
 	protected static function start(array $options = null) {
-      if(self::$_started) {
+      if(!self::$_started) {
          // check if header is already sent.  if so throw an exception.
         $file = null;
         $line = null;
