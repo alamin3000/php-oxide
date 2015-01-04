@@ -31,6 +31,36 @@ class Dictionary
    }
    
    /**
+    * Get value using key path.  
+    * 
+    * @param string $keypath
+    * @param mixed $default
+    * @param char $pathseparator
+    * @return mixed
+    */
+   public function getUsingKeyPath($keypath, $default = null, $pathseparator = '.') {   
+      if(!is_array($keypath)) {
+      	$keys = explode($pathseparator, $keypath);
+      } else {
+	      $keys = $keypath;
+      }
+      
+      $var = null;
+      if(!empty($keys)) {
+         $var = $this->toArray();
+         foreach($keys as $key) {
+            if(isset($var[$key])) {
+               $var = $var[$key];
+            } else {
+               return $default;
+            }
+         }
+      }
+      
+      return $var;
+   }
+   
+   /**
     * 
     * @param type $key
     * @return type
