@@ -130,7 +130,7 @@ class Loader {
       
       // setup the connection
       $context->setConnection(function() use ($config) {
-         $conn = \oxide\data\Connection($config->getRequired('database'), [
+         $conn = new data\Connection($config->getRequired('database'), [
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
@@ -167,11 +167,7 @@ class Loader {
             $name = _util::value($module, 'name', null, true);
             $dir = _util::value($module, 'dir', null, true);
             $namespace = _util::value($module, 'namespace', null, true);
-            
-            // register with autoloader
             $autoloader->addNamespace($namespace, $dir);
-            
-            // register with router
             $router->register($name, $dir, $namespace);
          }
       }

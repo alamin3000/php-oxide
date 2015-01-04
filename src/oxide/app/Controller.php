@@ -212,6 +212,15 @@ abstract class Controller
       }
 	}   
    
+   private function init(Context $context) {
+      $config = $context->getConfig();
+      
+      // perform access validation
+      $authManager = new auth\AuthManager($config, $context->getAuth());
+      $authManager->validateAccess($this->getRoute(), 
+              EventNotifier::sharedInstance(), true); // throws exception if denied
+   }
+   
    /**
 	 * this method determine which action method to call and the attempts to call
 	 *
@@ -221,6 +230,7 @@ abstract class Controller
 	final public function execute(Context $context) {
       $this->_context = $context;
       try {
+         $this->init($context);
          $this->onInit($context); // call initializer
          $route = $this->_route;
          $view = $this->onExecute($context, $route);
@@ -237,13 +247,6 @@ abstract class Controller
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      $config = $context->getConfig();
-      
-      // perform access validation
-      $authManager = new auth\AuthManager($config, $context->getAuth());
-      $authManager->validateAccess($this->getRoute(), 
-              EventNotifier::sharedInstance(), true); // throws exception if denied
-      
    }
    
    /**

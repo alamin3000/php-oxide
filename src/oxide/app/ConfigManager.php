@@ -8,7 +8,7 @@
  * @license http://URL name 
  */
 namespace oxide\app;
-use oxide\util\DataFile;
+use oxide\base\Dictionary;
 
 class ConfigManager {
    use \oxide\base\pattern\SharedInstanceTrait;
@@ -60,10 +60,8 @@ class ConfigManager {
          throw new \Exception('Config file not found in location: ' . $file);
       }
       
-      $config = new DataFile($file);
-      $config->load();
-      
-      return $config;
+      $data = $this->parseFile($file);
+      return new Dictionary($data);
    }
    
    /**
@@ -79,5 +77,37 @@ class ConfigManager {
       return $this->openConfigByFilename($filename);
    }
    
-   
+   /**
+    * Parse the given file into an array
+    * 
+    * @param type $file
+    * @return array
+    * @throws \Exception
+    */
+   public function parseFile($file) {
+      // first we need to check if file exits
+      if(!is_file($file)) {
+         throw new \Exception("File: $file is not found.");
+      }
+      
+      $info = pathinfo($file);
+      $data = null;
+      switch(strtolower($info['extension'])) {
+         case 'json':
+            $raw = file_get_contents($file);
+            $data =json_decode($raw, true);
+            
+            break;
+         
+         case 'ini':
+            $data = parse_ini_file($file, true);
+            
+            break;
+            
+         case 'php':
+         	$data = include $file;
+      }
+      
+      return $data;
+   }
 }

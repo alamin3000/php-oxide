@@ -9,7 +9,6 @@
  */
 
 namespace oxide\app;
-use oxide\util\DataFile;
 use oxide\data\Connection;
 use oxide\data\model\EAVModel;
 use oxide\http\Session;
