@@ -247,7 +247,7 @@ class ViewManager {
       } else {
          $layoutView = $this->getLayoutView();
          $renderingView = $layoutView;
-         $layoutView->getRenderer->addPartial($view, $layoutView->contentKey);
+         $layoutView->getRenderer()->addPartial($view, $layoutView->contentKey);
          $renderer = $view->getRenderer();
          if($renderer instanceof Page) {
             $renderer->setParent($layoutView);
