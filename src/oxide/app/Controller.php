@@ -219,6 +219,12 @@ abstract class Controller
       $authManager = new auth\AuthManager($config, $context->getAuth());
       $authManager->validateAccess($this->getRoute(), 
               EventNotifier::sharedInstance(), true); // throws exception if denied
+      
+      
+      // setup helpers
+      $context->setFlashHelper(function() {
+         return new \oxide\helper\FlashHelper();
+      });
    }
    
    /**
