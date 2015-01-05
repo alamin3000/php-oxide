@@ -11,6 +11,7 @@
 namespace oxide\app;
 use oxide\ui\Renderer;
 use oxide\base\Stringify;
+use oxide\http\Context;
 
 class View implements Renderer, Stringify {
    public
@@ -18,6 +19,7 @@ class View implements Renderer, Stringify {
       $title = null;
    
    protected
+      $_context = null,
       $_rendering = false,
       $_cache = null,
       $_contentType = 'text/html',
@@ -53,6 +55,28 @@ class View implements Renderer, Stringify {
     */
    public function getData() {
       return $this->_data;
+   }
+   
+   /**
+    * Set the context
+    * @param Context $context
+    */
+   public function setContext(Context $context) {
+      $this->_context = $context;
+   }
+   
+   /**
+    * 
+    * @return Context
+    */
+   public function getContext() {
+      return $this->_context;
+   }
+   
+   public function getHelper($name) {
+      $name = ucfirst($name);
+      $helpername = "{$name}Helper";
+      return $this->_context->get($helpername);
    }
    
    /**
