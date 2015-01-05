@@ -73,6 +73,12 @@ class View implements Renderer, Stringify {
       return $this->_context;
    }
    
+   /**
+    * convinient method to get registered helpers from the context
+    * 
+    * @param type $name
+    * @return type
+    */
    public function getHelper($name) {
       $name = ucfirst($name);
       $helpername = "{$name}Helper";
@@ -177,28 +183,5 @@ class View implements Renderer, Stringify {
     */
    public function __toString() {
       return $this->render();
-   }
-   
-   public function __call($name, $arguments) {
-      $renderer = $this->_renderer;
-      
-      if(is_callable([$renderer, $name])) {
-         return call_user_func_array([$renderer, $name], $arguments);
-      } else {
-         throw new \InvalidArgumentException('Method not found: ' . get_class($renderer) . '::' . $name);
-      }
-   }
-   
-   public function __get($property) {
-      $renderer = $this->_renderer;
-      if (property_exists($renderer, $property)) {
-         return $renderer->$property;
-      }
-      return null;
-    }
-
-   public function __set($property, $value) {
-      $this->_renderer->$property = $value;
-      return $this;
    }
 }
