@@ -16,9 +16,9 @@ use oxide\base\Container;
 class ViewData extends Container {
    protected static
       $_shared = [];
-      
+   
    /**
-    * Share data accross all view
+    * Share data accross all views
     * 
     * @param type $key
     * @param type $value

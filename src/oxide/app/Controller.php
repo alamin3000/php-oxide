@@ -222,7 +222,7 @@ abstract class Controller
       
       
       // setup helpers
-      $context->setFlashHelper(function() {
+      $this->_viewData->setFlashHelper(function() {
          return new \oxide\helper\FlashHelper();
       });
    }

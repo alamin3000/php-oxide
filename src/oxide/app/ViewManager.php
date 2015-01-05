@@ -247,8 +247,8 @@ class ViewManager {
       } else {
          $layoutView = $this->getLayoutView();
          $renderingView = $layoutView;
-         $layoutRenderer = $layoutView->getRenderer();
-         $layoutRenderer->addPartial($view, $layoutRenderer->contentKey);
+         $masterPage = $layoutView->getRenderer();
+         $masterPage->addPartial($view, $masterPage->contentKey);
          $renderer = $view->getRenderer();
          if($renderer instanceof Page) {
             $renderer->setParent($layoutView);
@@ -256,6 +256,6 @@ class ViewManager {
       }
             
       $response->setContentType($renderingView->getContentType(), $renderingView->getEncoding());
-      $response->addBody($renderingView->render(), $layoutView->contentKey);
+      $response->addBody($renderingView->render());
    }
 }
