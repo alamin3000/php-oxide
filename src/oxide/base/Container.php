@@ -47,7 +47,7 @@ class Container
          return $value;
       }
    }
-   
+      
    /**
     * Sets a data
     * 

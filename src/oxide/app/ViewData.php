@@ -15,7 +15,51 @@ use oxide\base\Container;
  */
 class ViewData extends Container {
    protected static
-      $_shared = [];
+      /**
+       * @var Container Shared container
+       */
+      $_shared = null;
+   
+   protected
+      $_context = null;
+   
+   public function __construct($data = null) {
+      parent::__construct($data);
+   }
+   
+   /**
+    * Set helper
+    * @param type $name
+    * @param type $helper
+    */
+   public function setHelper($name, $helper) {
+      $hname = ucfirst($name) . "Helper";
+      self::sharedContainer()->set($hname, $helper);
+   }
+   
+   /**
+    * Get helper by name
+    * @param string $name
+    * @return mixed
+    */
+   public function getHelper($name) {
+      $hname = ucfirst($name) . "Helper";
+      return self::sharedContainer()->get($hname);
+   }
+   
+   /**
+    * Get the shared container among all views
+    * 
+    * @return Container
+    */
+   public static function sharedContainer() {
+      if(!self::$_shared) {
+         $instance = new Container();
+         self::$_shared = $instance;
+      }
+      
+      return self::$_shared;
+   }
    
    /**
     * Share data accross all views
@@ -24,7 +68,7 @@ class ViewData extends Container {
     * @param type $value
     */
    public function share($key, $value) {
-      self::$_shared[$key] = $value;
+      self::sharedContainer()->set($key, $value);
    }
    
    /**
@@ -34,8 +78,9 @@ class ViewData extends Container {
     * @return type
     */
    public function shared($key) {
-      if(isset(self::$_shared[$key])) {
-         return self::$_shared[$key];
+      $shared = self::sharedContainer();
+      if(isset($shared[$key])) {
+         return $shared[$key];
       }
       
       return null;

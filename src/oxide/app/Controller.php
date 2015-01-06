@@ -224,15 +224,15 @@ abstract class Controller
       $viewData = $this->_viewData;
       
       // setup helpers
-      $viewData->setFlashHelper(function() {
+      $viewData->setHelper('Flash', function() {
          return new helper\FlashHelper();
       });
       
-      $viewData->setUrlHelper(function() use ($context, $route) {
+      $viewData->setHelper('Url', function() use ($context, $route) {
          return new helper\UrlHelper($context->getRequest(), $route);
       });
       
-      $viewData->setHtmlHelper(function() {
+      $viewData->setHelper('Html', function() {
          return new helper\HtmlHelper();
       });
    }
