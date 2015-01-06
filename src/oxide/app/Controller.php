@@ -225,11 +225,15 @@ abstract class Controller
       
       // setup helpers
       $viewData->setFlashHelper(function() {
-         return new \oxide\helper\FlashHelper();
+         return new helper\FlashHelper();
       });
       
       $viewData->setUrlHelper(function() use ($context, $route) {
-         return new \oxide\helper\UrlHelper($context->getRequest(), $route);
+         return new helper\UrlHelper($context->getRequest(), $route);
+      });
+      
+      $viewData->setHtmlHelper(function() {
+         return new helper\HtmlHelper();
       });
    }
    
