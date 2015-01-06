@@ -1,5 +1,5 @@
 <?php
-namespace oxide\helper;
+namespace oxide\app\helper;
 
 class FlashHelper  {
    /**

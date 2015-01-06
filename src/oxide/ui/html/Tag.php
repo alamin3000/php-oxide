@@ -1,7 +1,6 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
-use oxide\helper\_html;
 
 
 class Tag implements Renderer {
@@ -109,39 +108,88 @@ class Tag implements Renderer {
     * 
     * If the tag is void tag, then it will self close
     * @see oxide\helper\Html::rstart()
-    * @return type
+    * @return string
     */
    public function renderOpen() {
-      return _html::openTag($this->_tag, $this->_attributes, $this->_void);
+      return self::renderOpenTag($this->_tag, $this->_attributes, $this->_void);
    }
    
    /**
     * 
-    * @return type
+    * @return string
     */
    public function renderClose() {
-      return _html::closeTag($this->_tag, $this->_void);
+      return self::renderCloseTag($this->_tag, $this->_void);
    }
       
+   /**
+    * 
+    * @return string
+    */
    public function render() {
       return $this->renderOpen() .
         $this->renderClose();
    }
    
-   public static function renderOpenTag($tag, array $attributes = null, $void = false) {
-      return _html::openTag($tag, $attributes, $void);
-   }
-   
-   public static function renderCloseTag($tag, $void = false) {
-      return _html::closeTag($tag, $void);
-   }
-   
-   public static function escape($string) {
-      return _html::escape($string);
+   /**
+    * Convert array into key=value string
+    * 
+    * @param array $attributes
+    * @return string
+    * @throws \Exception
+    */
+   public static function renderAttributeString(array $attributes = null) {
+      if(empty($attributes)) return '';
+		
+      $str = '';
+      foreach ($attributes as $key => $value) {
+         if(!empty($value) && !is_scalar($value)) {
+            trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
+         }
+         $value = $this->escape($value);
+         $str .= "{$key}=\"{$value}\" ";
+      }
+      
+      return ' ' . trim($str);
    }
    
    /**
-    * Allows to render an element based on given $tag and $content
+    * Render the opening of an html tag
+    * 
+    * If tag is set to void, then tag will be closed.  Else renderCloseTag must be called
+    * @param string $tag
+    * @param array $attributes
+    * @param bool $void
+    * @return string
+    */
+   public static function renderOpenTag($tag, array $attributes = null, $void = false) {
+      if($void) $close = ' /';
+      else $close = '';
+      return '<'. $tag . self::renderAttributeString($attributes) . $close . '>';
+   }
+   
+   /**
+    * 
+    * @param type $tag
+    * @param type $void
+    * @return type
+    */
+   public static function renderCloseTag($tag, $void = false) {
+      if($void) return '';
+      return "</{$tag}>";
+   }
+   
+   /**
+    * 
+    * @param type $string
+    * @return type
+    */
+   public static function escape($string) {
+      return htmlentities($string, ENT_QUOTES);
+   }
+   
+   /**
+    * Renders a HTML element based on given $tag and $content
     * 
     * @param \oxide\ui\html\Tag $tag
     * @param type $content

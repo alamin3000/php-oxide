@@ -8,29 +8,25 @@
  * @license http://URL name 
  */
 
-namespace oxide\helper;
+namespace oxide\app\helper;
+use oxide\http\Context;
 
-class _helper {
+class HelperAbstract {
+   use \oxide\base\pattern\SingletonTrait;
    
-   static protected
-      $_instance = null,
-      $_invokers = [];
+   protected
+      $_context = null;
    
-   private function __construct() {
-
+   protected function __construct(Context $context = null) {
+      if($context) $this->setContext ($context);
    }
    
-   /**
-    * Get instance of helper class
-    * 
-    * @return
-    */
-   public static function instance() {
-      if(self::$_instance === null) {
-         self::$_instance = new static();
-      }
-      
-      return self::$_instance;
+   public function setContext(Context $context) {
+      $this->_context= $context;
+   }
+   
+   public function getContext() {
+      return $this->_context;
    }
    
    /**
@@ -38,11 +34,11 @@ class _helper {
     * @param type $name
     * @param \Closure $function
     */
-   public static function extendClosure($name, \Closure $function) {
+   public function extendClosure($name, \Closure $function) {
       self::$_invokers[$name] = $function;
    }
    
-   public static function extendClass($class) {
+   public function extendClass($class) {
       $reflector = new \ReflectionClass($class);
       $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
       foreach($methods as $method) {
@@ -50,9 +46,10 @@ class _helper {
       }
    }
    
-   public static function __callStatic($name, $arguments) {
+   public function __call($name, $arguments) {
       if(self::$_invokers[$name]) {
          $callable = self::$_invokers[$name];
+         
          return call_user_func_array($callable, $arguments);
       } else {
          throw new \Exception('Unable to find helper method: '. $name);

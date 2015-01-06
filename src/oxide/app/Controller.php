@@ -124,7 +124,7 @@ abstract class Controller
       $params = $this->_route->params;
       if($index === null) return $params;
       if(is_int($index)) {
-         return _util::value($params, $index, $default);
+         return (isset($params[$index])) ? $params[$index] : $default;
       } else {
          $keypos = array_search($index, $params);
          if($keypos !== FALSE) {
@@ -214,16 +214,22 @@ abstract class Controller
    
    private function init(Context $context) {
       $config = $context->getConfig();
+      $route = $this->getRoute();
       
       // perform access validation
       $authManager = new auth\AuthManager($config, $context->getAuth());
       $authManager->validateAccess($this->getRoute(), 
               EventNotifier::sharedInstance(), true); // throws exception if denied
       
+      $viewData = $this->_viewData;
       
       // setup helpers
-      $this->_viewData->setFlashHelper(function() {
+      $viewData->setFlashHelper(function() {
          return new \oxide\helper\FlashHelper();
+      });
+      
+      $viewData->setUrlHelper(function() use ($context, $route) {
+         return new \oxide\helper\UrlHelper($context->getRequest(), $route);
       });
    }
    

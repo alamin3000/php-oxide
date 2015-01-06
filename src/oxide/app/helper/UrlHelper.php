@@ -1,11 +1,11 @@
 <?php
-namespace oxide\helper;
+namespace oxide\app\helper;
 use oxide\http\Request;
 use oxide\http\Route;
 /**
  * 
  */
-class Url {	
+class UrlHelper {	
    protected 
       $_route = null,
       $_request = null;

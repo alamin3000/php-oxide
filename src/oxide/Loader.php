@@ -164,9 +164,10 @@ class Loader {
       $autoloader = $this->getAutoloader();
       if($modules) {
          foreach($modules as $module) {
-            $name = _util::value($module, 'name', null, true);
-            $dir = _util::value($module, 'dir', null, true);
-            $namespace = _util::value($module, 'namespace', null, true);
+            $dic = new base\Dictionary($module);
+            $name = $dic->getRequired('name', true);
+            $dir = $dic->getRequired('dir', true);
+            $namespace = $dic->getRequired('namespace', true);
             $autoloader->addNamespace($namespace, $dir);
             $router->register($name, $dir, $namespace);
          }

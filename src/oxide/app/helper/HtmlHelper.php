@@ -1,5 +1,6 @@
 <?php
-namespace oxide\helper;
+namespace oxide\app\helper;
+use oxide\ui\html\Tag;
 
 /** 
  * html helper class
@@ -29,7 +30,8 @@ namespace oxide\helper;
  * </pre>
  * </code>
  */
-abstract class _html {
+
+class HtmlHelper {
    public static
       $voidTags =  ['area' => true,'base' => true, 'br' => true, 'col' => true, 'command' => true, 'embed' => true, 'hr' => true, 'img' => true, 'input' => true, 'keygen' => true, 'link' => true, 'meta' => true, 'param' => true, 'source' => true, 'track' => true, 'wbr' => true],
       $blockTags = ['address' => true, 'figcaption' => true, 'ol' => true, 'article' => true, 'figure' => true, 'output' => true, 'aside' => true, 'footer' => true, 'p' => true, 'audio' => true, 'form' => true, 'pre' => true, 'blockquote' => true, 'h1' => true,'h2' => true,'h3' => true,'h4' => true,'h5' => true,'h6' =>true, 'section' => true, 'canvas' => true, 'header' => true, 'table' => true, 'dd' => true, 'hgroup' => true, 'ul' => true, 'div' => true, 'hr' => true, 'dl' => true, 'video' => true, 'fieldset' => true, 'noscript' => true, 'li' => true],
@@ -43,10 +45,8 @@ abstract class _html {
     * @param type $void
     * @return type
     */
-   public static function openTag($tag, array $attributes = null, $void = false) {
-      if($void) $close = ' /';
-      else $close = '';
-      return '<'. $tag . self::attributeString($attributes) . $close . '>';
+   public function openTag($tag, array $attributes = null, $void = false) {
+      return Tag::renderOpenTag($tag, $attributes, $void);
    }
    
    /**
@@ -54,10 +54,10 @@ abstract class _html {
     * @param type $tag
     * @return type
     */
-   public static function closeTag($tag, $void = false) {
-      if($void) return '';
-      return "</{$tag}>";
+   public function closeTag($tag, $void = false) {
+      return Tag::renderCloseTag($tag, $void);
    }
+   
 	/**
 	 * generate a html tag string based on given information
 	 *
@@ -78,7 +78,7 @@ abstract class _html {
 	 * @param string $inner
 	 * @param array $attributes
 	 */
-	public static function tag($tag, $inner = null, array $attributes = null, $void = null) {
+	public function tag($tag, $inner = null, array $attributes = null, $void = null) {
 		// create the attribute string from the $attributes
       if(is_array($tag)) {
          list($tag, $inner, $attributes) = $tag;
@@ -92,9 +92,9 @@ abstract class _html {
          }
       }
       
-      return self::openTag($tag, $attributes, $void) .
-              self::toString($inner) .
-              self::closeTag($tag, $void);
+      return $this->openTag($tag, $attributes, $void) .
+              $this->toString($inner) .
+              $this->closeTag($tag, $void);
       
 	}
    
@@ -104,7 +104,7 @@ abstract class _html {
     * @param mixed $content
     * @return string
     */
-   public static function toString($content) {
+   public function toString($content) {
       if(is_scalar($content)) return (string) $content;
       else if($content instanceof \oxide\ui\Renderer) return $content->render();
       else if($content instanceof \oxide\util\Stringify) return (string)$content;
@@ -125,11 +125,11 @@ abstract class _html {
     * @access public
     * @param type $tags 
     */
-	public static function tags(array $tags) {
+	public function tags(array $tags) {
       $buffer = '';
 		foreach($tags as $tag) {
          if(count($tag) !== 3) throw new \Exception('Tag array is malformed');
-			$buffer .= self::tag($tag[0], $tag[1], $tag[2]);
+			$buffer .= $this->tag($tag[0], $tag[1], $tag[2]);
 		}
       return $buffer;
 	}
@@ -140,19 +140,8 @@ abstract class _html {
     * @param array $attributes
     * @return string
     */
-   public static function attributeString($attributes) {
-  		if(empty($attributes)) return '';
-		
-      $str = '';
-      foreach ($attributes as $key => $value) {
-         if(!empty($value) && !is_scalar($value)) {
-            throw new \Exception('both value for attribute key {' . $key . '} must be scalar data type');
-         }
-         $value = self::escape($value);
-         $str .= "{$key}=\"{$value}\" ";
-      }
-      
-      return ' ' . trim($str);
+   public function attributeString($attributes) {
+  		return Tag::renderAttributeString($attributes);
    }
 	
 	/**
@@ -163,7 +152,7 @@ abstract class _html {
     * @param string $text
     * @param array $attrib
     */
-	public static function a($link = null, $text = null, $attrib = null) {
+	public function a($link = null, $text = null, $attrib = null) {
 		if($link) {
 			if($attrib) {
 				$attrib['href'] = $link;
@@ -172,7 +161,7 @@ abstract class _html {
 			}
 		}
 
-		return self::tag('a', ($text) ? $text: $link, $attrib);
+		return $this->tag('a', ($text) ? $text: $link, $attrib);
 	}
 
    /**
@@ -186,7 +175,7 @@ abstract class _html {
     * @param int $opt
     * @return string
     */
-   public static function ul($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
+   public function ul($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
       return self::_list($list, 'ul', $attrib, $opt);
    }
 
@@ -194,7 +183,7 @@ abstract class _html {
     * builds and returns OL tag
     * @see ul()
     */
-   public static function ol($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
+   public function ol($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
       return self::_list($list, 'ol', $attrib, $opt);
    }
    
@@ -209,7 +198,7 @@ abstract class _html {
    public static function label($text, $for = null, array $attribs = null) {
       if(!$attribs) $attribs = [];
       if($for) $attribs['for'] = $for;
-      return self::tag('label', $text, $attribs);
+      return $this->tag('label', $text, $attribs);
    }
    
    /**
@@ -226,7 +215,7 @@ abstract class _html {
       $attribs['name'] = $name;
       $attribs['type'] = $type;
       if($value) $attribs['value'] = $value;
-      return self::tag('input', null,  $attribs);
+      return $this->tag('input', null,  $attribs);
    }
    
    /**
@@ -242,7 +231,7 @@ abstract class _html {
       $attribs['name'] = $name;
       $attribs['type'] = $type;
       if($value) $attribs['value'] = $value;
-      return self::tag('button',  $attribs);
+      return $this->tag('button',  $attribs);
 	}
    
    /**
@@ -256,7 +245,7 @@ abstract class _html {
    public static function textarea($name, $value = null,  $attribs = null) {
       if(!$attribs) $attribs = [];
       $attrib['name'] = $name;
-      return self::tag('textarea', $value, $attrib);
+      return $this->tag('textarea', $value, $attrib);
    }
    
    /**
@@ -273,7 +262,7 @@ abstract class _html {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       
-      self::start('select', $attribs);
+      $this->start('select', $attribs);
       foreach($options as $key => $val) {
          if(is_int($key)) {
             $text = $val;
@@ -284,9 +273,9 @@ abstract class _html {
          else $opt_attrib = [];
          
          $opt_attrib['value'] = $val;
-         echo self::tag('option', $text, $opt_attrib);
+         echo $this->tag('option', $text, $opt_attrib);
       }
-      return self::end();
+      return $this->end('select');
    }
    
    
@@ -299,7 +288,7 @@ abstract class _html {
     * @param int $opt
     * @return string
     */
-   private static function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE) {
+   private function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE) {
       if(!$list) return;
       
       if(!is_array($list)) {
@@ -311,14 +300,14 @@ abstract class _html {
          else $list = (array) $list;
       }
       
-      self::start($type, $attrib);
+      $this->start($type, $attrib);
       foreach($list as $name => $value) {
          if(is_int($name)) $name = "";
 
-         echo self::openTag('li');
+         echo $this->openTag('li');
          if(is_array($value)) {
 				if($opt == self::LIST_VALUE_LINK)
-					echo self::a(null, $name);
+					echo $this->a(null, $name);
 				else echo $name;
             echo self::_list($value, $type, null, $opt);
          } else {
@@ -367,28 +356,28 @@ abstract class _html {
 	 * and value of the array entry is definition (DD)
 	 * @param array $list
 	 */
-   public static function dl($list, $attrib = null) {
+   public function dl($list, $attrib = null) {
       if(!$list) {return;}
       if(!is_array($list) && !is_object($list)) {
          return $list;
       }
       
-      self::start('dl', $attrib);
+      $this->start('dl', $attrib);
       foreach($list as $key => $value) {
          if(is_numeric($key)) {
             $key = "";
          }
-         echo self::tag('dt', $key, array('title' => $key));
+         echo $this->tag('dt', $key, ['title' => $key]);
          
          if(!is_array($value)) {
             $value = [$value];
          }
          
          foreach($value as $val) {
-            echo self::tag('dd', $val, array('title' => $key));
+            echo $this->tag('dd', $val, ['title' => $key]);
          }
       }
-      return self::end();
+      return $this->end('dl');
    }
  
    /**
@@ -398,10 +387,10 @@ abstract class _html {
     * @param string $tag name to start
     * @param array $attrib attributes for the tag
     */
-   public static function start($tag = null, $attrib = null) {
+   public function start($tag = null, $attrib = null) {
       ob_start();
       if($tag)
-         echo self::openTag($tag, $attrib, false);
+         echo $this->openTag($tag, $attrib, false);
 
    }
 
@@ -409,9 +398,9 @@ abstract class _html {
 	 * ends the last tag opened using start() method
 	 * @see start()
 	 */
-   public static function end($tag = null) {
+   public function end($tag = null) {
       if($tag)
-         echo self::closeTag ($tag);
+         echo $this->closeTag ($tag);
       
       return ob_get_clean();
    }
@@ -422,7 +411,7 @@ abstract class _html {
 	 * @param string $str
 	 * @return string
 	 */
-	public static function escape($str) {
+	public function escape($str) {
       return htmlentities($str, ENT_QUOTES);
    }
    
@@ -432,7 +421,7 @@ abstract class _html {
     * @param type $encode
     * @return type
     */
-   public static function encode($str, $encode = 'utf-8') {
+   public function encode($str, $encode = 'utf-8') {
       return utf8_encode(htmlentities($str,ENT_QUOTES, $encode));
    }   
       
@@ -442,15 +431,13 @@ abstract class _html {
    * @param type $arguments
    * @return type
    */
-   public static function __callStatic($name, $arguments) {
+   public function __call($name, $arguments) {
       if(!$arguments) {
-         return self::tag($name, '');
+         return $this->tag($name, '');
       } else {
          $inner = array_shift($arguments);
          $attributes = (!empty($arguments)) ? array_shift($arguments) : null;
-         echo $name;
-         var_dump($arguments);
-         return self::tag($name, $inner, $attributes);
+         return $this->tag($name, $inner, $attributes);
       }
    }
 }

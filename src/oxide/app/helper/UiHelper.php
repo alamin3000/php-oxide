@@ -1,15 +1,17 @@
 <?php
-namespace oxide\helper;
-use oxide\helper\_html;
+namespace oxide\app\helper;
 use oxide\ui\html\Form;
 use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
 use oxide\util\ArrayString;
 
-class _ui {
-   use \oxide\base\pattern\SingletonTrait;
+class UiHelper extends HelperAbstract {
    
    protected
+      /**
+       * @var HtmlHelper 
+       */
+      $_htmlHelper = null,
       $_attributes = [],
       $_wrappers = [],
       $_renderers = [];
@@ -59,6 +61,11 @@ class _ui {
       SIZE_SMALL = 2,
       SIZE_LARGE = 3;
    
+   public function __construct(HtmlHelper $htmlHelper) {
+      parent::__construct();
+
+      $this->extendClass($htmlHelper);
+   }
    
    protected function _class_style($style, $prefix) {
       switch ($style) {
@@ -120,8 +127,8 @@ class _ui {
     * @param \Closure $tdcallback
     * @return type
     */
-   public static function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null) {
-      _html::start('table', ['class' => 'table']);
+   public static function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null, $style = null) {
+      $this->tableStart($style);
       if(!$thcallback) { // default header callback
          $thcallback = function($key) {
             return ucwords(str_replace(['-', '_'], ' ', $key));
@@ -147,75 +154,56 @@ class _ui {
       }
       echo '</tbody>';
       
-      return _html::end('table');
+      return $this->tableEnd();
    }
    
    /**
     * Start creating table
     * @param int $style
     */
-   public static function table_start($style = null) {
+   public static function tableStart($style = null) {
       $cls = ['table'];
       $cls[] = 'table-condensed';
       if($style & self::TABLE_HOVERED) $cls[] = 'table-hover';
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
       
-      _html::start('table', ['class' => implode(' ', $cls)]);
+      $this->_htmlHelper->start('table', ['class' => implode(' ', $cls)]);
    }
    
    /**
     * End table. Must be echoed.
+    * 
     * @return string
     */
-   public static function table_end() {
-      return _html::end('table');
-   }
-   
-   /**
-    * 
-    * @param Form $controls
-    * @param array $attrs
-    * @return type
-    */
-   public static function form($controls, array $attrs = null) {
-      if($controls instanceof Form) return self::form_element($controls);
-      
-      _html::start('form', $attrs);
-      foreach($controls as $name => $control) {
-         
-      }
-      
-      return _html::end('form');
+   public static function tableEnd() {
+      return $this->_htmlHelper->end('table');
    }
    
    
    /**
     * Prints heading
+    * 
     * @param string $main
     * @param string $secondary
     * @return string
     */
    public static function heading($main, $secondary = null, $outline_level = 1) {
-      if($secondary) $h2 = '<br/>'._html::tag('small', $secondary);
+      if($secondary) $h2 = '<br/>'.$this->_htmlHelper->tag('small', $secondary);
       else $h2 = null;
       
-      return _html::tag("h{$outline_level}", $main . $h2);
-   }
-   
-   
-   public static function heading_content($main, $sub = null) {
-      
+      return $this->_htmlHelper->tag("h{$outline_level}", $main . $h2);
    }
    
    /**
+    * Renders a html link
     * 
     * @param type $link
     * @param type $text
     * @return type
     */
    public static function link($link, $text = null) {
-      return _html::tag('a', $text, ['href' => $link]);
+      return $this->_htmlHelper->tag('a', $text, ['href' => $link]);
    }
    
    /**
@@ -227,18 +215,18 @@ class _ui {
     * @param type $attribs
     * @return type
     */
-   public static function link_button($href, $text, $style = null, $size = null) {
+   public static function linkButton($href, $text, $style = null, $size = null) {
       $attribs = [];
-      
-      $cls_size = self::_class_size($size, 'btn');
-      $cls_style = self::_class_style($style, 'btn');
+      $cls_size = $this->_class_size($size, 'btn');
+      $cls_style = $this->_class_style($style, 'btn');
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
       $attribs['herf'] = $href;
-      return _html::tag('a', $text, $attribs);
+      return $this->_htmlHelper->tag('a', $text, $attribs);
    }
    
    /**
+    * Render a button
     * 
     * @param type $type
     * @param type $text
@@ -247,15 +235,15 @@ class _ui {
     * @return type
     */
    public static function button($type, $text, $style = null, $size = null) {
-      $cls_size = self::_class_size($size, 'btn');
-      $cls_style = self::_class_style($style, 'btn');
+      $cls_size = $this->_class_size($size, 'btn');
+      $cls_style = $this->_class_style($style, 'btn');
 
       $attr = [
           'type' => $type,
           'class' => "btn {$cls_size} {$cls_style}"
       ];
           
-      return _html::tag('button', $text,$attr);
+      return $this->_htmlHelper->tag('button', $text,$attr);
    }
    
    /**
@@ -264,7 +252,7 @@ class _ui {
     * @param type $for
     */
    public static function label($text, $for = null) {
-      echo _html::tag('label', $text, ['class' => 'form-label', 'for' => $for]);
+      echo $this->_htmlHelper->tag('label', $text, ['class' => 'form-label', 'for' => $for]);
    }
    
    /**
@@ -342,43 +330,63 @@ class _ui {
    }
 
    /**
+    * Start a form element
     * 
     * @param type $style
     * @param type $method
     * @param type $action
     */
-   public static function form_start($style = null, $method = 'get', $action = null) {
+   public static function formStart($style = null, $method = 'get', $action = null) {
       $attr = [
           'role' => 'form',
           'method' => $method,
           'action' => $action
       ];
+      
       if($style == self::FORM_INLINE) {
          $attr['class'] = 'form-inline';
       } else if($style == self::FORM_STANDARD) {
          $attr['class'] = 'form-horizontal';
       }      
       
-      _html::start('form', $attr);
+      $this->_htmlHelper->start('form', $attr);
    }
    
-   public static function form_row_start() {
-      _html::start('div', ['class' => 'form-group form-group-sm']);
+   /**
+    * Starting a form row 
+    * @return void Doesn't return anything.  Everything is buffered.
+    */
+   public static function formRowStart() {
+      $this->_htmlHelper->start('div', ['class' => 'form-group form-group-sm']);
    }
    
-   public static function form_row_end() {
-      return _html::end('div');
+   /**
+    * 
+    * @return string returns the buffered 
+    */
+   public static function formRowEnd() {
+      return $this->_htmlHelper->end('div');
    }
    
-   public static function form_control($type, $name, $value = null, $label = null, $items = null) {
+   /**
+    * Render a html form control using given information
+    * 
+    * @param string $type
+    * @param type $name
+    * @param type $value
+    * @param type $label
+    * @param type $items
+    * @return string
+    */
+   public static function formControl($type, $name, $value = null, $label = null, $items = null) {
       $attrs = [
           'class' => 'form-control'
       ];
       
       $rendered = null;
       switch ($type) {
-         case (isset(_html::$inputTypes[$type])) :
-            $rendered = _html::input($type, $name, $value, null, $attrs);
+         case (isset(HtmlHelper::$inputTypes[$type])) :
+            $rendered = $this->input($type, $name, $value, null, $attrs);
             break;
          
          case 'textfield':
@@ -405,8 +413,8 @@ class _ui {
       return $rendered;
    }
    
-   public static function form_end() {
-      return _html::end();
+   public static function formEnd() {
+      return $this->_htmlHelper->end('form');
    }
    
    /**
@@ -414,7 +422,7 @@ class _ui {
     * @param Form $form
     * @return Form
     */
-   public static function form_element(Form $form, $style = null, $size = null) {
+   public static function formElement(Form $form, $style = null, $size = null) {
 //      return $form;
 //      $form->registerRenderCallback(function(Form $form, ArrayString $buffer) {
 //         
@@ -470,6 +478,7 @@ class _ui {
       return $form;
    }
    
+   
    public static function listing(array $items, $style = null) {
       if($style) {
          
@@ -505,7 +514,7 @@ class _ui {
     * @param type $style
     * @return type
     */
-   public static function list_group($items, $style = null) {
+   public static function navList($items, $style = null) {
       _html::start('div', ['class' => 'list-group']);
       $cpath = Url::path();
       $attrs = ['class' => 'list-group-item'];
@@ -538,7 +547,7 @@ class _ui {
     * @param type $style
     * @return type
     */
-   public function nav_list($items, $active = null, $style = null) {
+   public function navBar($items, $active = null, $style = null) {
       $cls = ['nav'];
       if($style & self::NAV_NAVBAR) $cls[] = 'navbar-nav';
       else if($style & self::NAV_PILLS) $cls[] = 'nav-pills';
@@ -675,15 +684,15 @@ class _ui {
     * @param string $html
     * @return string
     */
-   public function panel_footer($html) {
+   public function panelFooter($html) {
       return _html::tag('div', $html, ['class' => 'panel-footer']);
    }
    
    /**
     * End the panel
     */
-   public function panel_end() {
-      return _html::end('div');
+   public function panelEnd() {
+      return $this->_htmlHelper->end('div');
    }
    
    /**
@@ -693,14 +702,15 @@ class _ui {
     * @return string
     */
    public function breadcrumb($items) {
-      _html::start('ol', ['class' => 'breadcrumb']);
+      $html = $this->_htmlHelper;
+      $html->start('ol', ['class' => 'breadcrumb']);
       $count = count($items);
       for($i = 0; $i < $count; $i++) {
          list($key, $link) = each($items); 
-         if($i == $count - 1 || empty($link)) echo _html::tag('li', $key, ['class' => 'active']);
-         else echo _html::tag('li', _html::tag('a', $key, ['href' => $link]));
+         if($i == $count - 1 || empty($link)) echo $html->tag('li', $key, ['class' => 'active']);
+         else echo $html->tag('li', $html->tag('a', $key, ['href' => $link]));
       }
-      return _html::end();
+      return $html->end('ol');
    }
    
    /**
@@ -711,23 +721,22 @@ class _ui {
     * @param int $printcount
     * @return type
     */
-   public function pagination($pagecount, $querykey = 'p', $printcount = 5) {
+   public function pagination($pagecount, $urlprefix, $querykey = 'p', $printcount = 5) {
       if(!$querykey) $querykey = 'p';
       $currentpage = Url::query($querykey, 1);
       if($currentpage < 1) $currentpage = 1;
       $start = -1;
       $end = -1;
 		$mean = floor($printcount/2);
-      $path = Url::path();
-      $qparams = Url::query();
       
-      $linkmake = function($text, $link_page = null, $class = null) use ($path, $qparams, $querykey) {
+      
+      
+      $linkmake = function($text, $link_page = null, $class = null) use ($urlprefix) {
          if($class) echo '<li class="'.$class.'">';
          else echo '<li>';
          if($link_page) {
-            $qparams[$querykey] = $link_page;
-            $query = http_build_query($qparams);
-            echo self::link("{$path}?{$query}", $text);
+            $href = "{$urlprefix}p={$link_page}";
+            echo $this->link($href, $text);
          } else {
             echo '<span>'.$text.'</span>';
          }
@@ -744,7 +753,7 @@ class _ui {
 			else $end = $currentpage + $mean;
 		}	
 		
-      _html::start('ul', ['class' => 'pagination']);
+      $this->_htmlHelper->start('ul', ['class' => 'pagination']);
 		// previous link.
 		if($currentpage > 1) $linkmake('&laquo;', $currentpage - 1);
 				
@@ -764,7 +773,7 @@ class _ui {
 		if($currentpage < $pagecount) {
          $linkmake('&raquo;', $currentpage + 1);
 		}
-      return _html::end('ul');
+      return $this->_htmlHelper->end('ul');
    }
    
    /**
@@ -796,14 +805,14 @@ class _ui {
             $attr['width'] = $size;
          }
       }
-      return _html::tag('img', null, $attr);
+      return $this->_htmlHelper->tag('img', null, $attr);
    }
    
    /**
     * Starts a responsive grid system
     */
-   public function grid_start() {
-      _html::start('div', ['class' => 'row']);
+   public function gridRowOpen() {
+      echo $this->_htmlHelper->openTag('div', ['class' => 'row']);
    }
    
    /**
@@ -813,22 +822,22 @@ class _ui {
     * @param int $md_cols number of cols medium screeen should take
     * @param int $sm_cols number of cols small screen should take
     */
-   public function grid_item_start($lg_cols, $md_cols, $sm_cols = 1) {
-      _html::start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
+   public function gridColumnOpen($lg_cols, $md_cols, $sm_cols = 1) {
+      $this->_htmlHelper->start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
    }
    
    /**
     * Ends the responsive grid
     */
-   public function grid_item_end() {
-      echo _html::end('div');
+   public function gridColumnClose() {
+      echo $this->_htmlHelper->end('div');
    }
    
    /**
     * Ends the responseive grid system
     */
-   public function grid_end() {
-      echo _html::end('div');
+   public function gridRowClose() {
+      echo $this->_htmlHelper->closeTag('div');
    }
    
    /**
@@ -840,13 +849,14 @@ class _ui {
     * @return type
     */
    public function media($src, $title, $description = null) {
-      _html::start('div', ['class' => 'media']);
-      echo _html::tag('a', self::img($src, $title, null, Ui::IMG_MEDIA), ['class' => 'pull-left']);
-      echo _html::tag('div', 
-         _html::tag('h4', $title, ['class' => 'media-heading']) .  
+      $html = $this->_htmlHelper;
+      $html->start('div', ['class' => 'media']);
+      echo $html->tag('a', $this->img($src, $title, null, self::IMG_MEDIA), ['class' => 'pull-left']);
+      echo $html->tag('div', 
+         $html->tag('h4', $title, ['class' => 'media-heading']) .  
          $description
          , ['class' => 'media-body']);
-      return _html::end('div');
+      return $html->end('div');
    }
    
    /**
@@ -857,10 +867,10 @@ class _ui {
     * @param boolean $allowdismiss
     * @return string
     */
-   public function alert($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
+   public function message($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
       $cls = 'alert';
       $cls .= ' ' . self::_class_style($style, 'alert');
 
-      return _html::tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
+      return $this->_htmlHelper->tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
    }
 }
