@@ -146,7 +146,7 @@ class Tag implements Renderer {
          if(!empty($value) && !is_scalar($value)) {
             trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
          }
-         $value = $this->escape($value);
+         $value = self::escape($value);
          $str .= "{$key}=\"{$value}\" ";
       }
       
