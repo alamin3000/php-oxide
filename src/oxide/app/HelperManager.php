@@ -14,37 +14,9 @@ use oxide\base\Container;
 class HelperManager extends Container {
    use \oxide\base\pattern\SharedInstanceTrait;
    
-   
-   /**
-    * Add an instance of helper 
-    * @param type $name
-    * @param type $helper
-    */
-   public function addHelper($name, $helper) {
-      $this->_helpers[$name] = $helper;
-   }
-   
-   public function registerHelperNamespace($namespace) {
-      
-   }
-   
-   public function loadHelper($name) {
-      if(isset($this->_helpers[$name])) {
-         return $this->_helpers[$name];
-      }
-      
-      foreach($this->_registry as $namespace) {
-         $class = ucfirst($name);
-         $classname = "{$namespace}\\{$class}";
-         
-         if(class_exists($classname)) {
-            $helper = new $classname();
-         }
-      }
+   public function __construct($data = null) {
+      parent::__construct($data);
    }
    
    
-   public function getHelper($name) {
-      
-   }
 }

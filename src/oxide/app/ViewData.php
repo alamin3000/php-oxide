@@ -42,6 +42,7 @@ class ViewData extends Container {
       $this->_context = $context;
    }
    
+   
    /**
     * @return Context
     */
@@ -51,6 +52,8 @@ class ViewData extends Container {
    
    /**
     * Set helper
+    * 
+    * Helper will be shared among ALL views
     * @param type $name
     * @param type $helper
     */
