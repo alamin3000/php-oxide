@@ -23,7 +23,6 @@ class View implements Renderer, Stringify {
       $_contentType = 'text/html',
       $_encoding = 'utf-8',
       $_data = null,
-      $_subviews = [],
       $_isRendering = false,
       $_renderer = null;
    
@@ -37,22 +36,6 @@ class View implements Renderer, Stringify {
    public function __construct(Renderer $renderer = null) {
       if($renderer)
          $this->_renderer = $renderer;
-   }
-   
-   /**
-    * 
-    * @param ViewData $data
-    */
-   public function setData(ViewData $data) {
-      $this->_data = $data;
-   }
-   
-   /**
-    * 
-    * @return ViewData
-    */
-   public function getData() {
-      return $this->_data;
    }
    
    /**
