@@ -246,7 +246,6 @@ class ViewManager {
          $renderingView = $view;
       } else {
          $layoutView = $this->getLayoutView();
-         $layoutView->getData()->setContext($view->getData()->getContext());
          $renderingView = $layoutView;
          $masterPage = $layoutView->getRenderer();
          $masterPage->addPartial($view, $masterPage->contentKey);
