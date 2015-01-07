@@ -118,8 +118,13 @@ class Loader {
       $context->setConfig($config);
       
       // set session
-      $context->setSession(function() {
-         return new http\Session();
+      $context->setSession(function(http\Context $container) {
+         $request = $container->getRequest();
+         $opt = [
+            'cookie_domain' => $request->getUriComponents(http\Request::URI_HOST),
+            'cookie_secure' => $request->isSecured()
+         ];
+         return new http\Session(null, $opt);
       });
       
       // setup the authentication

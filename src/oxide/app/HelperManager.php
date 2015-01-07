@@ -9,13 +9,11 @@
  */
 
 namespace oxide\app;
+use oxide\base\Container;
 
-class HelperManager {
+class HelperManager extends Container {
    use \oxide\base\pattern\SharedInstanceTrait;
    
-   protected
-      $_helpers = [],
-      $_registry = [];
    
    /**
     * Add an instance of helper 

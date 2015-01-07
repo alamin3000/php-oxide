@@ -10,6 +10,7 @@
 
 namespace oxide\app;
 use oxide\base\Container;
+use oxide\http\Context;
 
 /**
  */
@@ -23,8 +24,29 @@ class ViewData extends Container {
    protected
       $_context = null;
    
-   public function __construct($data = null) {
+   /**
+    * Construct a new view data container
+    * 
+    * @param mixed $data
+    */
+   public function __construct($data = null, Context $context = null) {
       parent::__construct($data);
+      if($context) $this->setContext ($context);
+   }
+   
+   /**
+    * Set the application context object
+    * @param Context $context
+    */
+   public function setContext(Context $context) {
+      $this->_context = $context;
+   }
+   
+   /**
+    * @return Context
+    */
+   public function getContext() {
+      $this->_context;
    }
    
    /**

@@ -163,29 +163,6 @@ class HtmlHelper {
 
 		return $this->tag('a', ($text) ? $text: $link, $attrib);
 	}
-
-   /**
-    * builds and prints UL tag
-    *
-    * given $list must be an array or object that is iterable. 
-    * $opt value determines how to handle associative array
-	 * 
-    * @param array $list
-    * @param array $attrib
-    * @param int $opt
-    * @return string
-    */
-   public function ul($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
-      return self::_list($list, 'ul', $attrib, $opt);
-   }
-
-   /**
-    * builds and returns OL tag
-    * @see ul()
-    */
-   public function ol($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
-      return self::_list($list, 'ol', $attrib, $opt);
-   }
    
    /**
     * Renders a Label tag
@@ -278,6 +255,28 @@ class HtmlHelper {
       return $this->end('select');
    }
    
+   /**
+    * builds and prints UL tag
+    *
+    * given $list must be an array or object that is iterable. 
+    * $opt value determines how to handle associative array
+	 * 
+    * @param array $list
+    * @param array $attrib
+    * @param int $opt
+    * @return string
+    */
+   public function ul($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
+      return $this->_list($list, 'ul', $attrib, $opt);
+   }
+
+   /**
+    * builds and returns OL tag
+    * @see ul()
+    */
+   public function ol($list, $attrib = null, $opt = self::LIST_SMART_LINK) {
+      return $this->_list($list, 'ol', $attrib, $opt);
+   }
    
    /**
     * build html list (UL/OL)
@@ -309,7 +308,7 @@ class HtmlHelper {
 				if($opt == self::LIST_VALUE_LINK)
 					echo $this->a(null, $name);
 				else echo $name;
-            echo self::_list($value, $type, null, $opt);
+            echo $this->_list($value, $type, null, $opt);
          } else {
             switch($opt) {
                case self::LIST_VALUE_CONCAT:
@@ -318,7 +317,7 @@ class HtmlHelper {
 
                case self::LIST_VALUE_LINK:
                   if($value)
-                     echo self::a($value, $name);
+                     echo $this->a($value, $name);
                   else echo $name;
                   break;
 
@@ -330,7 +329,7 @@ class HtmlHelper {
                case self::LIST_SMART_LINK:
                   // only use link if both link and text available
                   if($name && $value) 
-                     echo self::a($value, $name);
+                     echo $this->a($value, $name);
                   // else simply return value
                   else echo "{$name}{$value}";
                   break;
@@ -343,10 +342,9 @@ class HtmlHelper {
             }
          }
 
-         echo self::closeTag('li');
+         echo $this->closeTag('li');
       }
-      return self::end();
-
+      return $this->end($type);
    }
 
 	/**

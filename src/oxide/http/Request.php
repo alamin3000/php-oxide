@@ -134,6 +134,14 @@ class Request {
    }
    
    /**
+    * 
+    * @return bool
+    */
+   public function isSecured() {
+      return $this->_secured;
+   }
+   
+   /**
     * Get the HTTP method
     * 
     * @return null|string

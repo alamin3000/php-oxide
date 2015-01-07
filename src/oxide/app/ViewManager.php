@@ -205,7 +205,7 @@ class ViewManager {
    /**
     * returns the main layout view
     * 
-    * @return MasterPage 
+    * @return View 
     */
    public function getLayoutView() {
       if ($this->_layoutView == null) {
@@ -246,6 +246,7 @@ class ViewManager {
          $renderingView = $view;
       } else {
          $layoutView = $this->getLayoutView();
+         $layoutView->getData()->setContext($view->getData()->getContext());
          $renderingView = $layoutView;
          $masterPage = $layoutView->getRenderer();
          $masterPage->addPartial($view, $masterPage->contentKey);

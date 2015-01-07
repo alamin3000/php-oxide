@@ -235,6 +235,10 @@ abstract class Controller
       $viewData->setHelper('Html', function() {
          return new helper\HtmlHelper();
       });
+      
+      $viewData->setHelper('Ui', function($container) {
+         return new helper\UiHelper($container->getHelper('Html'));
+      });
    }
    
    /**

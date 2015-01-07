@@ -17,7 +17,7 @@ namespace oxide\http;
  * @todo implement ArrayAccess
  */
 class Session { 
-   protected static
+   protected
       $_started = false;
    
 	protected 
@@ -26,7 +26,9 @@ class Session {
          'cookie_path' => '/',
          'cookie_timeout' => 60 * 60 * 6,
          'garbage_timeout' => 60 * 60 * 60 + 600,
-         'session_dir' => 'oxide_session'
+         'session_dir' => 'oxide_session',
+         'cookie_secure' => false,
+         'cookie_domain' => null
       ],
 		$_namespace = '',
 		$_id = '';
@@ -41,7 +43,11 @@ class Session {
 	 */
 	public function __construct($namespace = null, array $options = null) {
       $this->_namespace = $namespace;      
-      $this->_id = self::start($options);
+      if($options) {
+         $this->_options = array_merge($this->_options, $options);
+      }
+      
+      $this->start();
 	}
  
 	/**
@@ -50,34 +56,52 @@ class Session {
 	 * @throw HeaderAlreadySentException
 	 * @throw SessionAlreadyStartedException
 	 */
-	protected static function start(array $options = null) {
-      if(!self::$_started) {
-         // check if header is already sent.  if so throw an exception.
-        $file = null;
-        $line = null;
-        if(headers_sent($file,$line)) {
-           throw new exception\HeaderAlreadySentException();
-        }
-
-        // check if session has started automatically.
-        if(session_id()) {
-           throw new exception\SessionAlreadyStartedException();
-        }
-
-        $cookie_path = $options['cookie_path'];
-        $cookie_timeout = $options['cookie_timeout'];
-        $garbage_timeout = $options['garbage_timeout']; // in seconds
-        session_set_cookie_params($cookie_timeout, $cookie_path);
-        ini_set('session.gc_maxlifetime', $garbage_timeout);
-        session_cache_limiter("must-revalidate");
-
-        // starting the sesion.
-        session_start(); 
-        self::$_started = true;
+	protected function start() {
+      $options = $this->_options;
+      
+      // check if header is already sent.  if so throw an exception.
+      $file = null;
+      $line = null;
+      if(headers_sent($file,$line)) {
+        throw new exception\HeaderAlreadySentException();
       }
+
+      // check if session has started automatically.
+      if(session_id()) {
+        throw new exception\SessionAlreadyStartedException();
+      }
+
+      $cookie_path = $options['cookie_path'];
+      $cookie_timeout = $options['cookie_timeout'];
+      $garbage_timeout = $options['garbage_timeout']; // in seconds
+      $domain = $options['cookie_domain'];
+      $secured = $options['cookie_secure'];
+      session_set_cookie_params($cookie_timeout, $cookie_path);
+      ini_set('session.gc_maxlifetime', $garbage_timeout, $domain, $secured, TRUE);
+      session_cache_limiter("must-revalidate");
+
+      // starting the sesion.
+      session_start(); 
       
       return session_id();
 	}
+   
+   protected function securityCheck() {
+      if(isset($_SESSION['REMOTE_ADDR']) && isset($_SESSION['HTTP_USER_AGENT'])) {
+         if($_SESSION['HTTP_USER_AGENT'] == $_SERVER['HTTP_USER_AGENT'] &&
+            $_SESSION['REMOTE_ADDR'] == $_SERVER['REMOTE_ADDR']) {
+            return true;
+         }
+      }
+      
+      return false;
+   }
+
+
+
+   public function end() {
+      
+   }
 		
 	/**
 	 * get session id
@@ -108,6 +132,7 @@ class Session {
 	 */
 	public function regenerateId($deleteold = true) {
       session_regenerate_id($deleteold);
+      $this->_id = session_id();
 	}
    
    /**
@@ -174,7 +199,7 @@ class Session {
    /**
     * return to array
     */
-   public static function toArray()	{ return $_SESSION; }
+   public function toArray()	{ return $_SESSION; }
 	public function __get($key) {	return $this->read($key);	}
 	public function __set($key, $value) { return $this->write($key, $value); }
 	public function __unset($key)	{ $this->delete($key); }
