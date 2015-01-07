@@ -76,8 +76,8 @@ class Session {
       $garbage_timeout = $options['garbage_timeout']; // in seconds
       $domain = $options['cookie_domain'];
       $secured = $options['cookie_secure'];
-      session_set_cookie_params($cookie_timeout, $cookie_path);
-      ini_set('session.gc_maxlifetime', $garbage_timeout, $domain, $secured, TRUE);
+      session_set_cookie_params($cookie_timeout, $cookie_path, $domain, $secured, TRUE);
+      ini_set('session.gc_maxlifetime', $garbage_timeout);
       session_cache_limiter("must-revalidate");
 
       // starting the sesion.
