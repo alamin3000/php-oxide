@@ -2,9 +2,7 @@
 
 namespace oxide\app;
 use oxide\http\Route;
-use oxide\http\Response;
 use oxide\ui\Page;
-use oxide\ui\MasterPage;
 
 /**
  * View Controller
@@ -47,7 +45,7 @@ class ViewManager {
     */
    public function __construct($template, Route $route) {
       $this->setTemplateDir($template);
-      if($route) $this->setRoute ($route);
+      $this->_route = $route;
    }
    
    /**
