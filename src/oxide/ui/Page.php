@@ -22,6 +22,7 @@ class Page implements Renderer {
       $_partials = [],
       $_data = null,
       $_codeScript = null,
+      $_layoutScript = null,
       $_script = null;
    
    /**
@@ -36,6 +37,16 @@ class Page implements Renderer {
       if($codeScript) $this->setCodeScript ($codeScript);
    }
    
+   
+   public function setLayoutScript($script) {
+      $this->_layoutScript = $script;
+   }
+   
+   public function getLayoutScript() {
+      return $this->_layoutScript;
+   }
+
+
    /**
     * Set data for the page script
     * 
@@ -138,8 +149,17 @@ class Page implements Renderer {
 		return $this->_script;
 	}
    
+   /**
+    * Get the page content
+    * 
+    * This returns the page script rendered content without the layout
+    * @return string
+    */
+   public function getContent() {
+      return $this->_cache;
+   }
 
-    /**
+   /**
     * Executes the script in private scope
     * @param string $script
     * @param array $data
@@ -165,7 +185,7 @@ class Page implements Renderer {
 
          // prerender partials
          foreach($this->_partials as $partial) {
-            if($partial instanceof Page) {
+            if($partial instanceof self) {
                if($partial->prerender)
                   $partial->render();
             }
@@ -174,6 +194,10 @@ class Page implements Renderer {
          ob_start();
          echo $this->renderPage($script, $data);
          $this->_cache = ob_get_clean();
+         
+         if($this->_layoutScript) {
+            $this->renderPage($this->_layoutScript, $data);
+         }
       }
       
       return $this->_cache;

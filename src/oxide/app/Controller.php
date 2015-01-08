@@ -149,7 +149,7 @@ abstract class Controller
 	public function getViewManager() {
       if(!$this->_viewManager) {
          $config = ConfigManager::sharedInstance()->getConfig();
-         $viewManager = new ViewManager($config->getRequired('template'));
+         $viewManager = new ViewManager($config->getRequired('template'), $this->_route);
          $this->_viewManager = $viewManager;
       }
       
@@ -273,7 +273,7 @@ abstract class Controller
     * 
     * @param Context $context
     * @param Route $route
-    * @return type
+    * @return View
     */
    protected function onExecute(Context $context, Route $route) {
       $action_name = $route->action;		
@@ -301,16 +301,12 @@ abstract class Controller
     */
    protected function onRender(Context $context, View $view = null) {
       $viewManager = $this->getViewManager();
-      $viewManager->setRoute($this->getRoute());
-      if($view === NULL) {
-         // no view is provided
-         // we will use default view
-         $data = $this->getViewData();
-         $view = $viewManager->createView($data);
-      }
-      
       $response = $context->getResponse();
-      $viewManager->renderViewToResponse($view, $response);
+      $data = $this->getViewData();
+      
+      $prepview = $viewManager->prepareViewWithData($view, $data);
+      $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
+      $response->addBody($prepview->render());
    }
    
    /**

@@ -23,6 +23,10 @@ class ViewManager {
       $disableLayout = false;
    
    protected
+      /**
+       * @var Page Holds the layout page
+       */
+      $_layoutPage = null,
       $_viewDirName = 'view',
       $_viewScriptExt = 'phtml',
       $_templateDir = null,
@@ -41,18 +45,9 @@ class ViewManager {
     * @param string $template
     * @param Route $route
     */
-   public function __construct($template, Route $route = null) {
+   public function __construct($template, Route $route) {
       $this->setTemplateDir($template);
       if($route) $this->setRoute ($route);
-   }
-   
-   /**
-    * Set the route that will be used for generating templates and scripts
-    * 
-    * @param Route $route
-    */
-   public function setRoute(Route $route) {
-      $this->_route = $route;
    }
    
    /**
@@ -201,23 +196,17 @@ class ViewManager {
 
       return null;
    }
-
-   /**
-    * returns the main layout view
-    * 
-    * @return View 
-    */
-   public function getLayoutView() {
-      if ($this->_layoutView == null) {
-         $data = new ViewData();
+   
+   public function getLayoutPage() {
+      if($this->_layoutPage == null) {
          $script = $this->getLayoutScript();
-         $codefile = $this->getCodeScriptForScript($script);
-         $page = new MasterPage($this->getLayoutScript(), $data, $codefile);
-         $view = new View($page);
-         $this->_layoutView = $view;
+         $page = new Page($script);
+         $page->setCodeScript($this->getCodeScriptForScript($script));
+         
+         $this->_layoutPage = $page;
       }
-
-      return $this->_layoutView;
+      
+      return $this->_layoutPage;
    }
    
    /**
@@ -236,26 +225,24 @@ class ViewManager {
    }
    
    /**
-    * Render the given $view to the given $response
-    * @param View $view
-    * @param Response $response
+    * 
+    * @param \oxide\app\View $view
+    * @param \oxide\app\ViewData $data
+    * @return View
     */
-   public function renderViewToResponse(View $view, Response $response) {
-      $renderingView = null;
-      if($this->disableLayout) {
-         $renderingView = $view;
-      } else {
-         $layoutView = $this->getLayoutView();
-         $renderingView = $layoutView;
-         $masterPage = $layoutView->getRenderer();
-         $masterPage->addPartial($view, $masterPage->contentKey);
-         $renderer = $view->getRenderer();
-         if($renderer instanceof Page) {
-            $renderer->setParent($layoutView);
-         }
+   public function prepareViewWithData(View $view = null, ViewData $data = null) {
+      if(!$view) {
+         $view = $this->createView($data);
       }
-            
-      $response->setContentType($renderingView->getContentType(), $renderingView->getEncoding());
-      $response->addBody($renderingView->render());
+      
+      if(!$this->disableLayout) {
+         $layoutPage = $this->getLayoutPage();
+         $layoutPage->setData($data);
+         $layoutPage->addPartial($view, 'content');
+         $layoutView = new View($layoutPage);
+         return $layoutView;
+      } else {
+         return $view;
+      }
    }
 }
