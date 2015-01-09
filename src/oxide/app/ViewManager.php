@@ -233,7 +233,7 @@ class ViewManager {
       if(!$this->disableLayout) {
          $layoutPage = $this->getLayoutPage();
          $layoutPage->setData($data);
-         $layoutPage->addPartial($view, 'content');
+         $layoutPage->addPartial($view, null);
          return new View($layoutPage);
       } else {
          return $view;
