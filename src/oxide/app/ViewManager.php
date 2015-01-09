@@ -83,19 +83,7 @@ class ViewManager {
    public function getViewDirName() {
       return $this->_viewDirName;
    }
-   
-   /**
-    * Create a page object
-    * @param string $script
-    * @param Dictionary $data
-    * @return Page
-    */
-   protected function createPage($script, ViewData $data) {
-      $page = new Page($script);
-      $page->setData($data);
-      
-      return $page;
-   }
+
    
    /**
     * Create a new view using given $script
@@ -109,7 +97,7 @@ class ViewManager {
          $script = $this->_route->action;
       }
       $templateScript = $this->getTemplateScript($script); // get templatized script
-      $page = $this->createPage($templateScript, $data);
+      $page = new Page($templateScript, $data);
       $view = new View($page);
       
       return $view;
@@ -126,6 +114,7 @@ class ViewManager {
    }
    
    /**
+    * Set the template directory
     * 
     * @param string $dir
     */
@@ -195,6 +184,11 @@ class ViewManager {
       return null;
    }
    
+   /**
+    * Get the layout page for the current template
+    * 
+    * @return Page
+    */
    public function getLayoutPage() {
       if($this->_layoutPage == null) {
          $script = $this->getLayoutScript();
@@ -208,7 +202,10 @@ class ViewManager {
    }
    
    /**
+    * Generate code script based on given view script
     * 
+    * It simply tries to find script with the same name as view script but with
+    * php extension
     * @param type $script
     * @return string
     */
@@ -237,8 +234,7 @@ class ViewManager {
          $layoutPage = $this->getLayoutPage();
          $layoutPage->setData($data);
          $layoutPage->addPartial($view, 'content');
-         $layoutView = new View($layoutPage);
-         return $layoutView;
+         return View($layoutPage);
       } else {
          return $view;
       }

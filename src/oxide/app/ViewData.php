@@ -10,44 +10,43 @@
 
 namespace oxide\app;
 use oxide\base\Container;
-use oxide\http\Context;
 
 /**
  */
 class ViewData extends Container {
-   protected static
-      /**
-       * @var Container Shared container
-       */
-      $_shared = null;
-   
    protected
-      $_context = null;
+      $_helpers = null;
    
    /**
     * Construct a new view data container
     * 
     * @param mixed $data
     */
-   public function __construct($data = null, Context $context = null) {
+   public function __construct($data = null) {
       parent::__construct($data);
-      if($context) $this->setContext ($context);
    }
    
    /**
-    * Set the application context object
-    * @param Context $context
+    * Get the internal helper container
+    * 
+    * If no container found, it will create an empty container and return
+    * @return Container
     */
-   public function setContext(Context $context) {
-      $this->_context = $context;
+   public function getHelperContainer() {
+      if($this->_helpers == null) {
+         $this->_helpers = new helper\HelperContainer();
+      }
+      
+      return $this->_helpers;
    }
    
-   
    /**
-    * @return Context
+    * Set the helper container for the view data
+    * 
+    * @param Container $container
     */
-   public function getContext() {
-      $this->_context;
+   public function setHelperContainer(helper\HelperContainer $container) {
+      $this->_helpers = $container;
    }
    
    /**
@@ -58,8 +57,7 @@ class ViewData extends Container {
     * @param type $helper
     */
    public function setHelper($name, $helper) {
-      $hname = ucfirst($name) . "Helper";
-      self::sharedContainer()->set($hname, $helper);
+      $this->getHelperContainer()->set($name, $helper);
    }
    
    /**
@@ -68,46 +66,6 @@ class ViewData extends Container {
     * @return mixed
     */
    public function getHelper($name) {
-      $hname = ucfirst($name) . "Helper";
-      return self::sharedContainer()->get($hname);
-   }
-   
-   /**
-    * Get the shared container among all views
-    * 
-    * @return Container
-    */
-   public static function sharedContainer() {
-      if(!self::$_shared) {
-         $instance = new Container();
-         self::$_shared = $instance;
-      }
-      
-      return self::$_shared;
-   }
-   
-   /**
-    * Share data accross all views
-    * 
-    * @param type $key
-    * @param type $value
-    */
-   public function share($key, $value) {
-      self::sharedContainer()->set($key, $value);
-   }
-   
-   /**
-    * Get the shared data
-    * 
-    * @param type $key
-    * @return type
-    */
-   public function shared($key) {
-      $shared = self::sharedContainer();
-      if(isset($shared[$key])) {
-         return $shared[$key];
-      }
-      
-      return null;
+      return $this->getHelperContainer()->get($name);
    }
 }

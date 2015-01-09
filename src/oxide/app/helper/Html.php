@@ -31,7 +31,7 @@ use oxide\ui\html\Tag;
  * </code>
  */
 
-class HtmlHelper {
+class Html {
    public static
       $voidTags =  ['area' => true,'base' => true, 'br' => true, 'col' => true, 'command' => true, 'embed' => true, 'hr' => true, 'img' => true, 'input' => true, 'keygen' => true, 'link' => true, 'meta' => true, 'param' => true, 'source' => true, 'track' => true, 'wbr' => true],
       $blockTags = ['address' => true, 'figcaption' => true, 'ol' => true, 'article' => true, 'figure' => true, 'output' => true, 'aside' => true, 'footer' => true, 'p' => true, 'audio' => true, 'form' => true, 'pre' => true, 'blockquote' => true, 'h1' => true,'h2' => true,'h3' => true,'h4' => true,'h5' => true,'h6' =>true, 'section' => true, 'canvas' => true, 'header' => true, 'table' => true, 'dd' => true, 'hgroup' => true, 'ul' => true, 'div' => true, 'hr' => true, 'dl' => true, 'video' => true, 'fieldset' => true, 'noscript' => true, 'li' => true],

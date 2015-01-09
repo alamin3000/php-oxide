@@ -1,7 +1,7 @@
 <?php
 namespace oxide\app\helper;
 
-class FlashHelper  {
+class Flash  {
    /**
     *
     * @access private
@@ -9,6 +9,13 @@ class FlashHelper  {
     */
 	private static
       $_key		= "__oxide_helper_flash";
+   
+   protected
+      $_session = null;
+   
+   public function __construct(Container $container) {
+      
+   }
    
    public function has($namespace = null) {
       $key = self::$_key;

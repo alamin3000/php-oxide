@@ -5,14 +5,15 @@ use oxide\http\Route;
 /**
  * 
  */
-class UrlHelper {	
+class Url {	
    protected 
       $_route = null,
       $_request = null;
    
-   public function __construct(Request $request, Route $route) {
-      $this->_request = $request;
-      $this->_route = $route;
+   public function __construct(HelperContainer $container) {
+      $context = $container->getContext();
+      $this->_request = $context->getRequest();
+      $this->_route = $context->g;
    }
    /**
     * Get GET

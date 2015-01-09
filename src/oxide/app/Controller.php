@@ -7,7 +7,6 @@ use oxide\http\CommandFactory;
 use oxide\http\Route;
 use oxide\http\Context;
 use oxide\util\EventNotifier;
-use oxide\helper\_util;
 use oxide\data\Connection;
 
 /**
@@ -26,7 +25,9 @@ abstract class Controller
    extends AbstractClass 
    implements Command {
    
-	protected                     
+	protected  
+      $_helpers = ['HtmlHelper', 'UiHelper', 'FlashHelper'],
+           
       /**
        * @var Route
        */
@@ -212,33 +213,33 @@ abstract class Controller
       }
 	}   
    
+   /**
+    * Initializes the controllers
+    * - set the controller route to the context
+    * - performs controller access check
+    * - setup the hepers
+    * @param Context $context
+    */
    private function init(Context $context) {
       $config = $context->getConfig();
       $route = $this->getRoute();
+      $context->setRoute($route);
       
       // perform access validation
       $authManager = new auth\AuthManager($config, $context->getAuth());
-      $authManager->validateAccess($this->getRoute(), 
+      $authManager->validateAccess($route, 
               EventNotifier::sharedInstance(), true); // throws exception if denied
       
-      $viewData = $this->_viewData;
-      
       // setup helpers
-      $viewData->setHelper('Flash', function() {
-         return new helper\FlashHelper();
-      });
+      if(!helper\HelperContainer::hasSharedInstance()) {
+         $helpers = new helper\HelperContainer($context);
+         helper\HelperContainer::setSharedInstance($helpers);
+      } else {
+         $helpers = helper\HelperContainer::sharedInstance();
+      }
       
-      $viewData->setHelper('Url', function() use ($context, $route) {
-         return new helper\UrlHelper($context->getRequest(), $route);
-      });
-      
-      $viewData->setHelper('Html', function() {
-         return new helper\HtmlHelper();
-      });
-      
-      $viewData->setHelper('Ui', function($container) {
-         return new helper\UiHelper($container->getHelper('Html'));
-      });
+      $viewData = $this->_viewData;
+      $viewData->setHelperContainer($helpers);
    }
    
    /**

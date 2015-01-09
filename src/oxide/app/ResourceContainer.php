@@ -18,6 +18,4 @@ class ResourceContainer extends Container {
       parent::__construct($data);
       
    }
-   
-   
 }

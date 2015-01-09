@@ -8,10 +8,11 @@
  * @license http://URL name 
  */
 
-namespace oxide\ui;
-use oxide\helper\_html;
+namespace oxide\app\helper;
+use oxide\ui\html\Tag;
+use oxide\ui\html\Element;
 
-class MasterPage extends Page {
+class Head {
    public 
       $contentKey = 'content',
       $stylesheets = [],
@@ -19,6 +20,10 @@ class MasterPage extends Page {
       $styles = [],
       $snippets = [],
       $scripts = [];
+   
+   protected
+      $_htmlHelper = null;
+   
    
    
    /**
@@ -30,7 +35,7 @@ class MasterPage extends Page {
     * @param string $key_content
     */
    public function addMeta($name, $content, $key_name = 'name', $key_content = 'content') {
-      $this->metas[] = ['meta', null, [$key_name => $name, $key_content => $content]];
+      $this->metas[] = new Tag('meta', [$key_name => $name, $key_content => $content]);
    }
    
    /**
@@ -56,7 +61,7 @@ class MasterPage extends Page {
 		$attribs['rel'] = 'stylesheet';
       if($media) $attribs['media'] = $media;
 
-      $this->stylesheets[] = ['link', null, $attribs];
+      $this->stylesheets[] = new Tag('link', $attributes);
    }
    
    /**
@@ -178,6 +183,7 @@ class MasterPage extends Page {
       return _html::tag('title', $this->title);
    }
    
-   
-   
+   public function render() {
+      
+   }
 }
