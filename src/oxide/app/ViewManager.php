@@ -234,7 +234,7 @@ class ViewManager {
          $layoutPage = $this->getLayoutPage();
          $layoutPage->setData($data);
          $layoutPage->addPartial($view, 'content');
-         return View($layoutPage);
+         return new View($layoutPage);
       } else {
          return $view;
       }
