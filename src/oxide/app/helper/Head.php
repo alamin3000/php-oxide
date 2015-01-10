@@ -53,7 +53,7 @@ class Head extends Element {
       $attr['href'] = $href;
       $attr['rel'] = $rel;
       
-      $this[] = new Tag('link', null, $attr);
+      $this[] = new Tag('link', $attr);
    }
    
    /**
@@ -65,6 +65,7 @@ class Head extends Element {
    public function stylesheet($href, $media = null) {
       $attribs = [];
       if($media) $attribs['media'] = $media;
+      $attribs['type'] = 'text/css';
 
       $this->link($href, 'stylesheet', $attribs);
    }
