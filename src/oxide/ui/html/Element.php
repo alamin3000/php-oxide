@@ -237,7 +237,11 @@ class Element
             }
          }
          
-         $buffer .= $inner;
+         if($inner instanceof Renderer) {
+            $buffer .= $inner->render();
+         } else {
+            $buffer .= $inner;
+         }
       }
       
       return $buffer;
