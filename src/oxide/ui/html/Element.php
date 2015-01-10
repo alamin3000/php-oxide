@@ -221,7 +221,7 @@ class Element
     */
    public function renderInner() {      
       $buffer = '';
-      foreach($this->inner() as $inner) {
+      foreach($this as $inner) {
          if($this->_callback_inner_render) {
             foreach($this->_callback_inner_render as $callback) {
                $callback($this, $inner, $buffer);
