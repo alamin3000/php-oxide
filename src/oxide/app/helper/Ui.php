@@ -96,7 +96,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function textLabel($text, $style = null) {
+   public function textLabel($text, $style = null, array $attrib = null) {
       $attrbs = [
           'class' => 'label ' . self::_class_style($style, 'label')
       ];
@@ -246,8 +246,8 @@ class Ui extends Html {
     * @param type $text
     * @param type $for
     */
-   public function label($text, $for = null) {
-      $attribs = [];
+   public function label($text, $for = null, array $attribs = null) {
+      if(!$attribs) $attribs = [];
       $attribs['class'] = 'form-label';
       $attribs['for'] = $for;
       echo $this->tag('label', $text, $attribs);
@@ -261,8 +261,8 @@ class Ui extends Html {
     * @param type $label
     * @return type
     */
-   public function input($type, $name, $value = null) {
-      $attribs = [];
+   public function input($type, $name, $value = null, array $attribs = null) {
+      if(!$attribs) $attribs = [];
       $attribs['type'] = $type;
       $attribs['name'] = $name; 
       $attribs['value'] = $this->encode($value);
@@ -276,10 +276,10 @@ class Ui extends Html {
     * @param type $value
     * @param type $label
     */
-   public function textfield($name, $value = null) {
-      $attribs = [
-          'class' => 'form-control input-sm',
-          'name' => $name];
+   public function textfield($name, $value = null, array $attribs = null) {
+      if(!$attribs) $attribs = [];
+      $attribs['class'] = 'form-control input-sm';
+      $attribs['name'] = $name;
       $this->tag('textarea', $value, $attribs);
    }
    
@@ -291,11 +291,10 @@ class Ui extends Html {
     * @param array $items
     * @return type
     */
-   public function select($name, $value = null, array $items = null) {
-      $attribs = [
-          'class' => 'form-control input-sm',
-          'name' => $name
-      ];
+   public function select($name, $value = null, array $items = null, array $attribs = null) {
+      if(!$attribs) $attribs = [];
+      $attribs['class'] = 'form-control input-sm';
+      $attribs['name'] = $name;
       
       $this->start('select', $attribs);
       foreach($items as $key => $val) {
