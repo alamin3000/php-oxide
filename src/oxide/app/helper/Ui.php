@@ -100,7 +100,7 @@ class Ui extends Html {
       $attrbs = [
           'class' => 'label ' . self::_class_style($style, 'label')
       ];
-      return _html::tag('span', $text, $attrbs);
+      return $this->tag('span', $text, $attrbs);
    }
    
    /**
@@ -367,6 +367,10 @@ class Ui extends Html {
           'class' => 'form-control'
       ];
       
+      throw new \Exception;
+      
+      $this->formRowStart();
+      
       $rendered = null;
       switch ($type) {
          case (isset(self::$inputTypes[$type])) :
@@ -394,7 +398,7 @@ class Ui extends Html {
          $rendered = _html::label($label, $name, ['class' => 'control-label']) . $rendered;
       }
       
-      return $rendered;
+      return $this->formRowEnd();
    }
    
    public function formEnd() {
