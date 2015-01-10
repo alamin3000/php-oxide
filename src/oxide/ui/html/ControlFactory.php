@@ -1,6 +1,5 @@
 <?php
 namespace oxide\ui\html;
-use oxide\helper\Html;
 
 
 abstract class ControlFactory {

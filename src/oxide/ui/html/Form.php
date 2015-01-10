@@ -402,10 +402,9 @@ class Form extends Element {
       $headerElement = $this->headerElement;
       if($this->isProcessed()) {
          if(!$result->isValid()) {
-            if($this->isSubmit()) {
+            if($this->isSubmit()) { // show errors only if form is submitted
                $errors = $result->getErrors();
                if(isset($errors[$this->getIdentifierValue()])) {
-                  // now lists all form level errors
                   $formerrors = $errors[$this->getIdentifierValue()];
                   $headerElement[] = self::renderOpenTag('ul');
                   foreach($formerrors as $error) {
@@ -416,8 +415,7 @@ class Form extends Element {
                   $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
                }
             }
-         } else {
-            // for submission success
+         } else { // for submission success
             if($this->isSubmit()) {
                $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
             }

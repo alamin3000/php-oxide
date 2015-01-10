@@ -25,6 +25,6 @@ class LinkControl extends Control
     */
    public function setLabel($str) {
       parent::setLabel($str);
-      $this->html($str);
+      $this->setHtml($str);
    }
 }

@@ -72,6 +72,6 @@ class FileControl extends InputControl {
     */
    protected function onPreRender(\oxide\util\ArrayString $buffer) {
       parent::onPreRender($buffer);
-      $this->inner($this->_fileInfoElement);
+      $this->addInner($this->_fileInfoElement);
    }
 }

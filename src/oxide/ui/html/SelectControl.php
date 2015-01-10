@@ -1,7 +1,6 @@
 <?php
 namespace oxide\ui\html;
 use oxide\util\ArrayString;
-use oxide\helper\Html;
 
 /**
  * SelectControl class
@@ -113,7 +112,7 @@ class SelectControl extends Control
       if($tag != 'option' && $tag != 'optgroup')         
          throw new \Exception('Invalid Element provided.  Only <option> and <optgroup> tags are allowed.');
       
-      parent::inner($item);
+      parent::addInner($item);
    }
    
    

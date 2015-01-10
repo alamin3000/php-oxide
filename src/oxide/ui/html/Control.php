@@ -1,7 +1,6 @@
 <?php
 namespace oxide\ui\html;
 use oxide\util\ArrayString;
-use oxide\helper\HtmlHelper;
 
 /**
  * Defines an abstract class for creating HTML Control

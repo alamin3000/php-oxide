@@ -43,67 +43,78 @@ class Element
 	 */
    public function __construct($tag = 'span', $inner = null, array $attributes = null) {
       parent::__construct($tag, $attributes);
-      if($inner !== null) $this->inner($inner);
+      if($inner !== null) $this->addInner($inner);
    }
-      
+   
    /**
-    * Access to the inner contents as array.
+    * Add inner content for the element
     * 
-    * Element stores all inner contents in as an array
-    * 
-    * @param mixed $content
-    * @return array
+    * @param type $content
+    * @param type $identifier
     */
-   public function inner($content = null, $identifier = null) {
-      if ($content) {
-         if (is_array($content)) {
-            foreach ($content as $acontent) {
-               $this->_t_array_storage = $acontent;
-            }
-         } else {
-            if ($identifier)
-               $this->_t_array_storage[$identifier] = $content;
-            else
-               $this->_t_array_storage[] = $content;
+   public function addInner($content, $identifier = null) {
+      if (is_array($content)) {
+         foreach ($content as $acontent) {
+            $this[] = $acontent;
          }
       } else {
-         if ($identifier !== null)
-            return $this->_t_array_storage[$identifier];
+         if ($identifier)
+            $this[$identifier] = $content;
          else
-            return $this->_t_array_storage;
+            $this[] = $content;
       }
    }
    
-	/**
-	 * sets the inner HTML content
-	 *
-	 * It replaces all content if exits.
-	 * @see append()
-	 * @see prepend()
-	 * @param string $html
-	 * @return string
-	 */
-	public function html($html = null) {
-      if($html) { $this->_t_array_storage = [$html]; }
-      else {
-         return $this->renderInnerTag();
-      }
-	}
-
-	/**
-	 * Sets the innner HTML content with simple text.
-	 *
-	 * It function will remove all HTML tags and only store texts for bot set/get functionalties
-	 *
-	 * @param string $text
-	 * @return string
-	 */
-	public function text($text = null) {
-      if($text) $this->_t_array_storage = [\strip_tags((string)$text)];
-      else {
-         return \strip_tags($this->renderInnerTag ());
-      }
-	}
+   /**
+    * Return inner element/content by $identifier if found
+    * 
+    * @param string $identifier
+    * @param mixed $default
+    * @return \oxide\ui\html\Element
+    */
+   public function getInnerByIdentifier($identifier, $default = null) {
+      if(isset($this[$identifier]))
+         return $this[$identifier];
+      else return $default;
+   }
+   
+   /**
+    * Set the content for the element
+    * 
+    * Existing content will be removed.
+    * @param mixed $html
+    */
+   public function setHtml($html) {
+      $this->_t_array_storage = [$html];
+   }
+   
+   /**
+    * Get the html string of the inner tag
+    * 
+    * @see renderInner()
+    * @return string
+    */
+   public function getHtml() {
+      $this->renderInner();
+   }
+   
+   /**
+    * Set plain text for the element
+    * 
+    * Will perform strip_tag
+    * @param mixed $text
+    */
+   public function setText($text) {
+      $this->_t_array_storage = [\strip_tags((string)$text)];
+   }
+   
+   /**
+    * Get plain text of the inner text
+    * @return string
+    */
+   public function getText() {
+      \strip_tags($this->renderInner());
+   }
    
    /**
 	 * resets the element
