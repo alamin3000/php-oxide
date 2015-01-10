@@ -22,8 +22,8 @@ class ButtonControl extends Control {
       $this->type = $type;
 	}
    
-   public function setValue($value) {
-      parent::setValue($value);
+   public function setLabel($value) {
+      parent::setLabel($value);
       $this->setHtml($value);
    }
 }
