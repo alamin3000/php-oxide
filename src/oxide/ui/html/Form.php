@@ -475,8 +475,6 @@ class Form extends Element {
       
       if($value !== null) {
          $control->setValue($value); // setting the form submitted value
-         
-         echo "<p>{$name} = {$value}</p>";
       }
    }
    
