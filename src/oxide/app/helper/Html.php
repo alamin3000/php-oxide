@@ -187,7 +187,7 @@ class Html {
     * @param type $attribs
     * @return type
     */
-   public function input($type, $name, $value = null, $attribs = null) {
+   public function input($type, $name, $value = null, array $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       $attribs['type'] = $type;
@@ -235,7 +235,7 @@ class Html {
     * @param array $attrib
     * @return string
     */
-   public function select($name, $value = null, $options = [], $attribs = null) {
+   public function select($name, $value = null, array $options = null, array $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       
