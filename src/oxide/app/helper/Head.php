@@ -12,41 +12,48 @@ namespace oxide\app\helper;
 use oxide\ui\html\Tag;
 use oxide\ui\html\Element;
 
-class Head {
+class Head extends Element {
    public 
-      $contentKey = 'content',
+      $title = null,
       $stylesheets = [],
       $metas = [],
       $styles = [],
-      $snippets = [],
       $scripts = [];
    
-   protected
-      $_htmlHelper = null;
-   
-   
-   
+   public function __construct() {
+      parent::__construct('head');
+   }
    /**
-    * Add Meta content for the HTML document
     * 
-    * @param string $name
-    * @param string $content
-    * @param string $key_name
-    * @param string $key_content
+    * @param string $string
     */
-   public function addMeta($name, $content, $key_name = 'name', $key_content = 'content') {
-      $this->metas[] = new Tag('meta', [$key_name => $name, $key_content => $content]);
+   public function title($string) {
+      $this['title'] = new Element('title', $string);
    }
    
    /**
-    * Render meta tags
     * 
-    * @return string
+    * @param type $name
+    * @param type $content
+    * @param type $nameKey
+    * @param type $contentKey
     */
-   public function renderMetas() {
-      if($this->metas)
-         return _html::tags($this->metas);
-      else return null;
+   public function meta($name, $content, $nameKey = 'name', $contentKey = 'content') {
+      $this[] = new Tag('meta', [$nameKey => $name, $contentKey => $content]);
+   }
+   
+   /**
+    * 
+    * @param type $href
+    * @param type $rel
+    * @param array $attr
+    */
+   public function link($href, $rel, array $attr = null) {
+      if(!$attr) $attr = [];
+      $attr['href'] = $href;
+      $attr['rel'] = $rel;
+      
+      $this[] = new Tag('link', null, $attr);
    }
    
    /**
@@ -55,26 +62,13 @@ class Head {
     * @param string $href
     * @param string $media
     */
-   public function addStylesheet($href, $media = null) {
+   public function stylesheet($href, $media = null) {
       $attribs = [];
-		$attribs['href'] = $href;
-		$attribs['rel'] = 'stylesheet';
       if($media) $attribs['media'] = $media;
 
-      $this->stylesheets[] = new Tag('link', $attributes);
+      $this->link($href, 'stylesheet', $attribs);
    }
-   
-   /**
-    * Renders stylesheets
-    * 
-    * @return string
-    */
-   public function renderStylesheets() {
-      if($this->stylesheets)
-         return _html::tags($this->stylesheets);
-      
-      return null;
-   }
+  
    
    /**
     * Add CSS styles
@@ -83,107 +77,35 @@ class Head {
     * @param array $styles
     * @param string $media
     */
-   public function addStyles($selector, array $styles, $media = null) {
-      $arr = [$selector => $styles];
-      if($media)  self::$styles[$media] = $arr;
-      else self::$styles[] = $arr;
-   }
-   
-   /**
-    * Render CSS styles
-    * @return string
-    */
-   public function renderStyles() {
+   public function style($selector, array $styles, $media = null) {
       $attr = ['type' => 'text/css'];
-      _html::start('style', $attr);
-      foreach(self::$styles as $media => $styles) {
-         if($media) print "@media {$media} {";
-         foreach($styles as $selector => $styles) {
-            print $selector . "{";
-            foreach($styles as $key => $value) {
-               print $key . ":" . $value . ";";
-            }
-            print "}";
-         }
-         if($media) print "}";
-      }
-
-      return _html::end('style');
+      if($media) $attr['media'] = $media;
+      $cssattr = $this->cssAttributeString($styles);
+      $css = "{$selector} { {$cssattr} }";
+      $this[] = new Element('style', $css, $attr);
    }
    
    /**
-    * Add javascript file
+    * Add javascript file or code
     * 
     * @param string $src
     * @param array $attribs
     */
-   public function addScript($src = null, array $attribs = null) {
-      if($attribs === null) {
-         $attribs = [];
-      }
-      
-      $attribs['src'] = $src;
+   public function script($src = null, $code = null, array $attribs = null) {
+      if($attribs === null) $attribs = [];
+      if($src) $attribs['src'] = $src;
       $attribs['type'] = 'text/javascript';
       
-      $this->scripts[] = ['script', null, $attribs];
+      $this[] = new Element('script', $code, $attribs);
    }
    
-   /**
-    * Render script file
-    * @return string
-    */
-   public function renderScript() {
-      if($this->scripts) {
-         return _html::tags($this->scripts);
+      
+   public function cssAttributeString(array $styles) {
+      $css = '';
+      foreach($styles as $key => $val) {
+         $css .= "{$key} : {$val};";
       }
       
-      return null;
-   }
-   
-   /**
-    * Add JavaScript code snippets
-    * 
-    * @param string $code
-    * @param array $attribs
-    */
-   public function addSnippet($code, array $attribs = null) {
-      if($attribs === null) {
-         $attribs = [];
-      }
-      
-      $attribs['type'] = 'text/javascript';
-      $this->snippets[] = ['script', $code, $attribs];
-   }
-   
-   /**
-    * Render javascript snippets
-    * @return string
-    */
-   public function renderSnippets() {
-      if($this->snippets) {
-         return _html::tags($this->snippets);
-      }
-      return null;
-   }
-   
-   /**
-    * Set the title for the html page
-    * 
-    * @param string $title
-    */
-   public function setTitle($title) {
-      $this->title = $title;
-   }
-   
-   /**
-    * Render the title tag
-    * @return string
-    */
-   public function renderTitle() {
-      return _html::tag('title', $this->title);
-   }
-   
-   public function render() {
-      
+      return $css;
    }
 }
