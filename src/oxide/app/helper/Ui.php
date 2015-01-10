@@ -5,13 +5,10 @@ use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
 use oxide\util\ArrayString;
 
-class UiHelper extends HelperAbstract {
+class Ui extends Html {
    
    protected
-      /**
-       * @var HtmlHelper 
-       */
-      $_htmlHelper = null,
+      $_head = null,
       $_attributes = [],
       $_wrappers = [],
       $_renderers = [];
@@ -61,10 +58,8 @@ class UiHelper extends HelperAbstract {
       SIZE_SMALL = 2,
       SIZE_LARGE = 3;
    
-   public function __construct(HtmlHelper $htmlHelper) {
-      parent::__construct();
-
-      $this->extendClass($htmlHelper);
+   public function __construct(HelperContainer $c) {
+      $this->_head = $c->get('head');
    }
    
    protected function _class_style($style, $prefix) {
@@ -101,7 +96,7 @@ class UiHelper extends HelperAbstract {
     * @param type $style
     * @return type
     */
-   public function text_label($text, $style = null) {
+   public function textLabel($text, $style = null) {
       $attrbs = [
           'class' => 'label ' . self::_class_style($style, 'label')
       ];
@@ -115,7 +110,7 @@ class UiHelper extends HelperAbstract {
     * @return string
     */
    public function icon($name) {
-      return _html::tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
+      return $this->tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
    }
 
    /**
@@ -127,7 +122,7 @@ class UiHelper extends HelperAbstract {
     * @param \Closure $tdcallback
     * @return type
     */
-   public static function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null, $style = null) {
+   public function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null, $style = null) {
       $this->tableStart($style);
       if(!$thcallback) { // default header callback
          $thcallback = function($key) {
@@ -161,14 +156,14 @@ class UiHelper extends HelperAbstract {
     * Start creating table
     * @param int $style
     */
-   public static function tableStart($style = null) {
+   public function tableStart($style = null) {
       $cls = ['table'];
       $cls[] = 'table-condensed';
       if($style & self::TABLE_HOVERED) $cls[] = 'table-hover';
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
       
-      $this->_htmlHelper->start('table', ['class' => implode(' ', $cls)]);
+      $this->start('table', ['class' => implode(' ', $cls)]);
    }
    
    /**
@@ -176,8 +171,8 @@ class UiHelper extends HelperAbstract {
     * 
     * @return string
     */
-   public static function tableEnd() {
-      return $this->_htmlHelper->end('table');
+   public function tableEnd() {
+      return $this->end('table');
    }
    
    
@@ -188,11 +183,11 @@ class UiHelper extends HelperAbstract {
     * @param string $secondary
     * @return string
     */
-   public static function heading($main, $secondary = null, $outline_level = 1) {
+   public function heading($main, $secondary = null, $outline_level = 1) {
       if($secondary) $h2 = '<br/>'.$this->_htmlHelper->tag('small', $secondary);
       else $h2 = null;
       
-      return $this->_htmlHelper->tag("h{$outline_level}", $main . $h2);
+      return $this->tag("h{$outline_level}", $main . $h2);
    }
    
    /**
@@ -202,8 +197,8 @@ class UiHelper extends HelperAbstract {
     * @param type $text
     * @return type
     */
-   public static function link($link, $text = null) {
-      return $this->_htmlHelper->tag('a', $text, ['href' => $link]);
+   public function link($link, $text = null) {
+      return $this->tag('a', $text, ['href' => $link]);
    }
    
    /**
@@ -215,14 +210,14 @@ class UiHelper extends HelperAbstract {
     * @param type $attribs
     * @return type
     */
-   public static function linkButton($href, $text, $style = null, $size = null) {
+   public function linkButton($href, $text, $style = null, $size = null) {
       $attribs = [];
       $cls_size = $this->_class_size($size, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
       $attribs['herf'] = $href;
-      return $this->_htmlHelper->tag('a', $text, $attribs);
+      return $this->tag('a', $text, $attribs);
    }
    
    /**
@@ -234,7 +229,7 @@ class UiHelper extends HelperAbstract {
     * @param type $size
     * @return type
     */
-   public static function button($type, $text, $style = null, $size = null) {
+   public function button($type, $text, $style = null, $size = null) {
       $cls_size = $this->_class_size($size, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
 
@@ -243,7 +238,7 @@ class UiHelper extends HelperAbstract {
           'class' => "btn {$cls_size} {$cls_style}"
       ];
           
-      return $this->_htmlHelper->tag('button', $text,$attr);
+      return $this->tag('button', $text,$attr);
    }
    
    /**
@@ -251,8 +246,11 @@ class UiHelper extends HelperAbstract {
     * @param type $text
     * @param type $for
     */
-   public static function label($text, $for = null) {
-      echo $this->_htmlHelper->tag('label', $text, ['class' => 'form-label', 'for' => $for]);
+   public function label($text, $for = null) {
+      $attribs = [];
+      $attribs['class'] = 'form-label';
+      $attribs['for'] = $for;
+      echo $this->tag('label', $text, $attribs);
    }
    
    /**
@@ -263,17 +261,13 @@ class UiHelper extends HelperAbstract {
     * @param type $label
     * @return type
     */
-   public static function input($type, $name, $value = null, $label = null) {
-      $attribs = ['type' => $type, 
-                  'name' => $name, 
-                  'value' => _html::encode($value),
-                  'class' => 'form-control input-sm'];
-      self::form_row_start();
-      if($label) {
-         echo self::label($label, $name);
-      }
-      echo _html::tag('input', null, $attribs);
-      return self::form_row_end();
+   public function input($type, $name, $value = null) {
+      $attribs = [];
+      $attribs['type'] = $type;
+      $attribs['name'] = $name; 
+      $attribs['value'] = $this->encode($value);
+      $attribs['class'] = 'form-control input-sm';
+      return $this->tag('input', null, $attribs);
    }
    
    /**
@@ -282,16 +276,11 @@ class UiHelper extends HelperAbstract {
     * @param type $value
     * @param type $label
     */
-   public static function textfield($name, $value = null, $label = null) {
+   public function textfield($name, $value = null) {
       $attribs = [
           'class' => 'form-control input-sm',
           'name' => $name];
-      self::form_row_start();
-      if($label) {
-         echo self::label($label, $name);
-      }
-      echo _html::tag('textarea', $value, $attribs);
-      return self::form_row_end();
+      $this->tag('textarea', $value, $attribs);
    }
    
    /**
@@ -302,17 +291,13 @@ class UiHelper extends HelperAbstract {
     * @param array $items
     * @return type
     */
-   public static function select($name, $value = null, $label = null, array $items = null) {
+   public function select($name, $value = null, array $items = null) {
       $attribs = [
           'class' => 'form-control input-sm',
           'name' => $name
       ];
       
-      self::form_row_start();
-      if($label) {
-         echo self::label($label, $name);
-      }
-      _html::start('select', $attribs);
+      $this->start('select', $attribs);
       foreach($items as $key => $val) {
          if(is_int($key)) {
             $text = $val;
@@ -323,10 +308,9 @@ class UiHelper extends HelperAbstract {
          else $opt_attrib = [];
          
          $opt_attrib['value'] = $val;
-         echo _html::tag('option', $text, $opt_attrib);
+         echo $this->tag('option', $text, $opt_attrib);
       }
-      echo _html::end('select');
-      return self::form_row_end();
+      return $this->end('select');
    }
 
    /**
@@ -336,7 +320,7 @@ class UiHelper extends HelperAbstract {
     * @param type $method
     * @param type $action
     */
-   public static function formStart($style = null, $method = 'get', $action = null) {
+   public function formStart($style = null, $method = 'get', $action = null) {
       $attr = [
           'role' => 'form',
           'method' => $method,
@@ -349,23 +333,23 @@ class UiHelper extends HelperAbstract {
          $attr['class'] = 'form-horizontal';
       }      
       
-      $this->_htmlHelper->start('form', $attr);
+      $this->start('form', $attr);
    }
    
    /**
     * Starting a form row 
     * @return void Doesn't return anything.  Everything is buffered.
     */
-   public static function formRowStart() {
-      $this->_htmlHelper->start('div', ['class' => 'form-group form-group-sm']);
+   public function formRowStart() {
+      $this->start('div', ['class' => 'form-group form-group-sm']);
    }
    
    /**
     * 
     * @return string returns the buffered 
     */
-   public static function formRowEnd() {
-      return $this->_htmlHelper->end('div');
+   public function formRowEnd() {
+      return $this->end('div');
    }
    
    /**
@@ -378,14 +362,14 @@ class UiHelper extends HelperAbstract {
     * @param type $items
     * @return string
     */
-   public static function formControl($type, $name, $value = null, $label = null, $items = null) {
+   public function formControl($type, $name, $value = null, $label = null, $items = null) {
       $attrs = [
           'class' => 'form-control'
       ];
       
       $rendered = null;
       switch ($type) {
-         case (isset(HtmlHelper::$inputTypes[$type])) :
+         case (isset(self::$inputTypes[$type])) :
             $rendered = $this->input($type, $name, $value, null, $attrs);
             break;
          
@@ -413,8 +397,37 @@ class UiHelper extends HelperAbstract {
       return $rendered;
    }
    
-   public static function formEnd() {
-      return $this->_htmlHelper->end('form');
+   public function formEnd() {
+      return $this->end('form');
+   }
+   
+   public function formTab(Form $form) {
+      $form->registerRenderCallback(function(Form $form, ArrayString $buffer) {
+         $tabid = $form->id . '-tab';
+         $ul = new Element('ul', null, ['id' => $tabid, 'role' => 'tablist', 'class' => 'nav nav-tabs']);
+         $div = new Element('div', null, ['class' => 'tab-content']);
+         $count = 0; 
+         foreach($form->inner() as $inner) {
+            if($inner instanceof Fieldset) {
+               if($count === 0) {
+                  $active = ' active';
+               } else {
+                  $active = '';
+               }
+               $count++;
+               $tabname = $inner->getName() . '-tab';
+               $a = Html::a("#".$tabname, $inner->getLabel(),['role' => 'tab', 'data-toggle' => 'tab']);
+               $ul->inner(Html::tag('li', $a, ['class' => $active]));
+               $inner->wrapElement->tag('div');
+               $inner->wrapElement->id = $tabname;
+               $inner->wrapElement->class = 'tab-pane' . $active;
+               $inner->setLabel(null);
+               $form->moveControl($inner, $div);
+            }
+         }
+         $form->prepend($div);
+         $form->prepend($ul);
+      });
    }
    
    /**
@@ -422,37 +435,7 @@ class UiHelper extends HelperAbstract {
     * @param Form $form
     * @return Form
     */
-   public static function formElement(Form $form, $style = null, $size = null) {
-//      return $form;
-//      $form->registerRenderCallback(function(Form $form, ArrayString $buffer) {
-//         
-//         $tabid = $form->id . '-tab';
-//         $ul = new Element('ul', null, ['id' => $tabid, 'role' => 'tablist', 'class' => 'nav nav-tabs']);
-//         $div = new Element('div', null, ['class' => 'tab-content']);
-//         $count = 0; 
-//         foreach($form->inner() as $inner) {
-//            if($inner instanceof Fieldset) {
-//               if($count === 0) {
-//                  $active = ' active';
-//               } else {
-//                  $active = '';
-//               }
-//               $count++;
-//               $tabname = $inner->getName() . '-tab';
-//               $a = Html::a("#".$tabname, $inner->getLabel(),['role' => 'tab', 'data-toggle' => 'tab']);
-//               $ul->inner(Html::tag('li', $a, ['class' => $active]));
-//               $inner->wrapElement->tag('div');
-//               $inner->wrapElement->id = $tabname;
-//               $inner->wrapElement->class = 'tab-pane' . $active;
-//               $inner->setLabel(null);
-//               $form->moveControl($inner, $div);
-//            }
-//         }
-//         $form->prepend($div);
-//         $form->prepend($ul);
-//      });
-      
-    
+   public function formElement(Form $form, $style = null, $size = null) {
       $form->registerRenderCallbacks(function(Form $form, ArrayString $buffer) {
          foreach($form->getControls() as $control) {
             if(!$control instanceof Fieldset) {
@@ -479,7 +462,7 @@ class UiHelper extends HelperAbstract {
    }
    
    
-   public static function listing(array $items, $style = null) {
+   public function listing(array $items, $style = null) {
       if($style) {
          
       } else {
@@ -491,13 +474,13 @@ class UiHelper extends HelperAbstract {
       else if($style & self::LIST_UNORDERED) $tag = 'ul';
       
       
-      _html::start($tag);
+      $this->start($tag);
       foreach($items as $key => $value) {
          echo "<li>";
          if($style & self::LIST_LINK_KEY) {
-            echo self::link($key, $value);
+            echo $this->link($key, $value);
          } else if($style & self::LIST_LINK_VALUE) {
-            echo self::link($value, $key);
+            echo $this->link($value, $key);
          } else {
             echo $value;
          }
@@ -505,7 +488,7 @@ class UiHelper extends HelperAbstract {
          echo "</li>";
       }
       
-      return _html::end($tag);
+      return $this->end($tag);
    }
    
    /**
@@ -514,28 +497,27 @@ class UiHelper extends HelperAbstract {
     * @param type $style
     * @return type
     */
-   public static function navList($items, $style = null) {
-      _html::start('div', ['class' => 'list-group']);
-      $cpath = Url::path();
+   public static function navList($items, $style = null, $activeUrl = null) {
+      $this->start('div', ['class' => 'list-group']);
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
          if(is_array($value)) {
             unset($attrs['href']);
-            echo _html::tag('span', $key,$attrs);
-            echo self::nav_list($value, $style);
+            echo $this->tag('span', $key,$attrs);
+            echo $this->navList($value, $style, $activeUrl);
          } else {
             if($value) $attrs['href'] = $value;
             else unset($attrs['href']);
 
-            if(stripos($value, $cpath)) {
+            if(stripos($value, $activeUrl)) {
                $attrs['class'] .= ' active';
             }
 
-            echo _html::tag('a', $key, $attrs);
+            echo $this->tag('a', $key, $attrs);
          }
       }
       
-      return _html::end('div');
+      return $this->end('div');
    }
    
    /**
@@ -552,15 +534,15 @@ class UiHelper extends HelperAbstract {
       if($style & self::NAV_NAVBAR) $cls[] = 'navbar-nav';
       else if($style & self::NAV_PILLS) $cls[] = 'nav-pills';
       else if($style & self::NAV_TABS) $cls[] = 'nav-tabs';
-      _html::start('ul', ['class' => implode(' ' , $cls)]);
+      $this->start('ul', ['class' => implode(' ' , $cls)]);
       foreach( $items as $key => $link) {
          if($active && $key == $active) echo '<li class="active">';
          else echo '<li>';
-         echo self::link($link, $key);
+         echo $this->link($link, $key);
          echo '</li>';
       }
       
-      return _html::end();
+      return $this->end('ul');
    }
 
    
@@ -597,23 +579,23 @@ class UiHelper extends HelperAbstract {
           'class' => $cls
       ];
       
-      _html::start('dl', $attrib);
+      $this->start('dl', $attrib);
       foreach($list as $key => $value) {
          if(is_numeric($key)) {
             $key = "";
          }
          
-         echo _html::tag('dt', $key, array('title' => $key));
+         echo $this->tag('dt', $key, array('title' => $key));
          
          if(!is_array($value)) {
             $value = [$value];
          }
          
          foreach($value as $val) {
-            echo _html::tag('dd', $val, array('title' => $key));
+            echo $this->tag('dd', $val, array('title' => $key));
          }
       }
-      return _html::end('dl');
+      return $this->end('dl');
    }
    
    
@@ -626,20 +608,20 @@ class UiHelper extends HelperAbstract {
     * @return string
     */
    public function panel($body, $header = null, $footer = null) {
-      self::panel_start();
+      $this->panelStart();
       if($header)
-         echo self::panel_header($header);
-      echo self::panel_body($body);
+         echo $this->panelHeader($header);
+      echo $this->panelBody($body);
       if($footer)
-         echo self::panel_footer($footer);
-      return self::panel_end();
+         echo $this->panelFooter($footer);
+      return $this->panelEnd();
    }
    
    /**
     * Starts a panel
     */
-   public function panel_start() {
-      _html::start('div', ['class' => 'panel panel-default']);
+   public function panelStart() {
+      $this->start('div', ['class' => 'panel panel-default']);
    }
    
    /**
@@ -648,8 +630,8 @@ class UiHelper extends HelperAbstract {
     * @param string $title
     * @return string
     */
-   public function panel_header($title) {
-      return _html::tag('div', $title, ['class' => 'panel-heading']);
+   public function panelHeader($title) {
+      return $this->tag('div', $title, ['class' => 'panel-heading']);
    }
    
    /**
@@ -658,15 +640,15 @@ class UiHelper extends HelperAbstract {
     * @param string $body
     * @return string
     */
-   public function panel_body($body) {
-      return _html::tag('div', $body, ['class' => 'panel-body']);
+   public function panelBody($body) {
+      return $this->tag('div', $body, ['class' => 'panel-body']);
    }
    
    /**
     * Starts panel body
     */
-   public function panel_body_start() {
-      _html::start('div',  ['class' => 'panel-body']);
+   public function panelBodyStart() {
+      $this->start('div',  ['class' => 'panel-body']);
    }
    
    /**
@@ -674,8 +656,8 @@ class UiHelper extends HelperAbstract {
     * 
     * @return string
     */
-   public function panel_body_end() {
-      return _html::end('div');
+   public function panelBodyEnd() {
+      return $this->end('div');
    }
    
    /**
@@ -685,14 +667,14 @@ class UiHelper extends HelperAbstract {
     * @return string
     */
    public function panelFooter($html) {
-      return _html::tag('div', $html, ['class' => 'panel-footer']);
+      return $this->tag('div', $html, ['class' => 'panel-footer']);
    }
    
    /**
     * End the panel
     */
    public function panelEnd() {
-      return $this->_htmlHelper->end('div');
+      return $this->end('div');
    }
    
    /**
@@ -702,15 +684,14 @@ class UiHelper extends HelperAbstract {
     * @return string
     */
    public function breadcrumb($items) {
-      $html = $this->_htmlHelper;
-      $html->start('ol', ['class' => 'breadcrumb']);
+      $this->start('ol', ['class' => 'breadcrumb']);
       $count = count($items);
       for($i = 0; $i < $count; $i++) {
          list($key, $link) = each($items); 
-         if($i == $count - 1 || empty($link)) echo $html->tag('li', $key, ['class' => 'active']);
-         else echo $html->tag('li', $html->tag('a', $key, ['href' => $link]));
+         if($i == $count - 1 || empty($link)) echo $this->tag('li', $key, ['class' => 'active']);
+         else echo $this->tag('li', $this->tag('a', $key, ['href' => $link]));
       }
-      return $html->end('ol');
+      return $this->end('ol');
    }
    
    /**
@@ -728,8 +709,6 @@ class UiHelper extends HelperAbstract {
       $start = -1;
       $end = -1;
 		$mean = floor($printcount/2);
-      
-      
       
       $linkmake = function($text, $link_page = null, $class = null) use ($urlprefix) {
          if($class) echo '<li class="'.$class.'">';
@@ -753,7 +732,7 @@ class UiHelper extends HelperAbstract {
 			else $end = $currentpage + $mean;
 		}	
 		
-      $this->_htmlHelper->start('ul', ['class' => 'pagination']);
+      $this->start('ul', ['class' => 'pagination']);
 		// previous link.
 		if($currentpage > 1) $linkmake('&laquo;', $currentpage - 1);
 				
@@ -773,7 +752,7 @@ class UiHelper extends HelperAbstract {
 		if($currentpage < $pagecount) {
          $linkmake('&raquo;', $currentpage + 1);
 		}
-      return $this->_htmlHelper->end('ul');
+      return $this->end('ul');
    }
    
    /**
@@ -805,14 +784,14 @@ class UiHelper extends HelperAbstract {
             $attr['width'] = $size;
          }
       }
-      return $this->_htmlHelper->tag('img', null, $attr);
+      return $this->tag('img', null, $attr);
    }
    
    /**
     * Starts a responsive grid system
     */
    public function gridRowOpen() {
-      echo $this->_htmlHelper->openTag('div', ['class' => 'row']);
+      echo $this->openTag('div', ['class' => 'row']);
    }
    
    /**
@@ -823,21 +802,21 @@ class UiHelper extends HelperAbstract {
     * @param int $sm_cols number of cols small screen should take
     */
    public function gridColumnOpen($lg_cols, $md_cols, $sm_cols = 1) {
-      $this->_htmlHelper->start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
+      $this->start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
    }
    
    /**
     * Ends the responsive grid
     */
    public function gridColumnClose() {
-      echo $this->_htmlHelper->end('div');
+      echo $this->end('div');
    }
    
    /**
     * Ends the responseive grid system
     */
    public function gridRowClose() {
-      echo $this->_htmlHelper->closeTag('div');
+      echo $this->closeTag('div');
    }
    
    /**
@@ -849,14 +828,13 @@ class UiHelper extends HelperAbstract {
     * @return type
     */
    public function media($src, $title, $description = null) {
-      $html = $this->_htmlHelper;
-      $html->start('div', ['class' => 'media']);
-      echo $html->tag('a', $this->img($src, $title, null, self::IMG_MEDIA), ['class' => 'pull-left']);
-      echo $html->tag('div', 
-         $html->tag('h4', $title, ['class' => 'media-heading']) .  
+      $this->start('div', ['class' => 'media']);
+      echo $this->tag('a', $this->img($src, $title, null, self::IMG_MEDIA), ['class' => 'pull-left']);
+      echo $this->tag('div', 
+         $this->tag('h4', $title, ['class' => 'media-heading']) .  
          $description
          , ['class' => 'media-body']);
-      return $html->end('div');
+      return $this->end('div');
    }
    
    /**
@@ -869,8 +847,8 @@ class UiHelper extends HelperAbstract {
     */
    public function message($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
       $cls = 'alert';
-      $cls .= ' ' . self::_class_style($style, 'alert');
+      $cls .= ' ' . $this->_class_style($style, 'alert');
 
-      return $this->_htmlHelper->tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
+      return $this->tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
    }
 }

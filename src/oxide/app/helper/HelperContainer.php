@@ -17,7 +17,7 @@ class HelperContainer extends Container  {
    
    protected
       $_helpers = [
-         'Flash', 'Html'
+         'Flash', 'Html', 'Head', 'Ui'
       ],
            
       $_context = null;
