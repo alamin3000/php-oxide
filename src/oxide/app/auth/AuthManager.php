@@ -11,7 +11,6 @@
 namespace oxide\app\auth;
 use oxide\validation\ValidationResult;
 use oxide\base\Dictionary;
-use Zend\Authentication\Storage\StorageInterface;
 use oxide\util\EventNotifier;
 use oxide\http\Route;
 
@@ -47,7 +46,7 @@ class AuthManager  {
     * @return array
     */
    public function getRoles() {
-      return $this->_config->getRequired('roles');
+      return $this->_config->get('roles', NULL, TRUE);
    }
    
    /**
@@ -55,7 +54,7 @@ class AuthManager  {
     * @return array
     */
    public function getRules() {
-      return $this->_config->getRequired('rules');
+      return $this->_config->get('rules', NULL, TRUE);
    }
    
    /**

@@ -30,15 +30,7 @@ class Container
     */
    public function get($key, $default = null, $required = false) {
       if(isset($this->_instances[$key])) return $this->_instances[$key]; 
-      if(!isset($this->_t_array_storage[$key]))  {
-         if($required) {
-            throw new \Exception("Key: {$key} is required, but not found in the container.");
-         } else {
-            return $default;
-         }
-      }
-      
-      $value = $this->_t_array_storage[$key];
+      $value = parent::get($key, $default, $required);
       if($value instanceof \Closure) {
          $val = $value($this);
          $this->_instances[$key] = $val;
@@ -73,10 +65,6 @@ class Container
    
    public function offsetUnset($offset) {
       $this->remove($offset);
-   }
-   
-   public function offsetGet($offset) {
-      return $this->get($offset);
    }
    
    public function __call($name, $arguments) {

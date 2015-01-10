@@ -150,7 +150,7 @@ abstract class Controller
 	public function getViewManager() {
       if(!$this->_viewManager) {
          $config = ConfigManager::sharedInstance()->getConfig();
-         $viewManager = new ViewManager($config->getRequired('template'), $this->_route);
+         $viewManager = new ViewManager($config->get('template', NULL, TRUE), $this->_route);
          $this->_viewManager = $viewManager;
       }
       

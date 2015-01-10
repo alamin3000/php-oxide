@@ -135,7 +135,7 @@ class Loader {
       
       // setup the connection
       $context->setConnection(function() use ($config) {
-         $conn = new data\Connection($config->getRequired('database'), [
+         $conn = new data\Connection($config->get('database', null, TRUE), [
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
@@ -149,7 +149,7 @@ class Loader {
       http\FrontController::setSharedInstance($fc);
       
       // load modules
-      $modules = $config->getRequired('modules');
+      $modules = $config->get('modules', NULL, TRUE);
       $loader->loadModules($modules, $fc->getRouter());
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
@@ -170,9 +170,9 @@ class Loader {
       if($modules) {
          foreach($modules as $module) {
             $dic = new base\Dictionary($module);
-            $name = $dic->getRequired('name', true);
-            $dir = $dic->getRequired('dir', true);
-            $namespace = $dic->getRequired('namespace', true);
+            $name = $dic->get('name', NULL, TRUE);
+            $dir = $dic->get('dir', NULL, TRUE);
+            $namespace = $dic->get('namespace', NULL, TRUE);
             $autoloader->addNamespace($namespace, $dir);
             $router->register($name, $dir, $namespace);
          }

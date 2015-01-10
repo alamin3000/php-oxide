@@ -38,7 +38,7 @@ class Dictionary
     * @param char $pathseparator
     * @return mixed
     */
-   public function getUsingKeyPath($keypath, $default = null, $pathseparator = '.') {   
+   public function getUsingKeyPath($keypath, $default = null, $required = null, $pathseparator = '.') {   
       if(!is_array($keypath)) {
       	$keys = explode($pathseparator, $keypath);
       } else {
@@ -52,7 +52,8 @@ class Dictionary
             if(isset($var[$key])) {
                $var = $var[$key];
             } else {
-               return $default;
+               if($required) throw new \Exception("Required keypath {$keypath} not found.");
+               else return $default;
             }
          }
       }
@@ -60,32 +61,16 @@ class Dictionary
       return $var;
    }
    
-   /**
-    * 
-    * @param type $key
-    * @return type
-    * @throws \Exception
-    */
-   public function getRequired($key) {
-      if($this->offsetExists($key)) {
-         return $this->offsetGet($key);
-      } else {
-         throw new \Exception('Required key: ' . $key . ' not found.');
+   public function get($key, $default = null, $required = false) {
+      if(!isset($this->_t_array_storage[$key]))  {
+         if($required) {
+            throw new \Exception("Required key: {$key} not found.");
+         } else {
+            return $default;
+         }
       }
-   }
-   
-   /**
-    * 
-    * @param type $key
-    * @param type $default
-    * @return type
-    */
-   public function getOptional($key, $default = null) {
-      if($this->offsetExists($key)) {
-         return $this->offsetGet($key);
-      } else {
-         return $default;
-      }
+      
+      return $this->_t_array_storage[$key];
    }
    
    /**
@@ -102,6 +87,15 @@ class Dictionary
       } else {
          throw new \InvalidArgumentException('Invalid data passed.');
       }
+   }
+   
+   /**
+    * 
+    * @param type $offset
+    * @return type
+    */
+   public function offsetGet($offset) {
+      return $this->get($offset);
    }
    
    /**
