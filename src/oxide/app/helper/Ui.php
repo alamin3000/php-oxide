@@ -363,39 +363,32 @@ class Ui extends Html {
     * @return string
     */
    public function formControl($type, $name, $value = null, $label = null, $items = null) {
-      $attrs = [
-          'class' => 'form-control'
-      ];
-      
-      throw new \Exception;
-      
       $this->formRowStart();
+      if($label) {
+         echo $this->label($label, $name);
+      }
       
       $rendered = null;
       switch ($type) {
          case (isset(self::$inputTypes[$type])) :
-            $rendered = $this->input($type, $name, $value, null, $attrs);
+            $rendered = $this->input($type, $name, $value);
             break;
          
          case 'textfield':
-            $rendered = _html::textarea($name, $value, null, $attrs);
+            $rendered = $this->textarea($name, $value);
             break;
          
          case 'select':
-            $rendered = _html::select($name, $value, null, $items, $attrs);
+            $rendered = $this->select($name, $value, $items);
             break;
          
          case 'button':
          case 'submit':
          case 'reset':
-            $rendered = _html::button($type, $name, $value, null, $attrs);
+            $rendered = $this->button($type, $value);
             break;
          
          default:
-      }
-      
-      if($label) {
-         $rendered = _html::label($label, $name, ['class' => 'control-label']) . $rendered;
       }
       
       return $this->formRowEnd();
