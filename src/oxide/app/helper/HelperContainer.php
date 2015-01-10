@@ -17,8 +17,10 @@ class HelperContainer extends Container  {
    
    protected
       $_helpers = [
-         'oxide\app\helper\Flash', 'oxide\app\helper\Html', 
-         'oxide\app\helper\Head', 'oxide\app\helper\Ui'
+         'html' => 'oxide\app\helper\Helper',
+         'flash' => 'oxide\app\helper\Flash', 
+         'head' => 'oxide\app\helper\Head', 
+         'ui' => 'oxide\app\helper\Ui'
       ],
            
       $_context = null;
@@ -32,8 +34,8 @@ class HelperContainer extends Container  {
    
    
    protected function registerDefaultHelpers(array $helpers) {
-      foreach($helpers as $helper) {
-         $this->set($helper, function($c) use($helper) {
+      foreach($helpers as $name => $helper) {
+         $this->set($name, function($c) use($helper) {
             return new $helper($c);
          });
       }

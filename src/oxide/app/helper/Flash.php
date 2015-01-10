@@ -13,8 +13,8 @@ class Flash  {
    protected
       $_session = null;
    
-   public function __construct(Container $container) {
-      
+   public function __construct(HelperContainer $container) {
+      $this->_session = $container->getContext()->getSession();
    }
    
    public function has($namespace = null) {
