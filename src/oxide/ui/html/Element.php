@@ -66,6 +66,15 @@ class Element
    }
    
    /**
+    * Return all inner elements
+    * 
+    * @return array
+    */
+   public function getInners() {
+      return $this->toArray();
+   }
+   
+   /**
     * Return inner element/content by $identifier if found
     * 
     * @param string $identifier
@@ -221,7 +230,7 @@ class Element
     */
    public function renderInner() {      
       $buffer = '';
-      foreach($this as $inner) {
+      foreach($this->getInners() as $inner) {
          if($this->_callback_inner_render) {
             foreach($this->_callback_inner_render as $callback) {
                $callback($this, $inner, $buffer);
