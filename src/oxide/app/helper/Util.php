@@ -1,21 +1,8 @@
 <?php
-namespace oxide\helper;
+namespace oxide\app\helper;
 
 
-abstract class _util {
-   
-   public static function require_keys($from, $keys) {
-      if(!is_array($keys)) {
-         $keys = [$keys];
-      }
-      
-      foreach($keys as $key) {
-         if(!isset($from[$key])) {
-            
-         }
-      }
-   }
-   
+class Util {
    /**
     * gets value from the given $from storage using dot path syntax to dig deep
     * @param type $from
@@ -23,7 +10,7 @@ abstract class _util {
     * @param type $default
     * @return type
     */
-   public static function deep($from, $keypath = null, $default = null, $required = false) {
+   public function deep($from, $keypath = null, $default = null, $required = false) {
    	if($keypath === null) return $from;
    
       if(!is_array($keypath)) {
@@ -74,7 +61,7 @@ abstract class _util {
    * @param boolean $required 
    * @return mixed
    */
-   public static function value($storage, $key = null, $default = null, $required = false) {
+   public function value($storage, $key = null, $default = null, $required = false) {
      if($key !== null) {
         if(isset($storage[$key])) {
            return $storage[$key];
@@ -91,12 +78,12 @@ abstract class _util {
      }
    }
    
-   public static function get($storage, $keypath = nul, $default = null, $required = false) {
+   public function get($storage, $keypath = nul, $default = null, $required = false) {
       
    }
    
    
-   public static function set(&$storage, $keypath, $value = null) {
+   public function set(&$storage, $keypath, $value = null) {
       if(!is_array($keypath)) {
       	$keys = explode('.', $keypath);
       } else {
@@ -121,7 +108,7 @@ abstract class _util {
       }
    }
    
-   public static function dateString($time) {
+   public function dateString($time) {
       return date("F j, Y \a\\t h:i a", strtotime($time));
    }
    
@@ -130,7 +117,7 @@ abstract class _util {
     * @param type $ptime
     * @return string
     */
-   public static function timeToString($ptime) {
+   public function timeToString($ptime) {
       $etime = time() - $ptime;
 
       if ($etime < 1) {

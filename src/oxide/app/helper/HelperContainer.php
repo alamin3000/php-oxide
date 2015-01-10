@@ -17,6 +17,7 @@ class HelperContainer extends Container  {
    
    protected
       $_helpers = [
+         'util' => 'oxide\app\helper\Util',         
          'html' => 'oxide\app\helper\Html',
          'flash' => 'oxide\app\helper\Flash', 
          'head' => 'oxide\app\helper\Head', 
