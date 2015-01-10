@@ -409,19 +409,17 @@ class Form extends Element {
                   $formerrors = $errors[$this->getIdentifierValue()];
                   $headerElement[] = self::renderOpenTag('ul');
                   foreach($formerrors as $error) {
-                     $headerElement[] = self::renderTag('strong', $error);
+                     $headerElement[] = $this->errorTag->renderWithContent($error);
                   }
                   $headerElement[] = self::renderCloseTag('ul');
-                  
                } else {
-                  $headerElement[] = self::renderTag('strong', $this->_submitErrorMessage);
+                  $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
                }
             }
          } else {
-            
             // for submission success
             if($this->isSubmit()) {
-               $headerElement[] = self::renderTag('strong', $this->_submitSuccessMessage);
+               $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
             }
          }
       }

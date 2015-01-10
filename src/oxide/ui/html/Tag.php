@@ -15,9 +15,13 @@ class Tag implements Renderer {
     * @param string $tag
     * @param array $attributes
     */
-   public function __construct($tag, $attributes = null) {
-      $this->_tag = $tag;
+   public function __construct($tag = null, $attributes = null) {
+      if($tag) $this->_tag = $tag;
       if($attributes) $this->_attributes = $attributes;
+   }
+   
+   public function setTag($tag) {
+      $this->_tag = $tag;
    }
    
    /**
@@ -129,6 +133,18 @@ class Tag implements Renderer {
    public function render() {
       return $this->renderOpen() .
         $this->renderClose();
+   }
+   
+   /**
+    * Render the tag with given $content
+    * 
+    * @param type $content
+    * @return type
+    */
+   public function renderWithContent($content) {
+      return $this->renderOpen() .
+            $content.
+            $this->renderClose(); 
    }
    
    /**
