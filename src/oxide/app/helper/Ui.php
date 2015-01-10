@@ -71,6 +71,7 @@ class Ui extends Html {
          case self::STYLE_SUCCESS:
             return "{$prefix}-success";
          case self::STYLE_INFO:
+         case self::STYLE_ALERT:
             return "{$prefix}-info";
          case self::STYLE_DEFAULT:
          default:
@@ -845,6 +846,6 @@ class Ui extends Html {
       $cls = 'alert';
       $cls .= ' ' . $this->_class_style($style, 'alert');
 
-      return $this->tag('div', $message, ['class' => "alert {$cls}", 'role' => 'alert']);
+      return $this->tag('div', $message, ['class' => "{$cls}", 'role' => 'alert']);
    }
 }
