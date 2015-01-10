@@ -172,7 +172,7 @@ class Html {
     * @param array $attribs
     * @return string
     */
-   public static function label($text, $for = null, array $attribs = null) {
+   public function label($text, $for = null, array $attribs = null) {
       if(!$attribs) $attribs = [];
       if($for) $attribs['for'] = $for;
       return $this->tag('label', $text, $attribs);
@@ -187,7 +187,7 @@ class Html {
     * @param type $attribs
     * @return type
     */
-   public static function input($type, $name, $value = null, $attribs = null) {
+   public function input($type, $name, $value = null, $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       $attribs['type'] = $type;
@@ -203,7 +203,7 @@ class Html {
     * @param type $attribs
     * @return type
     */
-   public static function button($type, $name, $value = null, $attribs = null) {
+   public function button($type, $name, $value = null, $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       $attribs['type'] = $type;
@@ -219,7 +219,7 @@ class Html {
     * @param array $attribs
     * @return type
     */
-   public static function textarea($name, $value = null,  $attribs = null) {
+   public function textarea($name, $value = null,  $attribs = null) {
       if(!$attribs) $attribs = [];
       $attrib['name'] = $name;
       return $this->tag('textarea', $value, $attrib);
@@ -235,7 +235,7 @@ class Html {
     * @param array $attrib
     * @return string
     */
-   public static function select($name, $value = null, $options = [], $attribs = null) {
+   public function select($name, $value = null, $options = [], $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       

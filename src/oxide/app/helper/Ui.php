@@ -413,8 +413,8 @@ class Ui extends Html {
                }
                $count++;
                $tabname = $inner->getName() . '-tab';
-               $a = Html::a("#".$tabname, $inner->getLabel(),['role' => 'tab', 'data-toggle' => 'tab']);
-               $ul->inner(Html::tag('li', $a, ['class' => $active]));
+               $a = $this->a("#".$tabname, $inner->getLabel(),['role' => 'tab', 'data-toggle' => 'tab']);
+               $ul->inner($this->tag('li', $a, ['class' => $active]));
                $inner->wrapElement->tag('div');
                $inner->wrapElement->id = $tabname;
                $inner->wrapElement->class = 'tab-pane' . $active;
