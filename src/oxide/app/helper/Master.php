@@ -72,7 +72,7 @@ class Master extends Container {
     * @param string $href
     * @param string $media
     */
-   public function stylesheet($href, $media = null) {
+   public function stylesheet($href = null, $media = null) {
       $attribs = [];
       if($media) $attribs['media'] = $media;
       $attribs['type'] = 'text/css';
