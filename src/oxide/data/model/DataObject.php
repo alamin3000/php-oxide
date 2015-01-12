@@ -17,7 +17,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 		$_strict	= false;          // 
 	
 	/**
-	 *
+	 * 
     * @access public
 	 * @param array $data
 	 */
@@ -186,7 +186,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
     * @return void
     */
    public function __set($key, $value) {	
-		if(!isset($this->_data[$key])) {
+		if(!array_key_exists($key, $this->_data)) {
 			if($this->_strict) throw new Exception("key: $key NOT found while writing in " . static::getClassName());
 			$this->_data[$key] = null;
 		}
@@ -206,11 +206,10 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
     * @return mixed
     */
    public function __get($key) {
-   	if(isset($this->_data[$key])) {
+   	if(array_key_exists($key, $this->_data)) {
    		return $this->_data[$key];
    	}
 		
-      var_dump($this->_data);
 		if($this->_strict) throw new Exception("key $key not  found while reading from " . static::getClassName());
 		return null;
    }
