@@ -210,6 +210,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
    		return $this->_data[$key];
    	}
 		
+      var_dump($this->_data);
 		if($this->_strict) throw new Exception("key $key not  found while reading from " . static::getClassName());
 		return null;
    }

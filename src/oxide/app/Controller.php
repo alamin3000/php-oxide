@@ -7,7 +7,6 @@ use oxide\http\CommandFactory;
 use oxide\http\Route;
 use oxide\http\Context;
 use oxide\util\EventNotifier;
-use oxide\data\Connection;
 
 /**
  * Action Controller
