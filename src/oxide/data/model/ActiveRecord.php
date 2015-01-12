@@ -17,7 +17,16 @@ use oxide\data\sql;
  */
 abstract class ActiveRecord extends DataObject {
    protected static
-      $_db = null;
+      /**
+       * @var data\Connection Shared connection among all records
+       */
+      $_sharedConnection = null;
+   
+   protected
+      /**
+       * @var data\Connection local connection for the object
+       */
+      $_connection = null;
 
    protected static
       $_pk = 'pk',
@@ -32,38 +41,38 @@ abstract class ActiveRecord extends DataObject {
    public function __construct($data = null, data\Connection $conn = null) {
       parent::__construct($data);
       if($conn) {
-         static::connection($conn);
+         $this->setConnection($conn);
       }
    }
-
-   /**
-    *
-    * @access public
-    * @param type $param 
-    */
-   public static function createUsingClouser(\Closure $call) {
-      
-   }
-
    
    /**
-    * set/get current shared database connection
-    *
-    * this method will be used by the class to connect to database.
-    * If no connection is found then it will attempt to retrive shared connection from the data\Connection object
-    * @param oxide\data\Connection $conn
-    * @return oxide\data\Connection
+    * Get active connection for the record
+    * 
+    * If local connection not found, it will attempt to return the shared connection
+    * @return data\Connection
     */
-   public static function connection(data\Connection $conn = null) {
-      if($conn != null) {
-         self::$_db = $conn;
+   public function connection(data\Connection $conn = null) {
+      if($conn === null) {
+         $this->_connection = $conn;
+      } else {
+         if($this->_connection) 
+            return $this->_connection;
+         else
+            return static::$_sharedConnection;
+      } 
+   }
+   
+   /**
+    * Get the shared connection
+    * 
+    * @return data\Connection
+    */
+   public static function sharedConnection(data\Connection $conn = null) {
+      if($conn) {
+         static::$_sharedConnection = $conn;
+      } else {
+         return static::$_sharedConnection;
       }
-
-      if(self::$_db === null) {
-         self::$_db = data\Connection::sharedInstance();
-      }
-
-      return self::$_db;
    }
 
    /**
@@ -113,11 +122,9 @@ abstract class ActiveRecord extends DataObject {
       $pkvalue = (isset($this->$pkfield)) ? $this->$pkfield : 0;
 		
       if(!$this->onPreSave()) return false;
-      if($pkvalue) {
-         // update
+      if($pkvalue) { // update
          $result = $this->_update();
-      } else {
-         // insert
+      } else { // insert
          $result = $this->_insert();
       }
       
@@ -139,13 +146,13 @@ abstract class ActiveRecord extends DataObject {
             return FALSE;
          }
       }
-
+      
+      $conn = $this->connection();
       $pkfield = static::$_pk;
       $pkvalue = $this->_data[$pkfield];
-
       if(!$pkvalue) return false;
 
-      $query = new sql\DeleteQuery(static::getTable(), static::connection());
+      $query = new sql\DeleteQuery(static::getTable(), $conn);
 		$query->where($pkfield, $pkvalue);
 		$result = $query->execute();
 
@@ -164,7 +171,7 @@ abstract class ActiveRecord extends DataObject {
          }
       }
 
-      $db = static::connection();
+      $db = $this->connection();
       $table = static::getTable();
       $pkfield = static::$_pk;
 		$data = $this->getModifiedData();
@@ -189,7 +196,7 @@ abstract class ActiveRecord extends DataObject {
          }
       }
 
-      $db = static::connection();
+      $db = $this->connection();
       $table = static::getTable();
       $pkfield = static::$_pk;
       $pkvalue = $this->_data[$pkfield];
@@ -216,7 +223,7 @@ abstract class ActiveRecord extends DataObject {
     */
    public static function select(sql\SelectQuery $query = null) {
       $table = static::getTable();
-      $db = static::connection();
+      $db = $this->connection();
 
       if($query == null) {
          $query = new sql\SelectQuery();

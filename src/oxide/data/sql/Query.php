@@ -9,17 +9,40 @@ use oxide\ui\Renderer;
  * @package oxide
  * @subpackage data\sql
  */
-abstract class Query implements Renderer
-{
+abstract class Query implements Renderer {
 	protected 
+      /**
+       * @var int Query id
+       */
       $_id = null,
+      /**
+       * @var Connection database connection for the query
+       */
       $_db = null,
-      $_param = array(),
+      /**
+       * @var array Holds data params
+       */
+      $_param = [],
+      /**
+       * @var string table name for the query
+       */
       $_table = null,
-      $_where = array(),
-      $_whereOr = array(),
-		$_join = array(),
-      $_fetchMode = array();
+      /**
+       * @var array Where clauses
+       */
+      $_where = [],
+      /**
+       * @var array Or Where clauses
+       */
+      $_whereOr = [],
+      /**
+       * @var array Join statements
+       */
+		$_join = [],
+      /**
+       * @var array Fetch mode options
+       */
+      $_fetchMode = [];
 
 	protected static
 		$_count = 0,
@@ -51,10 +74,6 @@ abstract class Query implements Renderer
    public function connection(Connection $conn = null) {
       if($conn != null) {
          $this->_db = $conn;
-      }
-
-      if($this->_db === null) {
-         $this->_db = data\Connection::sharedInstance();
       }
 
       return $this->_db;

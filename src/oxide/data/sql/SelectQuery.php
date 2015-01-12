@@ -1,43 +1,31 @@
 <?php
 namespace oxide\data\sql;
-use oxide\data\Connection;
 
-class SelectQuery extends Query 
-{
-   
-   /**
-    *
-    * @access protected
-    * @var type 
-    */
+class SelectQuery extends Query {
 	protected 
 		$_distinct= false,
-		$_columns = array(),
-		$_limit = array(),
-		$_order = array(),
-		$_groups= array();
+		$_columns = [],
+		$_limit = [],
+		$_order = [],
+		$_groups= [];
 
 	const
 	   SESSION_KEY_LAST_QUERY_SQL = '__oxide_data_SelectQuery:lastquerysql',
       SESSION_KEY_LAST_QUERY_PARAM = '__oxide_data_SelectQuery:lastqueryparam',
       SESSION_KEY_LAST_QUERY_COUNT = '__oxide_data_SelectQuery:lastquerycount';
 
-	/**
-	 * resets query
-	 */
-   
    /**
-    *
+    * Resets all internal data for new query
+    * 
     * @access public 
     */
-	public function reset()
-	{
+	public function reset() {
 		parent::reset();
-		$this->_columns = array();
-		$this->_join = array();
-		$this->_limit = array();
-		$this->_order = array();
-		$this->_groups = array();
+		$this->_columns = [];
+		$this->_join = [];
+		$this->_limit = [];
+		$this->_order = [];
+		$this->_groups = [];
 	}
    
 	/**
@@ -48,8 +36,7 @@ class SelectQuery extends Query
 	 * @param mixed $columns
 	 * @param string $schema
 	 */
-   public function select($columns, $table = null)
-	{
+   public function select($columns, $table = null) {
 		if(!is_array($columns)) {
 			$columns = array($columns);
 		}
