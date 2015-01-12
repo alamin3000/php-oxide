@@ -6,6 +6,7 @@ use oxide\base;
  * Contains multiple validators for performing validation against single value
  */
 class ValidatorArray extends base\Container implements Validator {
+   use \oxide\base\pattern\ArrayFunctionsTrait;
    public 
       /**
        * @var bool Indicate if validation process should add

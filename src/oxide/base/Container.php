@@ -12,7 +12,6 @@ namespace oxide\base;
 
 class Container 
    extends Dictionary {
-   use pattern\ArrayFunctionsTrait;
    
    protected           
       /**

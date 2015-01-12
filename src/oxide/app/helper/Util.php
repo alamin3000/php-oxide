@@ -108,6 +108,16 @@ class Util {
       }
    }
    
+   /**
+    * Convert time to MySQL data/time string format
+    * @param int|string $time
+    * @return string
+    */
+   public function toMySqlDateTime($time) {
+      if(!is_int($time)) $time = strtotime($time);
+      return date("Y-m-d H:i:s", $time);
+   }
+   
    public function dateString($time) {
       return date("F j, Y \a\\t h:i a", strtotime($time));
    }

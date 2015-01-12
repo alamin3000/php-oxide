@@ -2,10 +2,10 @@
 namespace oxide\validation;
 use oxide\base\Container;
 
-class ProcessorArray extends Container implements Processor
-{
+class ProcessorArray extends Container implements Processor {
+   use \oxide\base\pattern\ArrayFunctionsTrait;
    public 
-           $breakOnFirstError = false;
+      $breakOnFirstError = false;
    
    public function process($value, ValidationResult &$result = null)
    {

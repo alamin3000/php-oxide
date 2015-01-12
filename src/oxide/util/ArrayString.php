@@ -1,10 +1,10 @@
 <?php
 namespace oxide\util;
 use oxide\base\Stringify;
-use oxide\base\Container;
+use oxide\base\Dictionary;
 
 class ArrayString 
-   extends Container 
+   extends Dictionary 
    implements Stringify { 
    use \oxide\base\pattern\ArrayFunctionsTrait;
    

@@ -141,7 +141,6 @@ class Loader {
          ]);
          
          $conn->connect();
-         data\model\ActiveRecord::sharedConnection($conn);
          return $conn;
       });
 
