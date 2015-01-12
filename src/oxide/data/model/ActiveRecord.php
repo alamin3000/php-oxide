@@ -41,7 +41,7 @@ abstract class ActiveRecord extends DataObject {
    public function __construct($data = null, data\Connection $conn = null) {
       parent::__construct($data);
       if($conn) {
-         $this->setConnection($conn);
+         $this->connection($conn);
       }
    }
    
@@ -52,7 +52,7 @@ abstract class ActiveRecord extends DataObject {
     * @return data\Connection
     */
    public function connection(data\Connection $conn = null) {
-      if($conn === null) {
+      if($conn) {
          $this->_connection = $conn;
       } else {
          if($this->_connection) 
