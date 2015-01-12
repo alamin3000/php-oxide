@@ -1,6 +1,6 @@
 <?php
 namespace oxide\data\model;
-use oxide\util\Exception;
+use Exception;
 
 /**
  * Data object class
