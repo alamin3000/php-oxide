@@ -1,11 +1,11 @@
 <?php
 namespace oxide\validation;
-use oxide\base\Container;
+use oxide\base;
 /**
  * Validator Array
  * Contains multiple validators for performing validation against single value
  */
-class ValidatorArray extends Container implements Validator {
+class ValidatorArray extends base\Container implements Validator {
    public 
       /**
        * @var bool Indicate if validation process should add
@@ -28,7 +28,6 @@ class ValidatorArray extends Container implements Validator {
       };
       
       $this->iterate($function);
-
 		if(!$result->isValid()) {
          return NULL;
       }
