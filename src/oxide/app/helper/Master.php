@@ -63,7 +63,7 @@ class Master extends Container {
     * @param type $rel
     * @param array $attr
     */
-   public function link($href = null, $rel = null, array $attr = null) {
+   public function links($href = null, $rel = null, array $attr = null) {
       if($href) {
          if(!$attr) $attr = [];
          $attr['href'] = $href;
@@ -80,7 +80,7 @@ class Master extends Container {
     * @param string $href
     * @param string $media
     */
-   public function stylesheet($href = null, $media = null) {
+   public function stylesheets($href = null, $media = null) {
       if($href) {
          $attribs = [];
          if($media) $attribs['media'] = $media;
@@ -101,7 +101,7 @@ class Master extends Container {
     * @param array $styles
     * @param string $media
     */
-   public function style($selector = null, array $styles = null, $media = null) {
+   public function styles($selector = null, array $styles = null, $media = null) {
       if($selector) {
          $attr = ['type' => 'text/css'];
          if($media) $attr['media'] = $media;
@@ -119,7 +119,7 @@ class Master extends Container {
     * @param string $src
     * @param array $attribs
     */
-   public function script($src = null, $code = null, array $attribs = null) {
+   public function scripts($src = null, $code = null, array $attribs = null) {
       if($src || $code) {
          if($attribs === null) $attribs = [];
          if($src) $attribs['src'] = $src;
@@ -141,7 +141,7 @@ class Master extends Container {
       return $css;
    }
    
-   public function breadcrumb($title = null, $url = null) {
+   public function breadcrumbs($title = null, $url = null) {
       if($title) {
          $this->breadcrumbs[$title] = $url;
       } else {
