@@ -455,7 +455,7 @@ class Ui extends Html {
       
       $form->controlWrapperTag->setTag('div');
       $form->controlWrapperTag->class = 'form-group form-group-sm';
-      return $form;
+      return $form->render();
    }
    
    
