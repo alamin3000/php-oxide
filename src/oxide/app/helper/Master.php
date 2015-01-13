@@ -28,7 +28,7 @@ class Master extends Container {
    
    public function __construct(HelperContainer $container) {
       parent::__construct();
-      $this->_html = $container->getHtml();
+      $this->_html = $container->get('html');
    }
    
    /**
