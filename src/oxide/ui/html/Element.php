@@ -250,7 +250,4 @@ class Element
    protected function onInnerRender(ArrayString $buffer) {}
    protected function onPreRender(ArrayString $buffer) { }
    protected function onPostRender(ArrayString $buffer) {}
-   public function __toString() {
-      return $this->render();
-   }
 }
