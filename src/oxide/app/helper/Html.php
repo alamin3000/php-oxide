@@ -81,7 +81,12 @@ class Html {
 	public function tag($tag, $inner = null, array $attributes = null, $void = null) {
 		// create the attribute string from the $attributes
       if(is_array($tag)) {
-         list($tag, $inner, $attributes, $void) = $tag;
+         if(count($tag) == 4)
+            list($tag, $inner, $attributes, $void) = $tag;
+         else if(count($tag) == 3)
+            list($tag, $inner, $attributes) = $tag;
+         else
+            throw new \Exception('Tag tuple must be of 3 or 4 lenght');
       }
       
       if($void === null) {
