@@ -22,7 +22,6 @@ class Page implements Renderer {
       $_partials = [],
       $_data = null,
       $_codeScript = null,
-      $_layoutScript = null,
       $_script = null;
    
    /**
@@ -37,16 +36,6 @@ class Page implements Renderer {
       if($codeScript) $this->setCodeScript ($codeScript);
    }
    
-   
-   public function setLayoutScript($script) {
-      $this->_layoutScript = $script;
-   }
-   
-   public function getLayoutScript() {
-      return $this->_layoutScript;
-   }
-
-
    /**
     * Set data for the page script
     * 
@@ -165,12 +154,12 @@ class Page implements Renderer {
     * @param array $data
     */
    protected function renderPage($script, Dictionary $data) {
+      ob_start();
       if(!file_exists($script)) {
          trigger_error("View script '{$script}' not found", E_USER_ERROR);
       }
-      
-      
       include $script;
+      return ob_get_clean();
    }
    
    public function render() {
@@ -186,20 +175,13 @@ class Page implements Renderer {
          // prerender partials
          foreach($this->_partials as $partial) {
             if($partial instanceof self) {
+               print 'inside....';
                if($partial->prerender)
                   $partial->render();
             }
          }
-
-         ob_start();
-         echo $this->renderPage($script, $data);
-         $this->_cache = ob_get_clean();
-         
-         if($this->_layoutScript) {
-            $this->renderPage($this->_layoutScript, $data);
-         }
+         $this->_cache = $this->renderPage($script, $data);
       }
-      
       return $this->_cache;
    }
 }
