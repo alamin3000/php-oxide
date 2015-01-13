@@ -76,7 +76,7 @@ class Master extends Container {
       $attribs = [];
       if($media) $attribs['media'] = $media;
       $attribs['type'] = 'text/css';
-      $this->link($href, 'stylesheet', $attribs);
+      return $this->link($href, 'stylesheet', $attribs);
    }
   
    
