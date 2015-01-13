@@ -20,6 +20,10 @@ class Tag implements Renderer {
       if($attributes) $this->_attributes = $attributes;
    }
    
+   /**
+    * 
+    * @param type $tag
+    */
    public function setTag($tag) {
       $this->_tag = $tag;
    }
@@ -221,5 +225,5 @@ class Tag implements Renderer {
               self::renderCloseTag($tag, $void);
 
       }
-   }     
+   }
 }
