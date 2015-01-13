@@ -15,7 +15,7 @@ use oxide\base\pattern\ArrayFunctionsTrait;
  */
 class Element 
    extends Tag 
-   implements \ArrayAccess, \Countable, Stringify {   
+   implements \ArrayAccess, \Countable {   
    use ArrayAccessTrait, ArrayFunctionsTrait;
    
 	protected
