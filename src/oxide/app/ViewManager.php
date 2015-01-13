@@ -1,5 +1,4 @@
 <?php
-
 namespace oxide\app;
 use oxide\http\Route;
 use oxide\ui\Page;

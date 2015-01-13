@@ -12,7 +12,6 @@ namespace oxide\base;
 
 class Container 
    extends Dictionary {
-   
    protected           
       /**
        * @var array Stores manually managed object instances from clousers

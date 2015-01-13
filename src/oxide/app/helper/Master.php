@@ -10,20 +10,36 @@
 
 namespace oxide\app\helper;
 use oxide\base\Container;
-use oxide\ui\html\Element;
-use oxide\ui\html\Tag;
-use oxide\util\ArrayString;
 
 class Master extends Container {     
-   use \oxide\base\pattern\PropertyAccessTrait;
+   public
+      $title = null,
+      $metas = [],
+      $stylesheets = [],
+      $styles = [],
+      $links = [],
+      $scripts = [],
+      $breadcrumbs = [],
+      $actions = [],
+      $navigations = [];
+   
+   protected
+      $_html = null;
+   
+   public function __construct(HelperContainer $container) {
+      parent::__construct();
+      $this->_html = $container->getHtml();
+   }
    
    /**
     * 
     * @param string $string
     */
    public function title($string = null) {
-      if($string) $this->title = new Element('title', $string);
-      else return $this->title;
+      if($string) $this->title = $string;
+      else {
+         return $this->_html->tag('title', $this->title);
+      }
    }
    
    /**
@@ -33,15 +49,11 @@ class Master extends Container {
     * @param type $nameKey
     * @param type $contentKey
     */
-   public function meta($name = null, $content = null, $nameKey = 'name', $contentKey = 'content') {
-      if(!isset($this->metas)) {
-         $this->metas = new ArrayString();
-      }
-      
+   public function metas($name = null, $content = null, $nameKey = 'name', $contentKey = 'content') {
       if($name) {
-         $this->metas[] = new Tag('meta', [$nameKey => $name, $contentKey => $content]);
+         $this->metas[] = ['meta', null, [$nameKey => $name, $contentKey => $content]];
       } else {
-         return $this->metas;
+         return $this->_html->tags($this->metas);
       }
    }
    
@@ -52,17 +64,13 @@ class Master extends Container {
     * @param array $attr
     */
    public function link($href = null, $rel = null, array $attr = null) {
-      if(!(isset($this->links))) {
-         $this->links = new ArrayString();
-      }
-      
       if($href) {
          if(!$attr) $attr = [];
          $attr['href'] = $href;
          $attr['rel'] = $rel;
-         $this->links[] = new Tag('link', $attr);
+         $this->links[] = ['link', null, $attr];
       } else {
-         return $this->links;
+         return $this->_html->tags($this->links);
       }
    }
    
@@ -73,10 +81,16 @@ class Master extends Container {
     * @param string $media
     */
    public function stylesheet($href = null, $media = null) {
-      $attribs = [];
-      if($media) $attribs['media'] = $media;
-      $attribs['type'] = 'text/css';
-      return $this->link($href, 'stylesheet', $attribs);
+      if($href) {
+         $attribs = [];
+         if($media) $attribs['media'] = $media;
+         $attribs['type'] = 'text/css';
+         $attribs['href'] = $href;
+         $attribs['rel'] = 'stylesheet';
+         $this->stylesheets[] = ['link', null, $attribs];
+      } else {
+         return $this->_html->tags($this->stylesheets);
+      }
    }
   
    
@@ -88,18 +102,14 @@ class Master extends Container {
     * @param string $media
     */
    public function style($selector = null, array $styles = null, $media = null) {
-      if(!isset($this->styles)) {
-         $this->styles = new ArrayString();
-      }
-      
       if($selector) {
          $attr = ['type' => 'text/css'];
          if($media) $attr['media'] = $media;
          $cssattr = $this->cssAttributeString($styles);
          $css = "{$selector} { {$cssattr} }";
-         $this->styles[] = new Element('style', $css, $attr);
+         $this->styles[] = ['style', $css, $attr];
       } else {
-         return $this->styles;
+         return $this->_html->tags($this->styles);
       }
    }
    
@@ -110,18 +120,14 @@ class Master extends Container {
     * @param array $attribs
     */
    public function script($src = null, $code = null, array $attribs = null) {
-      if(!isset($this->scripts)) {
-         $this->scripts = new ArrayString();
-      }
-      
       if($src || $code) {
          if($attribs === null) $attribs = [];
          if($src) $attribs['src'] = $src;
          $attribs['type'] = 'text/javascript';
 
-         $this->scripts[] = new Element('script', $code, $attribs);
+         $this->scripts[] = ['script', $code, $attribs];
       } else {
-         return $this->scripts;
+         return $this->_html->tags($this->scripts);
       }
    }
    
@@ -136,38 +142,26 @@ class Master extends Container {
    }
    
    public function breadcrumb($title = null, $url = null) {
-      if(!isset($this->breadcrumbs)) {
-         $this->breadcrumbs = new ArrayString();
-      }
-      
       if($title) {
          $this->breadcrumbs[$title] = $url;
       } else {
-         return $this->breadcrumbs;
+         return $this->_html->ul($this->breadcrumbs);
       }
    }
    
    public function actions($title = null, $url = null) {
-      if(!isset($this->actions)) {
-         $this->actions = new ArrayString();
-      }
-      
       if($title) {
          $this->actions[$title] = $url;
       } else {
-         return $this->actions;
+         return $this->_html->ul($this->actions);
       }
    }
    
    public function navigations($title = null, $url = null) {
-      if(!isset($this->navigations)) {
-         $this->navigations = new ArrayString();
-      }
-      
       if($title) {
          $this->navigations[$title] = $url;
       } else {
-         return $this->navigations;
+         return $this->_html->ul($this->navigations);
       }
    }
 }

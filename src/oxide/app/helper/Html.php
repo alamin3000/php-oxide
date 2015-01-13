@@ -74,14 +74,14 @@ class Html {
 	 *
 	 *	<?php echo _Html::tag('p', $messages, array('style' => 'color:red')) ?>
 	 * </code>
-	 * @param string $tag
+	 * @param string|array $tag can be 3-tuple
 	 * @param string $inner
 	 * @param array $attributes
 	 */
 	public function tag($tag, $inner = null, array $attributes = null, $void = null) {
 		// create the attribute string from the $attributes
       if(is_array($tag)) {
-         list($tag, $inner, $attributes) = $tag;
+         list($tag, $inner, $attributes, $void) = $tag;
       }
       
       if($void === null) {
@@ -116,11 +116,15 @@ class Html {
    }
    
    /**
-    * this allows to render independed tags
+    * this allows to render independed tags from 4-tuple array
     * 
     * for example:
     * <code>
-    * _Html::tags(array(array('p', 'First paragraph', null), array('div', 'Div', null)));
+    * _Html::tags([
+    *    ['p', 'First paragraph', null, false], 
+    *    ['div', 'Div', null], false],
+    *    ['img', null, ['src' => 'path'], true]
+    * );
     * </code>
     * @access public
     * @param type $tags 
@@ -128,8 +132,7 @@ class Html {
 	public function tags(array $tags) {
       $buffer = '';
 		foreach($tags as $tag) {
-         if(count($tag) !== 3) throw new \Exception('Tag array is malformed');
-			$buffer .= $this->tag($tag[0], $tag[1], $tag[2]);
+			$buffer .= $this->tag($tag);
 		}
       return $buffer;
 	}
