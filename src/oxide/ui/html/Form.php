@@ -422,7 +422,7 @@ class Form extends Element {
          }
       }
       
-      return $headerElement;
+      return $headerElement->render();
 	}
 
    /**
