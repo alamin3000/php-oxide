@@ -46,7 +46,7 @@ class ValidatorContainer extends Container implements Validator
     * @param bool $break
     * @return bool
     */
-	public function validate($values, ValidationResult &$result = null)
+	public function validate($values, Result &$result = null)
 	{
       if(!$result) {
          $result = new ValidatorResult();

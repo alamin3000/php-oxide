@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\file;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 use oxide\validation\ValidatorAbstract;
 
 class FileUploadValidator extends ValidatorAbstract
@@ -40,10 +40,10 @@ class FileUploadValidator extends ValidatorAbstract
    }
    
 
-   public function validate($value, ValidationResult &$result = null)
+   public function validate($value, Result &$result = null)
    {
       if(!$result) {
-         $result = new ValidationResult();
+         $result = new Result();
       }
       
       // first check for standard values

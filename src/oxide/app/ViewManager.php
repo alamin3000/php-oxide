@@ -97,7 +97,6 @@ class ViewManager {
       }
       $templateScript = $this->getTemplateScript($script); // get templatized script
       $page = new Page($templateScript, $data);
-      $page->prerender = true;
       $view = new View($page);
       
       return $view;

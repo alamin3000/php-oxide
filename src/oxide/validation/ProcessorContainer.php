@@ -23,10 +23,10 @@ class ProcessorContainer extends Container implements Processor {
    /**
     * 
     * @param array $values
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return null|array
     */
-   public function process($values, ValidationResult &$result = null)  {
+   public function process($values, Result &$result = null)  {
       $processed = $values;
       $shouldbreakonfirsterror = $this->breakOnFirstError;
       $this->iterate(array_keys($values), function(Processor $process, $key, &$break) use (&$processed, &$result, &$shouldbreakonfirsterror) {

@@ -6,7 +6,7 @@ use oxide\http\Router;
 use Zend\Permissions\Acl\Acl;
 use Zend\Permissions\Acl\Resource\GenericResource;
 use Zend\Permissions\Acl\Role\GenericRole;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 /**
  * access validates
@@ -150,10 +150,10 @@ class AccessValidator extends ValidatorAbstract
     * @param ValidatorResult $result
     * @return ValidatorResult
     */
-   public function validate($identity, ValidationResult &$result = null)
+   public function validate($identity, Result &$result = null)
    {
       if(!$result) {
-         $result = new ValidationResult();
+         $result = new Result();
       }
 
       // create new Zend Access Control

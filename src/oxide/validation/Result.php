@@ -2,14 +2,14 @@
 namespace oxide\validation;
 
 /**
- * ValidationResult class
+ * Result class
  *
  * A validation result container for storing error messages.
  * isValid() method is used to check if result has any error messages, hence validation fail 
  * @package oxide
  * @subpackage validation
  */
-class ValidationResult
+class Result
 {
    protected
       $_errors = array();

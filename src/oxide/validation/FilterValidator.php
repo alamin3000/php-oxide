@@ -33,10 +33,10 @@ class FilterValidator extends ValidatorAbstract
    /**
     * 
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return bool
     */
-   public function validate($value, ValidationResult &$result = null) 
+   public function validate($value, Result &$result = null) 
    {
       $bool = true;
       $filtered = $this->_filterer->filter($value);

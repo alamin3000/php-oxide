@@ -48,10 +48,10 @@ abstract class ValidatorAbstract implements Validator
 	 * 
     * @param bool $bool
     */
-   protected function _returnResult($valid, ValidationResult &$result = null, $value = null)
+   protected function _returnResult($valid, Result &$result = null, $value = null)
    {
       if(!$result) {
-         $result = new ValidationResult();
+         $result = new Result();
       }
 
       if(!$valid) {

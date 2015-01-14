@@ -163,6 +163,12 @@ class Master extends Container {
       }
    }
    
+   /**
+    * 
+    * @param type $title
+    * @param type $url
+    * @return type
+    */
    public function navigations($title = null, $url = null) {
       if($title) {
          $this->navigations[$title] = $url;

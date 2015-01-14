@@ -26,7 +26,7 @@ class FileExistsValidation extends \oxide\validation\ValidatorAbstract
       }
    }
    
-   public function validate($value, \oxide\validation\ValidationResult &$result = null)
+   public function validate($value, \oxide\validation\Result &$result = null)
    {
       $bool = file_exists($value);
       if($this->validationType == self::VALIDATE_ON_INEXIST) {

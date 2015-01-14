@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\misc;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 use oxide\validation\ValidatorAbstract;
 
 class InArrayValidator extends ValidatorAbstract {
@@ -12,7 +12,7 @@ class InArrayValidator extends ValidatorAbstract {
    }
    
    
-   public function validate($value, ValidationResult &$result = null) {
+   public function validate($value, Result &$result = null) {
       $valid = false;
       if(in_array($value, $this->_array)) {
          $valid = true;

@@ -15,6 +15,6 @@ interface Processor
     * @param mixed $value value to be processed.
     * @param 
     */
-   public function process($value, ValidationResult &$result = null);
+   public function process($value, Result &$result = null);
 }
 ?>

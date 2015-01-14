@@ -30,7 +30,7 @@ class AlphaNumValidator extends ValidatorAbstract
     * @param string $value
     * @return bool
     */
-	public function validate($value, ValidationResult &$result = null)
+	public function validate($value, Result &$result = null)
    {
       if($this->_allowchars) {
          $chars = $this->_allowchars;

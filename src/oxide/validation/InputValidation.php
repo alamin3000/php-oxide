@@ -116,7 +116,7 @@ class InputValidation
     * @return array
 	 * @todo analyze the return values for the failed process
     */
-   public function process(ValidationResult &$result = null)
+   public function process(Result &$result = null)
    {
       // first start with validating data
       if(!$result) $result = new ValidatorResult();

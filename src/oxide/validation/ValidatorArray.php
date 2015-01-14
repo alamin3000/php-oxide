@@ -16,10 +16,10 @@ class ValidatorArray extends base\Container implements Validator {
    /**
     * 
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return null
     */
-   public function validate($value, ValidationResult &$result = null) {
+   public function validate($value, Result &$result = null) {
       $function = function(Validator $validator, $key, &$break) use (&$result, &$value) {
          $validator->validate($value, $result);
          

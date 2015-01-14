@@ -12,10 +12,6 @@ namespace oxide\ui;
 use oxide\base\Dictionary;
 
 class Page implements Renderer {
-   public
-      $prerender = false,
-      $title = null;
-           
    protected 
       $_prerenders = [],
       $_parent = null,
@@ -97,8 +93,7 @@ class Page implements Renderer {
    public function getPartial($key) {
       if(isset($this->_prerenders[$key])) {
          return $this->_prerenders[$key];
-      }
-      if(isset($this->_partials[$key])) {
+      } else if(isset($this->_partials[$key])) {
          return $this->_partials[$key];
       }
       

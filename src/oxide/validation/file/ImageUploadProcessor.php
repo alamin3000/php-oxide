@@ -59,10 +59,10 @@ class ImageUploadProcessor extends FileUploadProcessor
     * 
     * @param type $source_file
     * @param type $destination_file
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return type
     */
-   protected function processFileSave($source_file, $destination_file, \oxide\validation\ValidationResult &$result)
+   protected function processFileSave($source_file, $destination_file, \oxide\validation\Result &$result)
    {
       $image = Image::createFromFile($source_file);
       $success = $image->load($result);

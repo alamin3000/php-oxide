@@ -34,7 +34,7 @@ class UriExistsValidator extends ValidatorAbstract
     * @todo php header solution needs revision
     * @author found online
     */
-   function validate($url, ValidationResult &$result = null) 
+   function validate($url, Result &$result = null) 
    {
       $uri_parts = parse_url($url);
       if(empty($uri_parts['host'])) {

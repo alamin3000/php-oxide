@@ -32,7 +32,7 @@ class UrlValidator extends ValidatorAbstract
       return preg_match('/^[^.]+?\.\w{2}/', $host);
    }
 	
-	public function validate($value, ValidationResult &$result = null)
+	public function validate($value, Result &$result = null)
 	{
 		$valid = (bool)filter_var($value, \FILTER_VALIDATE_URL, $this->_flags);
 

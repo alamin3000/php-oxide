@@ -1,7 +1,7 @@
 <?php
 namespace oxide\validation\string;
 use oxide\validation\ValidatorAbstract;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 /**
  * Compare validator
@@ -31,7 +31,7 @@ class CompareValidator extends ValidatorAbstract {
     * @param mixed $value
     * @param ValidatorResult $result
     */
-   public function validate($value, ValidationResult &$result = null) {
+   public function validate($value, Result &$result = null) {
       if( strcmp((string) $this->_compareValue, (string) $value) != 0) {
          return $this->_returnResult(false, $result, $value);
       }

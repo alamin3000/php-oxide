@@ -9,7 +9,7 @@
  */
 
 namespace oxide\app\auth;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 use oxide\base\Dictionary;
 use oxide\util\EventNotifier;
 use oxide\http\Route;
@@ -64,10 +64,10 @@ class AuthManager  {
     * It will also notify events to default event notifier
     * @param Route $route
     * @throws \Exception
-    * @return ValidationResult Description
+    * @return Result Description
     */
    public function validateAccess(Route $route, EventNotifier $notifier = null, $throwException = false) {
-      $result = new ValidationResult();
+      $result = new Result();
       $identity = $this->getAuth()->getIdentity();
       $validator = new AccessValidator($route, $this->getRoles(), $this->getRules());
       $args = ['route' => $route, 'identity' => $identity, 'result' => $result];

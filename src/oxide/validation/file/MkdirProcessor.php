@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\file;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 use oxide\validation\Processor;
 
 class MkdirProcessor implements Processor
@@ -19,9 +19,9 @@ class MkdirProcessor implements Processor
    /**
     * 
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     */
-   public function process($value, ValidationResult &$result = null)
+   public function process($value, Result &$result = null)
    {
       ;
    }

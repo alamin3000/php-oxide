@@ -7,7 +7,7 @@ class ProcessorArray extends Container implements Processor {
    public 
       $breakOnFirstError = false;
    
-   public function process($value, ValidationResult &$result = null)
+   public function process($value, Result &$result = null)
    {
       // we don't want to perform validation if value is not given      
       if(empty($value)) return $value;

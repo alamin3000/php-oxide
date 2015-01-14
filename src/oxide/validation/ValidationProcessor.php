@@ -170,10 +170,10 @@ class ValidationProcessor implements Processor {
     *    - process values
     * 
     * @param array $values
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return null|array
     */
-   public function process($values, ValidationResult &$result = null)  {
+   public function process($values, Result &$result = null)  {
       // calls the preprocess callbacks, if any
       if(!empty($this->_preProcessCallback)) {
          $preprocessors = $this->_preProcessCallback;
@@ -183,7 +183,7 @@ class ValidationProcessor implements Processor {
          
       }
       // initial setups
-      if(!$result) $result = new ValidationResult();
+      if(!$result) $result = new Result();
       if(!is_array($values)) $values = (array) $values;
 
       /*

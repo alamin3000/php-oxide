@@ -23,7 +23,7 @@ class FilterProcessor implements Processor {
     * @param \oxide\validation\ValidatorResult $result
     * @return type
     */
-   public function process($value, ValidationResult &$result = null)  {
+   public function process($value, Result &$result = null)  {
       $filtered =  $this->_filterer->filter($value);
       return $filtered;
    }

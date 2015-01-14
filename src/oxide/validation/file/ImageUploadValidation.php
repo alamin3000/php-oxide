@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\file;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 use oxide\validation\ValidationComponent;
 use oxide\helper\_util;
 use oxide\validation\file\FileUploadFilterer;
@@ -44,10 +44,10 @@ class ImageUploadValidation implements ValidationComponent {
     * validation
     * 
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return type
     */
-   public function validate($value, ValidationResult &$result = null) {
+   public function validate($value, Result &$result = null) {
       if($this->_options['allowed_mimes']) {
          $mimes = $this->_options['allowed_mimes'];
          if(!is_array($mimes)) {
@@ -71,10 +71,10 @@ class ImageUploadValidation implements ValidationComponent {
    /**
     * 
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return type
     */
-   public function process($value, ValidationResult &$result = null) { 
+   public function process($value, Result &$result = null) { 
       $options = $this->_options;
       $upload_dir = rtrim(_util::value($options, 'upload_folder', null, true), '/');      
       $width = $options['image_width'];

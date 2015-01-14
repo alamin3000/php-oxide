@@ -3,7 +3,7 @@ namespace oxide\validation\db;
 use oxide\data\Connection;
 use oxide\data\sql\SelectQuery;
 use oxide\validation\ValidatorAbstract;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 /**
  */
@@ -34,10 +34,10 @@ class DbUniqueValueValidator extends ValidatorAbstract {
 
    /**
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return type
     */
-   public function validate($value, ValidationResult &$result = null) {
+   public function validate($value, Result &$result = null) {
       // first check if current value is same as given value
       // in this case we won't check on database
       if($value == $this->_current_value) {

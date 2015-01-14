@@ -1,7 +1,7 @@
 <?php
 namespace oxide\validation\string;
 use oxide\validation\ValidatorAbstract;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 class LengthValidator extends ValidatorAbstract {
 	private 
@@ -19,7 +19,7 @@ class LengthValidator extends ValidatorAbstract {
 		$this->_errorMessage  = "Value must be between $min and $max characters.";
 	}
 	
-	public function validate($str, ValidationResult &$result = null) {
+	public function validate($str, Result &$result = null) {
 		// only test for min if min is defined
 		if($this->_min !== null) {
 			if(strlen($str) < $this->_min) {

@@ -1,7 +1,7 @@
 <?php
 namespace oxide\validation\web;
 use oxide\validation\ValidatorAbstract;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 /**
  * validate email address format
@@ -19,7 +19,7 @@ class EmailValidator extends ValidatorAbstract  {
 		}
 	}
 	
-	public function validate($value, ValidationResult &$result = null) {
+	public function validate($value, Result &$result = null) {
 		if(!filter_var($value, FILTER_VALIDATE_EMAIL)) {
 			return $this->_returnResult(false, $result, $value);
 		}

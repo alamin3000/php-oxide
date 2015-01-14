@@ -330,11 +330,11 @@ class Form extends Element {
    /**
 	 * returns the form validation result
 	 *
-	 * @return validation\ValidationResult
+	 * @return validation\Result
 	 */
-	public function getValidationResult() {
+	public function getResult() {
 		if($this->_result == null) {
-			$this->_result = new validation\ValidationResult();
+			$this->_result = new validation\Result();
 		}
 		
 		return $this->_result;
@@ -344,10 +344,10 @@ class Form extends Element {
     * process the form
     *
     * returns filtered values if validation passes.  Otherwise null is passed.
-    * @param validation\ValidationResult $result
+    * @param validation\Result $result
     * @return null|array
     */
-   public function process(validation\ValidationResult &$result = null) {
+   public function process(validation\Result &$result = null) {
       // if form is disabled,
       // we will not process this
       if(isset($this->disabled)) {
@@ -358,7 +358,7 @@ class Form extends Element {
 		if($result) {
 			$this->_result = $result;
 		} else {
-			$result = $this->getValidationResult();
+			$result = $this->getResult();
 		}
       
       // notify internal event
@@ -398,7 +398,7 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormHeader() {            
-		$result = $this->getValidationResult();
+		$result = $this->getResult();
       $headerElement = $this->headerElement;
       if($this->isProcessed()) {
          if(!$result->isValid()) {
@@ -486,7 +486,7 @@ class Form extends Element {
     */
    public function onPostControlRender(Control $control, ArrayString $buffer) {
 		$name       = $control->getName();
-		$errors      = $this->getValidationResult()->getError($name);
+		$errors      = $this->getResult()->getError($name);
       
       if($errors) { // stringify error messages
 			if(\is_array($errors)) $errmsg = \implode(' ', $errors); 
@@ -512,6 +512,6 @@ class Form extends Element {
       return $bool;
    }
    
-   protected function onPreProcess(validation\ValidationResult $result) {}
-   protected function onPostProcess(validation\ValidationResult $result, array $processedvalues = null) {}
+   protected function onPreProcess(validation\Result $result) {}
+   protected function onPostProcess(validation\Result $result, array $processedvalues = null) {}
 }

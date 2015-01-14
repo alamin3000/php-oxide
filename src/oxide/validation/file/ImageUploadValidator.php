@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\file;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 /**
  * Image upload validator
@@ -64,10 +64,10 @@ class ImageUploadValidator extends FileUploadValidator {
     * Validate
     * 
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
-    * @return \oxide\validation\ValidationResult|boolean
+    * @param \oxide\validation\Result $result
+    * @return \oxide\validation\Result|boolean
     */
-   public function validate($value, ValidationResult &$result = null) {
+   public function validate($value, Result &$result = null) {
       $return = parent::validate($value, $result);
       if($return) {
          $file = $value['tmp_name'];

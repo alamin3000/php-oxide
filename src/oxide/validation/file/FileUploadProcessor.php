@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\file;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 use oxide\validation\Processor;
 
 
@@ -39,10 +39,10 @@ class FileUploadProcessor implements Processor {
     * Subclassing classes should override this method to handle any custom file saving process
     * @param string $source_file
     * @param string $destination_file
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return bool
     */
-   protected function processFileSave($source_file, $destination_file, ValidationResult &$result) {
+   protected function processFileSave($source_file, $destination_file, Result &$result) {
       // preserve file from temporary directory
       $success = move_uploaded_file($source_file, $destination_file);     
       
@@ -66,11 +66,11 @@ class FileUploadProcessor implements Processor {
     * 
     * Performs some misc validation and attempt the save the uploaded file
     * @param type $value
-    * @param \oxide\validation\ValidationResult $result
+    * @param \oxide\validation\Result $result
     * @return null
     */
-   public function process($value, ValidationResult &$result = null) {
-      if(!$result) $result = new ValidationResult();
+   public function process($value, Result &$result = null) {
+      if(!$result) $result = new Result();
       
       // first we want to make sure that we have correct value type
       // this must be $_FILE value format array

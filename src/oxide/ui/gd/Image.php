@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui;
-use oxide\validation\ValidationResult;
+use oxide\validation\Result;
 
 
 /**
@@ -63,11 +63,11 @@ class Image {
    /**
     * Load the current image into memory
     * 
-    * @param ValidationResult $result Holds result of image loading
+    * @param Result $result Holds result of image loading
     * @return bool indicate if loading was successful or not
     */
-   public function load(ValidationResult $result = null) {
-      if(!$result) $result = new ValidationResult();
+   public function load(Result $result = null) {
+      if(!$result) $result = new Result();
       
       $properties = $this->_properties;
       $file = $this->_file;
