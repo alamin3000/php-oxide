@@ -223,25 +223,20 @@ abstract class ActiveRecord extends DataObject {
     */
    public static function select(sql\SelectQuery $query = null) {
       $table = static::getTable();
-      $db = $this->connection();
-
       if($query == null) {
          $query = new sql\SelectQuery();
          $query->select('*');
       }
-      
-      // call pre select event
-      static::onPreSelect($query);
-
+      if(!$query->connection()) {
+         $query->connection(static::sharedConnection());
+      }
       $query->table($table);
-      $query->connection($db);
       $query->setFetchMode(\PDO::FETCH_CLASS, static::getClassName());
+      
+      static::onPreSelect($query);
       $stmt = $query->execute();
-
-		// call post select event
       static::onPostSelect($stmt);
 
-		// return the statement
       return $stmt;
    }
 
