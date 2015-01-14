@@ -117,4 +117,24 @@ class Result
       else         
          return null;
    }
+   
+   /**
+    * 
+    * @param type $error
+    * @param \oxide\validation\Result $result
+    * @return \self
+    */
+   public static function create($error, Result $result = null) {
+      if(!$result) {
+         $result = new self();
+      }
+      
+      if(!is_array($error)) {
+         $error = [$error];
+      }
+      
+      $result->addErrors($error);
+      
+      return $result;
+   }
 }
