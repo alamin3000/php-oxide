@@ -13,7 +13,13 @@ use oxide\base\Container;
 
 class Master extends Container {     
    public
+      /**
+       * @var string Head title
+       */
       $title = null,
+      /**
+       * @var array meta tags using 3 or 4 tuples
+       */
       $metas = [],
       $stylesheets = [],
       $styles = [],

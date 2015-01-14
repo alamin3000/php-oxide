@@ -17,6 +17,7 @@ class Page implements Renderer {
       $title = null;
            
    protected 
+      $_prerenders = [],
       $_parent = null,
       $_cache = null,
       $_partials = [],
@@ -86,9 +87,6 @@ class Page implements Renderer {
     */
    public function addPartial(Renderer $renderer, $key) {
       $this->_partials[$key] = $renderer;
-      if($renderer instanceof self) {
-         $renderer->setParent($this);
-      }
    }
    
    /**
@@ -97,6 +95,9 @@ class Page implements Renderer {
     * @return type
     */
    public function getPartial($key) {
+      if(isset($this->_prerenders[$key])) {
+         return $this->_prerenders[$key];
+      }
       if(isset($this->_partials[$key])) {
          return $this->_partials[$key];
       }
@@ -139,16 +140,6 @@ class Page implements Renderer {
 	}
    
    /**
-    * Get the page content
-    * 
-    * This returns the page script rendered content without the layout
-    * @return string
-    */
-   public function getContent() {
-      return $this->_cache;
-   }
-
-   /**
     * Executes the script in private scope
     * @param string $script
     * @param array $data
@@ -162,6 +153,10 @@ class Page implements Renderer {
       return ob_get_clean();
    }
    
+   /**
+    * 
+    * @return string
+    */
    public function render() {
       if($this->_cache === null) {
          $script = $this->getScript();
@@ -169,19 +164,16 @@ class Page implements Renderer {
          
          // first execute the behind the page code if available
          if($this->_codeScript) {
-            $this->renderPage($this->_codeScript, $data); // not expected to rener
+            $this->renderPage($this->_codeScript, $data); // not expected to return anything
          }
 
          // prerender partials
-         foreach($this->_partials as $partial) {
-            if($partial instanceof self) {
-               print 'inside....';
-               if($partial->prerender)
-                  $partial->render();
-            }
+         foreach($this->_partials as $key => $partial) {
+            $this->_prerenders[$key] = $partial->render();
          }
          $this->_cache = $this->renderPage($script, $data);
       }
+      
       return $this->_cache;
    }
 }

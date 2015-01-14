@@ -140,7 +140,6 @@ class View implements Renderer, Stringify {
    
    public function __call($name, $arguments) {
       $renderer = $this->_renderer;
-      
       if(is_callable([$renderer, $name])) {
          return call_user_func_array([$renderer, $name], $arguments);
       } else {
