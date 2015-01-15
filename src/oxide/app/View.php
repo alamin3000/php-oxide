@@ -101,6 +101,7 @@ class View implements Renderer, Stringify {
    }
    
    public function render() {
+      try {
       if($this->_cache === null) {
          if($this->_isRendering) { // rendering within rendering :/
             trigger_error("View ({$this->identifier}) is already rendering.", E_USER_ERROR);
@@ -111,6 +112,9 @@ class View implements Renderer, Stringify {
       }
       
       return $this->_cache;
+      } catch(\Exception $e) {
+         echo $e->getMessage();
+      }
    }
    
    /**
