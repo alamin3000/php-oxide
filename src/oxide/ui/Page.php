@@ -97,7 +97,7 @@ class Page implements Renderer {
          return $this->_partials[$key];
       }
       
-      return null;
+      return '';
    }
    
    /**
