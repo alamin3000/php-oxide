@@ -152,7 +152,7 @@ class Loader {
          $class = "Zend\\Mail\\Transport\\" .ucfirst($transport);
          $instance = new $class();
          if($options) {
-            $instance->setOptions($options);
+            $instance->setOptions(new \Zend\Mail\Transport\SmtpOptions($options));
          }
          
          return $instance;
