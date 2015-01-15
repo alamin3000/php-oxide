@@ -143,6 +143,20 @@ class Loader {
          $conn->connect();
          return $conn;
       });
+      
+      // setting up mail transport
+      $context->setMailTransport(function($c) {
+         $config = $c->getConfig()->get('email', null, true);
+         $transport = (isset($config['transport'])) ? $config['transport'] : 'sendmail';
+         $options = (isset($config['options'])) ? $config['options'] : null;
+         $class = "Zend\\Mail\\Transport\\" .ucfirst($transport);
+         $instance = new $class();
+         if($options) {
+            $instance->setOptions($options);
+         }
+         
+         return $instance;
+      });
 
       // create the front controller and share it
       $fc = new http\FrontController($context);
