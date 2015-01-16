@@ -25,8 +25,25 @@ class Url {
       return $this->host();
    }
    
-   public function server() {
+   public function schema() {
+      return $this->_request->getUriComponents(Request::URI_SCHEMA);
+   }
+   
+   public function port() {
+      return $this->_request->getUriComponents(Request::URI_PORT);
+   }
+   
+   public function serverUrl() {
+      $server = $this->schema();
+      $server .= '://';
+      $server .= $this->host();
+      $port = $this->port();
       
+		if($port != '' && $port != '80' && $port != '443') {
+			$server .= ':' . $port;
+		}
+      
+      return $server;
    }
    
    
@@ -49,21 +66,6 @@ class Url {
     */
    public function post($key = null, $default = null) {
       return $this->_request->getPost($key, $default);
-   }
-   
-  
-   /**
-    * Returns the current server absolute path
-    *
-    * Ex: http://domain.com/module/controller/action?var1=3
-    * will return http://domain.com
-    * 
-    * @return string
-    */
-   public function serverUrl()
-   {
-		$request = App::context()->getRequest();
-      return $request->getAbsoluteServerURL();
    }
    
    /**
