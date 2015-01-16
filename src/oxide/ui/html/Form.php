@@ -100,7 +100,6 @@ class Form extends Element {
       $this->headerElement = new Element('header');
       $this->errorTag = new Tag('strong');
       $this->successTag = new Tag('b');
-      $this->messageTag = new Tag('p');
       $this->controlWrapperTag = new Tag('div');
       
       $this->_method = $method;
