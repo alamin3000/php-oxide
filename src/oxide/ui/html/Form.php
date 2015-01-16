@@ -417,8 +417,8 @@ class Form extends Element {
 		$result = $this->getResult();
       $headerElement = $this->headerElement;
       
-      if($this->isProcessed()) {
-         if(!$result->isValid()) {
+      if($this->isSubmitted()) {
+         if(!$this->isProcessed()) {
             $errors = $result->getErrors();
             if(isset($errors[$this->getIdentifierValue()])) {
                $formerrors = $errors[$this->getIdentifierValue()];
@@ -433,9 +433,6 @@ class Form extends Element {
          } else { // for submission success
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
-      } else {
-         if($this->_defaultMessage) 
-            $headerElement[] = $this->messageTag->renderWithContent($this->_defaultMessage);
       }
       
       return $headerElement->render();
