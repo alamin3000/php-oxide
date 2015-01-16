@@ -26,7 +26,7 @@ class Url {
    }
    
    public function schema() {
-      return $this->_request->getUriComponents(Request::URI_SCHEMA);
+      return $this->_request->getUriComponents(Request::URI_SCHEME);
    }
    
    public function port() {
