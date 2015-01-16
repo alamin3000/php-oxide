@@ -22,18 +22,27 @@ class Form extends Element {
        * @var Tag Tag that will be used to wrap a control
        */
       $controlWrapperTag = null,
+           
       /**
        * @var Tag Tag that will be used to wrap an error message;
        */
       $errorTag = null,
+           
       /**
        * @var Tag Tag taht will be used to wrap success message
        */
       $successTag = null,
+           
+      /**
+       * @var Tag used for rendering default message for the form
+       */
+      $messageTag = null,
+           
       /**
        * @var Element Element for holding header contents
        */
       $headerElement = null,
+           
       /**
        * @var Element Element for holding footer contents
        */
@@ -47,6 +56,7 @@ class Form extends Element {
       $_values = null,
       $_processedValues = null,
       $_processed = false,
+      $_defaultMessage = '',
 		$_submitErrorMessage = 'Form validation failed.  Please review the form below and resubmit it.',
 		$_submitSuccessMessage = 'Form submission was successful.';
 
@@ -96,6 +106,7 @@ class Form extends Element {
       $this->headerElement = new Element('header');
       $this->errorTag = new Tag('strong');
       $this->successTag = new Tag('b');
+      $this->messageTag = new Tag('p');
       $this->controlWrapperTag = new Tag('div');
       
       $this->_method = $method;
@@ -104,9 +115,6 @@ class Form extends Element {
 		$this->_generateSubmitId($name);   // generating a unique id for the form
 	}
    
-   
-   
-
    /**
 	 * generate unique form id
     *
@@ -147,6 +155,16 @@ class Form extends Element {
 	public function getIdentifierKey() {
 		return $this->_formid_key;
 	}
+   
+   /**
+    * Sets the default message for the form.
+    * 
+    * This will be displayed until form is submitted.
+    * @param string $message
+    */
+   public function setDefaultMessage($message) {
+      $this->_defaultMessage = $message;
+   }
    
    /**
     * 
@@ -293,7 +311,6 @@ class Form extends Element {
       // multiple check/verification is not needed
       if($issubmit == true) return true;
       
-      
 		/*
 		 * only way to find out if the form is submitted or not is to first check
 		 * if GET/POST value is preset with the form id
@@ -310,6 +327,11 @@ class Form extends Element {
       return $issubmit;
 	}
    
+   /**
+    * Set the validation processor for the form
+    * 
+    * @param \oxide\validation\ValidationProcessor $processor
+    */
    public function setValidationProcessor(validation\ValidationProcessor $processor) {
       $this->_validationProcessor = $processor;
    }
@@ -385,7 +407,27 @@ class Form extends Element {
    public function isProcessed() {
       return $this->_processed;
    }
+      
+   /**
+    * Checks if form has been processed and validation has been passed.
+    * 
+    * @return bool
+    */
+   public function isProcessValid() {
+      if($this->_processed) {
+         if($this->_result->isValid()) return true;
+         else return false;
+      }
+   }
    
+   /**
+    * Get the form identifier control.
+    * 
+    * This is automatically included during form's render process
+    * This is hidden field to identify the for for submit and processing.
+    * Must be included for the form to work properly.  
+    * @return \oxide\ui\html\InputControl
+    */
    public function getIdentifierControl() {
       return new InputControl('hidden', $this->_formid_key, $this->_formid);
    }
@@ -400,26 +442,26 @@ class Form extends Element {
 	public function renderFormHeader() {            
 		$result = $this->getResult();
       $headerElement = $this->headerElement;
+      
       if($this->isProcessed()) {
          if(!$result->isValid()) {
-            if($this->isSubmit()) { // show errors only if form is submitted
-               $errors = $result->getErrors();
-               if(isset($errors[$this->getIdentifierValue()])) {
-                  $formerrors = $errors[$this->getIdentifierValue()];
-                  $headerElement[] = self::renderOpenTag('ul');
-                  foreach($formerrors as $error) {
-                     $headerElement[] = $this->errorTag->renderWithContent($error);
-                  }
-                  $headerElement[] = self::renderCloseTag('ul');
-               } else {
-                  $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
+            $errors = $result->getErrors();
+            if(isset($errors[$this->getIdentifierValue()])) {
+               $formerrors = $errors[$this->getIdentifierValue()];
+               $headerElement[] = self::renderOpenTag('ul');
+               foreach($formerrors as $error) {
+                  $headerElement[] = $this->errorTag->renderWithContent($error);
                }
+               $headerElement[] = self::renderCloseTag('ul');
+            } else {
+               $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
             }
          } else { // for submission success
-            if($this->isSubmit()) {
-               $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
-            }
+            $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
+      } else {
+         if($this->_defaultMessage) 
+            $headerElement[] = $this->messageTag->renderWithContent($this->_defaultMessage);
       }
       
       return $headerElement->render();
