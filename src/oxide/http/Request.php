@@ -72,7 +72,6 @@ class Request {
    public static function createFromUrl($url) {
       $request = new self();
       $uris = parse_url($url);
-      var_dump($uris);
       $request->_url = $url;
       $request->_uriComponents = $uris;
       
