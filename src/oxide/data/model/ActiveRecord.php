@@ -92,9 +92,12 @@ abstract class ActiveRecord extends DataObject {
           */
          $clsname = static::getClassName();
          $clsparts= explode('\\', $clsname);
-
          return end($clsparts);
       }
+   }
+   
+   public static function getPkColumn() {
+      return static::$_pk;
    }
 
    
@@ -105,6 +108,23 @@ abstract class ActiveRecord extends DataObject {
     */
    public function getPkValue() {
       return $this->{static::$_pk};
+   }
+   
+   /**
+    * 
+    * @param type $pk
+    * @return type
+    */
+   public function load($pk) {
+      $conn = $this->connection();
+      $query = new sql\SelectQuery(static::getTable(), $conn);
+      $query->where(static::$_pk, $pk);
+      $stmt = self::select($query);
+      return $stmt->fetch();
+   }
+   
+   public function loadBy($key, $value) {
+      
    }
 
    /**

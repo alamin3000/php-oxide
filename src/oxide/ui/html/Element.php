@@ -1,7 +1,6 @@
 <?php
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
-use oxide\base\Stringify;
 use oxide\util\ArrayString;
 use oxide\base\pattern\ArrayAccessTrait;
 use oxide\base\pattern\ArrayFunctionsTrait;

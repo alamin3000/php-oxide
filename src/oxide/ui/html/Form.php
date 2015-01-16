@@ -34,11 +34,6 @@ class Form extends Element {
       $successTag = null,
            
       /**
-       * @var Tag used for rendering default message for the form
-       */
-      $messageTag = null,
-           
-      /**
        * @var Element Element for holding header contents
        */
       $headerElement = null,
@@ -56,7 +51,6 @@ class Form extends Element {
       $_values = null,
       $_processedValues = null,
       $_processed = false,
-      $_defaultMessage = '',
 		$_submitErrorMessage = 'Form validation failed.  Please review the form below and resubmit it.',
 		$_submitSuccessMessage = 'Form submission was successful.';
 
@@ -155,16 +149,6 @@ class Form extends Element {
 	public function getIdentifierKey() {
 		return $this->_formid_key;
 	}
-   
-   /**
-    * Sets the default message for the form.
-    * 
-    * This will be displayed until form is submitted.
-    * @param string $message
-    */
-   public function setDefaultMessage($message) {
-      $this->_defaultMessage = $message;
-   }
    
    /**
     * 
@@ -392,13 +376,15 @@ class Form extends Element {
       $processedValues = $validationProcessor->process($this->_values, $result);
                         
       // indicate the form has been processed already
-      $this->_processed = true;
-      $this->_processedValues = $processedValues;
-      
-      // notify internal event
-      $this->onPostProcess($result, $processedValues);
-      
-      return $processedValues;
+      if($result->isValid()) {
+         $this->_processed = true;
+         $this->_processedValues = $processedValues;
+         // notify internal event
+         $this->onPostProcess($result, $processedValues);
+         return $processedValues;
+      } else {
+         return null;
+      }
    }
    
    /**
@@ -406,18 +392,6 @@ class Form extends Element {
     */
    public function isProcessed() {
       return $this->_processed;
-   }
-      
-   /**
-    * Checks if form has been processed and validation has been passed.
-    * 
-    * @return bool
-    */
-   public function isProcessValid() {
-      if($this->_processed) {
-         if($this->_result->isValid()) return true;
-         else return false;
-      }
    }
    
    /**

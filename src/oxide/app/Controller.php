@@ -176,6 +176,47 @@ abstract class Controller
       return 'execute' . $action;
    }
 
+   public function getConfig() {
+      if($this->_config === null) {
+         $cmanager = ConfigManager::sharedInstance();
+         $namespace = $this->classBaseNamespace();
+         
+         $config     = $configManager->openConfigByDirectory($this->classBaseNamespace());
+         $this->_config = $config;
+      }
+      
+      return $this->_config;
+   }
+   
+   /**
+    * Initializes the controllers
+    * - set the controller route to the context
+    * - performs controller access check
+    * - setup the hepers
+    * @param Context $context
+    */
+   private function init(Context $context) {
+      $config = $context->getConfig();
+      $route = $this->getRoute();
+      $context->setRoute($route);
+      
+      // perform access validation
+      $authManager = new auth\AuthManager($config, $context->getAuth());
+      $authManager->validateAccess($route, 
+              EventNotifier::sharedInstance(), true); // throws exception if denied
+      
+      // setup helpers
+      if(!helper\HelperContainer::hasSharedInstance()) {
+         $helpers = new helper\HelperContainer($context);
+         helper\HelperContainer::setSharedInstance($helpers);
+      } else {
+         $helpers = helper\HelperContainer::sharedInstance();
+      }
+      
+      $viewData = $this->_viewData;
+      $viewData->setHelperContainer($helpers);
+   }
+   
    /**
 	 * forward to given $action immediately
 	 * 
@@ -211,35 +252,6 @@ abstract class Controller
          return $this->onUndefinedAction($context, $action);
       }
 	}   
-   
-   /**
-    * Initializes the controllers
-    * - set the controller route to the context
-    * - performs controller access check
-    * - setup the hepers
-    * @param Context $context
-    */
-   private function init(Context $context) {
-      $config = $context->getConfig();
-      $route = $this->getRoute();
-      $context->setRoute($route);
-      
-      // perform access validation
-      $authManager = new auth\AuthManager($config, $context->getAuth());
-      $authManager->validateAccess($route, 
-              EventNotifier::sharedInstance(), true); // throws exception if denied
-      
-      // setup helpers
-      if(!helper\HelperContainer::hasSharedInstance()) {
-         $helpers = new helper\HelperContainer($context);
-         helper\HelperContainer::setSharedInstance($helpers);
-      } else {
-         $helpers = helper\HelperContainer::sharedInstance();
-      }
-      
-      $viewData = $this->_viewData;
-      $viewData->setHelperContainer($helpers);
-   }
    
    /**
 	 * this method determine which action method to call and the attempts to call

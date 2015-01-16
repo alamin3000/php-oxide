@@ -2,6 +2,7 @@
 namespace oxide\app\helper;
 use oxide\http\Request;
 use oxide\http\Route;
+
 /**
  * 
  */
@@ -13,8 +14,23 @@ class Url {
    public function __construct(HelperContainer $container) {
       $context = $container->getContext();
       $this->_request = $context->getRequest();
-      $this->_route = $context->g;
+      $this->_route = $context->getRoute();
    }
+   
+   public function host() {
+      return $this->_request->getUriComponents(Request::URI_HOST);
+   }
+   
+   public function domain() {
+      return $this->host();
+   }
+   
+   public function server() {
+      
+   }
+   
+   
+   
    /**
     * Get GET
     * @param type $key
