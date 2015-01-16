@@ -313,9 +313,7 @@ abstract class Controller
     * 
     * @param Context $context
     */
-   protected function onExit(Context $context) {
-      
-   }
+   protected function onExit(Context $context) { }
    
    /**
     * 

@@ -145,17 +145,24 @@ class Loader {
       });
       
       // setting up mail transport
-      $context->setMailTransport(function($c) {
-         $config = $c->getConfig()->get('email', null, true);
-         $transport = (isset($config['transport'])) ? $config['transport'] : 'sendmail';
-         $options = (isset($config['options'])) ? $config['options'] : null;
-         $class = "Zend\\Mail\\Transport\\" .ucfirst($transport);
-         $instance = new $class();
-         if($options) {
-            $instance->setOptions(new \Zend\Mail\Transport\SmtpOptions($options));
+      $context->setMailer(function($c) {
+         $config = $c->getConfig();
+         $type = $config->getUsingKeyPath('email.transport', null, true);
+         if($type == 'sendmail') {
+            $host = $config->getUsingKeyPath('email.options.host', null, true);
+            $port = $config->getUsingKeyPath('email.options.prot', 25);
+            $encrypt = $config->getUsingKeyPath('email.options.encrypt', 'ssl');
+            $transport = \Swift_SendmailTransport::newInstance($host, $port, $encrypt);
+         } else if($type == 'smtp') {
+            $args = $config->getusingKeyPath('email.options.command', null);
+            $transport = \Swift_SmtpTransport::newInstance($args);
+         } else if($type == 'mail') {
+            $transport = \Swift_MailTransport::newInstance();
+         } else {
+            throw new \Exception('Email transport is not recognized.');
          }
          
-         return $instance;
+         return \Swift_Mailer::newInstance($transport);
       });
 
       // create the front controller and share it
