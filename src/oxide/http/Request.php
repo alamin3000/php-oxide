@@ -123,7 +123,6 @@ class Request {
          }
 
          $url = "{$schema}://{$host}{$uri}";
-         var_dump($url);
 
          // create request from the url and setup the additional information
          $instance = self::createFromUrl($url);
