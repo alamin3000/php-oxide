@@ -86,10 +86,7 @@ class Request {
          } else {
             $request->_secured = false;
          }
-      } else { // schema is not found
-         $uris[self::URI_SCHEMA] = 'http'; // set default schema
       }
-          
       
       if(isset($uris[self::URI_QUERY])) {
          $query = $uris[self::URI_QUERY];
@@ -126,6 +123,7 @@ class Request {
          }
 
          $url = "{$schema}://{$host}{$uri}";
+         var_dump($url);
 
          // create request from the url and setup the additional information
          $instance = self::createFromUrl($url);
