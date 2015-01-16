@@ -152,10 +152,10 @@ class Loader {
             $host = $config->getUsingKeyPath('email.options.host', null, true);
             $port = $config->getUsingKeyPath('email.options.prot', 25);
             $encrypt = $config->getUsingKeyPath('email.options.encrypt', null);
-            $transport = \Swift_SendmailTransport::newInstance($host, $port, $encrypt);
+            $transport = \Swift_SmtpTransport::newInstance($host, $port, $encrypt);
          } else if($type == 'sendmail') {
             $args = $config->getusingKeyPath('email.options.command', null);
-            $transport = \Swift_SmtpTransport::newInstance($args);
+            $transport = \Swift_SendmailTransport::newInstance($args);
          } else if($type == 'mail') {
             $transport = \Swift_MailTransport::newInstance();
          } else {
