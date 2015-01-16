@@ -80,12 +80,16 @@ class Request {
          $request->_pathParams = array_values($params);
       }
       
-      if(isset($uris[self::URI_SCHEMA]) && 
-              strtolower($uris[self::URI_SCHEMA]) == 'https') {
-         $request->_secured = true;
-      } else {
-         $request->_secured = false;
+      if(isset($uris[self::URI_SCHEMA])) {
+         if(strtolower($uris[self::URI_SCHEMA]) == 'https') {
+            $request->_secured = true;
+         } else {
+            $request->_secured = false;
+         }
+      } else { // schema is not found
+         $uris[self::URI_SCHEMA] = 'http'; // set default schema
       }
+          
       
       if(isset($uris[self::URI_QUERY])) {
          $query = $uris[self::URI_QUERY];
