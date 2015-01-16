@@ -164,6 +164,7 @@ class Tag implements Renderer {
       $str = '';
       foreach ($attributes as $key => $value) {
          if(!empty($value) && !is_scalar($value)) {
+            var_dump($attributes);
             trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
          }
          $value = self::escape($value);
