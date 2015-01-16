@@ -42,7 +42,7 @@ class Request {
       $_vars = [];
 
    const
-      URI_SCHEMA  = 'schema',
+      URI_SCHEME  = 'scheme',
       URI_HOST    = 'host',
       URI_PATH    = 'path',
       URI_BASE    = 'base',
@@ -80,8 +80,8 @@ class Request {
          $request->_pathParams = array_values($params);
       }
       
-      if(isset($uris[self::URI_SCHEMA])) {
-         if(strtolower($uris[self::URI_SCHEMA]) == 'https') {
+      if(isset($uris[self::URI_SCHEME])) {
+         if(strtolower($uris[self::URI_SCHEME]) == 'https') {
             $request->_secured = true;
          } else {
             $request->_secured = false;
@@ -110,19 +110,19 @@ class Request {
       if($instance === null) {
          $host = filter_input(INPUT_SERVER, 'HTTP_HOST');
          $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
-         $schema = null;
+         $scheme = null;
          $https = filter_input(INPUT_SERVER, 'HTTPS');
          if($https && $https == 1) /* Apache */ {
-            $schema = 'https';
+            $scheme = 'https';
          } elseif ($https && $https == 'on') /* IIS */ {
-            $schema = 'https';
+            $scheme = 'https';
          } elseif (filter_input(INPUT_SERVER, 'SERVER_PORT') == 443) /* others */ {
-            $schema = 'https';
+            $scheme = 'https';
          } else {
-            $schema = 'http';
+            $scheme = 'http';
          }
 
-         $url = "{$schema}://{$host}{$uri}";
+         $url = "{$scheme}://{$host}{$uri}";
 
          // create request from the url and setup the additional information
          $instance = self::createFromUrl($url);
@@ -153,7 +153,7 @@ class Request {
    
    /**
     * Gets the full URL for the request.
-    * This may or may not have schema and host information, depending on whether
+    * This may or may not have scheme and host information, depending on whether
     * those information was provided when creating the request or not.
     * @return string
     */
