@@ -375,15 +375,11 @@ class Form extends Element {
       $processedValues = $validationProcessor->process($this->_values, $result);
                         
       // indicate the form has been processed already
-      if($result->isValid()) {
-         $this->_processed = true;
-         $this->_processedValues = $processedValues;
-         // notify internal event
-         $this->onPostProcess($result, $processedValues);
-         return $processedValues;
-      } else {
-         return null;
-      }
+      $this->_processed = true;
+      $this->_processedValues = $processedValues;
+      // notify internal event
+      $this->onPostProcess($result, $processedValues);
+      return $processedValues;
    }
    
    /**
@@ -416,8 +412,8 @@ class Form extends Element {
 		$result = $this->getResult();
       $headerElement = $this->headerElement;
       
-      if($this->isSubmitted()) {
-         if(!$this->isProcessed()) {
+      if($this->isProcessed()) {
+         if(!$result->isValid()) {
             $errors = $result->getErrors();
             if(isset($errors[$this->getIdentifierValue()])) {
                $formerrors = $errors[$this->getIdentifierValue()];
