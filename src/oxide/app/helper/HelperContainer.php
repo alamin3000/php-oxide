@@ -22,7 +22,8 @@ class HelperContainer extends Container  {
          'flash' => 'oxide\app\helper\Flash', 
          'head' => 'oxide\app\helper\Head', 
          'ui' => 'oxide\app\helper\Ui',
-         'master' => 'oxide\app\helper\Master'
+         'master' => 'oxide\app\helper\Master',
+         'url' => 'oxide\app\helper\Url'
       ],
            
       $_context = null;
