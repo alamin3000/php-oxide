@@ -12,6 +12,7 @@ namespace oxide\validation\db;
 use oxide\validation\Processor;
 use oxide\validation\db\DbUniqueValueValidator;
 use oxide\data\Connection;
+use oxide\validation\Result;
 
 class DbUniqueProcessor implements Processor {
    protected
