@@ -123,7 +123,7 @@ class Form extends Element {
       if(isset(self::$_form_ids[$key])) throw new \Exception('Duplicate Form key was generated. Please check your Form name property.');
 
       $this->_formid_key = $key;
-      $id = md5(uniqid(rand(), true));
+      $id = uniqid();
       $this->_formid = $id;
       self::$_form_ids[$key] = $id;
 	}
@@ -135,7 +135,7 @@ class Form extends Element {
 	 * in order to process this form
 	 * @return string
 	 */
-	public function getIdentifierValue() {
+	public function getId() {
 		return $this->_formid;
 	}
 
@@ -145,7 +145,7 @@ class Form extends Element {
 	 * this is used in the <input> tag in "name" attribute
 	 * @return string
 	 */
-	public function getIdentifierKey() {
+	public function getKey() {
 		return $this->_formid_key;
 	}
    
@@ -418,8 +418,8 @@ class Form extends Element {
             print 'error';
             var_dump($result);
             $errors = $result->getErrors();
-            if(isset($errors[$this->getIdentifierValue()])) {
-               $formerrors = $errors[$this->getIdentifierValue()];
+            if(isset($errors[$this->getKey()])) {
+               $formerrors = $errors[$this->getKey()];
                $headerElement[] = self::renderOpenTag('ul');
                foreach($formerrors as $error) {
                   $headerElement[] = $this->errorTag->renderWithContent($error);
