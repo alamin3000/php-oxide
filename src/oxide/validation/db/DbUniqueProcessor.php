@@ -45,7 +45,7 @@ class DbUniqueProcessor implements Processor {
    }
    
    public function uid($prefix = '') {
-      return uniqid($prefix, $more_entropy);
+      return uniqid($prefix);
    }
    
 
