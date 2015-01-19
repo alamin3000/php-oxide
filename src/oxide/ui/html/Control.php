@@ -197,10 +197,9 @@ class Control extends Element {
     * @param \oxide\util\ArrayString $buffer
     */
    protected function onPostRender(ArrayString $buffer) {
+      $this->onRenderLabel($buffer);
       if($this->_form) {
          $this->_form->onPostControlRender($this, $buffer);
       }
-      
-      $this->onRenderLabel($buffer);
    }
 }
