@@ -418,11 +418,9 @@ class Form extends Element {
             $errors = $result->getErrors();
             if(isset($errors[$this->getId()])) {
                $formerrors = $errors[$this->getId()];
-               $headerElement[] = self::renderOpenTag('ul');
                foreach($formerrors as $error) {
                   $headerElement[] = $this->errorTag->renderWithContent($error);
                }
-               $headerElement[] = self::renderCloseTag('ul');
             }
          } else { // for submission success
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
