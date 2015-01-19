@@ -119,6 +119,29 @@ class Result
    }
    
    /**
+    * Get error string
+    * 
+    * @param null|int|string $offset
+    * @param char $seperator
+    * @return null|string
+    */
+   public function getErrorString($offset = null, $seperator = ' ') {
+      if($offset) {
+         $errors = $this->getError($offset);
+      } else {
+         $errors = $this->getErrors();
+      }
+      
+      $errors = array_filter($errors);
+      if($errors) {
+         if(!is_array($errors)) $errors = [$errors];
+         return implode($seperator, $errors);
+      } else {
+         return null;
+      }
+   }
+   
+   /**
     * 
     * @param type $error
     * @param \oxide\validation\Result $result
