@@ -413,10 +413,7 @@ class Form extends Element {
       $headerElement = $this->headerElement;
       
       if($this->isProcessed()) {
-         print 'processed...';
          if(!$result->isValid()) {
-            print 'error';
-            var_dump($result);
             $errors = $result->getErrors();
             if(isset($errors[$this->getKey()])) {
                $formerrors = $errors[$this->getKey()];
@@ -429,11 +426,8 @@ class Form extends Element {
                $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
             }
          } else { // for submission success
-            print "success: ". $this->_submitSuccessMessage;
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
-      } else {
-         print 'no processed.';
       }
       
       return $headerElement->render();
