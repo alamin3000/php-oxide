@@ -64,6 +64,15 @@ class Result
    }
    
    /**
+    * 
+    * @param int|string $offset
+    * @return boolean
+    */
+   public function hasError($offset) {
+      return isset($this->_errors[$offset]);
+   }
+   
+   /**
     * Add error messages using associative array
     * 
     * array key represents offset and value represents error message

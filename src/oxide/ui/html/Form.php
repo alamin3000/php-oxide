@@ -414,10 +414,13 @@ class Form extends Element {
       
       if($this->isProcessed()) {
          if(!$result->isValid()) {
-            $errors = $result->getError($this->getId());
-            if($errors) $errmsg = \implode(' ', (array)$errors);
-            else $errmsg = null;
-            $headerElement[] = $this->errorTag->renderWithContent($errmsg);
+            $errmsg = null;
+            if($result->hasError($this->getId())) {
+               $errmsg = $result->getErrorString($this->getId());
+            } else {
+               $errmsg = $this->_submitErrorMessage;
+            }
+            $headerElement[] = $headerElement[] = $this->errorTag->renderWithContent($errmsg);
          } else { // for submission success
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
@@ -487,15 +490,10 @@ class Form extends Element {
     */
    public function onPostControlRender(Control $control, ArrayString $buffer) {
 		$name       = $control->getName();
-		$errors      = $this->getResult()->getError($name);
+		$result      = $this->getResult();
       
-      if($errors) { // stringify error messages
-			if(\is_array($errors)) $errmsg = \implode(' ', $errors); 
-         else $errmsg = null;
-         
-         if($errmsg) { // show error if available
-            $buffer[] = self::renderTag('strong', $errmsg);
-         }
+      if($result->hasError($name)) { // stringify error messages
+         $buffer[] = $this->errorTag->renderWithContent($result->getErrorString($name));
 		}
       
       // only wrap control is not block level
