@@ -416,6 +416,7 @@ class Form extends Element {
          print 'processed...';
          if(!$result->isValid()) {
             print 'error';
+            var_dump($result);
             $errors = $result->getErrors();
             if(isset($errors[$this->getIdentifierValue()])) {
                $formerrors = $errors[$this->getIdentifierValue()];
