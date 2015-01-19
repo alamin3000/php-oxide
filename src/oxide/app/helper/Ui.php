@@ -433,6 +433,10 @@ class Ui extends Html {
     * @return Form
     */
    public function formElement(Form $form, $style = null, $size = null) {
+      $form->errorTag->setTag('div');
+      $form->errorTag->class = 'alert alert-danger';
+      $form->successTag->setTag('div');
+      $form->successTag->class = 'alert alert-success';
       $form->registerRenderCallbacks(function(Form $form, ArrayString $buffer) {
          foreach($form->getControls() as $control) {
             if(!$control instanceof Fieldset) {
