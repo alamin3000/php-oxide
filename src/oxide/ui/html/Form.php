@@ -413,6 +413,7 @@ class Form extends Element {
       $headerElement = $this->headerElement;
       
       if($this->isProcessed()) {
+         print 'processed...';
          if(!$result->isValid()) {
             $errors = $result->getErrors();
             if(isset($errors[$this->getIdentifierValue()])) {
@@ -429,6 +430,8 @@ class Form extends Element {
             print "success: ". $this->_submitSuccessMessage;
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
+      } else {
+         print 'no processed.';
       }
       
       return $headerElement->render();
