@@ -420,6 +420,8 @@ class Form extends Element {
             } else {
                $errmsg = $this->_submitErrorMessage;
             }
+            
+            var_dump($errmsg);
             $headerElement[] = $headerElement[] = $this->errorTag->renderWithContent($errmsg);
          } else { // for submission success
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
