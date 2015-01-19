@@ -150,9 +150,10 @@ class Form extends Element {
 	}
    
    /**
+    * Set form messages
     * 
-    * @param type $success
-    * @param type $failure
+    * @param string $success
+    * @param string $failure
     */
    public function setSubmitMessages($success = null, $failure = null) {
       $this->_submitErrorMessage = $failure;
@@ -425,6 +426,7 @@ class Form extends Element {
                $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
             }
          } else { // for submission success
+            print "success: ". $this->_submitSuccessMessage;
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
       }
