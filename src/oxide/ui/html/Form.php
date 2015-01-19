@@ -414,14 +414,9 @@ class Form extends Element {
       
       if($this->isProcessed()) {
          if(!$result->isValid()) {
-            $headerElement[] = $this->errorTag->renderWithContent($this->_submitErrorMessage);
-            $errors = $result->getErrors();
-            if(isset($errors[$this->getId()])) {
-               $formerrors = $errors[$this->getId()];
-               foreach($formerrors as $error) {
-                  $headerElement[] = $this->errorTag->renderWithContent($error);
-               }
-            }
+            $errors = $result->getError($this->getId());
+            if(\is_array($errors)) $errmsg = \implode(' ', $errors); 
+            $headerElement[] = $this->errorTag->renderWithContent($errmsg);
          } else { // for submission success
             $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
          }
