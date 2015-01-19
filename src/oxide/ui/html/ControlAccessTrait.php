@@ -14,25 +14,25 @@ trait ControlAccessTrait {
 	 */
 	public function addControl(Control $control, $allowmultiple = false) {
       $this->onControlAdd($control);
-      if(isset($this->_t_array_storage[$control->getName()])) {
+      if(isset($this[$control->getName()])) {
          if(!$allowmultiple) {
             throw new \Exception("Control named {$control->getName()} already exists.");
          }
          
-         if(is_array($this->_t_array_storage[$control->getName()])) {
+         if(is_array($this[$control->getName()])) {
             // if this is already array
             // simply add
-            $this->_t_array_storage[$control->getName()][] = $control;
+            $this[$control->getName()][] = $control;
          } else {
             // this is not array
             // so we will need to convert into array
-            $current = $this->_t_array_storage[$control->getName()];
-            $this->_t_array_storage[$control->getName()] = null;
-            $this->_t_array_storage[$control->getName()][] = $current;
-            $this->_t_array_storage[$control->getName()][] = $control;
+            $current = $this[$control->getName()];
+            $this[$control->getName()] = null;
+            $this[$control->getName()][] = $current;
+            $this[$control->getName()][] = $control;
          }
       } else {
-         $this->_t_array_storage[$control->getName()] = $control;
+         $this[$control->getName()] = $control;
       }		
 	}
 
@@ -60,16 +60,15 @@ trait ControlAccessTrait {
     */
    public function findControl($name, $callback = null) {
       $control = null;
-      
       // first check if we can find the control directly
-      if(isset($this->_t_array_storage[$name])) {
-         $control = $this->_t_array_storage[$name];
+      if(isset($this[$name])) {
+         $control = $this[$name];
          if($callback) {
             $callback($control, $this);
          }
       } else {
          // we will need to loop through fieldsets
-         foreach($this->_t_array_storage as $fieldset) {
+         foreach($this->toArray() as $fieldset) {
             if($fieldset instanceof Fieldset) {
                $control = $fieldset->findControl($name, $callback);
                if($control) {

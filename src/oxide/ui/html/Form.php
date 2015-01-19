@@ -331,7 +331,6 @@ class Form extends Element {
       return $this->_validationProcessor;
    }
 
-
    /**
 	 * returns the form validation result
 	 *

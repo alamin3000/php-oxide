@@ -8,10 +8,14 @@ use oxide\validation\Result;
 /**
  */
 class DbUniqueValueValidator extends ValidatorAbstract {
+   public
+      $count = null;
+   
    protected 
       $_errorMessage = '';
 
    private
+      $_query = null,
       $_connection = null,
       $_table = null,
       $_field = null,
@@ -31,6 +35,17 @@ class DbUniqueValueValidator extends ValidatorAbstract {
       $this->_current_value = $current_value;
       $this->_errorMessage = "$field must be unique.";
    }
+   
+   public function getQuery() {
+      if($this->_query === null) {
+         $query = new SelectQuery($this->_table, $this->_connection);
+         $query->column('count', 'count('.  $this->_field . ')');
+         $query->where($this->_field);
+         $this->_query = $query;
+      }
+      
+      return $this->_query;
+   }
 
    /**
     * @param type $value
@@ -44,11 +59,9 @@ class DbUniqueValueValidator extends ValidatorAbstract {
          return $this->_returnResult(true, $result);
       }
 
-      $query = new SelectQuery($this->_table, $this->_connection);
-      $query->column('count', 'count('.  $this->_field . ')');
-      $query->where($this->_field, (string)$value);
-      $count = (int) $query->executeOne();
-      
+      $query = $this->getQuery();
+      $count = (int) $query->executeOne([$this->_field => (string) $value]);
+      $this->count = $count;
       if($count != 0) {
       	return $this->_returnResult(false, $result, $value);
       }

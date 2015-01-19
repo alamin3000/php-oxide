@@ -1,7 +1,6 @@
 <?php
 namespace oxide\app\helper;
 use oxide\http\Request;
-use oxide\http\Route;
 
 /**
  * 
@@ -17,22 +16,44 @@ class Url {
       $this->_route = $context->getRoute();
    }
    
+   /**
+    * Get the host name.  This will include subdomin
+    * @return string
+    */
    public function host() {
       return $this->_request->getUriComponents(Request::URI_HOST);
    }
    
+   /**
+    * Get the domain name
+    * @return string
+    */
    public function domain() {
       return $this->host();
    }
    
+   /**
+    * scheme/protocol for the site (http/https)
+    * 
+    * @return string
+    */
    public function schema() {
       return $this->_request->getUriComponents(Request::URI_SCHEME);
    }
    
+   /**
+    * port number
+    * 
+    * @return int
+    */
    public function port() {
       return $this->_request->getUriComponents(Request::URI_PORT);
    }
    
+   /**
+    * Full server url (http://domain.com)
+    * @return string
+    */
    public function serverUrl() {
       $server = $this->schema();
       $server .= '://';
@@ -49,20 +70,22 @@ class Url {
    
    
    /**
-    * Get GET
-    * @param type $key
-    * @param type $default
-    * @return type
+    * Get GET query params
+    * 
+    * @param string|null $key
+    * @param mixed $default
+    * @return string|null|array
     */
    public function query($key = null, $default = null) {
       return $this->_request->getQuery($key, $default);
    }
    
    /**
-    * Get post
-    * @param type $key
-    * @param type $default
-    * @return type
+    * Get post param(s)
+    * 
+    * @param string|null $key
+    * @param mixed $default
+    * @return string|null|array
     */
    public function post($key = null, $default = null) {
       return $this->_request->getPost($key, $default);
@@ -72,8 +95,7 @@ class Url {
     * 
     * @return string
     */
-   public function base()
-   {
+   public function base() {
       $request = App::context()->getRequest();
       return $request->getUriComponents('base');
    }
@@ -157,7 +179,7 @@ class Url {
     * @return \oxide\http\Route
     */
    public function route() {
-      return App::context()->route;
+      return $this->_route;
    }
 
 
@@ -167,7 +189,7 @@ class Url {
     * @return string
     */
    public function module() {
-      return self::route()->module;
+      return $this->_route->module;
    }
    
    /**
@@ -176,7 +198,7 @@ class Url {
     * @return string
     */
    public function controller() {
-      return self::route()->controller;
+      return $this->_route->controller;
    }
    
    /**
@@ -185,7 +207,7 @@ class Url {
     * @return string
     */
    public function action() {
-      return self::route()->action;
+      return $this->_route->action;
    }
    
    /**
@@ -195,9 +217,9 @@ class Url {
     */
    public function param($index = null) {
       if($index == null) {
-         return self::route()->params;
+         return $this->_route->params;
       } else {
-         return self::route()->params[$index];
+         return $this->_route->params[$index];
       }
    }
    
@@ -212,15 +234,10 @@ class Url {
     * @param int $index
     * @return string
     */
-   public function path($index = null) {
-      $request = App::context()->getRequest();
-      if($index) 
-         return $request->getPathAtIndex($index);
-      else 
-         return $request->getPath();
+   public function path($index = null, $default = null) {
+      $this->_request->getPaths($index, $default);
    }
    
-
    /**
     * returns only the module portion of the url
     *
@@ -228,9 +245,8 @@ class Url {
     * will return /module
     * @return string
     */
-   public function moduleUrl() {
-      $route = self::route();
-		return "/{$route->module}";
+   public function modulePath() {
+		return "/{$this->_route->module}";
    }
 
    /**
@@ -240,9 +256,8 @@ class Url {
     * will return /module/controller
     * @return string
     */
-   public function controllerUrl() {
-      $route = self::route();
-		return "/{$route->module}/{$route->controller}";
+   public function controllerPath() {
+		return "/{$this->_route->module}/{$this->_route->controller}";
    }
 
    /**
@@ -252,8 +267,9 @@ class Url {
     * will return /module/controller/action
     * @return string
     */
-	public function actionUrl() {
-      $route = self::route();
-		return "/{$route->module}/{$route->controller}/{$route->action}";
+	public function actionPath() {
+		return "/{$this->_route->module}/{$this->_route->controller}/{$this->_route->action}";
 	}
+   
+//   public function build($paths)
 }

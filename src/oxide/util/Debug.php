@@ -14,6 +14,10 @@ abstract class Debug {
    public 
       $enabled = false;
    
+   const
+      ERR_CRITICAL = 90000,
+      ERR_NOTIFY = 90001,
+      ERR_UNKNOWN = 99999;
    
    /**
     * Log a string 
