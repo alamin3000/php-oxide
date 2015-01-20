@@ -224,11 +224,6 @@ class Element
             foreach($this->_callback_post_render as $callback) {$callback($this, $buffer); }
          }
          
-         if($this->wrapperTag) {
-            $buffer->prepend($this->wrapperTag->renderOpen());
-            $buffer->append($this->wrapperTag->renderClose());
-         }
-         
          return (string) $buffer;
       }
       catch (\Exception $e) {
