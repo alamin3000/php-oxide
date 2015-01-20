@@ -106,6 +106,7 @@ class Form extends Element {
 		$this->_action = $action;      
       $this->_values = $values;    // store the raw values
 		$this->_generateSubmitId($name);   // generating a unique id for the form
+      $this->addControl($this->getIdentifierControl());
 	}
    
    /**
@@ -501,17 +502,7 @@ class Form extends Element {
       $buffer->prepend($this->controlWrapperTag->renderOpen());
       $buffer->append($this->controlWrapperTag->renderClose());
    }
- 
-   /**
-    * Before rendering the form, we will need to add the form identification control
-    * @return string
-    */
-   protected function onPreRender(ArrayString $buffer) {
-      $bool = parent::onPreRender($buffer);
-      $this->addControl($this->getIdentifierControl());      
-      return $bool;
-   }
-   
+    
    protected function onPreProcess(validation\Result $result) {}
    protected function onPostProcess(validation\Result $result, array $processedvalues = null) {}
 }
