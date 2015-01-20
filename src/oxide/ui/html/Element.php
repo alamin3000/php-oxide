@@ -15,14 +15,7 @@ use oxide\base\pattern\ArrayFunctionsTrait;
 class Element 
    extends Tag 
    implements \ArrayAccess, \Countable {   
-   use ArrayAccessTrait, ArrayFunctionsTrait { offsetSet as protected _offsetSet;}
-   
-   public 
-      /**
-       * @var Tag Optional wrapper tag
-       */
-      $wrapperTag = null;
-   
+   use ArrayAccessTrait, ArrayFunctionsTrait { offsetSet as protected _offsetSet;}   
 	protected
       $_parent = null,
       $_cache = null,
@@ -44,7 +37,9 @@ class Element
    }
    
    /**
+    * Set the parent
     * 
+    * This will be 
     * @param Element $parent
     */
    public function setParent(Element $parent) {
@@ -216,7 +211,7 @@ class Element
             foreach($this->_callback_pre_render as $callback) { $callback($this, $buffer); }
          }
          
-         if($renderer) {  $buffer[] =  $renderer->render($this->inner()); } 
+         if($renderer) {  $buffer[] =  $renderer->render(); } 
          else {
             $buffer[] = $this->renderOpen();
             $this->onInnerRender($buffer);
