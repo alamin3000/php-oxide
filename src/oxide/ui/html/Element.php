@@ -15,9 +15,16 @@ use oxide\base\pattern\ArrayFunctionsTrait;
 class Element 
    extends Tag 
    implements \ArrayAccess, \Countable {   
-   use ArrayAccessTrait, ArrayFunctionsTrait;
+   use ArrayAccessTrait, ArrayFunctionsTrait { offsetSet as protected _offsetSet;}
+   
+   public 
+      /**
+       * @var Tag Optional wrapper tag
+       */
+      $wrapperTag = null;
    
 	protected
+      $_parent = null,
       $_cache = null,
       $_renderer = null,
       $_callback_pre_render = null,
@@ -34,6 +41,21 @@ class Element
    public function __construct($tag = 'span', $inner = null, array $attributes = null) {
       parent::__construct($tag, $attributes);
       if($inner !== null) $this->addInner($inner);
+   }
+   
+   /**
+    * 
+    * @param Element $parent
+    */
+   public function setParent(Element $parent) {
+      $this->_parent = $parent;
+   }
+   
+   /**
+    * @return Element 
+    */
+   public function getParent() {
+      return $this->_parent;
    }
    
    /**
@@ -126,6 +148,13 @@ class Element
 		$this->_t_property_storage = [];
 	}
    
+   public function offsetSet($offset, $value) {
+      if($value instanceof Element) {
+         $value->setParent($this);
+      }
+      $this->_offsetSet($offset, $value);
+   }
+   
    /**
     * Get the current renderer for the element, if any
     * 
@@ -200,6 +229,11 @@ class Element
             foreach($this->_callback_post_render as $callback) {$callback($this, $buffer); }
          }
          
+         if($this->wrapperTag) {
+            $buffer->prepend($this->wrapperTag->renderOpen());
+            $buffer->append($this->wrapperTag->renderClose());
+         }
+         
          return (string) $buffer;
       }
       catch (\Exception $e) {
@@ -240,7 +274,4 @@ class Element
    protected function onInnerRender(ArrayString $buffer) {}
    protected function onPreRender(ArrayString $buffer) { }
    protected function onPostRender(ArrayString $buffer) {}
-   
-   protected function onPreInsertToElement(Element $element) {}
-   protected function onPostInsertToElement(Element $element) {}
 }
