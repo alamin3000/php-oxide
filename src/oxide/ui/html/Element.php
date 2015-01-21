@@ -15,14 +15,9 @@ use oxide\base\pattern\ArrayFunctionsTrait;
 class Element 
    extends Tag 
    implements \ArrayAccess, \Countable {   
-   use ArrayAccessTrait, ArrayFunctionsTrait { offsetSet as protected _offsetSet;}   
+   use ArrayAccessTrait, ArrayFunctionsTrait;   
 	protected
-      $_parent = null,
-      $_cache = null,
-      $_renderer = null,
-      $_callback_pre_render = null,
-      $_callback_post_render = null,
-      $_callback_inner_render = null;
+      $_rendererCallback = null;
          
    /**
 	 * construct the element
@@ -33,65 +28,9 @@ class Element
 	 */
    public function __construct($tag = 'span', $inner = null, array $attributes = null) {
       parent::__construct($tag, $attributes);
-      if($inner !== null) $this->addInner($inner);
-   }
-   
-   /**
-    * Set the parent
-    * 
-    * This will be 
-    * @param Element $parent
-    */
-   public function setParent(Element $parent) {
-      $this->_parent = $parent;
-   }
-   
-   /**
-    * @return Element 
-    */
-   public function getParent() {
-      return $this->_parent;
-   }
-   
-   /**
-    * Add inner content for the element
-    * 
-    * @param type $content
-    * @param type $identifier
-    */
-   public function addInner($content, $identifier = null) {
-      if (is_array($content)) {
-         foreach ($content as $acontent) {
-            $this[] = $acontent;
-         }
-      } else {
-         if ($identifier)
-            $this[$identifier] = $content;
-         else
-            $this[] = $content;
+      if($inner !== null) {
+         $this->_t_array_storage[] = $inner;
       }
-   }
-   
-   /**
-    * Return all inner elements
-    * 
-    * @return array
-    */
-   public function getInners() {
-      return $this->toArray();
-   }
-   
-   /**
-    * Return inner element/content by $identifier if found
-    * 
-    * @param string $identifier
-    * @param mixed $default
-    * @return \oxide\ui\html\Element
-    */
-   public function getInnerByIdentifier($identifier, $default = null) {
-      if(isset($this[$identifier]))
-         return $this[$identifier];
-      else return $default;
    }
    
    /**
@@ -115,24 +54,6 @@ class Element
    }
    
    /**
-    * Set plain text for the element
-    * 
-    * Will perform strip_tag
-    * @param mixed $text
-    */
-   public function setText($text) {
-      $this->_t_array_storage = [\strip_tags((string)$text)];
-   }
-   
-   /**
-    * Get plain text of the inner text
-    * @return string
-    */
-   public function getText() {
-      \strip_tags($this->renderInner());
-   }
-   
-   /**
 	 * resets the element
 	 *
 	 * This is useful to reuse the object for different element
@@ -142,56 +63,19 @@ class Element
 		$this->_t_array_storage = [];
 		$this->_t_property_storage = [];
 	}
-   
-   public function offsetSet($offset, $value) {
-      if($value instanceof Element) {
-         $value->setParent($this);
-      }
-      $this->_offsetSet($offset, $value);
-   }
-   
-   /**
-    * Get the current renderer for the element, if any
-    * 
-    * If no renderer is found, Element will be rendered by itself.
-    * @return \oxide\ui\Renderer
-    */
-   public function getRenderer() {
-      return $this->_renderer;
-   }
-   
-   /**
-    * Set renderer for the element
-    * 
-    * @param \oxide\ui\Renderer $renderer
-    */
-   public function setRenderer(Renderer $renderer) {
-      $this->_renderer = $renderer;
-   }
-   
-   /**
-    * Register callbacks for different part of the rendering process
-    * All callbacks will have following signature callback($this, ArrayString $buffer, $item = null)
-    * $item argument is only available in the inner callback
-    * @param \Closure $prerender
-    * @param \Closure $innerrender
-    * @param \Closure $postrender
-    */
-   public function registerRenderCallbacks(\Closure $prerender = null, \Closure $innerrender = null, \Closure $postrender = null ) {
-      if($prerender) 
-         if($this->_callback_pre_render) $this->_callback_pre_render[] = $prerender;
-         else $this->_callback_pre_render = [$prerender];
-         
-      if($postrender) 
-         if($this->_callback_post_render) $this->_callback_post_render[] = $prerender;
-         else $this->_callback_post_render = [$prerender];
-         
-      if($innerrender) 
-         if($this->_callback_inner_render) $this->_callback_inner_render[] = $prerender;
-         else $this->_callback_inner_render = [$prerender];
-   }
 
-
+   /**
+    * Renderer callable
+    * 
+    * Callback signature $callable($this, $buffer)
+    * If method returns TRUE, then internal rendering will be performed
+    * @param callable $callable
+    * @return callable
+    */
+   public function rendererCallback(callable $callable = null) {
+      if($callable) $this->_rendererCallback = $callable;
+      else return $this->_rendererCallback;
+   }
    /**
     * renders the html tag
     *
@@ -203,27 +87,14 @@ class Element
     */
    public function render() {
       try {
-         $renderer = $this->getRenderer();
          $buffer = new ArrayString();
-         
          $this->onPreRender($buffer);
-         if($this->_callback_pre_render) { // notify pre render callbacks
-            foreach($this->_callback_pre_render as $callback) { $callback($this, $buffer); }
-         }
-         
-         if($renderer) {  $buffer[] =  $renderer->render(); } 
-         else {
-            $buffer[] = $this->renderOpen();
-            $this->onInnerRender($buffer);
-            $buffer[] = $this->renderInner();
-            $buffer[] = $this->renderClose();         
-         }
+         $buffer[] = $this->renderOpen();
+         $this->onInnerRender($buffer);
+         $buffer[] = $this->renderInner();
+         $buffer[] = $this->renderClose();         
 
          $this->onPostRender($buffer); // notifying internal post render event
-         if($this->_callback_post_render) {
-            foreach($this->_callback_post_render as $callback) {$callback($this, $buffer); }
-         }
-         
          return (string) $buffer;
       }
       catch (\Exception $e) {
@@ -244,13 +115,7 @@ class Element
     */
    public function renderInner() {      
       $buffer = '';
-      foreach($this->getInners() as $inner) {
-         if($this->_callback_inner_render) {
-            foreach($this->_callback_inner_render as $callback) {
-               $callback($this, $inner, $buffer);
-            }
-         }
-         
+      foreach($this->_t_array_storage as $inner) {
          if($inner instanceof Renderer) {
             $buffer .= $inner->render();
          } else {
@@ -260,6 +125,23 @@ class Element
       
       return $buffer;
    }
+   
+   /**
+    * Renders a HTML element based on given $tag and $content
+    * 
+    * @param \oxide\ui\html\Tag $tag
+    * @param type $content
+    */
+   public static function renderTag($tag, $content = null, array $attributes = null, $void = false) {
+      if($tag instanceof self) {
+         return $tag->renderOpen() .
+            $content.
+            $tag->renderClose();    
+      } else {
+         $tag = new Tag($tag, $attributes);
+         return $tag->renderWithContent($content);
+      }
+   }   
    
    protected function onInnerRender(ArrayString $buffer) {}
    protected function onPreRender(ArrayString $buffer) { }

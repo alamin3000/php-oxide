@@ -1,6 +1,5 @@
 <?php
 namespace oxide\app\helper;
-use oxide\ui\html\Tag;
 
 /** 
  * html helper class
@@ -46,7 +45,10 @@ class Html {
     * @return type
     */
    public function openTag($tag, array $attributes = null, $void = false) {
-      return Tag::renderOpenTag($tag, $attributes, $void);
+      if($void) $close = ' /';
+      else $close = '';
+      
+      return '<'. $tag . $this->attributeString($attributes) . $close . '>';
    }
    
    /**
@@ -55,7 +57,8 @@ class Html {
     * @return type
     */
    public function closeTag($tag, $void = false) {
-      return Tag::renderCloseTag($tag, $void);
+      if($void) return '';
+      return "</{$tag}>";
    }
    
 	/**
@@ -148,8 +151,19 @@ class Html {
     * @param array $attributes
     * @return string
     */
-   public function attributeString($attributes) {
-  		return Tag::renderAttributeString($attributes);
+   public function attributeString(array $attributes = null) {
+      if(empty($attributes)) return '';
+		
+      $str = '';
+      foreach ($attributes as $key => $value) {
+         if(!empty($value) && !is_scalar($value)) {
+            trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
+         }
+         $value = self::escape($value);
+         $str .= "{$key}=\"{$value}\" ";
+      }
+      
+      return ' ' . trim($str);
    }
 	
 	/**

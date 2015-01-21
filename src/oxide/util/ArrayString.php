@@ -11,9 +11,14 @@ class ArrayString
    protected 
       $_stringify_callback = null;
 
-   public function registerStringifyCallback(callable $callback) {
+   /**
+    * 
+    * @param \Closure $callback
+    */
+   public function registerStringifyCallback(\Closure $callback) {
       $this->_stringify_callback = $callback;
    }
+   
    
    public function __toString() {
       if($this->_stringify_callback) {
@@ -24,6 +29,12 @@ class ArrayString
       }
    }
    
+   /**
+    * Get string from given $args
+    * 
+    * @param mixed $arg
+    * @return string
+    */
    public static function toString($arg) {
       if(is_scalar($arg)) return $arg;
       else if($arg instanceof \oxide\ui\Renderer) return $arg->render();

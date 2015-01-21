@@ -15,35 +15,9 @@ use oxide\util\ArrayString;
  * @subpackage ui
  */
 class Form extends Element {
-   use ControlAccessTrait;
-   
-   public
-      /**
-       * @var Tag Tag that will be used to wrap a control
-       */
-      $controlWrapperTag = null,
-           
-      /**
-       * @var Tag Tag that will be used to wrap an error message;
-       */
-      $errorTag = null,
-           
-      /**
-       * @var Tag Tag taht will be used to wrap success message
-       */
-      $successTag = null,
-           
-      /**
-       * @var Element Element for holding header contents
-       */
-      $headerElement = null,
-           
-      /**
-       * @var Element Element for holding footer contents
-       */
-      $footerElement = null;
-            
+   use ControlAccessTrait;         
    protected
+      $_controlRenderCallback = null,
       $_controlRefs = [],
       $_method = null,
       $_action = null,
@@ -100,7 +74,6 @@ class Form extends Element {
       $this->headerElement = new Element('header');
       $this->errorTag = new Tag('strong');
       $this->successTag = new Tag('b');
-      $this->controlWrapperTag = new Tag('div');
       
       $this->_method = $method;
 		$this->_action = $action;      
@@ -402,6 +375,15 @@ class Form extends Element {
       return new InputControl('hidden', $this->_formid_key, $this->_formid);
    }
    
+   /**
+    * 
+    * @param array $callbacks
+    * @return array
+    */
+   public function &controlRenderCallbacks(callable $callbacks = null) {
+      if($callbacks) $this->_controlRenderCallback = $callbacks;
+      else return $this->_controlRenderCallback;
+   }
    
    /**
     * render for header
@@ -411,24 +393,20 @@ class Form extends Element {
     */
 	public function renderFormHeader() {            
 		$result = $this->getResult();
-      $headerElement = $this->headerElement;
-      
       if($this->isProcessed()) {
+         $p = new Element('p');
          if(!$result->isValid()) {
             $errmsg = null;
-            if($result->hasError($this->getId())) {
-               $errmsg = $result->getErrorString($this->getId());
-            } else {
-               $errmsg = $this->_submitErrorMessage;
-            }
-            
-            $headerElement[] =  $this->errorTag->renderWithContent($errmsg);
+            if($result->hasError($this->getId())) $errmsg = $result->getErrorString($this->getId());
+            else $errmsg = $this->_submitErrorMessage;
+            $p[] = new Element('strong', $errmsg);
          } else { // for submission success
-            $headerElement[] = $this->successTag->renderWithContent($this->_submitSuccessMessage);
+            $p[] = new Element('b', $this->_submitSuccessMessage);
          }
+         return $p->render();
       }
       
-      return $headerElement->render();
+      return '';
 	}
 
    /**
@@ -438,12 +416,7 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormFooter() {
-		$validator = $this->getValidationProcessor();
-		if($validator->isRequired()) {
-         $p = self::renderTag('p', self::renderTag('small', '* Indicates required field(s).'));
-         $this->footerElement[] = $p;
-         return $this->footerElement->render();
-		}
+      
 	}
    
 	/**
@@ -466,41 +439,23 @@ class Form extends Element {
     * @param Control $control
     * @param ArrayString $buffer Holds the current rendrered buffer for the control
     */
-   public function onPreControlRender(Control $control, ArrayString $buffer) {
+   public function onControlRender(Control $control, ArrayString $buffer) {
 		$name          = $control->getName();      
       $value         = $this->getValue($name);
 		$validation    = $this->getValidationProcessor();
+      $result        = $this->getResult();
       
       if($validation->isRequired($name)) {
 			$control->required = "required"; // 'required' attribute is part of (HTML5)
-         $label = $control->getLabel();
-         if($label) {
-            $control->setLabel($label.'*');
-         }
+		}
+      
+      if($result->hasError($name)) { // stringify error messages
+         $control->setError($result->getErrorString($name));
 		}
       
       if($value !== null) {
          $control->setValue($value); // setting the form submitted value
       }
-   }
-   
-   /**
-    * This method is called by Control objects after it completes rendering
-    * 
-    * @param Control $control
-    * @param ArrayString $buffer Holds the current rendrered buffer for the control
-    */
-   public function onPostControlRender(Control $control, ArrayString $buffer) {
-		$name       = $control->getName();
-		$result      = $this->getResult();
-      
-      if($result->hasError($name)) { // stringify error messages
-         $buffer[] = $this->errorTag->renderWithContent($result->getErrorString($name));
-		}
-      
-      // only wrap control is not block level
-      $buffer->prepend($this->controlWrapperTag->renderOpen());
-      $buffer->append($this->controlWrapperTag->renderClose());
    }
     
    protected function onPreProcess(validation\Result $result) {}

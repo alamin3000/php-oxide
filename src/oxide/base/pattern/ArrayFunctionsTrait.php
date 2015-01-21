@@ -8,8 +8,6 @@ namespace oxide\base\pattern;
  * statement for auto loading ArrayAccessTrait is because unneccessary method overloading
  */
 trait ArrayFunctionsTrait {
-   
-   
    /**
     * Add $content at the end of the array
     * 

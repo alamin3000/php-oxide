@@ -320,12 +320,12 @@ class Ui extends Html {
     * @param type $method
     * @param type $action
     */
-   public function formStart($style = null, $method = 'get', $action = null) {
-      $attr = [
-          'role' => 'form',
-          'method' => $method,
-          'action' => $action
-      ];
+   public function formStart($style = null, $method = 'get', $action = null, array $attr = null) {
+      if(!$attr) { $attr = []; }
+      $attr['role'] = 'form';
+      $attr['method'] = $method;
+      $attr['action'] = $action;
+   
       
       if($style == self::FORM_INLINE) {
          $attr['class'] = 'form-inline';
@@ -392,6 +392,10 @@ class Ui extends Html {
       }
       
       return $this->formRowEnd();
+   }
+   
+   public function formControlElement(\oxide\ui\html\Control $control) {
+      
    }
    
    public function formEnd() {

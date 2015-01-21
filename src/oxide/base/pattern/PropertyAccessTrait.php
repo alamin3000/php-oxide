@@ -1,8 +1,7 @@
 <?php
 namespace oxide\base\pattern;
 
-trait PropertyAccessTrait
-{
+trait PropertyAccessTrait {
    protected 
       $_t_property_storage = [];
    

@@ -14,11 +14,16 @@ trait ArrayAccessTrait {
    protected 
       $_t_array_storage = [];
    
+   /**
+    * Get array
+    * 
+    * @return array
+    */
    public function toArray() {
       return $this->_t_array_storage;
    }
    
-   public function setArray($arr) {
+   public function setArray(array $arr) {
       $this->_t_array_storage = $arr;
    }
    
