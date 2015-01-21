@@ -15,9 +15,35 @@ use oxide\util\ArrayString;
  * @subpackage ui
  */
 class Form extends Element {
-   use ControlAccessTrait;         
+   use ControlAccessTrait;
+   
+   public
+      /**
+       * @var Tag Tag that will be used to wrap a control
+       */
+      $controlWrapperTag = null,
+           
+      /**
+       * @var Tag Tag that will be used to wrap an error message;
+       */
+      $errorTag = null,
+           
+      /**
+       * @var Tag Tag taht will be used to wrap success message
+       */
+      $successTag = null,
+           
+      /**
+       * @var Element Element for holding header contents
+       */
+      $headerElement = null,
+           
+      /**
+       * @var Element Element for holding footer contents
+       */
+      $footerElement = null;
+            
    protected
-      $_controlRenderCallback = null,
       $_controlRefs = [],
       $_method = null,
       $_action = null,
@@ -25,8 +51,8 @@ class Form extends Element {
       $_values = null,
       $_processedValues = null,
       $_processed = false,
-		$_submitErrorMessage = 'Form validation failed.  Please review the form below and resubmit it.',
-		$_submitSuccessMessage = 'Form submission was successful.';
+		$_errorMessage = 'Form validation failed.  Please review the form below and resubmit it.',
+		$_successMessage = 'Form submission was successful.';
 
 	static protected
       $_form_ids = [],
@@ -74,6 +100,7 @@ class Form extends Element {
       $this->headerElement = new Element('header');
       $this->errorTag = new Tag('strong');
       $this->successTag = new Tag('b');
+      $this->controlWrapperTag = new Tag('div');
       
       $this->_method = $method;
 		$this->_action = $action;      
@@ -81,6 +108,16 @@ class Form extends Element {
 		$this->_generateSubmitId($name);   // generating a unique id for the form
       $this->addControl($this->getIdentifierControl());
 	}
+   
+   public function successMessage($message = null) {
+      if($message) $this->_successMessage = $message;
+      else return $this->_successMessage;
+   }
+   
+   public function errorMessage($message = null) {
+      if($message) $this->_errorMessage = $message;
+      else return $this->_errorMessage;
+   }
    
    /**
 	 * generate unique form id
@@ -122,17 +159,6 @@ class Form extends Element {
 	public function getKey() {
 		return $this->_formid_key;
 	}
-   
-   /**
-    * Set form messages
-    * 
-    * @param string $success
-    * @param string $failure
-    */
-   public function setSubmitMessages($success = null, $failure = null) {
-      $this->_submitErrorMessage = $failure;
-      $this->_submitSuccessMessage = $success;
-   }
 
    /**
     * Returns Form value for the given $key
@@ -375,15 +401,6 @@ class Form extends Element {
       return new InputControl('hidden', $this->_formid_key, $this->_formid);
    }
    
-   /**
-    * 
-    * @param array $callbacks
-    * @return array
-    */
-   public function &controlRenderCallbacks(callable $callbacks = null) {
-      if($callbacks) $this->_controlRenderCallback = $callbacks;
-      else return $this->_controlRenderCallback;
-   }
    
    /**
     * render for header
@@ -396,13 +413,20 @@ class Form extends Element {
       if($this->isProcessed()) {
          $p = new Element('p');
          if(!$result->isValid()) {
-            $errmsg = null;
-            if($result->hasError($this->getId())) $errmsg = $result->getErrorString($this->getId());
-            else $errmsg = $this->_submitErrorMessage;
-            $p[] = new Element('strong', $errmsg);
+            $strong = new Tag('strong');
+            if($result->hasError($this->getId())) {
+               $strong[] = $result->getErrorString($this->getId());
+            } else {
+               $strong[] = $this->_submitErrorMessage;
+            }
+            
+            $p[] = $strong;
          } else { // for submission success
-            $p[] = new Element('b', $this->_submitSuccessMessage);
+            $b = new Tag('b');
+            $b[] = $this->_submitSuccessMessage;
+            $p[] = $b;
          }
+         
          return $p->render();
       }
       
@@ -416,7 +440,12 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormFooter() {
-      
+		$validator = $this->getValidationProcessor();
+		if($validator->isRequired()) {
+         $p = self::renderTag('p', self::renderTag('small', '* Indicates required field(s).'));
+         $this->footerElement[] = $p;
+         return $this->footerElement->render();
+		}
 	}
    
 	/**
@@ -443,7 +472,7 @@ class Form extends Element {
 		$name          = $control->getName();      
       $value         = $this->getValue($name);
 		$validation    = $this->getValidationProcessor();
-      $result        = $this->getResult();
+		$result      = $this->getResult();
       
       if($validation->isRequired($name)) {
 			$control->required = "required"; // 'required' attribute is part of (HTML5)
