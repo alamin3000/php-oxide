@@ -241,7 +241,7 @@ class Control extends Element {
       if($this->_label) { // render label if available
          $wrap = true;
          $label = $this->_label;
-         if($this->required) {
+         if(isset($this->required)) {
             $label .= '*';
          }
          $buffer->prepend($this->getLabelTag()->renderWithContent($this->_label));
