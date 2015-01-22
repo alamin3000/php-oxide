@@ -232,7 +232,7 @@ class Ui extends Html {
     * @param type $size
     * @return type
     */
-   public function button($type, $text, $style = null, $size = null) {
+   public function button($type, $text, $style = null, $size = null, array $attribs = null) {
       $cls_size = $this->_class_size($size, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
 
@@ -353,49 +353,16 @@ class Ui extends Html {
    public function formRowEnd() {
       return $this->end('div');
    }
-   
+  
    /**
-    * Render a html form control using given information
     * 
-    * @param string $type
+    * @param type $type
     * @param type $name
     * @param type $value
-    * @param type $label
-    * @param type $items
+    * @param array $options
+    * @param array $attribs
     * @return string
     */
-   public function formControl($type, $name, $value = null, $label = null, $items = null) {
-      $this->formRowStart();
-      if($label) {
-         echo $this->label($label, $name);
-      }
-      
-      $rendered = null;
-      switch ($type) {
-         case (isset(self::$inputTypes[$type])) :
-            $rendered = $this->input($type, $name, $value);
-            break;
-         
-         case 'textfield':
-            $rendered = $this->textarea($name, $value);
-            break;
-         
-         case 'select':
-            $rendered = $this->select($name, $value, $items);
-            break;
-         
-         case 'button':
-         case 'submit':
-         case 'reset':
-            $rendered = $this->button($type, $value);
-            break;
-         
-         default:
-      }
-      
-      return $this->formRowEnd();
-   }
-   
    public function control($type, $name, $value = null, array $options = null, array $attribs = null) {
       switch($type) {
          case 'input':
@@ -403,7 +370,14 @@ class Ui extends Html {
             return $this->input($itype, $name, $value, $attribs);
          case (isset(self::$inputTypes[$type])):
             return $this->input($type, $name, $value, $attribs);
-         
+         case 'textfield':
+            return $this->textarea($name, $value, $attribs);
+         case 'select':
+            return $this->select($name, $value, $options, $attribs);
+         case 'button':
+         case 'submit':
+         case 'reset':
+            return $this->button($type, $value, null, $attribs);   
          default:
             return '';
       }
