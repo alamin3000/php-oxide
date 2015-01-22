@@ -394,7 +394,7 @@ class Ui extends Html {
          case 'submit':
          case 'reset':
             $type = (isset($control->type)) ? $control->type : 'text';
-            return $this->button($type, $name, $value, $inner, $attributes);
+            return $this->button($type, $name, $inner, $attributes);
          case 'textfield':
             return $this->textfield($name, $value, $attributes);
       }
