@@ -377,6 +377,7 @@ class Ui extends Html {
          case 'button':
          case 'submit':
          case 'reset':
+            print 'here';
             return $this->button($type, $value, null, $attribs);   
          default:
             return '';
