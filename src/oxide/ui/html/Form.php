@@ -501,7 +501,7 @@ class Form extends Element {
     * @param Control $control
     * @param ArrayString $buffer Holds the current rendrered buffer for the control
     */
-   public function onControlRender(Control $control, ArrayString $buffer) {
+   public function onControlRender(Control $control) {
 		$name          = $control->getName();      
       $value         = $this->getValue($name);
 		$validation    = $this->getValidationProcessor();
