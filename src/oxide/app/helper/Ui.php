@@ -380,6 +380,12 @@ class Ui extends Html {
       }
    }
    
+   /**
+    * Render a form Control element
+    * 
+    * @param Control $control
+    * @return string
+    */
    public function formControlElement(Control $control) {
       $tag = $control->getTag();
       $name = $control->getName();
@@ -400,6 +406,11 @@ class Ui extends Html {
       }
    }
    
+   /**
+    * Render form end tag
+    * 
+    * @return string
+    */
    public function formEnd() {
       return $this->end('form');
    }
