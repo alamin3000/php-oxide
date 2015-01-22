@@ -368,8 +368,6 @@ class Ui extends Html {
          case 'input':
             $itype = ($attribs && isset($attribs['type'])) ? $attribs['type'] : 'text';
             return $this->input($itype, $name, $value, $attribs);
-         case (isset(self::$inputTypes[$type])):
-            return $this->input($type, $name, $value, $attribs);
          case 'textfield':
             return $this->textarea($name, $value, $attribs);
          case 'select':
@@ -377,8 +375,9 @@ class Ui extends Html {
          case 'button':
          case 'submit':
          case 'reset':
-            print 'here';
-            return $this->button($type, $value, null, $attribs);   
+            return $this->button($type, $value, null, $attribs);  
+         case (isset(self::$inputTypes[$type])):
+            return $this->input($type, $name, $value, $attribs);            
          default:
             return '';
       }
