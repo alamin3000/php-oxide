@@ -396,6 +396,16 @@ class Ui extends Html {
       return $this->formRowEnd();
    }
    
+   public function control($tag, $name, $value = null, $type = null, array $options = null, array $attribs = null) {
+      switch($tag) {
+         case 'input':
+            return $this->input($type, $name, $value, $attribs);
+            break;
+         case (isset(self::$inputTypes[$tag])):
+            $this->input($tag, $name, $value, $attribs);
+      }
+   }
+   
    public function formControlElement(\oxide\ui\html\Control $control) {
       
    }
@@ -444,31 +454,40 @@ class Ui extends Html {
       $form->getSuccessTag()->class = 'alert alert-success';
       
       
-//      $callback = function(\oxide\ui\html\Control $control) {
-//         $this->formRowStart();
-//         echo $this->label($control->getLabel(), $control->getName(), [])
-//         
-//         return $this->formRowEnd();
-//      };
-      
-      
-      $form->controlPreparedCallback(function(Control $control) {
-         $control->class = 'form-control col-sm-10';
-         $control->getLabelTag()->class = 'control-label col-sm-2';
-         $info = $control->getInfoTag();
-         $info->class = 'help-block';
-         $error = $control->getErrorTag();
-         $error->setTag('div');
-         $error->class = 'alert alert-danger';
-         if($control instanceof ButtonControl) {
-            $control->class = 'btn btn-primary';
-         }
+      $callback = function(Control $control) {
+         $this->formRowStart();
+         echo $this->label($control->getLabel(), $control->getName());
+         $attribs = $control->getAttributes();
+         if($attribs['class']) $attribs['class'] .= 'form-control';
+         echo $this->tag($control->getTag(), $control->getInners(), $attribs);
          
-         $control->getWrapperTag()->class = 'form-group form-group-sm';
-         if($control->getError()) {
-            $control->getWrapperTag()->class .= ' has-error';
-         }
-      });
+         
+         
+         return $this->formRowEnd();
+      };
+      
+      foreach($form->getControls() as $control) {
+         $control->rendererCallback($callback);
+      }
+      
+      
+//      $form->controlPreparedCallback(function(Control $control) {
+//         $control->class = 'form-control col-sm-10';
+//         $control->getLabelTag()->class = 'control-label col-sm-2';
+//         $info = $control->getInfoTag();
+//         $info->class = 'help-block';
+//         $error = $control->getErrorTag();
+//         $error->setTag('div');
+//         $error->class = 'alert alert-danger';
+//         if($control instanceof ButtonControl) {
+//            $control->class = 'btn btn-primary';
+//         }
+//         
+//         $control->getWrapperTag()->class = 'form-group form-group-sm';
+//         if($control->getError()) {
+//            $control->getWrapperTag()->class .= ' has-error';
+//         }
+//      });
                
       if($style == self::FORM_INLINE) {
          $form->class = 'form-inline';

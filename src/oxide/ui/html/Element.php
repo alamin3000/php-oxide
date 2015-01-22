@@ -33,6 +33,10 @@ class Element
       }
    }
    
+   public function &getInners() {
+      return $this->_t_array_storage;
+   }
+   
    /**
     * Set the content for the element
     * 
