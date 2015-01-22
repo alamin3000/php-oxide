@@ -4,10 +4,20 @@ use oxide\ui\Renderer;
 
 
 class Tag implements Renderer {
-   use \oxide\base\pattern\PropertyAccessTrait;
+   public 
+      /**
+       * @var bool Indicates if the tag is void tag or not
+       */
+      $void = false,
+           
+      /**
+       * @var array Tag's attribute array
+       */
+      $attributes = [];
+   
    protected 
-      $_tag,
-      $_void = false;
+      $_wrappers = null,
+      $_tag;
    
    /**
     * Create a new Html $tag
@@ -32,6 +42,19 @@ class Tag implements Renderer {
    }
    
    /**
+    * Add wrapper tags for this tag
+    * 
+    * These wrappers will be wrapped at the end of rendering
+    * @param array $tags
+    * @return type
+    */
+   public function wrappers(array $tags = null) {
+      if($tags) $this->_wrappers = $tags;
+      else return $this->_wrappers;
+   }
+   
+   /**
+    * Set the $tag name
     * 
     * @param type $tag
     */
@@ -49,14 +72,45 @@ class Tag implements Renderer {
    }
    
    /**
-    * Get the internal attributes array
+    * Get attribute by $key
     * 
-    * This will return the pointer to the array
-    * So changes to the return value will be reflected.
-    * @return array
+    * If not found, $default value will be return
+    * @param type $key
+    * @param type $default
+    * @return type
     */
-   public function &getAttributes() {
-      return $this->_t_property_storage;
+   public function getAttr($key, $default = null) {
+      if(isset($this->attributes[$key])) return $this->attributes[$key];
+      else return $default;
+   }
+   
+   /**
+    * Set an attribute by the $key name
+    * 
+    * @param type $key
+    * @param type $value
+    */
+   public function setAttr($key, $value = null) {
+      $this->attributes[$key] = $value;
+   }
+   
+   /**
+    * remove the given attribute $key
+    * 
+    * @param string $key
+    */
+   public function removeAttr($key) {
+      if(isset($this->attributes[$key])) unset($this->attributes[$key]);
+   }
+   
+   /**
+    * Checks if given attribute exits
+    * 
+    * @param string $key
+    * @return bool
+    */
+   public function hasAttr($key) {
+      return isset($this->attributes[$key]);
    }
    
    /**
@@ -98,10 +152,17 @@ class Tag implements Renderer {
     * @return string
     */
    public function renderOpen() {
+      $str = '';
+      if($this->_wrappers) {
+         foreach($this->_wrappers as $wrapper) {
+            $str .= $wrapper->renderOpen();
+         }
+      }
       if($this->_void) $close = ' /';
       else $close = '';
       
-      return '<'. $this->_tag . $this->attributeString($this->_t_property_storage) . $close . '>';
+      $str = '<'. $this->_tag . $this->attributeString($this->_t_property_storage) . $close . '>';
+      return $str;
    }
    
    /**
@@ -109,6 +170,12 @@ class Tag implements Renderer {
     * @return string
     */
    public function renderClose() {
+      $str = '';
+      if($this->_wrappers) {
+         foreach($this->_wrappers as $wrapper) {
+            $str .= $wrapper->renderClose();
+         }
+      }
       if($this->_void) return '';
       return "</{$this->_tag}>";
    }
