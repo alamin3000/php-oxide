@@ -232,14 +232,13 @@ class Ui extends Html {
     * @param type $size
     * @return type
     */
-   public function button($type, $text, $style = null, $size = null, array $attribs = null) {
+   public function button($type, $value, $text, $style = null, $size = null, array $attribs = null) {
       $cls_size = $this->_class_size($size, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
-
-      $attr = [
-          'type' => $type,
-          'class' => "btn {$cls_size} {$cls_style}"
-      ];
+      if(!$attribs) $attribs = [];
+      $attr['type'] = $type;
+      $attr['class'] = "btn {$cls_size} {$cls_style}";
+      $attr['value'] = $value;
           
       return $this->tag('button', $text,$attr);
    }
@@ -363,7 +362,7 @@ class Ui extends Html {
     * @param array $attribs
     * @return string
     */
-   public function control($type, $name, $value = null, array $options = null, array $attribs = null) {
+   public function control($type, $name, $value = null, $inner = null, array $options = null, array $attribs = null) {
       switch($type) {
          case 'input':
             $itype = ($attribs && isset($attribs['type'])) ? $attribs['type'] : 'text';
@@ -375,7 +374,7 @@ class Ui extends Html {
          case 'button':
          case 'submit':
          case 'reset':
-            return $this->button($type, $value, null, $attribs);  
+            return $this->button($type, $value, $inner, $attribs);  
          case (isset(self::$inputTypes[$type])):
             return $this->input($type, $name, $value, $attribs);            
          default:
@@ -383,8 +382,23 @@ class Ui extends Html {
       }
    }
    
-   public function formControlElement(\oxide\ui\html\Control $control) {
-      
+   public function formControlElement(Control $control) {
+      $tag = $control->getTag();
+      $name = $control->getName();
+      $value = $control->getValue();
+      $attributes = $control->getAttributes();
+      $inner = $control->getHtml();
+      switch($tag) {
+         case 'input':
+            return $this->input($type, $name, $value, $attributes);
+         case 'button':
+         case 'submit':
+         case 'reset':
+            $type = (isset($control->type)) ? $control->type : 'text';
+            return $this->button($type, $value, $inner);
+         case 'textfield':
+            return $this->textfield($name, $value, $attribs);
+      }
    }
    
    public function formEnd() {
@@ -432,7 +446,7 @@ class Ui extends Html {
       $callback = function(Control $control) {
          $this->formRowStart();
          echo $this->label($control->getLabel(), $control->getName());
-         echo $this->control($control->getTag(), $control->getName(), $control->getValue(), null, $control->getAttributes());
+         echo $this->formControlElement($control);
          
          
          return $this->formRowEnd();
