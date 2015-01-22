@@ -455,7 +455,9 @@ class Ui extends Html {
       $form->controlPreparedCallback(function(Control $control) {
          $control->class = 'form-control';
          $control->getLabelTag()->class = 'control-label';
-         $control->getErrorTag()->class = 'alert alert-danger';
+         $error = $control->getErrorTag();
+         $error->setTag('div');
+         $error->class = 'alert alert-danger';
          if($control instanceof ButtonControl) {
             $control->class = 'btn btn-primary';
          }
