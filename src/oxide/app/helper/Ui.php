@@ -840,12 +840,12 @@ class Ui extends Html {
     * @param int $sm_cols number of cols small screen should take
     */
    public function gridColumnOpen($xs_cols = 12, $sm_cols = null, $md_cols = null, $lg_cols = null) {
-      $cols = 'col';
-      if($xs_cols) $cols .= ' col-xs-' . $xs_cols;
-      if($sm_cols) $cols .= ' col-sm-' . $sm_cols;
-      if($md_cols) $cols .= ' col-md-' . $md_cols;
-      if($lg_cols) $cols .= ' col-lg-' . $lg_cols;
-      $this->start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
+      $class = 'col';
+      if($xs_cols) $class .= ' col-xs-' . $xs_cols;
+      if($sm_cols) $class .= ' col-sm-' . $sm_cols;
+      if($md_cols) $class .= ' col-md-' . $md_cols;
+      if($lg_cols) $class .= ' col-lg-' . $lg_cols;
+      $this->start('div', ['class' => $class]);
    }
    
    /**
