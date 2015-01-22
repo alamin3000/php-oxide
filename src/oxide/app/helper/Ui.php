@@ -438,7 +438,7 @@ class Ui extends Html {
     * @param Form $form
     * @return Form
     */
-   public function formElement(html\Form $form, $style = null, $size = null) {
+   public function formElement(Form $form, $style = null, $size = null) {
       
       $form->getErrorTag()->class = 'alert alert-danger';
       $form->getSuccessTag()->class = 'alert alert-success';
@@ -452,7 +452,7 @@ class Ui extends Html {
 //      };
       
       
-      $form->controlPreparedCallback(function(html\Control $control) {
+      $form->controlPreparedCallback(function(Control $control) {
          $control->class = 'form-control';
          $control->getLabelTag()->class = 'control-label';
          $control->getErrorTag()->class = 'alert alert-danger';
