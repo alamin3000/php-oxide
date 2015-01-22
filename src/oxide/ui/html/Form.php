@@ -28,6 +28,7 @@ class Form extends Element {
       $_values = null,
       $_processedValues = null,
       $_processed = false,
+      $_controlPreparedCallback = null,
 		$_errorMessage = 'Form validation failed.',
 		$_successMessage = 'Form submission was successful.';
 
@@ -437,6 +438,17 @@ class Form extends Element {
       return new InputControl('hidden', $this->_formid_key, $this->_formid);
    }
    
+   /**
+    * Callback that will be called after form has prepared a control
+    * 
+    * @param \Closure $callback
+    * @return \Closure
+    */
+   public function controlPreparedCallback(\Closure $callback = null) {
+      if($callback) $this->_controlPreparedCallback = $callback;
+      else return $this->_controlPreparedCallback;
+   }
+   
    
    /**
     * render for header
@@ -518,6 +530,9 @@ class Form extends Element {
       if($value !== null) {
          $control->setValue($value); // setting the form submitted value
       }
+      
+      $callback = $this->controlPreparedCallback();
+      if($callback) $callback($control, $this);
    }
     
    protected function onPreProcess(validation\Result $result) {}

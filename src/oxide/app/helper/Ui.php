@@ -4,6 +4,8 @@ use oxide\ui\html\Form;
 use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
 use oxide\util\ArrayString;
+use oxide\ui\html;
+
 
 class Ui extends Html {
    
@@ -436,15 +438,24 @@ class Ui extends Html {
     * @param Form $form
     * @return Form
     */
-   public function formElement(Form $form, $style = null, $size = null) {
+   public function formElement(html\Form $form, $style = null, $size = null) {
       
       $form->getErrorTag()->class = 'alert alert-danger';
       $form->getSuccessTag()->class = 'alert alert-success';
-      foreach($form->getControls() as $control) {
+      
+      
+//      $callback = function(\oxide\ui\html\Control $control) {
+//         $this->formRowStart();
+//         echo $this->label($control->getLabel(), $control->getName(), [])
+//         
+//         return $this->formRowEnd();
+//      };
+      
+      
+      $form->controlPreparedCallback(function(html\Control $control) {
          $control->class = 'form-control';
          $control->getLabelTag()->class = 'control-label';
          $control->getErrorTag()->class = 'alert alert-danger';
-         $control->getInfoTag()->class = 'alert alert-success';
          if($control instanceof ButtonControl) {
             $control->class = 'btn btn-primary';
          }
@@ -453,7 +464,7 @@ class Ui extends Html {
          if($control->getError()) {
             $control->getWrapperTag()->class .= ' has-error';
          }
-      }
+      });
                
       if($style == self::FORM_INLINE) {
          $form->class = 'form-inline';
