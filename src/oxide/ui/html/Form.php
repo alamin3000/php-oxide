@@ -447,25 +447,27 @@ class Form extends Element {
 	public function renderFormHeader() {            
 		$result = $this->getResult();
       if($this->isProcessed()) {
-         $p = new Element('p');
+         $header = $this->getHeaderElement();
          if(!$result->isValid()) {
             $strong = new Tag('strong');
-            $p[] = $strong->renderWithContent($this->_errorMessage);
+            $header[] = $strong->renderWithContent($this->_errorMessage);
             if($result->hasError($this->getId())) {
-               $p[] = new Tag('br');
-               $p[] = $strong->renderWithContent($result->getErrorString($this->getId()));
+               $header[] = new Tag('br');
+               $header[] = $strong->renderWithContent($result->getErrorString($this->getId()));
             } else {
                
             }
          } else { // for submission success
             $b = new Tag('b');
-            $p[] = $b->renderWithContent($this->_successMessage);
+            $header[] = $b->renderWithContent($this->_successMessage);
          }
          
-         return $p->render();
+         return $header->render();
+      } else {
+         if($this->_headerElement) return $this->_headerElement->render ();
+         else return '';
       }
-      
-      return '';
+
 	}
 
    /**
@@ -477,10 +479,13 @@ class Form extends Element {
 	public function renderFormFooter() {
 		$validator = $this->getValidationProcessor();
 		if($validator->isRequired()) {
-         $this->footerElement[] = self::renderTag('small', '* Indicates required field(s).');
-		}
-      
-      return $this->footerElement->render();
+         $footer = $this->getFooterElement();
+         $footer[] = self::renderTag('small', '* Indicates required field(s).');
+         return $footer->render();
+		} else {
+         if($this->_footerElement) return $this->_footerElement->render ();
+         else return '';
+      }
 	}
    
 	/**
