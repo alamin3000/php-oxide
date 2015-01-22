@@ -437,23 +437,21 @@ class Ui extends Html {
     * @return Form
     */
    public function formElement(Form $form, $style = null, $size = null) {
-      $form->errorTag->setTag('div');
-      $form->errorTag->class = 'alert alert-danger';
-      $form->successTag->setTag('div');
-      $form->successTag->class = 'alert alert-success';
-      $form->registerRenderCallbacks(function(Form $form, ArrayString $buffer) {
-         foreach($form->getControls() as $control) {
-            if(!$control instanceof Fieldset) {
-               $control->class = 'form-control';
-               $control->getLabelTag()->class = 'control-label';
-            }
+      
+      $form->getErrorTag()->class = 'alert alert-danger';
+      $form->getSuccessTag()->class = 'alert alert-success';
+      foreach($form->getControls() as $control) {
+         if(!$control instanceof Fieldset) {
+            $control->class = 'form-control';
+            $control->getLabelTag()->class = 'control-label';
+         }
 
-            if($control instanceof ButtonControl) {
-               $control->class = 'btn btn-primary';
-            }
+         if($control instanceof ButtonControl) {
+            $control->class = 'btn btn-primary';
          }
          
-      });
+         $control->getWrapperTag()->class = 'form-group form-group-sm';
+      }
                
       if($style == self::FORM_INLINE) {
          $form->class = 'form-inline';
@@ -461,8 +459,6 @@ class Ui extends Html {
          $form->class = 'form-horizontal';
       }
       
-      $form->controlWrapperTag->setTag('div');
-      $form->controlWrapperTag->class = 'form-group form-group-sm';
       return $form->render();
    }
    
