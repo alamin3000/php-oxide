@@ -76,6 +76,7 @@ class Element
       if($callable) $this->_rendererCallback = $callable;
       else return $this->_rendererCallback;
    }
+   
    /**
     * renders the html tag
     *
@@ -87,6 +88,12 @@ class Element
     */
    public function render() {
       try {
+         $this->onRender();
+         if($this->_rendererCallback) {
+            $renderer = $this->_rendererCallback;
+            return $renderer($this);
+         }
+         
          $buffer = new ArrayString();
          $this->onPreRender($buffer);
          $buffer[] = $this->renderOpen();
@@ -143,6 +150,7 @@ class Element
       }
    }   
    
+   protected function onRender() {}
    protected function onInnerRender(ArrayString $buffer) {}
    protected function onPreRender(ArrayString $buffer) { }
    protected function onPostRender(ArrayString $buffer) {}

@@ -5,13 +5,7 @@ namespace oxide\ui\html;
  * HTML file control class
  * 
  */
-class FileControl extends InputControl {
-   protected 
-      /**
-       * @var Element Holds internal element for managing file info
-       */
-      $_fileInfoElement = null;
-   
+class FileControl extends InputControl {   
    /**
     * 
     * @param type $name
@@ -21,19 +15,9 @@ class FileControl extends InputControl {
     */
    public function __construct($name, $value = null, $label = null, $attrbs = null) {
       parent::__construct('file', $name, $value, $label, $attrbs);
-      $this->_fileInfoElement = new Element('span', basename($value));
+      $this->_info = basename($value);
    }
-   
-   
-   /**
-    * get the internal file info element
-    * @return Element
-    */
-   public function getFileInfoElement() {
-      return $this->_fileInfoElement;
-   }
-   
-   
+      
    /**
     * 
     * @param type $value
@@ -64,14 +48,5 @@ class FileControl extends InputControl {
          // we will also need to modify form attribute
          $form->enctype="multipart/form-data";
       }
-   }
-   
-   /**
-    * 
-    * @param \oxide\util\ArrayString $buffer
-    */
-   protected function onPreRender(\oxide\util\ArrayString $buffer) {
-      parent::onPreRender($buffer);
-      $this->addInner($this->_fileInfoElement);
    }
 }

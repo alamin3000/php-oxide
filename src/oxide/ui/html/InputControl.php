@@ -35,7 +35,6 @@ class InputControl extends Control {
 	 * @param array $attrbs
 	 */
 	public function __construct($type, $name, $value = null, $label = null,  $attrbs = null) {
-		// call controller constructor
 		parent::__construct('input', $name, $value, $label,  $attrbs);
 		
 		// setup input type

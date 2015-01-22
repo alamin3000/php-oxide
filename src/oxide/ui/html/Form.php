@@ -154,7 +154,7 @@ class Form extends Element {
       if($message) $this->_errorMessage = $message;
       else return $this->_errorMessage;
    }
-   
+      
    /**
 	 * generate unique form id
     *
@@ -477,15 +477,8 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormFooter() {
-		$validator = $this->getValidationProcessor();
-		if($validator->isRequired()) {
-         $footer = $this->getFooterElement();
-         $footer[] = self::renderTag('small', '* Indicates required field(s).');
-         return $footer->render();
-		} else {
-         if($this->_footerElement) return $this->_footerElement->render ();
-         else return '';
-      }
+      if($this->_footerElement) return $this->_footerElement->render ();
+      else return '';
 	}
    
 	/**

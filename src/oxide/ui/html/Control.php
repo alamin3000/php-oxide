@@ -224,7 +224,7 @@ class Control extends Element {
     * @param \oxide\util\ArrayString $buffer
     * @return boolean
     */
-   protected function onPreRender(ArrayString $buffer) {
+   protected function onRender(ArrayString $buffer) {
       if($this->_form) {
          // we have the control inside a form
          // we will need to inform the form about rendering
