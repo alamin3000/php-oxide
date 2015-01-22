@@ -16,7 +16,7 @@ class ButtonControl extends Control {
 	 * @param string $label
 	 * @param array $attrbs
 	 */
-	public function __construct($type, $name, $value = null, $html = null,  $attrbs = null) {
+	public function __construct($type, $name, $value = null, $html = null, array $attrbs = null) {
 		parent::__construct('button', $name, $value, null,  $attrbs);
       $this->type = $type;
       $this->setValue($value);
