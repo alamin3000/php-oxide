@@ -396,13 +396,16 @@ class Ui extends Html {
       return $this->formRowEnd();
    }
    
-   public function control($tag, $name, $value = null, $type = null, array $options = null, array $attribs = null) {
-      switch($tag) {
+   public function control($type, $name, $value = null, array $options = null, array $attribs = null) {
+      switch($type) {
          case 'input':
+            $itype = ($attribs && isset($attribs['type'])) ? $attribs['type'] : 'text';
+            return $this->input($itype, $name, $value, $attribs);
+         case (isset(self::$inputTypes[$type])):
             return $this->input($type, $name, $value, $attribs);
-            break;
-         case (isset(self::$inputTypes[$tag])):
-            $this->input($tag, $name, $value, $attribs);
+         
+         default:
+            return '';
       }
    }
    
@@ -449,18 +452,13 @@ class Ui extends Html {
     * @return Form
     */
    public function formElement(Form $form, $style = null, $size = null) {
-      
       $form->getErrorTag()->class = 'alert alert-danger';
       $form->getSuccessTag()->class = 'alert alert-success';
-      
       
       $callback = function(Control $control) {
          $this->formRowStart();
          echo $this->label($control->getLabel(), $control->getName());
-         $attribs = $control->getAttributes();
-         if($attribs['class']) $attribs['class'] .= 'form-control';
-         echo $this->tag($control->getTag(), $control->getInners(), $attribs);
-         
+         echo $this->control($control->getTag(), $control->getName(), $control->getValue(), null, $control->getAttributes());
          
          
          return $this->formRowEnd();
