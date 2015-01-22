@@ -225,12 +225,12 @@ class Html {
     * @param type $attribs
     * @return type
     */
-   public function button($type, $name, $value = null, $attribs = null) {
+   public function button($type, $name, $text = null, array $attribs = null) {
       if(!$attribs) $attribs = [];
       $attribs['name'] = $name;
       $attribs['type'] = $type;
       if($value) $attribs['value'] = $value;
-      return $this->tag('button',  $attribs);
+      return $this->tag('button', $text, $attribs);
 	}
    
    /**
@@ -241,7 +241,7 @@ class Html {
     * @param array $attribs
     * @return type
     */
-   public function textarea($name, $value = null,  $attribs = null) {
+   public function textarea($name, $value = null,  array $attribs = null) {
       if(!$attribs) $attribs = [];
       $attrib['name'] = $name;
       return $this->tag('textarea', $value, $attrib);

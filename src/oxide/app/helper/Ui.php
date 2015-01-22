@@ -225,22 +225,20 @@ class Ui extends Html {
    
    /**
     * Render a button
-    * 
     * @param type $type
     * @param type $text
     * @param type $style
     * @param type $size
     * @return type
     */
-   public function button($type, $value, $text, $style = null, $size = null, array $attribs = null) {
+   public function button($type, $name, $text = null, array $attribs = null, $style = null, $size = null) {
       $cls_size = $this->_class_size($size, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
       if(!$attribs) $attribs = [];
-      $attr['type'] = $type;
-      $attr['class'] = "btn {$cls_size} {$cls_style}";
-      $attr['value'] = $value;
-          
-      return $this->tag('button', $text,$attr);
+      $attribs['name'] = $name;
+      $attribs['type'] = $type;
+      $attribs['class'] = "btn {$cls_size} {$cls_style}";
+      return $this->tag('button', $text, $attribs);
    }
    
    /**
@@ -374,7 +372,7 @@ class Ui extends Html {
          case 'button':
          case 'submit':
          case 'reset':
-            return $this->button($type, $value, $inner, $attribs);  
+            return $this->button($type, $name, $value, $inner, $attribs);  
          case (isset(self::$inputTypes[$type])):
             return $this->input($type, $name, $value, $attribs);            
          default:
