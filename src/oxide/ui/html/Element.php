@@ -54,7 +54,7 @@ class Element
     * @return string
     */
    public function getHtml() {
-      $this->renderInner();
+      return $this->renderInner();
    }
    
    /**
