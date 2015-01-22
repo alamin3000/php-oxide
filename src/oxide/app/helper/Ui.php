@@ -443,10 +443,21 @@ class Ui extends Html {
       $form->getSuccessTag()->class = 'alert alert-success';
       
       $callback = function(Control $control) {
+         $error = $control->getError();
          $this->formRowStart();
+         echo $this->gridColumnOpen(12, 2);
          echo $this->label($control->getLabel(), $control->getName());
+         echo $this->gridColumnClose();
+         echo $this->gridColumnOpen(12, 10);
          echo $this->formControlElement($control);
+         if($control->getInfo()) {
+            echo $this->tag('span', $control->getInfo(), ['class'=>'help-block']);
+         }
          
+         if($error) {
+            echo $this->alert($error, self::STYLE_ERROR);
+         }
+         echo $this->gridColumnClose();
          
          return $this->formRowEnd();
       };
@@ -828,7 +839,12 @@ class Ui extends Html {
     * @param int $md_cols number of cols medium screeen should take
     * @param int $sm_cols number of cols small screen should take
     */
-   public function gridColumnOpen($lg_cols, $md_cols, $sm_cols = 1) {
+   public function gridColumnOpen($xs_cols = 12, $sm_cols = null, $md_cols = null, $lg_cols = null) {
+      $cols = 'col';
+      if($xs_cols) $cols .= ' col-xs-' . $xs_cols;
+      if($sm_cols) $cols .= ' col-sm-' . $sm_cols;
+      if($md_cols) $cols .= ' col-md-' . $md_cols;
+      if($lg_cols) $cols .= ' col-lg-' . $lg_cols;
       $this->start('div', ['class' => "col col-lg-{$lg_cols} col-md-{$md_cols} col-sm-{$sm_cols}"]);
    }
    
@@ -872,7 +888,7 @@ class Ui extends Html {
     * @param boolean $allowdismiss
     * @return string
     */
-   public function message($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
+   public function alert($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
       $cls = 'alert';
       $cls .= ' ' . $this->_class_style($style, 'alert');
       return $this->tag('div', $message, ['class' => "{$cls}", 'role' => 'alert']);
