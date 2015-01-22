@@ -238,7 +238,6 @@ class Ui extends Html {
       $attribs['name'] = $name;
       $attribs['type'] = $type;
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
-      var_dump($text);
       return $this->tag('button', $text, $attribs);
    }
    
@@ -401,7 +400,6 @@ class Ui extends Html {
          case 'submit':
          case 'reset':
             $type = (isset($control->type)) ? $control->type : 'text';
-            print $inner . '...<br/>';
             return $this->button($type, $name, $inner, $attributes);
          case 'textfield':
             return $this->textfield($name, $value, $attributes);
