@@ -4,7 +4,7 @@ use oxide\ui\html\Form;
 use oxide\ui\html\Fieldset;
 use oxide\ui\html\ButtonControl;
 use oxide\util\ArrayString;
-use oxide\ui\html;
+use oxide\ui\html\Control;
 
 
 class Ui extends Html {
@@ -516,7 +516,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public static function navList($items, $style = null, $activeUrl = null) {
+   public static function navigationList($items, $style = null, $activeUrl = null) {
       $this->start('div', ['class' => 'list-group']);
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
@@ -548,7 +548,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function navBar($items, $active = null, $style = null) {
+   public function navigationBar($items, $active = null, $style = null) {
       $cls = ['nav'];
       if($style & self::NAV_NAVBAR) $cls[] = 'navbar-nav';
       else if($style & self::NAV_PILLS) $cls[] = 'nav-pills';
@@ -867,7 +867,6 @@ class Ui extends Html {
    public function message($message, $style = self::STYLE_ALERT, $allowdismiss = false) {
       $cls = 'alert';
       $cls .= ' ' . $this->_class_style($style, 'alert');
-
       return $this->tag('div', $message, ['class' => "{$cls}", 'role' => 'alert']);
    }
 }
