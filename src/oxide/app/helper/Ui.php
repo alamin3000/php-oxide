@@ -441,16 +441,18 @@ class Ui extends Html {
       $form->getErrorTag()->class = 'alert alert-danger';
       $form->getSuccessTag()->class = 'alert alert-success';
       foreach($form->getControls() as $control) {
-         if(!$control instanceof Fieldset) {
-            $control->class = 'form-control';
-            $control->getLabelTag()->class = 'control-label';
-         }
-
+         $control->class = 'form-control';
+         $control->getLabelTag()->class = 'control-label';
+         $control->getErrorTag()->class = 'alert alert-danger';
+         $control->getInfoTag()->class = 'alert alert-success';
          if($control instanceof ButtonControl) {
             $control->class = 'btn btn-primary';
          }
          
          $control->getWrapperTag()->class = 'form-group form-group-sm';
+         if($control->getError()) {
+            $control->getWrapperTag()->class .= ' has-error';
+         }
       }
                
       if($style == self::FORM_INLINE) {
