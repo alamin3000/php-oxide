@@ -455,6 +455,8 @@ class Ui extends Html {
       $form->controlPreparedCallback(function(Control $control) {
          $control->class = 'form-control';
          $control->getLabelTag()->class = 'control-label';
+         $info = $control->getInfoTag();
+         $info->class = 'help-block';
          $error = $control->getErrorTag();
          $error->setTag('div');
          $error->class = 'alert alert-danger';
