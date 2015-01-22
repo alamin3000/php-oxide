@@ -453,48 +453,48 @@ class Ui extends Html {
       $form->getErrorTag()->class = 'alert alert-danger';
       $form->getSuccessTag()->class = 'alert alert-success';
       
-      $callback = function(Control $control) {
-         $error = $control->getError();
-         $this->formRowStart();
-         echo $this->gridColumnOpen(12, 2);
-         echo $this->label($control->getLabel(), $control->getName());
-         echo $this->gridColumnClose();
-         echo $this->gridColumnOpen(12, 10);
-         echo $this->formControlElement($control);
-         if($control->getInfo()) {
-            echo $this->tag('span', $control->getInfo(), ['class'=>'help-block']);
-         }
-         
-         if($error) {
-            echo $this->alert($error, self::STYLE_ERROR);
-         }
-         echo $this->gridColumnClose();
-         
-         return $this->formRowEnd();
-      };
-      
-      foreach($form->getControls() as $control) {
-         $control->rendererCallback($callback);
-      }
-      
-      
-//      $form->controlPreparedCallback(function(Control $control) {
-//         $control->class = 'form-control col-sm-10';
-//         $control->getLabelTag()->class = 'control-label col-sm-2';
-//         $info = $control->getInfoTag();
-//         $info->class = 'help-block';
-//         $error = $control->getErrorTag();
-//         $error->setTag('div');
-//         $error->class = 'alert alert-danger';
-//         if($control instanceof ButtonControl) {
-//            $control->class = 'btn btn-primary';
+//      $callback = function(Control $control) {
+//         $error = $control->getError();
+//         $this->formRowStart();
+//         echo $this->gridColumnOpen(12, 2);
+//         echo $this->label($control->getLabel(), $control->getName());
+//         echo $this->gridColumnClose();
+//         echo $this->gridColumnOpen(12, 10);
+//         echo $this->formControlElement($control);
+//         if($control->getInfo()) {
+//            echo $this->tag('span', $control->getInfo(), ['class'=>'help-block']);
 //         }
 //         
-//         $control->getWrapperTag()->class = 'form-group form-group-sm';
-//         if($control->getError()) {
-//            $control->getWrapperTag()->class .= ' has-error';
+//         if($error) {
+//            echo $this->alert($error, self::STYLE_ERROR);
 //         }
-//      });
+//         echo $this->gridColumnClose();
+//         
+//         return $this->formRowEnd();
+//      };
+//      
+//      foreach($form->getControls() as $control) {
+//         $control->rendererCallback($callback);
+//      }
+      
+      
+      $form->controlPreparedCallback(function(Control $control) {
+         $control->class = 'form-control col-sm-10';
+         $control->getLabelTag()->class = 'control-label col-sm-2';
+         $info = $control->getInfoTag();
+         $info->class = 'help-block';
+         $error = $control->getErrorTag();
+         $error->setTag('div');
+         $error->class = 'alert alert-danger';
+         if($control instanceof ButtonControl) {
+            $control->class = 'btn btn-primary';
+         }
+         
+         $control->getWrapperTag()->class = 'form-group form-group-sm';
+         if($control->getError()) {
+            $control->getWrapperTag()->class .= ' has-error';
+         }
+      });
                
       if($style == self::FORM_INLINE) {
          $form->class = 'form-inline';
