@@ -15,9 +15,20 @@ class Tag implements Renderer {
     * @param string $tag
     * @param array $attributes
     */
-   public function __construct($tag = null, $attributes = null) {
+   public function __construct($tag = null, $attributes = null, $void = false) {
       if($tag) $this->_tag = $tag;
       if($attributes) $this->_t_property_storage = $attributes;
+      if($void) $this->_void = $void;
+   }
+   
+   /**
+    * Indicates if the tag is voided
+    * @param bool $bool
+    * @return bool
+    */
+   public function void($bool = null) {
+      if($bool === null) return $this->_void;
+      else $this->_void = (bool) $bool;
    }
    
    /**

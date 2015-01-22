@@ -16,34 +16,11 @@ use oxide\util\ArrayString;
  */
 class Form extends Element {
    use ControlAccessTrait;
-   
-   public
-      /**
-       * @var Tag Tag that will be used to wrap a control
-       */
-      $controlWrapperTag = null,
-           
-      /**
-       * @var Tag Tag that will be used to wrap an error message;
-       */
-      $errorTag = null,
-           
-      /**
-       * @var Tag Tag taht will be used to wrap success message
-       */
-      $successTag = null,
-           
-      /**
-       * @var Element Element for holding header contents
-       */
-      $headerElement = null,
-           
-      /**
-       * @var Element Element for holding footer contents
-       */
-      $footerElement = null;
-            
    protected
+      $_errorTag = null,
+      $_successTag = null,
+      $_headerElement = null,
+      $_footerElement = null,
       $_controlRefs = [],
       $_method = null,
       $_action = null,
@@ -51,7 +28,7 @@ class Form extends Element {
       $_values = null,
       $_processedValues = null,
       $_processed = false,
-		$_errorMessage = 'Form validation failed.  Please review the form below and resubmit it.',
+		$_errorMessage = 'Form validation failed.',
 		$_successMessage = 'Form submission was successful.';
 
 	static protected
@@ -83,37 +60,96 @@ class Form extends Element {
     */
 	public function __construct($method = self::METHOD_POST, $action = null, $name = null, $attrib = []) {
       self::$_counter++;
+      parent::__construct('form', null, $attrib);
       if(!$action) $action = filter_input(INPUT_SERVER, 'REQUEST_URI');
       if(!$name) $name = "_form-" . self::$_counter;
-      $attrib['action'] = $action;
-      $attrib['method'] = $method = \strtolower($method);      
-      $attrib['name'] = $name;
-      $attrib['id'] = $name;
-      parent::__construct('form', null, $attrib);
-      
       if($method == self::METHOD_POST) $values = filter_input_array(INPUT_POST);
       else if($method == self::METHOD_GET) $values = filter_input_array(INPUT_GET);
       else throw new \Exception('Unknown Form method : '. $method);
       if($_FILES) $values = array_merge($values, $_FILES);
-      
-      $this->footerElement = new Element('footer');
-      $this->headerElement = new Element('header');
-      $this->errorTag = new Tag('strong');
-      $this->successTag = new Tag('b');
-      $this->controlWrapperTag = new Tag('div');
-      
-      $this->_method = $method;
-		$this->_action = $action;      
+            
+      $this->name = $name;
+      $this->id = $name;
+      $this->_method = $this->method = $method;
+		$this->_action = $this->action = $action;      
       $this->_values = $values;    // store the raw values
 		$this->_generateSubmitId($name);   // generating a unique id for the form
       $this->addControl($this->getIdentifierControl());
 	}
    
+   /**
+    * Get the Error rendering tag
+    * 
+    * @return Tag
+    */
+   public function getErrorTag() {
+      if($this->_errorTag == null) {
+         $this->_errorTag = new Tag('strong');
+      }
+
+      return $this->_errorTag;
+   }
+   
+   /**
+    * Get the success tag
+    * 
+    * @return Tag
+    */
+   public function getSuccessTag() {
+      if($this->_successTag == null) {
+         $this->_successTag = new Tag('b');
+      }
+      
+      return $this->_successTag;
+   }
+   
+   /**
+    * Header element.
+    * 
+    * Initially the element's tag is set to 'p'.
+    * @return Element
+    */
+   public function getHeaderElement() {
+      if($this->_headerElement == null) {
+         $this->_headerElement = new Element('p');
+      }
+      
+      return $this->_headerElement;
+   }
+   
+   /**
+    * Footer Element
+    * 
+    * Initially elements tag is set to 'p'
+    * @return Element
+    */
+   public function getFooterElement() {
+      if($this->_footerElement == null) {
+         $this->_footerElement = new Element('p');
+      }
+      
+      return $this->_footerElement;
+   }
+   
+   /**
+    * Set the success message for the form
+    * 
+    * This message will be displayed after form is submitted and successfully processed.
+    * @param string $message
+    * @return string|null
+    */
    public function successMessage($message = null) {
       if($message) $this->_successMessage = $message;
       else return $this->_successMessage;
    }
    
+   /**
+    * Set the error message for the form
+    * 
+    * This message will be displayed after for is submitted and validation error occured.
+    * @param string $message
+    * @return null|string
+    */
    public function errorMessage($message = null) {
       if($message) $this->_errorMessage = $message;
       else return $this->_errorMessage;
@@ -240,7 +276,7 @@ class Form extends Element {
       if($this->isSubmitted()) {
          $key = $this->_values[$this->_formid_key];
       }
-		$this->_values = array();
+		$this->_values = [];
    }
    
    /**
@@ -414,17 +450,16 @@ class Form extends Element {
          $p = new Element('p');
          if(!$result->isValid()) {
             $strong = new Tag('strong');
+            $p[] = $strong->renderWithContent($this->_errorMessage);
             if($result->hasError($this->getId())) {
-               $strong[] = $result->getErrorString($this->getId());
+               $p[] = new Tag('br');
+               $p[] = $strong->renderWithContent($result->getErrorString($this->getId()));
             } else {
-               $strong[] = $this->_submitErrorMessage;
+               
             }
-            
-            $p[] = $strong;
          } else { // for submission success
             $b = new Tag('b');
-            $b[] = $this->_submitSuccessMessage;
-            $p[] = $b;
+            $p[] = $b->renderWithContent($this->_successMessage);
          }
          
          return $p->render();
@@ -442,10 +477,10 @@ class Form extends Element {
 	public function renderFormFooter() {
 		$validator = $this->getValidationProcessor();
 		if($validator->isRequired()) {
-         $p = self::renderTag('p', self::renderTag('small', '* Indicates required field(s).'));
-         $this->footerElement[] = $p;
-         return $this->footerElement->render();
+         $this->footerElement[] = self::renderTag('small', '* Indicates required field(s).');
 		}
+      
+      return $this->footerElement->render();
 	}
    
 	/**
