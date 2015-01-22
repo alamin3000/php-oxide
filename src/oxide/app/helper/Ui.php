@@ -390,6 +390,7 @@ class Ui extends Html {
       $inner = $control->getHtml();
       switch($tag) {
          case 'input':
+            $type = (isset($control->type)) ? $control->type : 'text';
             return $this->input($type, $name, $value, $attributes);
          case 'button':
          case 'submit':
