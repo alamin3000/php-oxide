@@ -8,16 +8,11 @@ class Tag implements Renderer {
       /**
        * @var bool Indicates if the tag is void tag or not
        */
-      $void = false,
-           
-      /**
-       * @var array Tag's attribute array
-       */
-      $attributes = [];
+      $void = false;
    
    protected 
-      $_wrappers = null,
-      $_tag;
+      $_attributes = [],
+      $_tag = null;
    
    /**
     * Create a new Html $tag
@@ -27,32 +22,10 @@ class Tag implements Renderer {
     */
    public function __construct($tag = null, $attributes = null, $void = false) {
       if($tag) $this->_tag = $tag;
-      if($attributes) $this->_t_property_storage = $attributes;
-      if($void) $this->_void = $void;
+      if($attributes) $this->_attributes = $attributes;
+      if($void) $this->void = $void;
    }
-   
-   /**
-    * Indicates if the tag is voided
-    * @param bool $bool
-    * @return bool
-    */
-   public function void($bool = null) {
-      if($bool === null) return $this->_void;
-      else $this->_void = (bool) $bool;
-   }
-   
-   /**
-    * Add wrapper tags for this tag
-    * 
-    * These wrappers will be wrapped at the end of rendering
-    * @param array $tags
-    * @return type
-    */
-   public function wrappers(array $tags = null) {
-      if($tags) $this->_wrappers = $tags;
-      else return $this->_wrappers;
-   }
-   
+      
    /**
     * Set the $tag name
     * 
@@ -79,8 +52,8 @@ class Tag implements Renderer {
     * @param type $default
     * @return type
     */
-   public function getAttr($key, $default = null) {
-      if(isset($this->attributes[$key])) return $this->attributes[$key];
+   public function getAttribute($key, $default = null) {
+      if(isset($this->_attributes[$key])) return $this->_attributes[$key];
       else return $default;
    }
    
@@ -90,8 +63,12 @@ class Tag implements Renderer {
     * @param type $key
     * @param type $value
     */
-   public function setAttr($key, $value = null) {
-      $this->attributes[$key] = $value;
+   public function setAttribute($key, $value = null, $appendChar = null) {
+      if($appendChar && isset($this->_attributes[$key])) {
+         $value = $this->_attributes[$key] . $appendChar . $value;
+      } else {
+         $this->_attributes[$key] = $value;
+      }
    }
    
    /**
@@ -99,8 +76,8 @@ class Tag implements Renderer {
     * 
     * @param string $key
     */
-   public function removeAttr($key) {
-      if(isset($this->attributes[$key])) unset($this->attributes[$key]);
+   public function removeAttribute($key) {
+      if(isset($this->_attributes[$key])) unset($this->_attributes[$key]);
    }
    
    /**
@@ -109,8 +86,27 @@ class Tag implements Renderer {
     * @param string $key
     * @return bool
     */
-   public function hasAttr($key) {
-      return isset($this->attributes[$key]);
+   public function hasAttribute($key) {
+      return isset($this->_attributes[$key]);
+   }
+   
+   /**
+    * Get the attribute array
+    * 
+    * @return array
+    */
+   public function getAttributes() {
+      return $this->_attributes;
+   }
+   
+   /**
+    * Sets attributes for the tag
+    * 
+    * Replaces current attributes.
+    * @param array $attrs
+    */
+   public function setAttributes(array $attrs) {
+      $this->_attributes = $attrs;
    }
    
    /**
@@ -120,16 +116,20 @@ class Tag implements Renderer {
     * @return string
     * @throws \Exception
     */
-   public function attributeString(array $attributes = null) {
-      if(empty($attributes)) return '';
+   public function attributeString() {
+      if(empty($this->_attributes)) return '';
 		
       $str = '';
-      foreach ($attributes as $key => $value) {
-         if(!empty($value) && !is_scalar($value)) {
-            trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
+      foreach ($this->_attributes as $key => $value) {
+         if($value === null) {
+            $str .= "$key ";
+         } else {
+            if(!is_scalar($value)) {
+               trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
+            }
+            $value = self::escape($value);
+            $str .= "{$key}=\"{$value}\" ";
          }
-         $value = self::escape($value);
-         $str .= "{$key}=\"{$value}\" ";
       }
       
       return ' ' . trim($str);
@@ -152,17 +152,11 @@ class Tag implements Renderer {
     * @return string
     */
    public function renderOpen() {
-      $str = '';
-      if($this->_wrappers) {
-         foreach($this->_wrappers as $wrapper) {
-            $str .= $wrapper->renderOpen();
-         }
-      }
-      if($this->_void) $close = ' /';
+      if(!$this->_tag) return '';
+      if($this->void) $close = ' /';
       else $close = '';
       
-      $str = '<'. $this->_tag . $this->attributeString($this->_t_property_storage) . $close . '>';
-      return $str;
+      return '<'. $this->_tag . $this->attributeString() . $close . '>';
    }
    
    /**
@@ -170,14 +164,9 @@ class Tag implements Renderer {
     * @return string
     */
    public function renderClose() {
-      $str = '';
-      if($this->_wrappers) {
-         foreach($this->_wrappers as $wrapper) {
-            $str .= $wrapper->renderClose();
-         }
-      }
-      if($this->_void) return '';
-      return "</{$this->_tag}>";
+      if(!$this->_tag) return '';
+      if(!$this->void) 
+         return "</{$this->_tag}>";
    }
       
    /**
@@ -195,7 +184,7 @@ class Tag implements Renderer {
     * @param type $content
     * @return type
     */
-   public function renderWithContent($content) {
+   public function renderContent($content) {
       return $this->renderOpen() .
             $content.
             $this->renderClose(); 

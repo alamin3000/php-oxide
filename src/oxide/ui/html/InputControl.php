@@ -13,18 +13,14 @@ class InputControl extends Control {
 		$_type = null;
    
    public static
-      $inputTypes = ['text' => true, 'submit' => true, 'button' => true, 'password' => true, 
-       'hidden' => true, 'radio' => true, 'image' => true, 'checkbox' => true, 'file' => true ,
-       'email' => true, 'url' => true, 'tel' => true, 'number' => true, 'range' => true, 'search' => true, 
-       'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 
-       'time' => true, 'datetime-local' => true, 'button' => true];
+      $inputTypes = [
+         'text' => true, 'submit' => true, 'button' => true, 'password' => true, 
+         'hidden' => true, 'radio' => true, 'image' => true, 'checkbox' => true, 'file' => true ,
+         'email' => true, 'url' => true, 'tel' => true, 'number' => true, 'range' => true, 'search' => true, 
+         'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 
+         'time' => true, 'datetime-local' => true, 'button' => true];
 
-
-   const 
-      TYPE_TEXT = 'text',
-      TYPE_PASSWORD = 'password';
-
-/**
+   /**
 	 * construct the input control
 	 *
 	 * $type can be one of the html INPUT type (ex. 'text', 'password', 'submit')
@@ -34,23 +30,25 @@ class InputControl extends Control {
 	 * @param string $label
 	 * @param array $attrbs
 	 */
-	public function __construct($type, $name, $value = null, $label = null,  $attrbs = null) {
-		parent::__construct('input', $name, $value, $label,  $attrbs);
-		
-		// setup input type
+	public function __construct($type, $name, $value = null, $label = null) {
 		if(isset(self::$inputTypes[$type])) {
 			$this->_type = $type;
 		} else {
 			throw new \Exception('Invalid input type provided: ' . $type);
 		}
-		
-      $this->_void = true;
-      $this->type = $type;
-      $this->setName($name);
+      
+		parent::__construct($name, $value, $label);
+      $this->setTag('input');
+      $this->void = true;
+      $this->_attributes['type'] = $type;
 	}
+   
+   public function getType() {
+      return $this->_type;
+   }
    
    public function setValue($value) {
       parent::setValue($value);
-      $this->value = $value;
+      $this->_attributes['value'] = $value;
    }
 }

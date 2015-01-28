@@ -51,6 +51,7 @@ trait ArrayAccessTrait {
     * @return mixed
     */
    public function offsetGet($offset)  {
+      $this->_t_array_access_get($offset);
       if(isset($this->_t_array_storage[$offset])) {
          return $this->_t_array_storage[$offset];
       } else {
@@ -68,6 +69,7 @@ trait ArrayAccessTrait {
     * @param mixed $value
     */
    public function offsetSet($offset , $value )  {
+      $this->_t_array_access_set($offset, $value);
       if (is_null($offset)) {
           $this->_t_array_storage[] = $value;
       } else {
@@ -82,7 +84,11 @@ trait ArrayAccessTrait {
     * @param mixed $offset
     */
    public function offsetUnset($offset) {
-      unset($this->_t_array_storage[$offset]);
+      if($this->_t_array_storage[$offset]) {
+         $value = $this->_t_array_storage[$offset];
+         $this->_t_array_access_unset($offset, $value);
+         unset($this->_t_array_storage[$offset]);
+      }
    }
    
    /**
@@ -95,4 +101,11 @@ trait ArrayAccessTrait {
    public function count($mode = 'COUNT_NORMAL') {
       return count($this->_t_array_storage, $mode);
    }
+   
+   
+   protected function _t_array_access_set($key, $value) {}
+   protected function _t_array_access_get($key) {}
+   protected function _t_array_access_unset($key, $value) {}
+      
+   
 }

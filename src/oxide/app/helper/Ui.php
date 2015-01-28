@@ -1,10 +1,11 @@
 <?php
 namespace oxide\app\helper;
+use oxide\ui\Renderer;
 use oxide\ui\html\Form;
 use oxide\ui\html\Fieldset;
-use oxide\ui\html\ButtonControl;
 use oxide\util\ArrayString;
 use oxide\ui\html\Control;
+use oxide\ui\html\Tag;
 
 
 class Ui extends Html {
@@ -13,6 +14,7 @@ class Ui extends Html {
       $_head = null,
       $_attributes = [],
       $_wrappers = [],
+      $_openStack = [],
       $_renderers = [];
    
    const
@@ -24,9 +26,11 @@ class Ui extends Html {
       STYLE_NONE = 5,
       STYLE_ERROR = 7,
       STYLE_WARNING = 8,
+      
            
       FORM_STANDARD = 10,
       FORM_INLINE = 11,
+      FORM_HORIZONTAL = 12,
            
       TABLE_STRIPED = 1,
       TABLE_HOVERED = 2,
@@ -64,6 +68,21 @@ class Ui extends Html {
       $this->_head = $c->get('head');
    }
    
+   protected function _merge_attributes(array &$arr1 = null, array $arr2 = null) {
+      if(!$arr2) return;
+      if($arr1 === null) {
+         $arr1 = [];
+      }
+      
+      foreach($arr2 as $key => $val) {
+         if($key == 'class' && isset($arr1[$key])) {
+            $arr1[$key] .= ' ' . $val;
+         } else {
+            $arr1[$key] = $val;
+         }
+      }
+   }
+   
    protected function _class_style($style, $prefix) {
       switch ($style) {
          case self::STYLE_PRIMARY:
@@ -95,15 +114,17 @@ class Ui extends Html {
    
    /**
     * Text label
+    * 
     * @param type $text
     * @param type $style
     * @return type
     */
    public function textLabel($text, $style = null, array $attrib = null) {
-      $attrbs = [
-          'class' => 'label ' . self::_class_style($style, 'label')
-      ];
-      return $this->tag('span', $text, $attrbs);
+      $this->_merge_attributes($attrib, [
+         'class' => 'label ' . self::_class_style($style, 'label')
+      ]);
+   
+      return $this->tag('span', $text, $attrib);
    }
    
    /**
@@ -222,95 +243,6 @@ class Ui extends Html {
       $attribs['herf'] = $href;
       return $this->tag('a', $text, $attribs);
    }
-   
-   /**
-    * Render a button
-    * @param type $type
-    * @param type $text
-    * @param type $style
-    * @param type $size
-    * @return type
-    */
-   public function button($type, $name, $text = null, array $attribs = null, $style = null, $size = null) {
-      $cls_size = $this->_class_size($size, 'btn');
-      $cls_style = $this->_class_style($style, 'btn');
-      if(!$attribs) $attribs = [];
-      $attribs['name'] = $name;
-      $attribs['type'] = $type;
-      $attribs['class'] = "btn {$cls_size} {$cls_style}";
-      return $this->tag('button', $text, $attribs);
-   }
-   
-   /**
-    * 
-    * @param type $text
-    * @param type $for
-    */
-   public function label($text, $for = null, array $attribs = null) {
-      if(!$attribs) $attribs = [];
-      $attribs['class'] = 'form-label';
-      $attribs['for'] = $for;
-      echo $this->tag('label', $text, $attribs);
-   }
-   
-   /**
-    * 
-    * @param type $type
-    * @param type $name
-    * @param type $value
-    * @param type $label
-    * @return type
-    */
-   public function input($type, $name, $value = null, array $attribs = null) {
-      if(!$attribs) $attribs = [];
-      $attribs['type'] = $type;
-      $attribs['name'] = $name; 
-      $attribs['value'] = $this->encode($value);
-      $attribs['class'] = 'form-control input-sm';
-      return $this->tag('input', null, $attribs);
-   }
-   
-   /**
-    * 
-    * @param type $name
-    * @param type $value
-    * @param type $label
-    */
-   public function textfield($name, $value = null, array $attribs = null) {
-      if(!$attribs) $attribs = [];
-      $attribs['class'] = 'form-control input-sm';
-      $attribs['name'] = $name;
-      $this->tag('textarea', $value, $attribs);
-   }
-   
-   /**
-    * 
-    * @param type $name
-    * @param type $value
-    * @param type $label
-    * @param array $items
-    * @return type
-    */
-   public function select($name, $value = null, array $items = null, array $attribs = null) {
-      if(!$attribs) $attribs = [];
-      $attribs['class'] = 'form-control input-sm';
-      $attribs['name'] = $name;
-      
-      $this->start('select', $attribs);
-      foreach($items as $key => $val) {
-         if(is_int($key)) {
-            $text = $val;
-         } else {
-            $text = $key;
-         }
-         if($value == $val) $opt_attrib = ['selected' => 'selected'];
-         else $opt_attrib = [];
-         
-         $opt_attrib['value'] = $val;
-         echo $this->tag('option', $text, $opt_attrib);
-      }
-      return $this->end('select');
-   }
 
    /**
     * Start a form element
@@ -319,36 +251,36 @@ class Ui extends Html {
     * @param type $method
     * @param type $action
     */
-   public function formStart($style = null, $method = 'get', $action = null, array $attr = null) {
-      if(!$attr) { $attr = []; }
-      $attr['role'] = 'form';
-      $attr['method'] = $method;
-      $attr['action'] = $action;
-   
+   public function formOpen($name, $method = 'get', $action = null, $style = null, array $attr = null) {
+      $this->_merge_attributes($attr, [
+         'name' => $name,
+         'role' => 'form',
+         'method' => $method,
+         'action' => $action,
+         'class' => ($style == self::FORM_INLINE) ? 'form-inline' : 
+                    ($style == self::FORM_HORIZONTAL) ? 'form-horizontal' : null
+      ]);
       
-      if($style == self::FORM_INLINE) {
-         $attr['class'] = 'form-inline';
-      } else if($style == self::FORM_STANDARD) {
-         $attr['class'] = 'form-horizontal';
-      }      
       
-      $this->start('form', $attr);
+//      $this->_openStack[] = 
+      return $this->openTag('form', $attr);
    }
    
    /**
     * Starting a form row 
     * @return void Doesn't return anything.  Everything is buffered.
     */
-   public function formRowStart() {
-      $this->start('div', ['class' => 'form-group form-group-sm']);
+   public function formRowOpen(array $attributes = null) {
+      $this->_merge_attributes($attributes, ['class' => 'form-group']);
+      return $this->openTag('div', $attributes);
    }
    
    /**
     * 
     * @return string returns the buffered 
     */
-   public function formRowEnd() {
-      return $this->end('div');
+   public function formRowClose() {
+      return $this->closeTag('div');
    }
   
    /**
@@ -360,59 +292,125 @@ class Ui extends Html {
     * @param array $attribs
     * @return string
     */
-   public function control($type, $name, $value = null, $inner = null, array $options = null, array $attribs = null) {
-      switch($type) {
-         case 'input':
-            $itype = ($attribs && isset($attribs['type'])) ? $attribs['type'] : 'text';
-            return $this->input($itype, $name, $value, $attribs);
-         case 'textfield':
-            return $this->textarea($name, $value, $attribs);
+   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::FORM_HORIZONTAL, array $attribs = null) {
+      $attribs = [
+        'name' => $name 
+      ];
+      
+      $buffer = '';
+      $ctl = '';
+      switch ($type) {
+         case 'text':
+         case 'email':
+         case 'password':
+         case 'hidden':
+            $attribs['class'] = 'form-control';
+            $attribs['value'] = $value;
+            $attribs['type'] = $type;
+            $ctl = $this->tag('input', null, $attribs, true);
+            break;
+         
+         case 'submit':
+            $attribs['class'] = 'btn btn-primary';
+            $attribs['value'] = $value;
+            $attribs['type'] = $type;
+            $ctl = $this->tag('input', null, $attribs, true);
+            break;
+         
+         case 'button':
+            $attribs['class'] = 'btn';
+            $attribs['value'] = $value;
+            $attribs['type'] = $type;
+            $ctl = $this->tag('button', $value, $attribs);
+            break;
+         
+         case 'textarea':
+            $attribs['class'] = 'form-control';
+            $ctl = $this->tag('textarea', $value, $attribs);
+            break;
+         
          case 'select':
-            return $this->select($name, $value, $options, $attribs);
-         case 'button':
-         case 'submit':
-         case 'reset':
-            return $this->button($type, $name, $value, $inner, $attribs);  
-         case (isset(self::$inputTypes[$type])):
-            return $this->input($type, $name, $value, $attribs);            
-         default:
-            return '';
+            $attribs['class'] = 'form-control';
+            $this->start('select', $attribs);
+            if($data) {
+               if(!is_array($data)) throw new \Exception('Data for select must be an associative array.');
+               $optattr = [];
+               foreach($data as $label => $val) {
+                  if($val == $value) $optattr['selected'] = 'selected';
+                  else if(isset($optattr['selected'])) unset($optattr['selected']);
+                  $optattr['value'] = $val;
+                  echo $this->tag('option', $label, $optattr);
+               }
+            }
+            
+            $ctl = $this->end('select');
+            break;
+            
+         case 'checkbox':
+            $attribs['type'] = $type;
+            if(!is_array($data)) {
+               $attribs['value'] = $value;
+               $ctl = $this->tag('label', $this->tag('input', null, $attribs) . $data,
+                       ['class' => 'checkbox-inline']);
+            } else {
+               $attribs['name'] = $name . '[]';
+               $bff = '';
+               foreach($data as $label => $val) {
+                  $attribs['value'] = $val;
+                  $bff .= $this->tag('label', $this->tag('input', null, $attribs) . $label,
+                          ['class' => 'checkbox-inline']);
+               }
+               
+               $ctl = $bff;
+            }
+            break;
+            
+         case 'radio':
+            $attribs['type'] = $type;
+            if(!is_array($data)) {
+               $attribs['value'] = $value;
+               $ctl = $this->tag('label', $this->tag('input', null, $attribs) . $data,
+                       ['class' => 'radio-inline']);
+            } else {
+               $attribs['name'] = $name . '[]';
+               $bff = '';
+               foreach($data as $label => $val) {
+                  $attribs['value'] = $val;
+                  $bff .= $this->tag('label', $this->tag('input', null, $attribs) . $label,
+                          ['class' => 'radio-inline']);
+               }
+               $ctl = $bff;
+            }
+            break;
       }
-   }
-   
-   /**
-    * Render a form Control element
-    * 
-    * @param Control $control
-    * @return string
-    */
-   public function formControlElement(Control $control) {
-      $tag = $control->getTag();
-      $name = $control->getName();
-      $value = $control->getValue();
-      $attributes = $control->getAttributes();
-      $inner = $control->getHtml();
-      switch($tag) {
-         case 'input':
-            $type = (isset($control->type)) ? $control->type : 'text';
-            return $this->input($type, $name, $value, $attributes);
-         case 'button':
-         case 'submit':
-         case 'reset':
-            $type = (isset($control->type)) ? $control->type : 'text';
-            return $this->button($type, $name, $inner, $attributes);
-         case 'textfield':
-            return $this->textfield($name, $value, $attributes);
+      
+      
+      if($label) {
+         $lblattr = ['for' => $name];
+         if($style == self::FORM_HORIZONTAL) {
+            $lblattr['class'] = 'col-sm-2 control-label';
+         } else {
+            $lblattr['class'] = 'control-label';
+         }
+         $buffer .= $this->tag('label', $label, $lblattr);
       }
+      
+      if($style == self::FORM_HORIZONTAL) {
+         $buffer .= $this->tag('div', $ctl, ['class' => 'col-sm-10']);
+      } else {
+         $buffer .= $ctl;
+      }
+      
+      return $buffer;
    }
-   
+  
    /**
     * Render form end tag
     * 
     * @return string
     */
-   public function formEnd() {
-      return $this->end('form');
+   public function formClose() {
+      return $this->closeTag('form');
    }
    
    public function formTab(Form $form) {
@@ -442,67 +440,6 @@ class Ui extends Html {
          $form->prepend($div);
          $form->prepend($ul);
       });
-   }
-   
-   /**
-    * 
-    * @param Form $form
-    * @return Form
-    */
-   public function formElement(Form $form, $style = null, $size = null) {
-      $form->getErrorTag()->class = 'alert alert-danger';
-      $form->getSuccessTag()->class = 'alert alert-success';
-      
-//      $callback = function(Control $control) {
-//         $error = $control->getError();
-//         $this->formRowStart();
-//         echo $this->gridColumnOpen(12, 2);
-//         echo $this->label($control->getLabel(), $control->getName());
-//         echo $this->gridColumnClose();
-//         echo $this->gridColumnOpen(12, 10);
-//         echo $this->formControlElement($control);
-//         if($control->getInfo()) {
-//            echo $this->tag('span', $control->getInfo(), ['class'=>'help-block']);
-//         }
-//         
-//         if($error) {
-//            echo $this->alert($error, self::STYLE_ERROR);
-//         }
-//         echo $this->gridColumnClose();
-//         
-//         return $this->formRowEnd();
-//      };
-//      
-//      foreach($form->getControls() as $control) {
-//         $control->rendererCallback($callback);
-//      }
-      
-      
-      $form->controlPreparedCallback(function(Control $control) {
-         $control->class = 'form-control col-sm-10';
-         $control->getLabelTag()->class = 'control-label col-sm-2';
-         $info = $control->getInfoTag();
-         $info->class = 'help-block';
-         $error = $control->getErrorTag();
-         $error->setTag('div');
-         $error->class = 'alert alert-danger';
-         if($control instanceof ButtonControl) {
-            $control->class = 'btn btn-primary';
-         }
-         
-         $control->getWrapperTag()->class = 'form-group form-group-sm';
-         if($control->getError()) {
-            $control->getWrapperTag()->class .= ' has-error';
-         }
-      });
-               
-      if($style == self::FORM_INLINE) {
-         $form->class = 'form-inline';
-      } else if($style == self::FORM_STANDARD) {
-         $form->class = 'form-horizontal';
-      }
-      
-      return $form->render();
    }
    
    /**
@@ -657,20 +594,21 @@ class Ui extends Html {
     * @return string
     */
    public function panel($body, $header = null, $footer = null) {
-      $this->panelStart();
+      $buffer = '';
+      $buffer .= $this->panelOpen();
       if($header)
-         echo $this->panelHeader($header);
-      echo $this->panelBody($body);
+         $buffer .= $this->panelHeader($header);
+      $buffer .= $this->panelBody($body);
       if($footer)
-         echo $this->panelFooter($footer);
-      return $this->panelEnd();
+         $buffer .= $this->panelFooter($footer);
+      $buffer .= $this->panelEnd();
    }
    
    /**
     * Starts a panel
     */
-   public function panelStart() {
-      $this->start('div', ['class' => 'panel panel-default']);
+   public function panelOpen() {
+      return $this->openTag('div', ['class' => 'panel panel-default']);
    }
    
    /**
@@ -696,8 +634,8 @@ class Ui extends Html {
    /**
     * Starts panel body
     */
-   public function panelBodyStart() {
-      $this->start('div',  ['class' => 'panel-body']);
+   public function panelBodyOpen() {
+      return $this->openTag('div',  ['class' => 'panel-body']);
    }
    
    /**
@@ -705,8 +643,8 @@ class Ui extends Html {
     * 
     * @return string
     */
-   public function panelBodyEnd() {
-      return $this->end('div');
+   public function panelBodyClose() {
+      return $this->closeTag('div');
    }
    
    /**
@@ -722,8 +660,8 @@ class Ui extends Html {
    /**
     * End the panel
     */
-   public function panelEnd() {
-      return $this->end('div');
+   public function panelClose() {
+      return $this->closeTag('div');
    }
    
    /**
@@ -840,7 +778,7 @@ class Ui extends Html {
     * Starts a responsive grid system
     */
    public function gridRowOpen() {
-      echo $this->openTag('div', ['class' => 'row']);
+      return $this->openTag('div', ['class' => 'row']);
    }
    
    /**
@@ -856,21 +794,21 @@ class Ui extends Html {
       if($sm_cols) $class .= ' col-sm-' . $sm_cols;
       if($md_cols) $class .= ' col-md-' . $md_cols;
       if($lg_cols) $class .= ' col-lg-' . $lg_cols;
-      $this->start('div', ['class' => $class]);
+      return $this->openTag('div', ['class' => $class]);
    }
    
    /**
     * Ends the responsive grid
     */
    public function gridColumnClose() {
-      echo $this->end('div');
+      return $this->closeTag('div');
    }
    
    /**
     * Ends the responseive grid system
     */
    public function gridRowClose() {
-      echo $this->closeTag('div');
+      return $this->closeTag('div');
    }
    
    /**
@@ -903,5 +841,109 @@ class Ui extends Html {
       $cls = 'alert';
       $cls .= ' ' . $this->_class_style($style, 'alert');
       return $this->tag('div', $message, ['class' => "{$cls}", 'role' => 'alert']);
+   }
+   
+   /**
+    * Render a Form element
+    * 
+    * @param Form $form
+    * @param type $style
+    * @return type
+    */
+   public function renderForm(Form $form, $style = self::FORM_STANDARD) {      
+      $form->errorTag   = new Tag('div', ['class' => 'alert alert-danger']);
+      $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
+
+      foreach($form->getControls() as $control) {
+         $control->setRendererCallback([$this, 'renderControl'], $style);
+      }
+                     
+      if($style == self::FORM_INLINE) {
+         $form->setAttribute('class', 'form-inline', ' ');
+      } else if($style == self::FORM_STANDARD) {
+         $form->setAttribute('class', 'form-horizontal', ' ');
+      } else {
+         
+      }
+      
+      return $form->render();
+   }
+   
+   /**
+    * Render a Control element
+    * 
+    * @param Control $ctl
+    * @return type
+    */
+   public function renderControl(Control $ctl, $style = null) {
+      $ctlgrpcls = null;
+      if($ctl instanceof \oxide\ui\html\SubmitControl) {
+         $ctl->setAttribute('class', 'btn btn-primary');
+      } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
+         $grptag = $ctl->getTemplateCheckboxTag();
+         $grptag->getLabelTag()->setAttribute('class', 'checkbox-inline', ' ');
+         $grptag->labelWrapsControl = true;
+         $grptag->labelPosition = Control::RIGHT;
+      } else if($ctl instanceof \oxide\ui\html\RadioGroupControl) {
+         $grptag = $ctl->getTemplateRadioTag();
+         $grptag->getLabelTag()->setAttribute('class', 'radio-inline', ' ');
+         $grptag->labelWrapsControl = true;
+         $grptag->labelPosition = Control::RIGHT;
+      } else {
+         $ctl->setAttribute('class', 'form-control');
+      }
+      $buffer = '';
+      
+      $error = $ctl->getError();
+      if($error) $buffer .= $this->formRowOpen (['class' => 'has-error']);
+      else $buffer .= $this->formRowOpen();
+      
+      // label
+      $buffer .= $this->gridColumnOpen(12, 2);
+      if($ctl->getLabel()) {
+         $lblTag = $ctl->getLabelTag();
+         $lblTag->setAttribute('class', 'control-label', ' ');
+         $lblTag->setAttribute('for', $ctl->getName());
+         $buffer .= $lblTag->renderContent($ctl->getLabel());
+      }
+      $buffer .= $this->gridColumnClose();
+      
+      // control
+      $buffer .= $this->gridColumnOpen(12, 10);
+      if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
+      $buffer .= $ctl->renderOpen();
+      $buffer .= $ctl->renderInner();
+      $buffer .= $ctl->renderClose();
+      if($ctlgrpcls) $buffer .= $this->closeTag('div');
+      if($ctl->getInfo()) {
+         $infoTag = $ctl->getInfoTag();
+         $infoTag->setAttribute('class', 'help-block', ' ');
+         $buffer .= $infoTag->renderContent($ctl->getInfo());
+      }
+      if($error) {
+         $errorTag = $ctl->getErrorTag();
+         $errorTag->setAttribute('class', 'help-block', ' ');
+         $buffer .= $errorTag->renderContent($error);
+      }
+      $buffer .= $this->gridColumnClose();
+      $buffer .= $this->formRowClose();
+      
+      return $buffer;
+   }
+   
+   /**
+    * Render
+    * 
+    * @param Renderer $renderer
+    * @return string
+    */
+   public function render(Renderer $renderer) {
+      if($renderer instanceof Form) {
+         return $this->renderForm($renderer);
+      } else if($renderer instanceof Control) {
+         return $this->renderControl($renderer);
+      } else {
+         return $renderer->render();
+      }
    }
 }

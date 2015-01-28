@@ -2,9 +2,8 @@
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
 use oxide\util\ArrayString;
-use oxide\base\pattern\ArrayAccessTrait;
 use oxide\base\pattern\ArrayFunctionsTrait;
-
+use oxide\base\pattern\ArrayAccessTrait;
 /**
  * Html Element
  *
@@ -13,10 +12,16 @@ use oxide\base\pattern\ArrayFunctionsTrait;
  * @subpackage ui
  */
 class Element 
-   extends Tag 
-   implements \ArrayAccess, \Countable {   
-   use ArrayAccessTrait, ArrayFunctionsTrait;   
+   extends Tag implements \ArrayAccess, \Countable {   
+   use  ArrayAccessTrait, ArrayFunctionsTrait;   
+   public 
+      /**
+       * @var array Tag objects to be wrapped
+       */
+      $wrappers = [];
+   
 	protected
+      $_parent = null,
       $_rendererCallback = null;
          
    /**
@@ -26,17 +31,13 @@ class Element
 	 * @param string $inner
 	 * @param array $attributes
 	 */
-   public function __construct($tag = 'span', $inner = null, array $attributes = null) {
+   public function __construct($tag = null, $inner = null, array $attributes = null) {
       parent::__construct($tag, $attributes);
       if($inner !== null) {
          $this->_t_array_storage[] = $inner;
       }
    }
-   
-   public function &getInners() {
-      return $this->_t_array_storage;
-   }
-   
+      
    /**
     * Set the content for the element
     * 
@@ -58,14 +59,34 @@ class Element
    }
    
    /**
+    * Sets the parent for the element
+    * 
+    * This method is called when added to any element.
+    * @param Element $element
+    */
+   public function setParent(Element $element = null) {
+      $this->_parent = $element;
+   }
+   
+   /**
+    * Get the parent element if available
+    * 
+    * @return Element
+    */
+   public function getParent() {
+      return $this->_parent;
+   }
+      
+   /**
 	 * resets the element
 	 *
 	 * This is useful to reuse the object for different element
 	 * All information about current element will be removed (tag name, attributes, renderer..)
 	 */
 	public function reset() {
+      $this->_tag = null;
 		$this->_t_array_storage = [];
-		$this->_t_property_storage = [];
+		$this->_attributes = [];
 	}
 
    /**
@@ -74,11 +95,13 @@ class Element
     * Callback signature $callable($this, $buffer)
     * If method returns TRUE, then internal rendering will be performed
     * @param callable $callable
-    * @return callable
     */
-   public function rendererCallback(callable $callable = null) {
-      if($callable) $this->_rendererCallback = $callable;
-      else return $this->_rendererCallback;
+   public function setRendererCallback(callable $callback = null) {
+      $this->_rendererCallback = $callback;
+   }
+   
+   public function getRendererCallback() {
+      return $this->_rendererCallback;
    }
    
    /**
@@ -94,8 +117,7 @@ class Element
       try {
          $this->onRender();
          if($this->_rendererCallback) {
-            $renderer = $this->_rendererCallback;
-            return $renderer($this);
+            return call_user_func($this->_rendererCallback, $this);
          }
          
          $buffer = new ArrayString();
@@ -106,6 +128,15 @@ class Element
          $buffer[] = $this->renderClose();         
 
          $this->onPostRender($buffer); // notifying internal post render event
+         
+         // now perform the wrappers
+         if(!empty($this->wrappers)) {
+            reset($this->wrappers);
+            foreach($this->wrappers as $wrapper) {
+               $buffer->prepend($wrapper->renderOpen());
+               $buffer->append($wrapper->renderClose());
+            }
+         }
          return (string) $buffer;
       }
       catch (\Exception $e) {
@@ -149,11 +180,22 @@ class Element
             $content.
             $tag->renderClose();    
       } else {
-         $tag = new Tag($tag, $attributes);
-         return $tag->renderWithContent($content);
+         $tag = new Tag($tag, $attributes, $void);
+         return $tag->renderContent($content);
       }
-   }   
+   }
    
+   protected function _t_array_access_set($key, $value) {
+      if($value instanceof Element) {
+         $value->setParent($this);
+      }
+   }
+   protected function _t_array_access_unset($key, $value) {
+      if($value instanceof Element) {
+         $value->setParent(null);
+      }
+   }
+
    protected function onRender() {}
    protected function onInnerRender(ArrayString $buffer) {}
    protected function onPreRender(ArrayString $buffer) { }

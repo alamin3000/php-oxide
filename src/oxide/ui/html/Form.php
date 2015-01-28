@@ -16,6 +16,18 @@ use oxide\util\ArrayString;
  */
 class Form extends Element {
    use ControlAccessTrait;
+   
+   public
+      $labelTag = null,
+      $errorTag = null,
+      $successTag = null,
+      $infoTag = null,
+      $rowTag = null,
+  		$submitErrorMessage = 'Form validation failed.',
+		$submitSuccessMessage = 'Form submission was successful.',
+      $requiredIndicator = '*',
+      $requiredMessage = '* Indicates required field(s).';
+
    protected
       $_errorTag = null,
       $_successTag = null,
@@ -26,28 +38,25 @@ class Form extends Element {
       $_action = null,
 		$_result = null,
       $_values = null,
+      $_name = null,
       $_processedValues = null,
       $_processed = false,
       $_controlPreparedCallback = null,
-		$_errorMessage = 'Form validation failed.',
-		$_successMessage = 'Form submission was successful.';
+      /**
+       * @var validation\ValidationProcessor holds input validation for the form
+       * @access private
+       */
+      $_validationProcessor = null;
 
 	static protected
       $_form_ids = [],
 		$_counter = 0;
    
    private 
-      /**
-       * @var validation\ValidationProcessor holds input validation for the form
-       * @access private
-       */
-      $_validationProcessor = null,
 		$_formid_key = null,
 		$_formid = null;
              
    const
-      TYPE_STANDARD = 1,
-      TYPE_INLINE = 2,
       METHOD_POST = 'post',
       METHOD_GET = 'get';
 
@@ -59,101 +68,66 @@ class Form extends Element {
 	 * @param string $action url here form processing will be performed
     * @param string $name name/id of the form.  this is important when there are multiple forms in the page
     */
-	public function __construct($method = self::METHOD_POST, $action = null, $name = null, $attrib = []) {
+	public function __construct($name = null, $method = self::METHOD_POST, $action = null, $attrib = []) {
       self::$_counter++;
       parent::__construct('form', null, $attrib);
-      if(!$action) $action = filter_input(INPUT_SERVER, 'REQUEST_URI');
+      if(!$action) $action = '';
       if(!$name) $name = "_form-" . self::$_counter;
       if($method == self::METHOD_POST) $values = filter_input_array(INPUT_POST);
       else if($method == self::METHOD_GET) $values = filter_input_array(INPUT_GET);
       else throw new \Exception('Unknown Form method : '. $method);
       if($_FILES) $values = array_merge($values, $_FILES);
-            
-      $this->name = $name;
-      $this->id = $name;
-      $this->_method = $this->method = $method;
-		$this->_action = $this->action = $action;      
-      $this->_values = $values;    // store the raw values
-		$this->_generateSubmitId($name);   // generating a unique id for the form
-      $this->addControl($this->getIdentifierControl());
+
+      $this->_name = $name;
+      $this->setMethod($method);
+		$this->setAction($action);      
+      $this->setValues($values);    // store the raw values
+      $this->_generateSubmitId($name);   // generating a unique id for the form
 	}
    
    /**
-    * Get the Error rendering tag
+    * Set the form method (POST|GET)
     * 
-    * @return Tag
+    * @param string $method
     */
-   public function getErrorTag() {
-      if($this->_errorTag == null) {
-         $this->_errorTag = new Tag('strong');
-      }
-
-      return $this->_errorTag;
+   public function setMethod($method) {
+      $this->_attributes['method'] = $method;
    }
    
    /**
-    * Get the success tag
+    * Get the form submit method
     * 
-    * @return Tag
+    * @return string
     */
-   public function getSuccessTag() {
-      if($this->_successTag == null) {
-         $this->_successTag = new Tag('b');
-      }
-      
-      return $this->_successTag;
+   public function getMethod() {
+      return $this->_attributes['method'];
    }
    
    /**
-    * Header element.
+    * Set the form's action
     * 
-    * Initially the element's tag is set to 'p'.
-    * @return Element
+    * @param string $action
     */
-   public function getHeaderElement() {
-      if($this->_headerElement == null) {
-         $this->_headerElement = new Element('p');
-      }
-      
-      return $this->_headerElement;
+   public function setAction($action) {
+      $this->_attributes['action'] = $action;
    }
    
    /**
-    * Footer Element
+    * Get the form's action
     * 
-    * Initially elements tag is set to 'p'
-    * @return Element
+    * @return string
     */
-   public function getFooterElement() {
-      if($this->_footerElement == null) {
-         $this->_footerElement = new Element('p');
-      }
-      
-      return $this->_footerElement;
+   public function getAction() {
+      return $this->_attributes['action'];
    }
    
    /**
-    * Set the success message for the form
+    * Get the form's name
     * 
-    * This message will be displayed after form is submitted and successfully processed.
-    * @param string $message
-    * @return string|null
+    * @return string
     */
-   public function successMessage($message = null) {
-      if($message) $this->_successMessage = $message;
-      else return $this->_successMessage;
-   }
-   
-   /**
-    * Set the error message for the form
-    * 
-    * This message will be displayed after for is submitted and validation error occured.
-    * @param string $message
-    * @return null|string
-    */
-   public function errorMessage($message = null) {
-      if($message) $this->_errorMessage = $message;
-      else return $this->_errorMessage;
+   public function getName() {
+      return $this->_name;
    }
       
    /**
@@ -304,6 +278,41 @@ class Form extends Element {
    }
    
    /**
+    * Remove a control by given name from the collection
+    * 
+    * If success, removed control will be returned.
+    * @param string $name
+    * @return oxide\ui\html\Control
+    */
+   public function removeControl($name) {
+      $control = $this->getControl($name);
+      if($control) {
+         $this->removeControlRef($control);
+         // now remove
+         $parent = $control->getParent();
+         if($parent) {
+            $pos = $parent->search($control);
+            if($pos !== FALSE) {
+               unset($parent[$pos]);
+            }
+         }
+      }
+      
+      
+      
+      return $control;
+   }
+   
+   /**
+    * Add a control
+    * 
+    * @param Control $control
+    */
+   public function addControl(Control $control) {
+      $this->append($control);
+   }
+   
+   /**
     * Get control $name from the 
     * @param type $name
     * @return type
@@ -327,6 +336,7 @@ class Form extends Element {
    public function isSubmit() { return $this->isSubmitted(); }
 	public function isSubmitted() {   
       static $issubmit = null;
+      
       
       // if once submit passed, we will return true
       // multiple check/verification is not needed
@@ -438,17 +448,45 @@ class Form extends Element {
       return new InputControl('hidden', $this->_formid_key, $this->_formid);
    }
    
+   public function getErrorTag() {
+      if($this->errorTag === null) {
+         $this->errorTag = new Tag('strong');
+      }
+      
+      return $this->errorTag;
+   }
+   
+   public function getRowTag() {
+      if($this->rowTag === null) {
+         $this->rowTag = new Tag('p');
+      }
+      
+      return $this->rowTag;
+   }
+   
+   
    /**
     * Callback that will be called after form has prepared a control
     * 
     * @param \Closure $callback
     * @return \Closure
     */
-   public function controlPreparedCallback(\Closure $callback = null) {
-      if($callback) $this->_controlPreparedCallback = $callback;
-      else return $this->_controlPreparedCallback;
+   public function setControlPrepareCallback(\Closure $callback = null) {
+      $this->_controlPreparedCallback = $callback;
    }
    
+   public function getControlPrepareCallback() {
+      return $this->_controlPreparedCallback;
+   }
+   
+   public function onRender() {
+      parent::onRender();
+      $this->_attributes['name'] = $this->_attributes['id'] = $this->_name;
+      if(!$this->errorTag) $this->errorTag = new Tag ('strong');
+      if(!$this->infoTag) $this->infoTag = new Tag('small');
+      if(!$this->successTag) $this->successTag = new Tag('b');
+      if(!$this->rowTag) $this->rowTag = new Tag('p');
+   }
    
    /**
     * render for header
@@ -459,27 +497,18 @@ class Form extends Element {
 	public function renderFormHeader() {            
 		$result = $this->getResult();
       if($this->isProcessed()) {
-         $header = $this->getHeaderElement();
+         $msgs = '';
          if(!$result->isValid()) {
-            $strong = new Tag('strong');
-            $header[] = $strong->renderWithContent($this->_errorMessage);
+            $msgs .= $this->errorTag->renderContent($this->submitErrorMessage);
             if($result->hasError($this->getId())) {
-               $header[] = new Tag('br');
-               $header[] = $strong->renderWithContent($result->getErrorString($this->getId()));
-            } else {
-               
+               $msgs .= $this->errorTag->renderContent($result->getErrorString($this->getId()));
             }
          } else { // for submission success
-            $b = new Tag('b');
-            $header[] = $b->renderWithContent($this->_successMessage);
+            $msgs .= $this->successTag->renderContent($this->submitSuccessMessage);
          }
          
-         return $header->render();
-      } else {
-         if($this->_headerElement) return $this->_headerElement->render ();
-         else return '';
+         return $this->rowTag->renderContent($msgs);
       }
-
 	}
 
    /**
@@ -489,8 +518,14 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormFooter() {
-      if($this->_footerElement) return $this->_footerElement->render ();
-      else return '';
+      $str = '';
+      if($this->getValidationProcessor()->isRequired()) {
+         $str .= $this->rowTag->renderContent(
+                 $this->infoTag->renderContent($this->requiredMessage));
+      }
+      
+      $str .= $this->getIdentifierControl()->render();
+      return $str;
 	}
    
 	/**
@@ -501,9 +536,9 @@ class Form extends Element {
 	 */
 	public function renderInner() {
 		return 
-            $this->renderFormHeader() .
-            parent::renderInner() .
-            $this->renderFormFooter();
+         $this->renderFormHeader() .
+         parent::renderInner() .
+         $this->renderFormFooter();
 	}
 
    /**
@@ -520,7 +555,8 @@ class Form extends Element {
 		$result      = $this->getResult();
       
       if($validation->isRequired($name)) {
-			$control->required = "required"; // 'required' attribute is part of (HTML5)
+			$control->setAttribute('required'); // 'required' attribute is part of (HTML5)
+         $control->setLabel($control->getLabel() . $this->requiredIndicator);
 		}
       
       if($result->hasError($name)) { // stringify error messages
@@ -531,10 +567,32 @@ class Form extends Element {
          $control->setValue($value); // setting the form submitted value
       }
       
-      $callback = $this->controlPreparedCallback();
+      $control->wrappers[] = $this->getRowTag();
+      
+      $callback = $this->_controlPreparedCallback;
       if($callback) $callback($control, $this);
    }
-    
+   
+   protected function _t_array_access_set($key, $value) {
+      parent::_t_array_access_set($key, $value);
+      if($value instanceof Control ||
+         $value instanceof Fieldset) {
+         $value->setForm($this);
+      }
+   }
+   
+   protected function _t_array_access_get($key) {
+      parent::_t_array_access_get($key);
+   }
+   
+   protected function _t_array_access_unset($key, $value) {
+      parent::_t_array_access_unset($key, $value);
+      if($value instanceof Control ||
+         $value instanceof Fieldset) {
+         $value->setForm(null);
+      }
+   }
+
    protected function onPreProcess(validation\Result $result) {}
    protected function onPostProcess(validation\Result $result, array $processedvalues = null) {}
 }

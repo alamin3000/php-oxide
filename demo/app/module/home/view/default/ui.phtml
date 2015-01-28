@@ -1,0 +1,35 @@
+<?php
+$ui = $data->getHelper('ui');
+
+
+
+?>
+
+<hr/>
+
+<div>
+   <h3>User login</h3>
+   <?= $ui->formOpen('myform','post', '', $ui::FORM_HORIZONTAL) ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('text', 'name', null, 'Full name') ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('email', 'email', null, 'Email address') ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('textarea', 'message', null, 'Message') ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('select', 'department', 'tech', 'Department', ['Sales/Service' => 'sale', 'Technical' => 'tech']) ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('radio', 'sex', 'male', 'Sex', ['Male' => 'male', 'Female' => 'female']) ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('checkbox', 'agreement', null, 'Agreement', ['Do you agree with the licnese agreement?' => 'license', 'Do you agree with privacy policy' => 'privacy']) ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formRowOpen() ?>
+   <?= $ui->control('submit', 'submit', 'Send') ?>
+   <?= $ui->formRowClose() ?>
+   <?= $ui->formEnd() ?>
+</div>

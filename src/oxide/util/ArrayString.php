@@ -19,6 +19,9 @@ class ArrayString
       $this->_stringify_callback = $callback;
    }
    
+   public function replace($str) {
+      $this->_t_array_storage = [$str];
+   }
    
    public function __toString() {
       if($this->_stringify_callback) {

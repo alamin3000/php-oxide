@@ -36,9 +36,8 @@
     ],
     
     
-    "templates" : [
-        "template/v1/view"
-    ],
+    "template" :  "template/v1/view"
+    ,
     
     "roles" : {
         "guest" : null,

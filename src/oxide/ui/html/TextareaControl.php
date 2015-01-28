@@ -20,12 +20,15 @@ class TextareaControl extends Control {
 	public function __construct($name, $value = '', $label = null,  $attrbs = null) {
 		parent::__construct('textarea', $name, $value, $label,  $attrbs);
 		$this->setHtml($value);
-      $this->name = $name;		
 	}
    
    public function setValue($value)  {
       parent::setValue($value);
       $this->setHtml($value);
+   }
+   
+   public function setRows($rows) {
+      $this->setAttribute('rows', $rows);
    }
 
 	/**
@@ -33,6 +36,6 @@ class TextareaControl extends Control {
 	 * @return string
 	 */
 	public function renderInner() {
-		return self::escape($this->getValue());
+		return $this->escape($this->getValue());
 	}	
 }

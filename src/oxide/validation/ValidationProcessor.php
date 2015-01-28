@@ -25,10 +25,6 @@ class ValidationProcessor implements Processor {
       $_requiredKeys = array(),
       $_missingRequiredKeys = array();
    
-   const
-      NOTIFICATION_PRE_PROCESS = 'OxideValidationProcessorPreProcess',
-      NOTIFICATION_POST_PROCESS = 'OxideValidationProcessorPostProcess';
-   
    public function __construct()  {
    }
    

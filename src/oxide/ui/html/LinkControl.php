@@ -15,7 +15,7 @@ class LinkControl extends Control
     */
    public function setValue($value)  {
       parent::setValue($value);
-      $this->href = $value;
+      $this->_attributes['href'] = $value;
    }
    
    /**

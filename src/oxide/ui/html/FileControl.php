@@ -46,7 +46,7 @@ class FileControl extends InputControl {
       
       if($form) {
          // we will also need to modify form attribute
-         $form->enctype="multipart/form-data";
+         $form->setAttribute('enctype', "multipart/form-data");
       }
    }
 }
