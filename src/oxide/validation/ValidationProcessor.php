@@ -48,7 +48,7 @@ class ValidationProcessor implements Processor {
             $this->_filters[$key][] = $filterer;
          }
       } else {
-         $this->_filters[$key][] = $filterer;
+         $this->_filters[$keys][] = $filterer;
       }
    }
    
@@ -63,7 +63,7 @@ class ValidationProcessor implements Processor {
             $this->_validators[$key][] = $validator;
          }
       } else {
-         $this->_validators[$key][] = $validator;
+         $this->_validators[$keys][] = $validator;
       }
    }
 
