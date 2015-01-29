@@ -16,4 +16,4 @@ class FiltererArray extends Container implements Filterer {
       
       return $value;
    }
-}
+}  
