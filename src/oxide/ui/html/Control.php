@@ -40,11 +40,12 @@ class Control extends Element {
     * @param string $value
     * @param string $label
     */
-   public function __construct($name, $value = null, $label = null) {
+   public function __construct($name, $value = null, $label = null, array $attributes = null) {
       parent::__construct();
       $this->setName($name);      
       if($label) $this->setLabel($label);
       if($value) $this->setValue($value);
+      if($attributes) $this->setAttributes ($attributes);
    }
       
    /**
