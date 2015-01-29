@@ -1,8 +1,7 @@
 <?php
 namespace oxide\validation;
 
-abstract class ValidatorAbstract implements Validator
-{
+abstract class ValidatorAbstract implements Validator {
 	protected
       $_errorMessage = '';
    
@@ -13,8 +12,7 @@ abstract class ValidatorAbstract implements Validator
     * name is used to construct error messages
     * @param string $name
     */
-   public function  __construct() 
-   {
+   public function  __construct() {
    }
 
    /**
@@ -24,8 +22,7 @@ abstract class ValidatorAbstract implements Validator
     * Different validators may have different templates.
     * @param string $str
     */
-   public function setErrorMessage($str)
-   {
+   public function setErrorMessage($str) {
       if($str) {
          $this->_errorMessage = $str;
       }
@@ -38,8 +35,7 @@ abstract class ValidatorAbstract implements Validator
     * then this method should be used to get error message intended for display
     * @return string
     */
-   public function getErrorMessage()
-   {
+   public function getErrorMessage() {
       return $this->_errorMessage;
    }
 
@@ -48,8 +44,7 @@ abstract class ValidatorAbstract implements Validator
 	 * 
     * @param bool $bool
     */
-   protected function _returnResult($valid, Result &$result = null, $value = null)
-   {
+   protected function _returnResult($valid, Result &$result = null, $value = null) {
       if(!$result) {
          $result = new Result();
       }

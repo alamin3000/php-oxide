@@ -9,10 +9,9 @@ namespace oxide\validation;
  * @package oxide
  * @subpackage validation
  */
-class Result
-{
+class Result {
    protected
-      $_errors = array();
+      $_errors = [];
 
    public
 		/**
@@ -31,9 +30,8 @@ class Result
     * 
     * @param string|array $error
     */
-   public function __construct($errors = null)
-   {
-      if(!is_null($errors)) {
+   public function __construct(array $errors = null) {
+      if($errors) {
          $this->addErrors($errors);
       }
    }
@@ -44,8 +42,7 @@ class Result
     * @param bool $strict
     * @return bool
     */
-   public function isValid()
-   {
+   public function isValid() {
       if(count($this->_errors) > 0) {     
          return false;
       } else {
@@ -58,8 +55,7 @@ class Result
     * 
     * @return array
     */
-   public function getErrors()
-   {
+   public function getErrors() {
       return $this->_errors;
    }
    
@@ -78,8 +74,7 @@ class Result
     * array key represents offset and value represents error message
     * @param array $arr
     */
-   public function addErrors(array $arr)
-   {
+   public function addErrors(array $arr) {
       if(!is_array($arr)) {
 			$arr = array($arr);
 		}
@@ -100,8 +95,7 @@ class Result
     * @param string $err error message
     * @param mixed $offset where error message should be set to
     */
-   public function addError($err, $offset = null)
-   {
+   public function addError($err, $offset = null) {
       if($offset) {
          $this->_errors[$offset][] = $err;
       } else {
@@ -119,8 +113,7 @@ class Result
     * @param type $offset
     * @return null
     */
-   public function getError($offset)
-   {
+   public function getError($offset) {
       if(isset($this->_errors[$offset]))         
          return $this->_errors[$offset];
       else         
