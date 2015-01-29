@@ -4,39 +4,64 @@ namespace oxide\validation;
  * 
  */
 class ValidationProcessor implements Processor {
+   public
+      $breakOnFirstError = true;
+   
    protected
       /**
        * @var FilterContainer Description
        */
-      $_filters = null,
+      $_filters = [],
+           
       /**
        * @var ValidatorContainer Description
        */
-      $_validators = null,
-      /**
-       * @var ProcessorContainer Description
-       */
-      $_processors = null,
-           
-      $_preProcessCallbacks = [],
-      $_postProcessCallbacks = [],
-           
+      $_validators = [],
 
-      $_requiredKeys = array(),
-      $_missingRequiredKeys = array();
+      $_requiredKeys = [],
+      $_missingRequiredKeys = [];
    
    public function __construct()  {
    }
    
    /**
     * 
-    * @param \oxide\validation\ValidationComponent $component
+    * @param ValidationComponent $component
     * @param type $key
     */
-   public function addValidationComponent(ValidationComponent $component, $key = null) {
+   public function addValidationComponent(ValidationComponent $component, $key) {
       $this->getFilterContainer()->addFilter($component, $key);
       $this->getValidatorContainer()->addValidator($component, $key);
-      $this->getProcessorContainer()->addProcessor($component, $key);
+   }
+   
+   /**
+    * 
+    * @param Filterer $filterer
+    * @param type $keys
+    */
+   public function addFilterer(Filterer $filterer, $keys) {
+      if(is_array($keys)) {
+         foreach($keys as $key) {
+            $this->_filters[$key][] = $filterer;
+         }
+      } else {
+         $this->_filters[$key][] = $filterer;
+      }
+   }
+   
+   /**
+    * 
+    * @param Validator $validator
+    * @param string|array|null $keys
+    */
+   public function addValidator(Validator $validator, $keys) {
+      if(is_array($keys)) {
+         foreach($keys as $key) {
+            $this->_validators[$key][] = $validator;
+         }
+      } else {
+         $this->_validators[$key][] = $validator;
+      }
    }
 
   /**
@@ -44,7 +69,7 @@ class ValidationProcessor implements Processor {
     * 
     * @param array $vars names of the variables those are required
     */
-   public function setRequired($vars) {
+   public function setRequiredKeys(array $vars) {
       if(is_array($vars)) {
          $this->_requiredKeys = $vars;
       }
@@ -55,8 +80,8 @@ class ValidationProcessor implements Processor {
     * 
     * @param mixed $vars can be single key, or arry of keys
     */
-	public function addRequired($vars) {
-		if(!is_array($vars)) $vars = array($vars);
+	public function addRequiredKeys($vars) {
+		if(!is_array($vars)) $vars = [$vars];
 
 		foreach($vars as $var) {
          if(in_array($var, $this->_requiredKeys)) continue;
@@ -104,60 +129,6 @@ class ValidationProcessor implements Processor {
    }
    
    /**
-    * Get the filterer container for the valation processor
-    * 
-    * @return Container
-    */
-   public function getFiltererContainer() {
-      if($this->_filters == null) {
-         $this->_filters = new FilterContainer();
-      }
-      
-      return $this->_filters;      
-   }
-   
-   /**
-    * Alias of getFilterererContainer
-    * @see getFiltererContainer
-    * @return FilterContainer
-    */
-   public function getFilterContainer() {
-      return $this->getFiltererContainer();
-   }
-   
-
-   /**
-    * Get the Validator container for this validation processor
-    * @return \oxide\validation\ValidatorContainer
-    */
-   public function getValidatorContainer() {
-      if($this->_validators == null) {
-         $this->_validators = new ValidatorContainer();
-      }
-      
-      return $this->_validators;
-   }
-   
-   /**
-    * Get the processor container for the validation process
-    * 
-    * @return ProcessorContainer
-    */
-   public function getProcessorContainer() {
-      if($this->_processors == null) {
-         $this->_processors = new ProcessorContainer();
-      }
-      
-      return $this->_processors;
-   }
-   
-   public function addProcessCallbacks(\Closure $preprocess = null, \Closure $postprocess = null) {
-      if($preprocess) $this->_preProcessCallback[] = $preprocess;
-      if($postprocess) $this->_postProcessCallback[] = $postprocess;
-   }
-
-   
-   /**
     * Perform the validation process
     * 
     * This method will perform following processes in the order
@@ -170,80 +141,80 @@ class ValidationProcessor implements Processor {
     * @return null|array
     */
    public function process($values, Result &$result = null)  {
-      // calls the preprocess callbacks, if any
-      if(!empty($this->_preProcessCallback)) {
-         $preprocessors = $this->_preProcessCallback;
-         foreach($preprocessors as $processor) {
-            $processor($values, $result);
-         }
-         
-      }
-      // initial setups
+      $break = $this->breakOnFirstError;
       if(!$result) $result = new Result();
-      if(!is_array($values)) $values = (array) $values;
-
+      if(!is_array($values)) $values = [$values];
+      $keys = array_keys($values);
+      $required = $this->_requiredKeys;
+      
       /*
        * perform filters first
        */
-      if($this->_filters) {
-         $values = $this->_filters->filter($values);
+      if(!empty($this->_filters)) {
+         foreach($keys as $key) {
+            if(isset($this->_filters[$key])) {
+               foreach($this->_filters[$key] as $filter) {
+                  $values[$key] = $filter->filter($values[$key]);
+               }
+            }
+         }
       }
       
-      $required = $this->_requiredKeys;
-
       // check on all required fields
-      foreach($required as $name) {
-         $value = null;
-         if(isset($values[$name])) {
-            $value = $values[$name];
-            if(!is_array($value)) {
-               $value = trim($value);
-            } else {
-               // this is an array
-               // we need to check if this is $_FILE type
-               if(isset($value['error'])) {
-                  // assuming this is $_FILE type
-                  if($value['error'] == UPLOAD_ERR_NO_FILE) {
-                     $value = null;
+      if(!empty($required)) {
+         foreach($required as $name) {
+            $value = null;
+            if(isset($values[$name])) {
+               $value = $values[$name];
+               if(!is_array($value)) {
+                  $value = trim($value);
+               } else {
+                  // this is an array
+                  // we need to check if this is $_FILE type
+                  if(isset($value['error'])) {
+                     // assuming this is $_FILE type
+                     if($value['error'] == UPLOAD_ERR_NO_FILE) {
+                        $value = null;
+                     }
+                  }
+               }
+            }
+
+            if(empty($value)) {
+               $result->currentOffset = $name;
+               $result->addError('Required.');
+               $this->_missingRequiredKeys[] = $name;
+            }
+         }
+
+         if(!empty($this->_missingRequiredKeys)) {
+            return null;
+         }
+      }
+      
+      /*
+       * perform validation
+       */
+      if(!empty($this->_validators)) {
+         foreach($keys as $key) {
+            if(isset($this->_validators[$key])) {
+               foreach($this->_validators[$key] as $validator) {
+                  if(empty($values[$key])) return;
+                  $result->currentOffset = $key;
+                  $validator->validate($values[$key], $result);
+                  $result->currentOffset = null;
+                  if(!$result->isValid() && $break) {
+                     break 2;
                   }
                }
             }
          }
-
-         if(empty($value)) {
-            $result->currentOffset = $name;
-            $result->addError('Required.');
-            $this->_missingRequiredKeys[] = $name;
-         }
-      }
-      
-      // if any of the required fields is missing,
-      // do not continue, regardless of $break value
-      if(!empty($this->_missingRequiredKeys)) {
-         return null;
-      }
-      
-      if($this->_validators) {
-         $this->_validators->validate($values, $result);
-      }
-      
-      if($result->isValid()) {
-        if($this->_processors) {
-           $values = $this->_processors->process($values, $result);
-        }
       }
       
       if(!$result->isValid()) {
          return NULL;
+      } else {
+         return $values;
       }
-      
-      // call the post processor callbacks, if any
-      if(!empty($this->_postProcessCallback)) {
-         $processors = $this->_postProcessCallback;
-         foreach($processors as $processor) {
-            $processor($values, $result);
-         }
-      }
-      return $values;
    }
 }

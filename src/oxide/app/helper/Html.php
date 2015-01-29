@@ -451,13 +451,13 @@ class Html {
    * @param type $arguments
    * @return type
    */
-   public function __call($name, $arguments) {
-      if(!$arguments) {
-         return $this->tag($name, '');
-      } else {
-         $inner = array_shift($arguments);
-         $attributes = (!empty($arguments)) ? array_shift($arguments) : null;
-         return $this->tag($name, $inner, $attributes);
-      }
-   }
+//   public function __call($name, $arguments) {
+//      if(!$arguments) {
+//         return $this->tag($name, '');
+//      } else {
+//         $inner = array_shift($arguments);
+//         $attributes = (!empty($arguments)) ? array_shift($arguments) : null;
+//         return $this->tag($name, $inner, $attributes);
+//      }
+//   }
 }
