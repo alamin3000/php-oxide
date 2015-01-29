@@ -899,7 +899,7 @@ class Ui extends Html {
       else $buffer .= $this->formRowOpen();
       
       // label
-      $buffer .= $this->gridColumnOpen(12, 2);
+      $buffer .= $this->gridColumnOpen(12, 3);
       if($ctl->getLabel()) {
          $lblTag = $ctl->getLabelTag();
          $lblTag->setAttribute('class', 'control-label', ' ');
@@ -909,7 +909,7 @@ class Ui extends Html {
       $buffer .= $this->gridColumnClose();
       
       // control
-      $buffer .= $this->gridColumnOpen(12, 10);
+      $buffer .= $this->gridColumnOpen(12, 9);
       if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
       $buffer .= $ctl->renderOpen();
       $buffer .= $ctl->renderInner();
