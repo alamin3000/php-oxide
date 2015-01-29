@@ -1,9 +1,8 @@
 <?php
 namespace oxide\validation;
-/**
- * 
- */
-class ValidationProcessor implements Processor {
+
+
+class ValidationProcessor {
    public
       /**
        * @var bool
