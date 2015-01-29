@@ -20,19 +20,14 @@ class ValidatorArray extends base\Container implements Validator {
     * @return null
     */
    public function validate($value, Result &$result = null) {
-      $function = function(Validator $validator, $key, &$break) use (&$result, &$value) {
+      foreach($this->getIterator() as $validator) {
          $validator->validate($value, $result);
-         
          if(!$result->isValid() && $this->breakOnFirstError) {
-            $break = true;
-         }      
-      };
-      
-      $this->iterate($function);
-		if(!$result->isValid()) {
-         return NULL;
+            break;
+         }
       }
       
-      return $value;      
+      if(!$result->isValid()) return NULL;
+      return $value;
    }
 }

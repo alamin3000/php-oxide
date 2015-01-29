@@ -10,13 +10,10 @@ class FiltererArray extends Container implements Filterer {
     * @param type $value
     */
    public function filter($value) {
-      $callback = function(Filterer $filter, $key, &$break) use (&$value) {
-         $value = $filter->filter($value);
-      };
-      
-      $this->iterate($callback);
+      foreach($this->getIterator() as $filterer) {
+         $value = $filterer->filter($value);
+      }
       
       return $value;
    }
-   
 }
