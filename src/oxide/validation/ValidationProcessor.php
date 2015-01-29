@@ -5,6 +5,9 @@ namespace oxide\validation;
  */
 class ValidationProcessor implements Processor {
    public
+      /**
+       * @var bool
+       */
       $breakOnFirstError = true;
    
    protected
@@ -30,8 +33,8 @@ class ValidationProcessor implements Processor {
     * @param type $key
     */
    public function addValidationComponent(ValidationComponent $component, $key) {
-      $this->getFilterContainer()->addFilter($component, $key);
-      $this->getValidatorContainer()->addValidator($component, $key);
+      $this->addFilterer($component, $key);
+      $this->addValidator($component, $key);
    }
    
    /**
