@@ -2,6 +2,6 @@
 namespace oxide\validation;
 
 
-interface ValidationComponent extends Filterer, Validator, Processor
+interface ValidationComponent extends Filterer, Validator
 {
 }
