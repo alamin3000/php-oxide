@@ -73,6 +73,11 @@ class Response {
       }
    }
    
+   public function localRedirect($url) {
+      $this->setRedirect($url, true);
+      exit;
+   }
+   
    /**
     * set encoding for the page
     */

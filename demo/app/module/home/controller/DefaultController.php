@@ -77,12 +77,14 @@ class DefaultController extends Controller {
    
    
    public function executeTest(Context $context, ViewData $data) {
-      $el = new html\Element('p');
-      $el->wrappers[] = new html\Tag('div');
-      $el->append('Hello');
-      
-      
-      echo $el->render();
+      if (preg_match('^(?:[a-z]+:)?$', 'http://hell')){
+         echo 'valid';
+      } else {
+         echo 'not valid';
+      }
+        
+        
+        
       die();
    }
    
