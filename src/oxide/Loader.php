@@ -179,7 +179,7 @@ class Loader {
       
       // load libraries
       $libraries = $config->get('libraries');
-      if($libraries) $this->registerNamespaces ($libraries);
+      if($libraries) $loader->registerNamespaces ($libraries);
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
       // if autorun, run the front controller
