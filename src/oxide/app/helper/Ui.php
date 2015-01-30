@@ -208,7 +208,7 @@ class Ui extends Html {
     * @return string
     */
    public function heading($main, $secondary = null, $outline_level = 1) {
-      if($secondary) $h2 = '<br/>'.$this->_htmlHelper->tag('small', $secondary);
+      if($secondary) $h2 = '<br/>'.$this->tag('small', $secondary);
       else $h2 = null;
       
       return $this->tag("h{$outline_level}", $main . $h2);
