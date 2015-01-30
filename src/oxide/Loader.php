@@ -177,6 +177,10 @@ class Loader {
       $modules = $config->get('modules', NULL, TRUE);
       $loader->loadModules($modules, $fc->getRouter());
       
+      // load libraries
+      $libraries = $config->get('libraries');
+      if($libraries) $this->registerNamespaces ($libraries);
+      
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
       // if autorun, run the front controller
 		if($autorun) {
@@ -184,6 +188,17 @@ class Loader {
 		}
 		
 		return $fc;
+   }
+   
+   protected function registerNamespaces(array $namespaces) {
+      $autoloader = $this->getAutoloader();
+      if($namespaces) {
+         foreach($namespaces as $defs) {
+            $dir = (isset($defs['dir'])) ? $defs['dir'] : trigger_error('dir key required for namespace.');
+            $namespace = (isset($defs['namespace'])) ? $defs['namespace'] : trigger_error('namespace key required for namespace definition.');
+            $autoloader->addNamespace($namespace, $dir);
+         }
+      }
    }
    
    /**
