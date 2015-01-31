@@ -201,7 +201,7 @@ class ValidationProcessor {
          foreach($keys as $key) {
             if(isset($this->_validators[$key])) {
                foreach($this->_validators[$key] as $validator) {
-                  if(empty($values[$key])) return;
+                  if(empty($values[$key])) continue;
                   $result->currentOffset = $key;
                   $validator->validate($values[$key], $result);
                   $result->currentOffset = null;
