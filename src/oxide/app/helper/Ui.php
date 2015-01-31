@@ -601,6 +601,8 @@ class Ui extends Html {
       if($footer)
          $buffer .= $this->panelFooter($footer);
       $buffer .= $this->panelClose();
+      
+      return $buffer;
    }
    
    /**
