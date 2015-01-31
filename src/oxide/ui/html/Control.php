@@ -13,6 +13,7 @@ class Control extends Element {
       $labelPosition = self::LEFT;
            
    protected 
+      $_name = null,
       $_error = null,
       $_info = null,
 		$_label = null,
@@ -56,6 +57,7 @@ class Control extends Element {
     * @param type $name
     */
    protected function setName($name) {
+      $this->_name = $name;
       $this->_attributes['name'] = $name;
    }
 
@@ -65,7 +67,7 @@ class Control extends Element {
     * @return string
     */
    public function getName() {
-      return $this->_attributes['name'];
+      return $this->_name;
    }
 
    /**
