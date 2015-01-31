@@ -890,6 +890,8 @@ class Ui extends Html {
          $grptag->getLabelTag()->setAttribute('class', 'radio-inline', ' ');
          $grptag->labelWrapsControl = true;
          $grptag->labelPosition = Control::RIGHT;
+      } else if($ctl instanceof \oxide\ui\html\FileControl) {
+         
       } else {
          $ctl->setAttribute('class', 'form-control');
       }
