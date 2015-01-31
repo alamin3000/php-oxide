@@ -2,7 +2,6 @@
 namespace oxide\validation\file;
 use oxide\validation\Result;
 use oxide\validation\ValidationComponent;
-use oxide\helper\_util;
 use oxide\validation\file\FileUploadFilterer;
 use oxide\validation\file\ImageUploadValidator;
 use oxide\validation\file\ImageUploadProcessor;

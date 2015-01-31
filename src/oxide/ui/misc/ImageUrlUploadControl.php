@@ -85,11 +85,12 @@ class ImageUrlUploadControl extends InputControl {
             $values[$urlname] = $imageurl;
             $form->setValue($urlname, $imageurl);
          });
+         
       }
    }
    
-   protected function onPreRender(ArrayString $buffer) {
-      parent::onPreRender($buffer);
+   protected function onRender() {
+      parent::onRender();
       $this->append($this->_imageUploadControl);
    }
 }

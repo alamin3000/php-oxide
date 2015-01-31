@@ -1,7 +1,6 @@
 <?php
 namespace oxide\validation\file;
 use oxide\validation\Result;
-use oxide\validation\Processor;
 
 
 /**
@@ -9,7 +8,7 @@ use oxide\validation\Processor;
  * 
  * Handle the uploaded file process
  */
-class FileUploadProcessor implements Processor {
+class FileUploadProcessor {
    protected 
       $_chmod = 0644,
       $_folder_chmod = 0755,

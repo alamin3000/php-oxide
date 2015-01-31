@@ -13,8 +13,8 @@ ini_set('memory_limit', '64M');
 class ImageUploadProcessor extends FileUploadProcessor
 {
    protected 
-           $_image_width = 0,
-           $_image_height= 0;
+      $_image_width = 0,
+      $_image_height= 0;
 
 
    /**
