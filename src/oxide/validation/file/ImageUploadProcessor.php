@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation\file;
-use oxide\ui\Image;
+use oxide\ui\gd\Image;
 
 
 ini_set('memory_limit', '64M');

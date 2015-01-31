@@ -1,5 +1,5 @@
 <?php
-namespace oxide\ui;
+namespace oxide\ui\gd;
 use oxide\validation\Result;
 
 
