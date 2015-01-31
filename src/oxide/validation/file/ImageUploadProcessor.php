@@ -3,16 +3,14 @@ namespace oxide\validation\file;
 use oxide\ui\gd\Image;
 
 
-ini_set('memory_limit', '64M');
-
 /**
  * Image upload processor
  * 
  * Performs actual image save processing
  */
-class ImageUploadProcessor extends FileUploadProcessor
-{
+class ImageUploadProcessor extends FileUploadProcessor {
    protected 
+      $_current_memlimit = null,
       $_image_width = 0,
       $_image_height= 0;
 
@@ -30,6 +28,9 @@ class ImageUploadProcessor extends FileUploadProcessor
       parent::__construct($upload_dir, 0644, $allow_file_override, $mk_dir);
       if($width) $this->_image_width = $width;
       if($height) $this->_image_height = $height;
+      $this->_current_memlimit = ini_get('memory_limit');
+      echo "Current: " . $this->_current_memlimit;
+      ini_set('memory_limit', '64M');
    }
    
    /**
@@ -75,5 +76,11 @@ class ImageUploadProcessor extends FileUploadProcessor
       }
       
       return $success;
+   }
+   
+   public function __destruct() {
+      if($this->_current_memlimit) {
+         ini_set('memory_limit', $this->_current_memlimit);
+      }
    }
 }
