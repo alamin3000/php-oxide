@@ -571,14 +571,13 @@ class Ui extends Html {
             $key = "";
          }
          
-         echo $this->tag('dt', $key, array('title' => $key));
-         
+         echo $this->tag('dt', $key, ['title' => $key]);
          if(!is_array($value)) {
             $value = [$value];
          }
          
          foreach($value as $val) {
-            echo $this->tag('dd', $val, array('title' => $key));
+            echo $this->tag('dd', $val, ['title' => $key]);
          }
       }
       return $this->end('dl');
@@ -601,7 +600,7 @@ class Ui extends Html {
       $buffer .= $this->panelBody($body);
       if($footer)
          $buffer .= $this->panelFooter($footer);
-      $buffer .= $this->panelEnd();
+      $buffer .= $this->panelClose();
    }
    
    /**
