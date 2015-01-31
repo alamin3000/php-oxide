@@ -76,7 +76,10 @@ class ImageUploadValidation implements ValidationComponent {
     */
    public function process($value, Result &$result = null) { 
       $options = $this->_options;
-      $upload_dir = rtrim(_util::value($options, 'upload_folder', null, true), '/');      
+      if(!isset($this->_options['upload_folder']) || empty($this->_options['upload_folder'])) {
+         throw new \Exception('Upload found is not provided.');
+      }
+      $upload_dir = rtrim($this->_options['upload_folder'], '/'); 
       $width = $options['image_width'];
       $height = $options['image_height'];
       
