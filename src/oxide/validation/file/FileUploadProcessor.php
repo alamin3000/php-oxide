@@ -10,6 +10,7 @@ use oxide\validation\Result;
  */
 class FileUploadProcessor {
    protected 
+      $_filename = null,
       $_chmod = 0644,
       $_folder_chmod = 0755,
       $_allow_override = true,
@@ -30,6 +31,10 @@ class FileUploadProcessor {
       $this->_chmod = $chmod;
       $this->_allow_override = $allow_file_override;
       $this->_makedir = $make_dir;
+   }
+   
+   public function setFilename($name) {
+      $this->_filename = $name;
    }
    
    /**
@@ -55,6 +60,20 @@ class FileUploadProcessor {
     * @return type
     */
    protected function generateFileName($name, $dir) {
+      if($this->_filename) {
+         $parts = pathinfo($this->_filename);
+         if(!isset($parts['extension'])) {
+            $ext = pathinfo($name, PATHINFO_EXTENSION);
+            if($ext) {
+               $name = $this->_filename . '.'. $ext;
+            } else {
+               $name = $this->_filename;
+            }
+         } else {
+            $name = $this->_filename;
+         }
+      }
+      
       $destination_file = "{$dir}/{$name}";
       return $destination_file;
    }
@@ -96,14 +115,12 @@ class FileUploadProcessor {
       
       // now check if directory is wriable
       if(!is_writable($upload_dir)) {
-         $result->addError('Upload directory is not wriable.');
+         $result->addError('Upload directory is not writable.');
          return NULL;
       }
       
       $name = $value['name'];
       $uploaded_file = $value['tmp_name'];
-
-      // generate destintation file
       $destination_file = $this->generateFileName($name, $upload_dir);
       
       // check for some issues with 

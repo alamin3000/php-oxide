@@ -10,7 +10,6 @@ use oxide\ui\gd\Image;
  */
 class ImageUploadProcessor extends FileUploadProcessor {
    protected 
-      $_current_memlimit = null,
       $_image_width = 0,
       $_image_height= 0;
 
@@ -23,14 +22,10 @@ class ImageUploadProcessor extends FileUploadProcessor {
     * @param int $width
     * @param int $height
     */
-   public function __construct($upload_dir, $allow_file_override, $mk_dir = false, $width = null, $height = null)
-   {
+   public function __construct($upload_dir, $allow_file_override, $mk_dir = false, $width = null, $height = null) {
       parent::__construct($upload_dir, 0644, $allow_file_override, $mk_dir);
       if($width) $this->_image_width = $width;
       if($height) $this->_image_height = $height;
-      $this->_current_memlimit = ini_get('memory_limit');
-      echo "Current: " . $this->_current_memlimit;
-      ini_set('memory_limit', '64M');
    }
    
    /**
@@ -39,8 +34,7 @@ class ImageUploadProcessor extends FileUploadProcessor {
     * @param int $width
     * @param int $height
     */
-   public function setImageResize($width, $height)
-   {
+   public function setImageResize($width, $height) {
       $this->_image_width = $width;
       $this->_image_height = $height;
    }
@@ -51,8 +45,7 @@ class ImageUploadProcessor extends FileUploadProcessor {
     * @param type $dir
     * @return type
     */
-   protected function generateFileName($name, $dir)
-   {
+   protected function generateFileName($name, $dir) {
       return parent::generateFileName($name, $dir);
    }
    
@@ -63,8 +56,7 @@ class ImageUploadProcessor extends FileUploadProcessor {
     * @param \oxide\validation\Result $result
     * @return type
     */
-   protected function processFileSave($source_file, $destination_file, \oxide\validation\Result &$result)
-   {
+   protected function processFileSave($source_file, $destination_file, \oxide\validation\Result &$result) {
       $image = Image::createFromFile($source_file);
       $success = $image->load($result);
       if($this->_image_width || $this->_image_height) {
@@ -79,8 +71,5 @@ class ImageUploadProcessor extends FileUploadProcessor {
    }
    
    public function __destruct() {
-      if($this->_current_memlimit) {
-         ini_set('memory_limit', $this->_current_memlimit);
-      }
    }
 }

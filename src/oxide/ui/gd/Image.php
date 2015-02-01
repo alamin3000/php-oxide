@@ -47,6 +47,11 @@ class Image {
 		$this->_mimetype = image_type_to_mime_type($properties[2]);
 	}
    
+   /**
+    * 
+    * @param string $file
+    * @return \oxide\ui\gd\Image
+    */
    public static function createFromFile($file) {
       return new Image($file);
    }

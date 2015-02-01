@@ -18,6 +18,7 @@ class ImageUploadValidation implements ValidationComponent {
           'image_max_height' => null,
           'min_filesize' => null,
           'max_filesize' => null,
+          'upload_filename' => null,
           'upload_folder' => null
       ];
    
@@ -85,6 +86,9 @@ class ImageUploadValidation implements ValidationComponent {
       // create the processor
       $processor = new ImageUploadProcessor($upload_dir, true, true);
       $processor->setImageResize($width, $height);
+      if(!empty($options['upload_filename'])) {
+         $processor->setFilename($options['upload_filename']);
+      }
       $path = $processor->process($value, $result);
       
       if(!$result->isValid()) {
