@@ -206,7 +206,7 @@ abstract class Controller
       // perform access validation
       $authManager = new auth\AuthManager($config, $context->getAuth());
       $authManager->validateAccess($route, 
-              EventNotifier::sharedInstance(), true); // throws exception if denied
+         EventNotifier::sharedInstance(), true); // throws exception if denied
       
       // setup helpers
       if(!helper\HelperContainer::hasSharedInstance()) {
@@ -241,15 +241,16 @@ abstract class Controller
       if(!is_callable($action_filtered, true)) {
          throw new \BadMethodCallException("Invalid method: ".htmlentities($action_filtered));
       }
-      
 		$method = $this->generateActionMethod($action_filtered);
       
       // attempt to exectue http method action if avalable
       // store view if avalable
       $method_http = "{$method}__{$httpmethod}";
       if(method_exists($this, $method_http)) { // calling specialized HTTP method
-         return $this->{$method_http}($context, $data);
-      } else if(method_exists($this, $method)) { // calling generic method
+         $this->{$method_http}($context, $data);
+      }
+      
+      if(method_exists($this, $method)) { // calling generic method
          return $this->{$method}($context, $data);
       } else { // no method is provided
          return $this->onUndefinedAction($context, $action);
@@ -282,6 +283,7 @@ abstract class Controller
     * @param Context $context
     */
    protected function onInit(Context $context) {
+      
    }
    
    /**
