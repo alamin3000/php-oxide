@@ -167,10 +167,11 @@ class Master extends Container {
    }
    
    /**
+    * Add/set actions
     * 
-    * @param type $title
-    * @param type $url
-    * @return type
+    * @param null|string|array $title
+    * @param null|string $url
+    * @return string
     */
    public function actions($title = null, $url = null) {
       if($title) {

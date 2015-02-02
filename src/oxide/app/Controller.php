@@ -291,10 +291,13 @@ abstract class Controller
     * @return View
     */
    protected function onExecute(Context $context, Route $route) {
-      $action_name = $route->action;		
+      $action_name = $route->action;
       if($this->_catchAll) {
-         array_unshift($route->params, $action_name);
-         $route->params = array_filter($route->params);
+         if(!empty($action_name)) {
+            array_unshift($route->params, $action_name);
+            $route->params = array_filter($route->params);
+         }
+         
          $action_name = $this->_defaultActionName;
       } else {
          // for to appropriate action method

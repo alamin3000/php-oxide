@@ -17,7 +17,7 @@ class Router {
 		$defaultModule = 'home',
 		$defaultController = 'default',
       $indexFile = 'index.php',
-		$defaultAction = 'index';
+		$defaultAction = '';
 	
 	protected
       $_config = null,
