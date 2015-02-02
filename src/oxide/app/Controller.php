@@ -229,7 +229,6 @@ abstract class Controller
 	 */
 	public function forward($action) {
       if(empty($action)) throw new Exception('Action name can not be empty.', 500);
-		
       $data = $this->getViewData();
       $this->_route->action = $action;
       $context = $this->getContext();
@@ -247,12 +246,27 @@ abstract class Controller
       // store view if avalable
       $method_http = "{$method}__{$httpmethod}";
       if(method_exists($this, $method_http)) { // calling specialized HTTP method
-         $this->{$method_http}($context, $data);
-      }
+         $method_init = "{$method}__init";
+         $method_view = "{$method}__view";
+         $view = null;
+         if(method_exists($this, $method_init)) { // initia method
+            $this->{$method_init}($context, $data);
+         }
+         
+         $this->{$method_http}($context, $data); // http method/action method
+         
+         if(method_exists($this, $method_view)) { // view method
+            $view = $this->{$method_view}($context, $data);
+         }
+         
+         return $view;
+      } 
       
-      if(method_exists($this, $method)) { // calling generic method
+      else if(method_exists($this, $method)) { // calling generic method
          return $this->{$method}($context, $data);
-      } else { // no method is provided
+      } 
+      
+      else { // no method is provided
          return $this->onUndefinedAction($context, $action);
       }
 	}   
