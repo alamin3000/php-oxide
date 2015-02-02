@@ -147,17 +147,38 @@ class Master extends Container {
       return $css;
    }
    
+   /**
+    * Add/set breadcrumb
+    * 
+    * @param null|string|array $title
+    * @param null|string $url
+    * @return string
+    */
    public function breadcrumbs($title = null, $url = null) {
       if($title) {
-         $this->breadcrumbs[$title] = $url;
+         if(is_array($title)) {
+            $this->breadcrumbs = $title;
+         } else {
+            $this->breadcrumbs[$title] = $url;
+         }
       } else {
          return $this->_html->ul($this->breadcrumbs);
       }
    }
    
+   /**
+    * 
+    * @param type $title
+    * @param type $url
+    * @return type
+    */
    public function actions($title = null, $url = null) {
       if($title) {
-         $this->actions[$title] = $url;
+         if(is_array($title)) {
+            $this->actions = $title;
+         } else {
+            $this->actions[$title] = $url;
+         }
       } else {
          return $this->_html->ul($this->actions);
       }

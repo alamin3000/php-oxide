@@ -118,6 +118,9 @@ abstract class Controller
    /**
     * Get Params passed to the route
     * 
+    * If $index is int, it will use simple array access
+    * If $index is string, it will use paired path to get value
+    *    /module/controller/action/key/value
     * @return array
     */
    public function getParams($index = null, $default = null) {
