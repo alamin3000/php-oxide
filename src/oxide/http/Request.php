@@ -300,7 +300,7 @@ class Request {
 	 * @param mixed $remove remove the key and it's value from the string
 	 * @return string
 	 */
-	public function getQueryString($add = null, $remove = null) {
+	public function getQueryString(array $add = null, $remove = null) {
 		// get the query string array
 		$qparams = $this->getQuery();
 		

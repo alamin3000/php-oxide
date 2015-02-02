@@ -18,6 +18,7 @@ class Url {
    
    /**
     * Get the host name.  This will include subdomin
+    * 
     * @return string
     */
    public function host() {
@@ -26,6 +27,7 @@ class Url {
    
    /**
     * Get the domain name
+    * 
     * @return string
     */
    public function domain() {
@@ -52,6 +54,7 @@ class Url {
    
    /**
     * Full server url (http://domain.com)
+    * 
     * @return string
     */
    public function serverUrl() {
@@ -144,22 +147,28 @@ class Url {
     *
     * Ex: http://domain.com/module/controller/action?var1=3
     * will return /module/controller/action?var1=3
-    * @param mixed $add
-    * @param mixed $remove
+    * @param bool $relative
+    * @param mixed $addQueryKeyValue
+    * @param mixed $removeQueryKey
     * @return string
     */
-	public function url($add = null, $remove = null) {
-		$request = App::context()->getRequest();
-		$path = trim($request->getPath(), '/');
-		$query = $request->getQueryString($add, $remove);
+	public function url($relative = true, array $addQueryKeyValue = null, $removeQueryKey = null ) {
+		$request = $this->_request;
+		$path = trim($request->getUriComponents('path'), '/');
+		$query = $request->getQueryString($addQueryKeyValue, $removeQueryKey);
 
 		if($query) {
-			return "/{$path}?{$query}";
+			$path = "/{$path}?{$query}";
 		} else {
-			return "/$path";
+			$path = "/$path";
 		}
+      
+      if(!$relative) {
+         $path = $this->serverUrl() .  $path;
+      }
+      
+      return $path;
 	}
-   
       
    /**
     * Returns abosolute URL of the correct location
@@ -167,9 +176,9 @@ class Url {
     * Includes both server and path information.  Does not include Query param
     * @return type
     */
-   public function current() {
-		$request = App::context()->getRequest();
-      $abs = $request->getAbsoluteURL();
+   public function current($relative = true) {
+		$request = $this->_request;
+      $abs = $request->getURL($relative);
       
       return $abs;
    }
