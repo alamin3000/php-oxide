@@ -95,12 +95,20 @@ class Url {
    }
    
    /**
+    * Get the base url for the current requested site
     * 
+    * @param bool $relative
     * @return string
     */
-   public function base() {
-      $request = App::context()->getRequest();
-      return $request->getUriComponents('base');
+   public function base($relative = true) {
+      $request = $this->_request;
+      $base = $request->getUriComponents('base');
+      if(!$relative) {
+         $server = $this->serverUrl();
+         $base = $server . '/' . trim($base, '/\\');
+      }
+      
+      return $base;
    }
    
    /**
