@@ -84,7 +84,7 @@ class AuthManager  {
          }
       }
       
-      return $validator;
+      return $result;
    }
    
 }

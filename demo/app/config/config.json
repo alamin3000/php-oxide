@@ -1,13 +1,18 @@
 {
-    "domain" : "domain.com",
-    "name" : "Website name",
-    "title" : "A site powered by oxide",
-    "developer" : "phpoxide",
-
-    "settings" : {
-        "timezone" : "America/New_York",
-        "upload_dir" : "/upload"
+    "site" : {
+        "name" : "Oxide website",
+        "title" : "Powered by oxide",
+        "description" : "",
+        "url" : "http://phpoxide.com",
+        "host" : "phpoxide.com",
+        "authors" : [{
+            "name" : "Alamin Ahmed",
+            "organization" : "Softwarable Inc.",
+            "email" : "al.ahmed@outlook.com"
+        }]
     },
+    
+    "upload_folder" : "upload",
     
     "debug" : {
         "display" : 1,

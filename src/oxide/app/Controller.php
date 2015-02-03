@@ -204,9 +204,9 @@ abstract class Controller
       $context->setRoute($route);
       
       // perform access validation
-      $authManager = new auth\AuthManager($config, $context->getAuth());
-      $authManager->validateAccess($route, 
-         EventNotifier::sharedInstance(), true); // throws exception if denied
+      $auth = $context->getAuth();
+      $authManager = new auth\AuthManager($config, $auth);
+      $authManager->validateAccess($route, EventNotifier::sharedInstance(), true);
       
       // setup helpers
       if(!helper\HelperContainer::hasSharedInstance()) {
@@ -215,6 +215,7 @@ abstract class Controller
       } else {
          $helpers = helper\HelperContainer::sharedInstance();
       }
+      $helpers->set('auth', $auth);
       
       $viewData = $this->_viewData;
       $viewData->setHelperContainer($helpers);
