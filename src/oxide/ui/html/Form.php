@@ -23,6 +23,7 @@ class Form extends Element {
       $successTag = null,
       $infoTag = null,
       $rowTag = null,
+      $disabledMessage = 'Form is disabled.',
   		$submitErrorMessage = 'Form validation failed.',
 		$submitSuccessMessage = 'Form submission was successful.',
       $requiredIndicator = '*',
@@ -84,6 +85,19 @@ class Form extends Element {
       $this->setValues($values);    // store the raw values
       $this->_generateSubmitId($name);   // generating a unique id for the form
 	}
+   
+   /**
+    * 
+    * @param type $bool
+    * @param type $message
+    */
+   public function disable($bool = null, $message = null) {
+      if($bool === null) return $this->hasAttribute('disabled');
+      else {
+         $this->setAttribute('disabled', 'disabled');
+         if($message) $this->disabledMessage = $message;
+      }
+   }
    
    /**
     * Set the form method (POST|GET)
@@ -402,7 +416,7 @@ class Form extends Element {
    public function process(validation\Result &$result = null) {
       // if form is disabled,
       // we will not process this
-      if(isset($this->disabled)) {
+      if($this->disable()) {
          // this is an error
          throw new \Exception('Form is disabled, therefore cannot be processed.');
       }

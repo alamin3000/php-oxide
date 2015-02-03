@@ -59,16 +59,16 @@ class Response {
     * use this to redirect to different page
     * @access public
     * @param string $url
-    * @param bool $send Indicates if redirect should be sent right away
+    * @param bool $sendAndExit Indicates if redirect should be sent right away and exit
     */
-   public function setRedirect($url, $send = false) {
+   public function setRedirect($url, $sendAndExit = false) {
       // if header is already sent, this will not work
 		if(headers_sent())
          trigger_error ('Cannot send response.  Headers already sent.', E_USER_WARNING);
       $header = "Location: $url";
       $this->addHeader($header);
       
-      if($send) {
+      if($sendAndExit) {
          $this->sendHeaders(true);
       }
    }
