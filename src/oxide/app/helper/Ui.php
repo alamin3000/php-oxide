@@ -483,7 +483,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public static function navigationList($items, $style = null, $activeUrl = null) {
+   public function navigationList($items, $style = null, $activeUrl = null) {
       $this->start('div', ['class' => 'list-group']);
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
