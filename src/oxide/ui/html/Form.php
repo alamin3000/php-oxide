@@ -312,8 +312,6 @@ class Form extends Element {
          }
       }
       
-      
-      
       return $control;
    }
    
@@ -510,6 +508,9 @@ class Form extends Element {
     */
 	public function renderFormHeader() {            
 		$result = $this->getResult();
+      if($this->disable()) {
+         return $this->rowTag->renderContent($this->disabledMessage);
+      }
       if($this->isProcessed()) {
          $msgs = '';
          if(!$result->isValid()) {
