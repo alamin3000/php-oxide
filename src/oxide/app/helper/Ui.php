@@ -300,7 +300,7 @@ class Ui extends Html {
     * @param array $attribs
     * @return string
     */
-   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::FORM_HORIZONTAL, array $attribs = null) {
+   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::FORM_STANDARD, array $attribs = null) {
       $attribs = [
         'name' => $name 
       ];
