@@ -177,19 +177,6 @@ class Url {
       
       return $path;
 	}
-      
-   /**
-    * Returns abosolute URL of the correct location
-    * 
-    * Includes both server and path information.  Does not include Query param
-    * @return type
-    */
-   public function current($relative = true) {
-		$request = $this->_request;
-      $abs = $request->getURL($relative);
-      
-      return $abs;
-   }
    
    /**
     * 
