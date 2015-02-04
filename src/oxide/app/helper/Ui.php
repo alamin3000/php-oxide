@@ -260,13 +260,16 @@ class Ui extends Html {
     * @param type $action
     */
    public function formOpen($name, $method = 'get', $action = null, $style = null, array $attr = null) {
+      if($style == self::FORM_INLINE) $cls = 'form-inline';
+      else if($style == self::FORM_HORIZONTAL) $cls = 'form-horizontal';
+      else $cls = null;
+      
       $this->_merge_attributes($attr, [
          'name' => $name,
          'role' => 'form',
          'method' => $method,
          'action' => $action,
-         'class' => ($style == self::FORM_INLINE) ? 'form-inline' : 
-                    ($style == self::FORM_HORIZONTAL) ? 'form-horizontal' : null
+         'class' => $cls
       ]);
       
       
