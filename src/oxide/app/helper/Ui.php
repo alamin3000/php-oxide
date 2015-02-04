@@ -10,6 +10,13 @@ use oxide\ui\html\Tag;
 
 class Ui extends Html {
    
+   protected 
+      /**
+       * @var \oxide\app\helper\Url 
+       */
+      $_url = null;
+
+
    protected
       $_head = null,
       $_attributes = [],
@@ -66,6 +73,7 @@ class Ui extends Html {
    
    public function __construct(HelperContainer $c) {
       $this->_head = $c->get('head');
+      $this->_url = $c->get('url');
    }
    
    protected function _merge_attributes(array &$arr1 = null, array $arr2 = null) {
@@ -388,7 +396,7 @@ class Ui extends Html {
       if($label) {
          $lblattr = ['for' => $name];
          if($style == self::FORM_HORIZONTAL) {
-            $lblattr['class'] = 'col-sm-2 control-label';
+            $lblattr['class'] = 'col-sm-3 control-label';
          } else {
             $lblattr['class'] = 'control-label';
          }
@@ -396,7 +404,7 @@ class Ui extends Html {
       }
       
       if($style == self::FORM_HORIZONTAL) {
-         $buffer .= $this->tag('div', $ctl, ['class' => 'col-sm-10']);
+         $buffer .= $this->tag('div', $ctl, ['class' => 'col-sm-9']);
       } else {
          $buffer .= $ctl;
       }
@@ -690,14 +698,22 @@ class Ui extends Html {
     * @param int $printcount
     * @return type
     */
-   public function pagination($pagecount, $urlprefix, $querykey = 'p', $printcount = 5) {
+   public function pagination($pagecount, $querykey = 'p', $printcount = 5) {
+      $urlHelper = $this->_url;
       if(!$querykey) $querykey = 'p';
-      $currentpage = Url::query($querykey, 1);
+      
+      $currentpage = $urlHelper->query($querykey, 1);
       if($currentpage < 1) $currentpage = 1;
       $start = -1;
       $end = -1;
 		$mean = floor($printcount/2);
       
+      $urlprefix = $urlHelper->url(true, null, $querykey);
+      if(stristr($urlprefix, '?') === TRUE) {
+         $urlprefix .= '&';
+      } else {
+         $urlprefix .= '?';
+      }
       $linkmake = function($text, $link_page = null, $class = null) use ($urlprefix) {
          if($class) echo '<li class="'.$class.'">';
          else echo '<li>';
