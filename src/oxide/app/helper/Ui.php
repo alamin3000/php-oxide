@@ -155,7 +155,8 @@ class Ui extends Html {
     * @return type
     */
    public function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null, $style = null) {
-      $this->tableStart($style);
+      $this->start();
+      echo $this->tableOpen($style);
       if(!$thcallback) { // default header callback
          $thcallback = function($key) {
             return ucwords(str_replace(['-', '_'], ' ', $key));
@@ -181,21 +182,22 @@ class Ui extends Html {
       }
       echo '</tbody>';
       
-      return $this->tableEnd();
+      echo $this->tableClose();
+      return $this->end();
    }
    
    /**
     * Start creating table
     * @param int $style
     */
-   public function tableStart($style = null) {
+   public function tableOpen($style = null) {
       $cls = ['table'];
       $cls[] = 'table-condensed';
       if($style & self::TABLE_HOVERED) $cls[] = 'table-hover';
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
       
-      $this->start('table', ['class' => implode(' ', $cls)]);
+      return $this->openTag('table', ['class' => implode(' ', $cls)]);
    }
    
    /**
@@ -203,8 +205,8 @@ class Ui extends Html {
     * 
     * @return string
     */
-   public function tableEnd() {
-      return $this->end('table');
+   public function tableClose() {
+      return $this->closeTag('table');
    }
    
    
