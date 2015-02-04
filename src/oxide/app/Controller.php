@@ -60,7 +60,12 @@ abstract class Controller
        * 
        * @var ViewManager
        */
-      $_viewManager = null;
+      $_viewManager = null,
+           
+      /**
+       * @var bool Indicates if rendering should be performed after action execution
+       */     
+      $_autoRender = true;
       
 	/**
 	 * initialize the controller
@@ -334,13 +339,15 @@ abstract class Controller
     * @throws Exception
     */
    protected function onRender(Context $context, View $view = null) {
-      $viewManager = $this->getViewManager();
-      $response = $context->getResponse();
-      $data = $this->getViewData();
-      
-      $prepview = $viewManager->prepareViewWithData($view, $data);
-      $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
-      $response->addBody($prepview->render());
+      if($this->_autoRender) {
+         $viewManager = $this->getViewManager();
+         $response = $context->getResponse();
+         $data = $this->getViewData();
+
+         $prepview = $viewManager->prepareViewWithData($view, $data);
+         $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
+         $response->addBody($prepview->render());
+      }
    }
    
    /**
