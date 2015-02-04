@@ -12,6 +12,8 @@ use oxide\util\Exception;
  * @author Alamin Ahmed <aahmed753@gmail.com>
  */
 class Connection {
+   use \oxide\base\pattern\SharedInstanceTrait;
+   
    /**
     *
     * @access protected
@@ -76,7 +78,7 @@ class Connection {
 	 */
    public function getPDO() {
       if(!$this->_pdo) {
-         throw new exception\ConnectionException('Connection is not established.');
+         $this->connect();
       }
       
       return $this->_pdo;
@@ -364,7 +366,6 @@ class Connection {
          }
 
          $schema[$name] = $type;
-
       }
 
       // return the schema

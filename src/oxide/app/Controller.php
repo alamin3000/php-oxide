@@ -211,6 +211,10 @@ abstract class Controller
       $authManager = new auth\AuthManager($config, $auth);
       $authManager->validateAccess($route, EventNotifier::sharedInstance(), true);
       
+      $conn = $context->getConnection();
+      \oxide\data\Connection::setSharedInstance($conn);
+      \oxide\data\model\ActiveRecord::sharedConnection($conn);
+      
       // setup helpers
       if(!helper\HelperContainer::hasSharedInstance()) {
          $helpers = new helper\HelperContainer($context);

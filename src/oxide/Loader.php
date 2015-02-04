@@ -139,8 +139,6 @@ class Loader {
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
-         
-         $conn->connect();
          return $conn;
       });
       
@@ -149,12 +147,12 @@ class Loader {
          $config = $c->getConfig();
          $type = $config->getUsingKeyPath('email.transport', null, true);
          if($type == 'smtp') {
-            $host = $config->getUsingKeyPath('email.options.host', null, true);
-            $port = $config->getUsingKeyPath('email.options.port', 25);
-            $encrypt = $config->getUsingKeyPath('email.options.encrypt', null);
-            $username = $config->getUsingKeyPath('email.options.username', null, true);
-            $password = $config->getUsingKeyPath('email.options.password', null, true);
-            $transport = \Swift_SmtpTransport::newInstance($host, $port, $encrypt);
+            $host       = $config->getUsingKeyPath('email.options.host', null, true);
+            $port       = $config->getUsingKeyPath('email.options.port', 25);
+            $encrypt    = $config->getUsingKeyPath('email.options.encrypt', null);
+            $username   = $config->getUsingKeyPath('email.options.username', null, true);
+            $password   = $config->getUsingKeyPath('email.options.password', null, true);
+            $transport  = \Swift_SmtpTransport::newInstance($host, $port, $encrypt);
             $transport->setUsername($username);
             $transport->setPassword($password);
          } else if($type == 'sendmail') {
