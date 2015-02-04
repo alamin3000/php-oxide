@@ -98,8 +98,30 @@ class Router {
               && !is_null($parts[$iparam]))
 				  ? \array_slice($parts, $iparam) : array();
 
+      $route->path = $path;
 		return $route;
 	}
+   
+   /**
+    * Attempt to match the given route with current router registry
+    * 
+    * If matched, it will update the namespace, dir of the route
+    * @param Route $route
+    * @return boolean
+    */
+   public function match(Route $route) {
+      $registry = $this->_registry;
+      if(empty($registry)) return FALSE;
+      $module = $route->module;
+      
+      if(!isset($registry[$module])) return FALSE;
+      $moduleinfo = $registry[$module];
+      list($dir, $namespace) = $moduleinfo;
+      $route->namespace = $namespace;
+      $route->dir = $dir;
+      
+      return TRUE;
+   }
    
    /**
     * Routes the given $request object into Route object
@@ -109,22 +131,15 @@ class Router {
     * @return Route|null
     */
    public function route(Request $request) {
-      $registry = $this->_registry;
-      if(empty($registry)) return NULL;
-      
       $path = $request->getUriComponents(Request::URI_PATH);
       $route = $this->urlToRoute($path);
-      $module = $route->module;
-      
-      if(!isset($registry[$module])) return NULL;
-      $moduleinfo = $registry[$module];
-      list($dir, $namespace) = $moduleinfo;
-      $route->path = $path;
-      $route->namespace = $namespace;
-      $route->dir = $dir;
-      $route->method = $request->getMethod();
-      $request->setParams($route->params);
-      return $route;
+      if($this->match($route)) {
+         $route->method = $request->getMethod();
+         $request->setParams($route->params);
+         return $route;
+      } else {
+         return NULL;
+      }
    }
 	   
    /**
