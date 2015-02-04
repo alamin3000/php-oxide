@@ -244,6 +244,12 @@ class Request {
       return $default;
 	}
    
+   /**
+    * Set any additional params for the request
+    * 
+    * This is usually called by the Router object once the request has been routed.
+    * @param array $params
+    */
    public function setParams(array $params) {
       $this->_vars = $params;
    }
@@ -254,7 +260,7 @@ class Request {
     * @param type $default
     * @return type
     */
-   public function getParam($index = null, $default = null) {
+   public function getParams($index = null, $default = null) {
       if($index === null) return $this->_vars;
       if(isset($this->_vars[$index])) return $this->_vars[$index];
       return $default;
@@ -273,7 +279,7 @@ class Request {
     * @return type
     */
    public static function getInput($type, $key = null, $default = null, 
-           $filter = FILTER_UNSAFE_RAW , $opitons = null) {
+      $filter = FILTER_UNSAFE_RAW , $opitons = null) {
 		if($key === null) {
 			$vals = filter_input_array($type);
          if(!$vals) {
