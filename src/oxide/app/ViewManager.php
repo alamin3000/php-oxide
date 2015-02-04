@@ -83,6 +83,14 @@ class ViewManager {
       return $this->_viewDirName;
    }
 
+   /**
+    * Set the route for the view manager
+    * 
+    * @param Route $route
+    */
+   public function setRoute(Route $route) {
+      $this->_route = $route;
+   }
    
    /**
     * Create a new view using given $script
