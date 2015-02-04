@@ -130,11 +130,11 @@ class Router {
    /**
     * makes necessary changes to the route object and reroutes to default controller
     * 
-    * This is following effect on router
+    * This has following effect on router
     * 1) module remains same
     * 2) controller becomes default
     * 3) action takes value of controller
-    * 4) params 
+    * 4) params are updated to reflect the shifts
     * @param \oxide\http\Route $route
     */
    public function rerouteToDefaultController(Route $route) {

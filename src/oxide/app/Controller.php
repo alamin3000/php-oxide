@@ -25,8 +25,6 @@ abstract class Controller
    implements Command {
    
 	protected  
-      $_helpers = ['HtmlHelper', 'UiHelper', 'FlashHelper'],
-           
       /**
        * @var Route
        */
@@ -313,6 +311,7 @@ abstract class Controller
          if(!empty($action_name)) {
             array_unshift($route->params, $action_name);
             $route->params = array_filter($route->params);
+            $context->getRequest()->setParams($route->params); // update the request params
          }
          
          $action_name = $this->_defaultActionName;
