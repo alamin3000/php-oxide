@@ -46,7 +46,7 @@ class Control extends Element {
       $this->setName($name);      
       if($label) $this->setLabel($label);
       if($value) $this->setValue($value);
-      if($data) $this->_data = $data;
+      if($data) $this->setData($data);
       if($attributes) $this->setAttributes ($attributes);
    }
       
