@@ -20,13 +20,12 @@ class SelectControl extends Control {
 	 * @param string $name
 	 * @param string $value
 	 * @param string $label
-	 * @param array $items
-	 * @param array $attrbs
+	 * @param array $data
+	 * @param array $attributes
 	 */
-	public function __construct($name, $value = null, $label = null) {
-      parent::__construct($name, $value, $label);      
+	public function __construct($name, $value = null, $label = null, $data = null, array $attributes = null) {
+      parent::__construct($name, $value, $label, $data, $attributes);      
       $this->setTag('select');
-      $this->_data = [];
    }
    
    /**
@@ -46,7 +45,7 @@ class SelectControl extends Control {
    }
    
 	/**
-	 * set wheather or not user can select multiple options
+	 * Set wheather or not user can select multiple options
 	 * 
 	 * @param bool $bool
 	 */
