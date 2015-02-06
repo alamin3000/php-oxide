@@ -231,9 +231,9 @@ class Ui extends Html {
     * @param type $text
     * @return type
     */
-   public function link($link, $text = null) {
+   public function link($link, $text = null, $target = '_self') {
       if($text === null) $text = $link;
-      return $this->tag('a', $text, ['href' => $link]);
+      return $this->tag('a', $text, ['href' => $link, 'target' => $target]);
    }
    
    /**
