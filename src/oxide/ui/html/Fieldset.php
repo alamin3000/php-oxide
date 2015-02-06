@@ -31,6 +31,7 @@ class Fieldset extends Element  {
     * @param Form $form
     */
    public function setForm(Form $form = null) {
+      $this->_form = $form;
       // we will apply form value to all entries
       foreach($this->toArray() as $element) {
          if($element instanceof Control || $element instanceof Fieldset) { // this will also include fieldset, since it is also control
