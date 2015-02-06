@@ -1,5 +1,7 @@
 <?php
 namespace oxide\validation\string;
+use oxide\validation\ValidatorAbstract;
+use oxide\validation\Result;
 
 class AlphaNumValidator extends ValidatorAbstract
 {
