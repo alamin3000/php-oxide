@@ -1,11 +1,11 @@
 <?php
-namespace oxide\validation;
+namespace oxide\validation\string;
 
 class AlphaNumValidator extends ValidatorAbstract
 {
 	protected 
       $_allowSpace = false,
-      $_unicode = false,
+      $_unicode = true,
       $_allowchars = null,
       $_errorMessage = "Only letters and numbers are allowed.";
 
@@ -17,10 +17,9 @@ class AlphaNumValidator extends ValidatorAbstract
     * @param bool $unicode
     * @todo white space and unicode needs to be added
     */
-	public function __construct($allowSpace = false, $unicode = true, $allowchars = null)
+	public function __construct($allowSpace = false, $allowchars = null)
    {
 		$this->_allowSpace = $allowSpace;
-      $this->_unicode = $unicode;
       $this->_allowchars = $allowchars;
 	}
 	
