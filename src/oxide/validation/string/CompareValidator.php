@@ -21,6 +21,7 @@ class CompareValidator extends ValidatorAbstract {
     * @todo add case check feature
     */
    public function __construct($init_value, $case = false) {
+      parent::__construct();
       $this->_compareValue = $init_value;
       $this->_case = $case;
    }

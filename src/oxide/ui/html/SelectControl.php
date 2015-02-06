@@ -123,6 +123,7 @@ class SelectControl extends Control {
       
 		foreach($this->_data as $grouplabel => $item) {
 			$options = ''; // hold rendered item list
+         
 			foreach($item as $label => $value) {            
 	         if(in_array($value, $values)) $selected = true;
 	         else $selected = false;
