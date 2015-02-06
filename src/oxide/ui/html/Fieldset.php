@@ -9,6 +9,7 @@ class Fieldset extends Element  {
       $legendTag = null;
    
    protected 
+      $_form = null,
       $_legend = null;
 
 
@@ -37,11 +38,30 @@ class Fieldset extends Element  {
          }
       }
    }
+   
+   /**
+    * Get the form associated with the fieldset, if any.
+    * @return Form
+    */
+   public function getForm() {
+      return $this->_form;
+   }
  
    protected function onRender() {
       if($this->_legend) {
          if(!$this->legendTag) $this->prepend(self::renderTag ('legend', $this->_legend));
          else $this->prepend($this->legendTag->renderContent($this->_legend));
+      }
+   }
+   
+   
+   protected function _t_array_access_set($key, $value) {
+      parent::_t_array_access_set($key, $value);
+      if($this->getForm()) {
+         if($value instanceof Control ||
+            $value instanceof Fieldset) {
+            $value->setForm($this->getForm());
+         }
       }
    }
 }
