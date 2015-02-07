@@ -370,18 +370,30 @@ class Ui extends Html {
          case 'checkbox':
             $attribs['type'] = $type;
             if(!is_array($data)) {
-               $attribs['value'] = $value;
+               if($data == $value) {
+                  $attribs['checked'] = 'checked';
+               }
+               $attribs['value'] = $data;
                $ctl = $this->tag('label', $this->tag('input', null, $attribs) . $data,
                        ['class' => 'checkbox-inline']);
             } else {
-               $attribs['name'] = $name . '[]';
-               $bff = '';
-               foreach($data as $lbl => $val) {
-                  $attribs['value'] = $val;
-                  $bff .= $this->tag('label', $this->tag('input', null, $attribs) . $lbl,
-                          ['class' => 'checkbox-inline']);
+               $_chkcount = count($data);
+               if($_chkcount > 1) {
+                  $attribs['name'] = $name . '[]';
                }
                
+               $bff = '';
+               foreach($data as $chklabel => $chkvalue) {
+                  $attribs['value'] = $chkvalue;
+                  if($chkvalue == $value) {
+                     $attribs['checked'] = 'checked';
+                  }
+                  
+                  $_ctlchkbx = $this->tag('input', null, $attribs, true);
+                  $bff .= $this->tag('label', $_ctlchkbx . $chklabel, [
+                     'class' => 'checkbox-inline'
+                  ]);
+               }
                $ctl = $bff;
             }
             break;
