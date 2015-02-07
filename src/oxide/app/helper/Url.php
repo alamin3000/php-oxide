@@ -160,15 +160,17 @@ class Url {
     * @param mixed $removeQueryKey
     * @return string
     */
-	public function url($relative = true, array $addQueryKeyValue = null, $removeQueryKey = null ) {
+	public function url($relative = true, array $addQueryKeyValue = null, $removeQueryKey = null, $prepareForQuery = true) {
       $request = $this->_request;
 		$path = $this->pathUrl($relative);
 		$query = $request->getQueryString($addQueryKeyValue, $removeQueryKey);
 
 		if($query) {
 			$path = "{$path}?{$query}";
+         if($prepareForQuery) $path .= '&';
 		} else {
 			$path = "$path";
+         if($prepareForQuery) $path .= '?';
 		}
       
       return $path;
