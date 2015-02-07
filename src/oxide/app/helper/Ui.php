@@ -376,9 +376,9 @@ class Ui extends Html {
             } else {
                $attribs['name'] = $name . '[]';
                $bff = '';
-               foreach($data as $label => $val) {
+               foreach($data as $lbl => $val) {
                   $attribs['value'] = $val;
-                  $bff .= $this->tag('label', $this->tag('input', null, $attribs) . $label,
+                  $bff .= $this->tag('label', $this->tag('input', null, $attribs) . $lbl,
                           ['class' => 'checkbox-inline']);
                }
                
