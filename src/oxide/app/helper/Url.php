@@ -161,8 +161,8 @@ class Url {
     * @return string
     */
 	public function url($relative = true, array $addQueryKeyValue = null, $removeQueryKey = null ) {
-		$request = $this->_request;
-		$path = trim($request->getUriComponents('path'), '/');
+      $request = $this->_request;
+		$path = $this->pathUrl($relative);
 		$query = $request->getQueryString($addQueryKeyValue, $removeQueryKey);
 
 		if($query) {
@@ -171,12 +171,24 @@ class Url {
 			$path = "/$path";
 		}
       
+      return $path;
+	}
+   
+   /**
+    * 
+    * @param type $relative
+    * @return string
+    */
+   public function pathUrl($relative = true) {
+      $request = $this->_request;
+      $path = trim($request->getUriComponents('path'), '/');
+      
       if(!$relative) {
          $path = $this->serverUrl() .  $path;
       }
       
       return $path;
-	}
+   }
    
    /**
     * 
