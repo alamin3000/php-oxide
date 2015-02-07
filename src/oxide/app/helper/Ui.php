@@ -252,6 +252,7 @@ class Ui extends Html {
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
       $attribs['herf'] = $href;
+      $attribs['role'] = 'button';
       return $this->tag('a', $text, $attribs);
    }
 
