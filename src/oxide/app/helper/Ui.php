@@ -331,6 +331,12 @@ class Ui extends Html {
             $ctl = $this->tag('input', null, $attribs, true);
             break;
          
+         case 'reset':
+            $attribs['class'] = 'btn btn-danger';
+            $attribs['value'] = $value;
+            $attribs['type'] = $type;
+            $ctl = $this->tag('input', null, $attribs, true);
+         
          case 'button':
             $attribs['class'] = 'btn';
             $attribs['value'] = $value;
