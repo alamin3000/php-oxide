@@ -523,7 +523,7 @@ class Ui extends Html {
          if(is_array($value)) {
             unset($attrs['href']);
             echo $this->tag('span', $key,$attrs);
-            echo $this->navList($value, $style, $activeUrl);
+            echo $this->navigationList($value, $style, $activeUrl);
          } else {
             if($value) $attrs['href'] = $value;
             else unset($attrs['href']);
