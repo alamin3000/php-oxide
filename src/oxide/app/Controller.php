@@ -242,41 +242,39 @@ abstract class Controller
       $context = $this->getContext();
       $request = $context->getRequest();
       $httpmethod = strtoupper($request->getMethod());
+      $handled = false;
 
       // generate and validate method name
       $action_filtered = CommandFactory::stringToName($action);
       if(!is_callable($action_filtered, true)) {
          throw new \BadMethodCallException("Invalid method: ".htmlentities($action_filtered));
       }
+      
+      // various methods that will be called
 		$method = $this->generateActionMethod($action_filtered);
-      
-      // attempt to exectue http method action if avalable
-      // store view if avalable
+      $method_init = "{$method}__init";
+      $method_view = "{$method}__view";
       $method_http = "{$method}__{$httpmethod}";
-      if(method_exists($this, $method_http)) { // calling specialized HTTP method
-         $method_init = "{$method}__init";
-         $method_view = "{$method}__view";
-         $view = null;
-         if(method_exists($this, $method_init)) { // initia method
-            $this->{$method_init}($context, $data);
+
+      // method executer
+      $executer = function($method, $context, $data) use (&$handled) {
+         if(method_exists($this, $method)) {
+            $handled = true;
+            return $this->{$method}($context, $data);
          }
-         
-         $this->{$method_http}($context, $data); // http method/action method
-         
-         if(method_exists($this, $method_view)) { // view method
-            $view = $this->{$method_view}($context, $data);
-         }
-         
-         return $view;
-      } 
+      };
       
-      else if(method_exists($this, $method)) { // calling generic method
-         return $this->{$method}($context, $data);
-      } 
+      // calling methods in particular order
+      $executer($method_init, $context, $data); // initialize method
+      $executer($method_http, $context, $data); // http version method
+      $executer($method, $context, $data); // standard method
+      $view = $executer($method_view, $context, $data); // view method
       
-      else { // no method is provided
+      if(!$handled) {
          return $this->onUndefinedAction($context, $action);
       }
+      
+      return $view;
 	}   
    
    /**
