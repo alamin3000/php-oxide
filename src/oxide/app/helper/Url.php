@@ -181,7 +181,7 @@ class Url {
     */
    public function pathUrl($relative = true) {
       $request = $this->_request;
-      $path = trim($request->getUriComponents('path'), '/');
+      $path = '/' . trim($request->getUriComponents('path'), '/');
       
       if(!$relative) {
          $path = $this->serverUrl() .  $path;
