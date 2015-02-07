@@ -166,9 +166,9 @@ class Url {
 		$query = $request->getQueryString($addQueryKeyValue, $removeQueryKey);
 
 		if($query) {
-			$path = "/{$path}?{$query}";
+			$path = "{$path}?{$query}";
 		} else {
-			$path = "/$path";
+			$path = "$path";
 		}
       
       return $path;
