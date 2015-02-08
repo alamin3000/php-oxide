@@ -37,6 +37,8 @@ class Html {
       $inputTypes = ['text' => true, 'submit' => true, 'button' => true, 'password' => true, 'hidden' => true, 'radio' => true, 'image' => true, 'checkbox' => true, 'file' => true , 'email' => true, 'url' => true, 'tel' => true, 'number' => true, 'range' => true, 'search' => true, 'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 'time' => true, 'datetime-local' => true, 'button' => true],
       $controls = ['input', 'textarea', 'select', 'button'];
 
+   protected
+      $_openedTagInfo = [];
    /**
     * 
     * @param type $tag
@@ -47,7 +49,6 @@ class Html {
    public function openTag($tag, array $attributes = null, $void = false) {
       if($void) $close = ' /';
       else $close = '';
-      
       return '<'. $tag . $this->attributeString($attributes) . $close . '>';
    }
    

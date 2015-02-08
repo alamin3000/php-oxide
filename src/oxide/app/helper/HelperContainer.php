@@ -33,11 +33,19 @@ class HelperContainer extends Container  {
    public function __construct(Context $context) {
       parent::__construct();
       $this->_context = $context;
-      $this->registerDefaultHelpers($this->_helpers);
+      $this->registerHelpers($this->_helpers);
    }
-   
-   
-   protected function registerDefaultHelpers(array $helpers) {
+
+   /**
+    * Register a helper
+    * 
+    * array must be in following format:
+    * [
+    *    'helpername' => 'full\path\to\Class
+    * ]
+    * @param array $helpers
+    */
+   public function registerHelpers(array $helpers) {
       foreach($helpers as $name => $helper) {
          $this->set($name, function($c) use($helper) {
             return new $helper($c);

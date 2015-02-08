@@ -10,7 +10,10 @@ use oxide\ui\html\Tag;
 
 class Ui extends Html {
    
-   protected 
+   
+   protected           
+      $_openedTags = [],
+           
       /**
        * @var \oxide\app\helper\Url 
        */
@@ -197,6 +200,7 @@ class Ui extends Html {
       if($style & self::TABLE_STRIPED) $cls[] = 'table-striped';      
       if($style & self::TABLE_BORDERED) $cls[] = 'table-bordered';
       
+      $this->_openedTags['table'] = $style;
       return $this->openTag('table', ['class' => implode(' ', $cls)]);
    }
    
@@ -206,6 +210,7 @@ class Ui extends Html {
     * @return string
     */
    public function tableClose() {
+      unset($this->_openedTags['table']);
       return $this->closeTag('table');
    }
    
@@ -277,7 +282,7 @@ class Ui extends Html {
       ]);
       
       
-//      $this->_openStack[] = 
+      $this->_openedTags['form'] = $style;
       return $this->openTag('form', $attr);
    }
    
@@ -307,7 +312,7 @@ class Ui extends Html {
     * @param array $attribs
     * @return string
     */
-   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::FORM_STANDARD, array $attribs = null) {
+   public function control($type, $name, $value = null, $label = null, $data = null, $style = null, array $attribs = null) {
       $attribs = [
         'name' => $name 
       ];
@@ -428,6 +433,13 @@ class Ui extends Html {
          $buffer .= $this->tag('label', $label, $lblattr);
       }
       
+      
+      if($style === null) {
+         if(isset($this->_openedTags['form'])) {
+            $style = $this->_openedTags['form'];
+         }
+      }
+      
       if($style == self::FORM_HORIZONTAL) {
          $buffer .= $this->tag('div', $ctl, ['class' => 'col-sm-9']);
       } else {
@@ -443,6 +455,7 @@ class Ui extends Html {
     * @return string
     */
    public function formClose() {
+      unset($this->_openedTags['form']);
       return $this->closeTag('form');
    }
    
