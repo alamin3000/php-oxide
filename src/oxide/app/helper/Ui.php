@@ -53,7 +53,12 @@ class Ui extends Html {
       STYLE_LEFT = 2097152,
       STYLE_RIGHT = 4194304,
       STYLE_CENTER = 8388608,
-      STYLE_INSIDE = 16777216;
+      STYLE_INSIDE = 16777216,
+      STYLE_VERTICAL = 33554432,
+      STYLE_ORDERED = 67108864,
+      STYLE_UNORDERED = 134217728,
+      STYLE_LINK_VALUE = 268435456;
+      
    
    public function __construct(HelperContainer $c) {
       $this->_head = $c->get('head');
@@ -477,24 +482,22 @@ class Ui extends Html {
     * @param type $style
     * @return string
     */
-   public function listing(array $items, $style = null) {
+   public function bullets(array $items, $style = null) {
       if($style) {
          
       } else {
-         $style = self::LIST_VERTICAL | self::LIST_UNORDERED;
+         $style = self::STYLE_VERTICAL | self::STYLE_UNORDERED;
       }
       
       $tag = 'ul';
-      if($style & self::LIST_ORDERED) $tag = 'ol';
-      else if($style & self::LIST_UNORDERED) $tag = 'ul';
+      if($style & self::STYLE_ORDERED) $tag = 'ol';
+      else if($style & self::STYLE_UNORDERED) $tag = 'ul';
       
       
       $this->start($tag);
       foreach($items as $key => $value) {
          echo "<li>";
-         if($style & self::LIST_LINK_KEY) {
-            echo $this->link($key, $value);
-         } else if($style & self::LIST_LINK_VALUE) {
+         if($style & self::STYLE_LINK_VALUE) {
             echo $this->link($value, $key);
          } else {
             echo $value;
