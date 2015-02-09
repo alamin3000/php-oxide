@@ -932,10 +932,14 @@ class Ui extends Html {
          $ctl->setAttribute('class', 'form-control');
       }
       $buffer = '';
-      
+      $cls = [];
       $error = $ctl->getError();
-      if($error) $buffer .= $this->formRowOpen (['class' => 'has-error']);
-      else $buffer .= $this->formRowOpen();
+      if($error) $cls[] = 'has-error';
+      if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
+      else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
+      
+      $buffer .= $this->formRowOpen(['class' => implode(' ', $cls)]);
+
       
       // label
       $buffer .= $this->gridColumnOpen(12, 3);
