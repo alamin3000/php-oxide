@@ -888,7 +888,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function renderForm(Form $form, $style = self::FORM_STANDARD) {      
+   public function renderForm(Form $form, $style = self::STYLE_STANDARD) {      
       $form->errorTag   = new Tag('div', ['class' => 'alert alert-danger']);
       $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
 
