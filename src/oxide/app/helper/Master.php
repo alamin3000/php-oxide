@@ -38,6 +38,7 @@ class Master extends Container {
    }
    
    /**
+    * <TITLE> string for the webpage
     * 
     * @param string $string
     */
@@ -49,6 +50,7 @@ class Master extends Container {
    }
    
    /**
+    * Add <META> Tags
     * 
     * @param type $name
     * @param type $content
@@ -64,7 +66,9 @@ class Master extends Container {
    }
    
    /**
+    * <LINK> tag for the html head.  
     * 
+    * Usually used for adding stylesheets.
     * @param type $href
     * @param type $rel
     * @param array $attr

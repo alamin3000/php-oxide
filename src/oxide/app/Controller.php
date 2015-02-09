@@ -297,6 +297,11 @@ abstract class Controller
       }
 	}
    
+   final public function render() {
+      $context = $this->getContext();
+      $this->onRender($context);
+   }
+   
    /**
     * Subclassing controller must/should call parent::onInit if overriding
     * 

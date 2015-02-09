@@ -90,6 +90,15 @@ class Page implements Renderer {
     * @param type $key
     * @return type
     */
+   public function hasPartial($key) {
+      return array_key_exists($key, $this->_partials);
+   }
+   
+   /**
+    * 
+    * @param type $key
+    * @return type
+    */
    public function getPartial($key) {
       if(isset($this->_prerenders[$key])) {
          return $this->_prerenders[$key];
