@@ -159,6 +159,7 @@ class Page implements Renderer {
       foreach($this->_partials as $key => $partial) {
          $this->_prerenders[$key] = $partial->render();
       }
-      $this->_cache = $this->renderPage($script, $data);
+      
+      return $this->renderPage($script, $data);
    }
 }
