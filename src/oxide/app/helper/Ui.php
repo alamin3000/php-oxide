@@ -985,13 +985,15 @@ class Ui extends Html {
     * @param Renderer $renderer
     * @return string
     */
-   public function render(Renderer $renderer) {
+   public function render($renderer) {
       if($renderer instanceof Form) {
          return $this->renderForm($renderer);
       } else if($renderer instanceof Control) {
          return $this->renderControl($renderer);
-      } else {
+      } else if($renderer instanceof Renderer) {
          return $renderer->render();
+      } else {
+         return (string)$renderer;
       }
    }
 }
