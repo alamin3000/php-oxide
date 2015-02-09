@@ -894,7 +894,7 @@ class Ui extends Html {
 
       foreach($form->getControls() as $control) {
          $control->setRendererCallback(function($ctl) use ($style) {
-            $this->renderControl($ctl, $style);
+            return $this->renderControl($ctl, $style);
          });
       }
       if($style & self::STYLE_INLINE) {
