@@ -893,7 +893,9 @@ class Ui extends Html {
       $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
 
       foreach($form->getControls() as $control) {
-         $control->setRendererCallback([$this, 'renderControl'], $style);
+         $control->setRendererCallback(function($ctl) use ($style) {
+            $this->renderControl($ctl, $style);
+         });
       }
       if($style & self::STYLE_INLINE) {
          $form->setAttribute('class', 'form-inline', ' ');
