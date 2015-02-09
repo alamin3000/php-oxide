@@ -28,51 +28,32 @@ class Ui extends Html {
       $_renderers = [];
    
    const
-      STYLE_DEFAULT = 0,
-      STYLE_PRIMARY = 1,
-      STYLE_ALERT = 2,
-      STYLE_SUCCESS = 3,
-      STYLE_INFO = 4,
-      STYLE_NONE = 5,
-      STYLE_ERROR = 7,
-      STYLE_WARNING = 8,
-      
-           
-      FORM_STANDARD = 10,
-      FORM_INLINE = 11,
-      FORM_HORIZONTAL = 12,
-           
-      TABLE_STRIPED = 1,
-      TABLE_HOVERED = 2,
-      TABLE_BORDERED = 4,
-      
-      IMG_STANDARD = 1,
-      IMG_ROUNDED = 2,
-      IMG_THUMBNAIL = 4,
-      IMG_RESPONSIVE = 8,
-      IMG_MEDIA = 16,
-           
-      NAV_DEFAULT = 0,
-      NAV_TABS = 1,
-      NAV_PILLS = 2,
-      NAV_NAVBAR = 3,
-           
-      LIST_NONE = 0,
-      LIST_STANDARD = 1,
-      LIST_INLINE = 2,
-      LIST_LINK = 4,
-      LIST_HORIZONTAL = 8,
-      LIST_VERTICAL = 16,
-      LIST_ORDERED = 32,
-      LIST_UNORDERED = 64,
-      LIST_LINK_KEY = 128,
-      LIST_LINK_VALUE = 256,
-      LIST_LINK_NONE = 512,
-
-      SIZE_DEFAULT = 0,
-      SIZE_EX_SMALL = 1,
-      SIZE_SMALL = 2,
-      SIZE_LARGE = 3;
+      STYLE_NONE = 0,
+      STYLE_SMALL = 1,
+      STYLE_MEDIUM = 2,
+      STYLE_LARGE = 4,
+      STYLE_STANDARD = 8,
+      STYLE_INLINE = 16,
+      STYLE_HORIZONTAL = 32,
+      STYLE_PRIMARY = 64,
+      STYLE_ALERT = 128,
+      STYLE_SUCCESS = 256,
+      STYLE_INFO = 512,
+      STYLE_DANGER = 1024,
+      STYLE_WARNING = 2048,
+      STYLE_STRIPED = 4096,
+      STYLE_HOVERED = 8192,
+      STYLE_BORDERED = 16384,
+      STYLE_ROUNDED = 32768,
+      STYLE_THUMBNAIL = 65536,
+      STYLE_RESPONSIVE = 131072,
+      STYLE_TAB = 262144,
+      STYLE_PILL = 524288,
+      STYLE_BAR = 1048576,
+      STYLE_LEFT = 2097152,
+      STYLE_RIGHT = 4194304,
+      STYLE_CENTER = 8388608,
+      STYLE_INSIDE = 16777216;
    
    public function __construct(HelperContainer $c) {
       $this->_head = $c->get('head');
@@ -96,27 +77,27 @@ class Ui extends Html {
    
    protected function _class_style($style, $prefix) {
       switch ($style) {
-         case self::STYLE_PRIMARY:
+         case ($style & self::STYLE_PRIMARY):
             return "{$prefix}-primary";
-         case self::STYLE_ERROR:
+         case ($style & self::STYLE_DANGER):
             return "{$prefix}-danger";
-         case self::STYLE_SUCCESS:
+         case ($style & self::STYLE_SUCCESS):
             return "{$prefix}-success";
-         case self::STYLE_INFO:
-         case self::STYLE_ALERT:
+         case ($style & self::STYLE_INFO):
+         case ($style & self::STYLE_ALERT):
             return "{$prefix}-info";
-         case self::STYLE_DEFAULT:
+         case ($style & self::STYLE_NONE):
          default:
             return "{$prefix}-default";
       }
    }
    
-   protected function _class_size($size, $prefix) {
-      if($size == self::SIZE_EX_SMALL) {
+   protected function _class_size($style, $prefix) {
+      if($style & self::STYLE_SMALL) {
          return "{$prefix}-xs";
-      } else if($size == self::SIZE_SMALL) {
+      } else if($style & self::STYLE_MEDIUM) {
          return "{$prefix}-sm";
-      } else if($size == self::SIZE_LARGE) {
+      } else if($style & self::STYLE_LARGE) {
          return "{$prefix}-lg";
       } else {
          return '';
@@ -140,12 +121,14 @@ class Ui extends Html {
    
    /**
     * Icon/glyphicon
-    * 
+    * @styles STYLE_LEFT, STYLE_RIGHT
     * @param string $name
+    * @param string $text
+    * @param int $style
     * @return string
     */
-   public function icon($name) {
-      return $this->tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]);
+   public function icon($name, $text = null, $style = null) {
+      return $this->tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]).$text;
    }
 
    /**
@@ -269,8 +252,8 @@ class Ui extends Html {
     * @param type $action
     */
    public function formOpen($name, $method = 'get', $action = null, $style = null, array $attr = null) {
-      if($style == self::FORM_INLINE) $cls = 'form-inline';
-      else if($style == self::FORM_HORIZONTAL) $cls = 'form-horizontal';
+      if($style & self::STYLE_INLINE) $cls = 'form-inline';
+      else if($style & self::STYLE_HORIZONTAL) $cls = 'form-horizontal';
       else $cls = null;
       
       $this->_merge_attributes($attr, [
@@ -425,7 +408,7 @@ class Ui extends Html {
       
       if($label) {
          $lblattr = ['for' => $name];
-         if($style == self::FORM_HORIZONTAL) {
+         if($style & self::STYLE_HORIZONTAL) {
             $lblattr['class'] = 'col-sm-3 control-label';
          } else {
             $lblattr['class'] = 'control-label';
@@ -440,7 +423,7 @@ class Ui extends Html {
          }
       }
       
-      if($style == self::FORM_HORIZONTAL) {
+      if($style & self::STYLE_HORIZONTAL) {
          $buffer .= $this->tag('div', $ctl, ['class' => 'col-sm-9']);
       } else {
          $buffer .= $ctl;
@@ -563,9 +546,9 @@ class Ui extends Html {
     */
    public function navigationBar($items, $active = null, $style = null) {
       $cls = ['nav'];
-      if($style & self::NAV_NAVBAR) $cls[] = 'navbar-nav';
-      else if($style & self::NAV_PILLS) $cls[] = 'nav-pills';
-      else if($style & self::NAV_TABS) $cls[] = 'nav-tabs';
+      if($style & self::STYLE_BAR) $cls[] = 'navbar-nav';
+      else if($style & self::STYLE_PILL) $cls[] = 'nav-pills';
+      else if($style & self::STYLE_TAB) $cls[] = 'nav-tabs';
       $this->start('ul', ['class' => implode(' ' , $cls)]);
       foreach( $items as $key => $link) {
          if($active && $key == $active) echo '<li class="active">';
@@ -595,8 +578,8 @@ class Ui extends Html {
       }
       
       $cls = null;
-      if($style & self::LIST_STANDARD) $cls = 'dl-horizontal';
-      else if($style & self::LIST_INLINE) { 
+      if($style & self::STYLE_STANDARD) $cls = 'dl-horizontal';
+      else if($style & self::STYLE_INLINE) { 
          $cls = 'dl-inline';
          if(!$inline_enabled) {
             Template::styles('.dl-inline dt, .dl-inline dd', [
@@ -813,9 +796,9 @@ class Ui extends Html {
       ];
       
       $cls = [];
-      if($style & self::IMG_ROUNDED) $cls[] = 'img-rounded';
-      if($style & self::IMG_THUMBNAIL) $cls[] = 'img-thumbnail';
-      if($style & self::IMG_RESPONSIVE) $cls[] = 'img-responsive';
+      if($style & self::STYLE_ROUNDED) $cls[] = 'img-rounded';
+      if($style & self::STYLE_THUMBNAIL) $cls[] = 'img-thumbnail';
+      if($style & self::STYLE_RESPONSIVE) $cls[] = 'img-responsive';
       if($style & self::IMG_MEDIA) $cls[] = 'media-object';
       $attr['class'] = implode(' ', $cls);
       if($size) {
@@ -912,10 +895,9 @@ class Ui extends Html {
       foreach($form->getControls() as $control) {
          $control->setRendererCallback([$this, 'renderControl'], $style);
       }
-                     
-      if($style == self::FORM_INLINE) {
+      if($style & self::STYLE_INLINE) {
          $form->setAttribute('class', 'form-inline', ' ');
-      } else if($style == self::FORM_STANDARD) {
+      } else if($style & self::STYLE_HORIZONTAL) {
          $form->setAttribute('class', 'form-horizontal', ' ');
       } else {
          
