@@ -802,7 +802,7 @@ class Ui extends Html {
       if($style & self::STYLE_ROUNDED) $cls[] = 'img-rounded';
       if($style & self::STYLE_THUMBNAIL) $cls[] = 'img-thumbnail';
       if($style & self::STYLE_RESPONSIVE) $cls[] = 'img-responsive';
-      if($style & self::IMG_MEDIA) $cls[] = 'media-object';
+//      if($style & self::IMG_MEDIA) $cls[] = 'media-object';
       $attr['class'] = implode(' ', $cls);
       if($size) {
          if(is_array($size)) {
