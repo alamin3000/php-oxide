@@ -110,21 +110,6 @@ class Page implements Renderer {
    }
    
    /**
-    * Render a given partial with $key
-    * 
-    * @param string $key
-    * @return string
-    */
-   public function renderPartial($key) {
-      $partial = $this->getPartial($key);
-      if($partial) {
-         return $partial->render();
-      }
-      
-      return null;
-   }
-
-   /**
 	 * sets the view script to render
 	 *
 	 * this function maybe used to change script for rendering
@@ -148,7 +133,7 @@ class Page implements Renderer {
     * @param string $script
     * @param array $data
     */
-   protected function renderPage($script, Dictionary $data) {
+   protected function renderPage($script, Dictionary $data = null) {
       ob_start();
       if(!file_exists($script)) {
          trigger_error("View script '{$script}' not found", E_USER_ERROR);
@@ -162,22 +147,18 @@ class Page implements Renderer {
     * @return string
     */
    public function render() {
-      if($this->_cache === null) {
-         $script = $this->getScript();
-         $data = $this->_data;
-         
-         // first execute the behind the page code if available
-         if($this->_codeScript) {
-            $this->renderPage($this->_codeScript, $data); // not expected to return anything
-         }
+      $script = $this->getScript();
+      $data = $this->_data;
 
-         // prerender partials
-         foreach($this->_partials as $key => $partial) {
-            $this->_prerenders[$key] = $partial->render();
-         }
-         $this->_cache = $this->renderPage($script, $data);
+      // first execute the behind the page code if available
+      if($this->_codeScript) {
+         $this->renderPage($this->_codeScript, $data); // not expected to return anything
       }
-      
-      return $this->_cache;
+
+      // prerender partials
+      foreach($this->_partials as $key => $partial) {
+         $this->_prerenders[$key] = $partial->render();
+      }
+      $this->_cache = $this->renderPage($script, $data);
    }
 }
