@@ -238,9 +238,9 @@ class Ui extends Html {
     * @param type $attribs
     * @return type
     */
-   public function linkButton($href, $text, $style = null, $size = null) {
+   public function linkButton($href, $text, $style = null) {
       $attribs = [];
-      $cls_size = $this->_class_size($size, 'btn');
+      $cls_size = $this->_class_size($style, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";

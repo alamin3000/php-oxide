@@ -8,6 +8,11 @@ class LinkControl extends Control
       parent::__construct('a', $name, $value, $label, $attributes);
    }
    
+   protected function setName($name) {
+      parent::setName($name);
+      $this->setAttribute('id', $name);
+   }
+   
    /**
     * Value of Link Control is href of the link
     * 

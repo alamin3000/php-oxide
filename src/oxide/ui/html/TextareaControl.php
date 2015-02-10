@@ -23,6 +23,11 @@ class TextareaControl extends Control {
 		$this->setHtml($value);
 	}
    
+   protected function setName($name) {
+      parent::setName($name);
+      $this->setAttribute('name', $name);
+   }
+   
    public function setValue($value)  {
       parent::setValue($value);
       $this->setHtml($value);

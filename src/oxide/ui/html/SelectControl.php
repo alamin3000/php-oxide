@@ -28,6 +28,11 @@ class SelectControl extends Control {
       $this->setTag('select');
    }
    
+   protected function setName($name) {
+      parent::setName($name);
+      $this->setAttribute('name', $name);
+   }
+   
    /**
     * 
     * @param type $data

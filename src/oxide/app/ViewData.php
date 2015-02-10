@@ -36,8 +36,6 @@ class ViewData extends Container {
       if($this->_helpers == null) {
          if(helper\HelperContainer::hasSharedInstance()) {
             $this->_helpers = helper\HelperContainer::sharedInstance();
-         } else {
-            $this->_helpers = new helper\HelperContainer($context);
          }
       }
       

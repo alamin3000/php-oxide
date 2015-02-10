@@ -59,7 +59,6 @@ class Control extends Element {
     */
    protected function setName($name) {
       $this->_name = $name;
-      $this->_attributes['name'] = $name;
    }
 
    /**

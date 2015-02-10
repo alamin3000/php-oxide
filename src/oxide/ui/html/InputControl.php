@@ -20,6 +20,11 @@ class InputControl extends Control {
          'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 
          'time' => true, 'datetime-local' => true, 'button' => true];
 
+      protected function setName($name) {
+         parent::setName($name);
+         $this->setAttribute('name', $name);
+      }
+   
    /**
 	 * construct the input control
 	 *
