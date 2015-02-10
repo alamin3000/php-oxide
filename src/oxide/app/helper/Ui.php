@@ -101,8 +101,6 @@ class Ui extends Html {
    protected function _class_size($style, $prefix) {
       if($style & self::STYLE_SMALL) {
          return "{$prefix}-xs";
-      } else if($style & self::STYLE_MEDIUM) {
-         return "{$prefix}-sm";
       } else if($style & self::STYLE_LARGE) {
          return "{$prefix}-lg";
       } else {
