@@ -577,7 +577,7 @@ class Ui extends Html {
     * @param int $style
     * @return string
     */
-   public function dl($list, $style = null) {
+   public function dl($list, $style = self::STYLE_NONE) {
       static $inline_enabled = false;
       
       if(!$list) {return;}
