@@ -242,9 +242,6 @@ class Ui extends Html {
       $cls_size = $this->_class_size($style, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
       
-      var_dump($style);
-      
-      
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
       $attribs['href'] = $href;
       $attribs['role'] = 'button';
