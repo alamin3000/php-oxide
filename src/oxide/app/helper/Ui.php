@@ -348,11 +348,11 @@ class Ui extends Html {
             if($data) {
                if(!is_array($data)) throw new \Exception('Data for select must be an associative array.');
                $optattr = [];
-               foreach($data as $label => $val) {
+               foreach($data as $lbl => $val) {
                   if($val == $value) $optattr['selected'] = 'selected';
                   else if(isset($optattr['selected'])) unset($optattr['selected']);
                   $optattr['value'] = $val;
-                  echo $this->tag('option', $label, $optattr);
+                  echo $this->tag('option', $lbl, $optattr);
                }
             }
             
