@@ -28,9 +28,8 @@ class Ui extends Html {
       $_renderers = [];
    
    const
-      STYLE_NONE = 3,
-      STYLE_SMALL = 1,
-      STYLE_MEDIUM = 2,
+      STYLE_NONE = 1,
+      STYLE_SMALL = 2,
       STYLE_LARGE = 4,
       STYLE_STANDARD = 8,
       STYLE_INLINE = 16,
