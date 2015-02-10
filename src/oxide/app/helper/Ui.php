@@ -28,7 +28,7 @@ class Ui extends Html {
       $_renderers = [];
    
    const
-      STYLE_NONE = 0,
+      STYLE_NONE = -1,
       STYLE_SMALL = 1,
       STYLE_MEDIUM = 2,
       STYLE_LARGE = 4,
@@ -118,7 +118,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function textLabel($text, $style = null, array $attrib = null) {
+   public function textLabel($text, $style = self::STYLE_NONE, array $attrib = null) {
       $this->_merge_attributes($attrib, [
          'class' => 'label ' . self::_class_style($style, 'label')
       ]);
@@ -134,7 +134,7 @@ class Ui extends Html {
     * @param int $style
     * @return string
     */
-   public function icon($name, $text = null, $style = null) {
+   public function icon($name, $text = null, $style = self::STYLE_NONE) {
       return $this->tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]).$text;
    }
 
@@ -183,7 +183,7 @@ class Ui extends Html {
     * Start creating table
     * @param int $style
     */
-   public function tableOpen($style = null) {
+   public function tableOpen($style = self::STYLE_NONE) {
       $cls = ['table'];
       $cls[] = 'table-condensed';
       if($style & self::STYLE_HOVERED) $cls[] = 'table-hover';
@@ -240,7 +240,7 @@ class Ui extends Html {
     * @param type $attribs
     * @return type
     */
-   public function linkButton($href, $text, $style = null) {
+   public function linkButton($href, $text, $style = self::STYLE_NONE) {
       $attribs = [];
       $cls_size = $this->_class_size($style, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
@@ -261,7 +261,7 @@ class Ui extends Html {
     * @param type $method
     * @param type $action
     */
-   public function formOpen($name, $method = 'get', $action = null, $style = null, array $attr = null) {
+   public function formOpen($name, $method = 'get', $action = null, $style = self::STYLE_NONE, array $attr = null) {
       if($style & self::STYLE_INLINE) $cls = 'form-inline';
       else if($style & self::STYLE_HORIZONTAL) $cls = 'form-horizontal';
       else $cls = null;
@@ -305,7 +305,7 @@ class Ui extends Html {
     * @param array $attribs
     * @return string
     */
-   public function control($type, $name, $value = null, $label = null, $data = null, $style = null, array $attribs = null) {
+   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
       $attribs = [
         'name' => $name 
       ];
@@ -487,7 +487,7 @@ class Ui extends Html {
     * @param type $style
     * @return string
     */
-   public function bullets(array $items, $style = null) {
+   public function bullets(array $items, $style = self::STYLE_NONE) {
       if($style) {
          
       } else {
@@ -520,7 +520,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function navigationList($items, $style = null, $activeUrl = null) {
+   public function navigationList($items, $style = self::STYLE_NONE, $activeUrl = null) {
       $this->start('div', ['class' => 'list-group']);
       $attrs = ['class' => 'list-group-item'];
       foreach($items as $key => $value) {
@@ -552,7 +552,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function navigationBar($items, $active = null, $style = null) {
+   public function navigationBar($items, $active = null, $style = self::STYLE_NONE) {
       $cls = ['nav'];
       if($style & self::STYLE_BAR) $cls[] = 'navbar-nav';
       else if($style & self::STYLE_PILL) $cls[] = 'nav-pills';
@@ -797,7 +797,7 @@ class Ui extends Html {
     * @param int $style
     * @return type
     */
-   public function img($src, $title = null, $size = null, $style = null) {
+   public function img($src, $title = null, $size = null, $style = self::STYLE_NONE) {
       $attr = [
           'src' => $src,
           'title' => $title
@@ -922,7 +922,7 @@ class Ui extends Html {
     * @param Control $ctl
     * @return type
     */
-   public function renderControl(Control $ctl, $style = null) {
+   public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
       $ctlgrpcls = null;
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
