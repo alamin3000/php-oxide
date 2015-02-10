@@ -81,6 +81,8 @@ class Ui extends Html {
    }
    
    protected function _class_style($style, $prefix) {
+     
+      
       switch ($style) {
          case ($style & self::STYLE_PRIMARY):
             return "{$prefix}-primary";
@@ -242,6 +244,9 @@ class Ui extends Html {
       $attribs = [];
       $cls_size = $this->_class_size($style, 'btn');
       $cls_style = $this->_class_style($style, 'btn');
+      
+      var_dump($style);
+      
       
       $attribs['class'] = "btn {$cls_size} {$cls_style}";
       $attribs['href'] = $href;
