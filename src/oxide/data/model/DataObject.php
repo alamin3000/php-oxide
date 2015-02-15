@@ -13,7 +13,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	protected
 		$_data   = [],        // store all data
 		$_modified = [],      // store all modified data
-		$_strict	= false;     // 
+		$_strict	= false;     // allows only access to defined data
 	
 	/**
 	 * 
@@ -43,11 +43,10 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
     * get/set strict mode
     *
     * If strict mode is set then access to undefined property will throw exception.
-	 * Can not set to string mode before adding any data
+	 * Can not set to strict mode before adding any data
 	 * 
     * Restrict access to the data only within what already defined.  Meaning access to data that is not already stored or defined 
     * will throw exception.
-    * 
     * @access public
     * @param type $bool
     * @return type
@@ -72,16 +71,13 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	}
 	
 	/**
-    * set object data from an associative array
-    * replaces all current data with given data
-    *
-    * to add individual values, @see addData()
-    * @access public
-	 * @throws Exception when data is not an array.
+	 * Alias to addData
+	 *
+	 * Set data will not remove existing data.  It will only replace existing data with what's provided.
+	 * @see addData
     * @param array
     */
    public function setData(array $arr) {
-   	$this->_data = [];
    	$this->addData($arr);
    }
 
@@ -101,7 +97,6 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	/**
 	 * get the current data array
 	 *
-	 * @see toArray()
 	 * @return array
 	 */
 	public function getData() {
@@ -163,17 +158,6 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
       else
          return (count($this->_modified) > 0);
 	}
-      
-	/**
-	 * Return object as an array.
-	 *
-	 * @see getData()
-	 * @return array
-	 */
-   public function toArray() {
-   	return $this->_data;
-   }
-	
 	
    /**
     * sets data to the object
