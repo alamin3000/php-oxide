@@ -107,7 +107,7 @@ abstract class ActiveRecord extends DataObject {
     * @return int 
     */
    public function getPkValue() {
-      return $this->{static::$_pk};
+      return $this->{static::getPkColumn()};
    }
    
    /**
@@ -118,7 +118,7 @@ abstract class ActiveRecord extends DataObject {
    public function load($pk) {
       $conn = $this->connection();
       $query = new sql\SelectQuery(static::getTable(), $conn);
-      $query->where(static::$_pk, $pk);
+      $query->where(static::getPkColumn(), $pk);
       $stmt = self::select($query);
       return $stmt->fetch();
    }
@@ -138,7 +138,7 @@ abstract class ActiveRecord extends DataObject {
     */
    public function save() {      
       if(!$this->isModified()) return false;
-      $pkfield = static::$_pk;
+      $pkfield = static::getPkColumn();
       $pkvalue = (isset($this->$pkfield)) ? $this->$pkfield : 0;
 		
       if(!$this->onPreSave()) return false;
@@ -168,7 +168,7 @@ abstract class ActiveRecord extends DataObject {
       }
       
       $conn = $this->connection();
-      $pkfield = static::$_pk;
+      $pkfield = static::getPkColumn();
       $pkvalue = $this->_data[$pkfield];
       if(!$pkvalue) return false;
 
@@ -193,7 +193,7 @@ abstract class ActiveRecord extends DataObject {
 
       $db = $this->connection();
       $table = static::getTable();
-      $pkfield = static::$_pk;
+      $pkfield = static::getPkColumn();
 		$data = $this->getModifiedData();
 
       $query = new sql\InsertQuery($table, $db);
@@ -218,7 +218,7 @@ abstract class ActiveRecord extends DataObject {
 
       $db = $this->connection();
       $table = static::getTable();
-      $pkfield = static::$_pk;
+      $pkfield = static::getPkColumn();
       $pkvalue = $this->_data[$pkfield];
 		$data = $this->getModifiedData();
 
@@ -269,7 +269,7 @@ abstract class ActiveRecord extends DataObject {
     */
    public static function find($pkval) {
       $query = new sql\SelectQuery();
-      $pk = static::$_pk;
+      $pk = static::getPkColumn();
       $query->select('*');
       $query->where($pk, $pkval);
 

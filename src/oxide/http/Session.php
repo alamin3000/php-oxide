@@ -191,7 +191,7 @@ class Session {
 	 * @param string $key
 	 * @return bool
 	 */
-	public function has($key) {
+	public function exists($key) {
 		$key = "{$this->_namespace}.{$key}";
 		return isset($_SESSION[$key]);
 	}
@@ -203,5 +203,5 @@ class Session {
 	public function __get($key) {	return $this->read($key);	}
 	public function __set($key, $value) { return $this->write($key, $value); }
 	public function __unset($key)	{ $this->delete($key); }
-	public function __isset($key)	{ return $this->has($key);	}
+	public function __isset($key)	{ return $this->exists($key);	}
 }
