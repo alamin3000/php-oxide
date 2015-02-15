@@ -81,7 +81,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
     * @param array
     */
    public function setData(array $arr) {
-   	$this->_data = $arr;
+   	$this->_data = [];
+   	$this->addData($arr);
    }
 
    /**
