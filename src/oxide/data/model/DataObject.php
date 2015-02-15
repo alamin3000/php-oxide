@@ -12,9 +12,8 @@ use Exception;
 class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	protected
 		$_data   = [],        // store all data
-		$_tmp		= [],        // store temporary data
 		$_modified = [],      // store all modified data
-		$_strict	= false;          // 
+		$_strict	= false;     // 
 	
 	/**
 	 * 
@@ -66,7 +65,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 
       if($bool == true) {
          if(count($this->_data) == 0)
-            throw new Exception('Can not enable strict mode when there is no data avaialble for ' . static::getClassName());
+            throw new Exception('Can not enable strict mode when there is no data available for ' . static::getClassName());
       }
       
       $this->_strict = $bool;
@@ -254,15 +253,51 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
    	return new \ArrayIterator($this->toArray());
    }
    
+   
+	/**
+	 * offsetSet function.
+	 * 
+	 * @access public
+	 * @param mixed $key
+	 * @param mixed $value
+	 * @return void
+	 */
 	function offsetSet($key, $value) {
 		return $this->__set($key,$value);
 	}
+	
+	
+	/**
+	 * offsetGet function.
+	 * 
+	 * @access public
+	 * @param mixed $key
+	 * @return void
+	 */
 	function offsetGet($key) {
 		return $this->__get($key);
 	}
+	
+	
+	/**
+	 * offsetUnset function.
+	 * 
+	 * @access public
+	 * @param mixed $key
+	 * @return void
+	 */
 	function offsetUnset($key) {
 		$this->__unset($key);
 	}
+	
+	
+	/**
+	 * offsetExists function.
+	 * 
+	 * @access public
+	 * @param mixed $offset
+	 * @return void
+	 */
 	function offsetExists($offset) {
 		return $this->__isset($offset);
 	}
