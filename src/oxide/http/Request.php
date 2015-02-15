@@ -225,7 +225,7 @@ class Request {
 	 */
 	public function getPost($key = null, $default = null) {
       if($key === null) return $this->_posts;
-      if(isset($this->_posts[$key])) return $this->_post[$key];
+      if(isset($this->_posts[$key])) return $this->_posts[$key];
       return $default;
 	}
 	
