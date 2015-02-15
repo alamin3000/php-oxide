@@ -11,6 +11,7 @@ use Exception;
  */
 class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	protected
+		$_schema = null,
 		$_data   = [],        // store all data
 		$_modified = [],      // store all modified data
 		$_strict	= false;     // allows only access to defined data
@@ -21,6 +22,15 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	 * @param array $data
 	 */
 	public function __construct(array $data = null) {
+		// if schema is not defined,
+		// but data defined by the subclass,
+		// this will act as schema for the data model
+		// this is done to have backward compitable
+		if(!$this->_schema && $this->_data) {
+			$this->_schema = $this->_data;
+		}
+		
+		
 		if($data) {
 			$this->setData($data);
 		}
@@ -58,26 +68,23 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
          return $this->_strict;
       }
 
-      if(!is_bool($bool)) {
-         throw new \Exception("argument needs to be boolean");
-      }
-
       if($bool == true) {
-         if(count($this->_data) == 0)
-            throw new Exception('Can not enable strict mode when there is no data available for ' . static::getClassName());
+         if(count($this->_schema) == 0)
+            throw new Exception('Can not enable strict mode when schema is not defined for ' . static::getClassName());
       }
       
       $this->_strict = $bool;
 	}
 	
 	/**
-	 * Alias to addData
-	 *
-	 * Set data will not remove existing data.  It will only replace existing data with what's provided.
-	 * @see addData
     * @param array
     */
    public function setData(array $arr) {
+	   if($this->_schema) {
+		   $this->_data = $this->_schema;
+	   } else {
+		   $this->_data = [];
+	   }
    	$this->addData($arr);
    }
 
