@@ -25,15 +25,10 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param array $data
 	 */
 	public function __construct(array $data = null) {
-		$this->_data = static::$_schema;
-		
-		var_dump(static::$_schema);
-		var_dump($this->_data);
-		
 		if($data) {
 			$this->setData($data);
 		}
-		
+	
 		// initially we specify that nothing is modified
 		$this->_modified = [];
 	}
@@ -176,8 +171,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     * @return void
     */
    public function __set($key, $value) {	
-		if(!array_key_exists($key, $this->_data)) {
-			var_dump($this->_data);
+		if(!array_key_exists($key, static::$_schema)) {
 			if($this->_strict) throw new Exception("key: $key NOT found while writing in " . static::getClassName());
 			$this->_data[$key] = null;
 		}
@@ -197,7 +191,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     * @return mixed
     */
    public function __get($key) {
-   	if(array_key_exists($key, $this->_data)) {
+   	if(array_key_exists($key, static::$_schema)) {
    		return $this->_data[$key];
    	}
 		
