@@ -28,9 +28,6 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 		if($data) {
 			$this->setData($data);
 		}
-	
-		// initially we specify that nothing is modified
-		$this->_modified = [];
 	}
 
 
