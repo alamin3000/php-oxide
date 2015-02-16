@@ -27,6 +27,9 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	public function __construct(array $data = null) {
 		$this->_data = static::$_schema;
 		
+		var_dump(static::$_schema);
+		var_dump($this->_data);
+		
 		if($data) {
 			$this->setData($data);
 		}
