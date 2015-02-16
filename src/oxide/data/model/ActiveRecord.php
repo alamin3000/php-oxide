@@ -238,7 +238,7 @@ abstract class ActiveRecord extends DataObject {
          $query->connection(static::sharedConnection());
       }
       $query->table($table);
-      $query->setFetchMode(PDO::FETCH_CLASS, get_called_class());
+      $query->setFetchMode(\PDO::FETCH_CLASS, get_called_class());
       
       static::onPreSelect($query);
       $stmt = $query->execute();
