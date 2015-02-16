@@ -12,7 +12,7 @@ use Exception;
 class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Serializable {
 	
 	protected static
-		$_schema = null;
+		$_schema = [];
 	
 	protected
 		$_data   = [],        // store all data
@@ -25,6 +25,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param array $data
 	 */
 	public function __construct(array $data = null) {
+		$this->_data = static::$_schema;
+		
 		if($data) {
 			$this->setData($data);
 		}
