@@ -25,9 +25,15 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param array $data
 	 */
 	public function __construct(array $data = null) {
+		// merge the data of the schema with initial data
+		// so that if any data is missing from the schema will be added to the data with default value
+		$this->_data = array_merge(self::$_schema, $this->_data);
 		if($data) {
-			$this->setData($data);
+			$this->addData($data); // since data is already initialized, we will do add, instead of set
 		}
+	
+		// initially we specify that nothing is modified
+		$this->_modified = [];
 	}
 
 
@@ -60,8 +66,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
       }
 
       if($bool == true) {
-         if(empty(static::$_schema))
-            throw new Exception('Can not enable strict mode when schema is not defined for ' . static::getClassName());
+         if(empty($this->_data))
+            throw new Exception('Can not enable strict mode when data is not found for ' . static::getClassName());
       }
       
       $this->_strict = $bool;
@@ -168,11 +174,15 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     * @return void
     */
    public function __set($key, $value) {	
-		if(!array_key_exists($key, static::$_schema)) {
+		if(!array_key_exists($key, $this->_data)) {
 			if($this->_strict) throw new Exception("key: $key NOT found while writing in " . static::getClassName());
 			$this->_data[$key] = null;
 		}
 		
+		
+		
+		// if save data is being added
+		// we won't do anything
 		if($this->_data[$key] === $value) return;
 		
 		// update data
@@ -188,7 +198,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     * @return mixed
     */
    public function __get($key) {
-   	if(array_key_exists($key, static::$_schema)) {
+   	if(array_key_exists($key, $this->_data)) {
    		return $this->_data[$key];
    	}
 		

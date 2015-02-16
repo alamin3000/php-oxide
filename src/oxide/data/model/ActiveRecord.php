@@ -92,7 +92,7 @@ abstract class ActiveRecord extends DataObject {
           * classname might have namespaces
           * we need to remove them
           */
-         $clsname = static::getClassName();
+         $clsname = get_called_class();
          $clsparts= explode('\\', $clsname);
          return end($clsparts);
       }
@@ -238,7 +238,7 @@ abstract class ActiveRecord extends DataObject {
          $query->connection(static::sharedConnection());
       }
       $query->table($table);
-      $query->setFetchMode(\PDO::FETCH_CLASS, static::getClassName());
+      $query->setFetchMode(PDO::FETCH_CLASS, get_called_class());
       
       static::onPreSelect($query);
       $stmt = $query->execute();
