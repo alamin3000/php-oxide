@@ -293,4 +293,26 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable {
 	function offsetExists($offset) {
 		return $this->__isset($offset);
 	}
+	
+	/**
+	 * serialize function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function serialize() {
+		return serialize($this->_data);
+	}
+	
+	
+	/**
+	 * unserialize function.
+	 * 
+	 * @access public
+	 * @param mixed $str
+	 * @return void
+	 */
+	public function unserialize($str) {
+		$this->_data = unserialize($str);
+	}
 }

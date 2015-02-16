@@ -122,7 +122,9 @@ abstract class ActiveRecord extends DataObject {
     * @return bool
     */
    public function save() {      
-      if(!$this->isModified()) return false;
+      if(!$this->isModified()) {
+	      return false;
+	   }
       $pkfield = static::getPkColumn();
       $pkvalue = (isset($this->$pkfield)) ? $this->$pkfield : 0;
 		
