@@ -174,6 +174,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     */
    public function __set($key, $value) {	
 		if(!array_key_exists($key, $this->_data)) {
+			var_dump($this->_data);
 			if($this->_strict) throw new Exception("key: $key NOT found while writing in " . static::getClassName());
 			$this->_data[$key] = null;
 		}
