@@ -10,8 +10,11 @@ use Exception;
  * provides iteration and arary access
  */
 class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Serializable {
+	
+	protected static
+		$_schema = null;
+	
 	protected
-		$_schema = null,
 		$_data   = [],        // store all data
 		$_modified = [],      // store all modified data
 		$_strict	= false;     // allows only access to defined data
@@ -22,15 +25,6 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param array $data
 	 */
 	public function __construct(array $data = null) {
-		// if schema is not defined,
-		// but data defined by the subclass,
-		// this will act as schema for the data model
-		// this is done to have backward compitable
-		if(!$this->_schema && $this->_data) {
-			$this->_schema = $this->_data;
-		}
-		
-		
 		if($data) {
 			$this->setData($data);
 		}
@@ -69,7 +63,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
       }
 
       if($bool == true) {
-         if(count($this->_schema) == 0)
+         if(empty(static::$_schema))
             throw new Exception('Can not enable strict mode when schema is not defined for ' . static::getClassName());
       }
       
@@ -80,8 +74,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     * @param array
     */
    public function setData(array $arr) {
-	   if($this->_schema) {
-		   $this->_data = $this->_schema;
+	   if(static::$_schema) {
+		   $this->_data = static::$_schema;
 	   } else {
 		   $this->_data = [];
 	   }
