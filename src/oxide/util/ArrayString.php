@@ -19,10 +19,23 @@ class ArrayString
       $this->_stringify_callback = $callback;
    }
    
+   
+   /**
+    * Replaces current string with the given string.
+    * 
+    * @param string $str
+    * @return void
+    */
    public function replace($str) {
       $this->_t_array_storage = [$str];
    }
    
+   
+   /**
+    * __toString function.
+    * 
+    * @return string
+    */
    public function __toString() {
       if($this->_stringify_callback) {
          $callback = $this->_stringify_callback;

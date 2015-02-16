@@ -38,11 +38,13 @@ abstract class ActiveRecord extends DataObject {
     * @param array $data
     * @param data\Connection $conn
     */
-   public function __construct($data = null, data\Connection $conn = null) {
+   public function __construct(array $data = null, data\Connection $conn = null) {
       parent::__construct($data);
       if($conn) {
          $this->connection($conn);
       }
+      
+      $this->onInit();
    }
    
    /**
@@ -108,23 +110,6 @@ abstract class ActiveRecord extends DataObject {
     */
    public function getPkValue() {
       return $this->{static::getPkColumn()};
-   }
-   
-   /**
-    * 
-    * @param type $pk
-    * @return type
-    */
-   public function load($pk) {
-      $conn = $this->connection();
-      $query = new sql\SelectQuery(static::getTable(), $conn);
-      $query->where(static::getPkColumn(), $pk);
-      $stmt = self::select($query);
-      return $stmt->fetch();
-   }
-   
-   public function loadBy($key, $value) {
-      
    }
 
    /**
