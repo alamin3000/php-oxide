@@ -98,6 +98,14 @@ abstract class ActiveRecord extends DataObject {
       }
    }
    
+   
+   /**
+    * getPkColumn function.
+    * 
+    * @access public
+    * @static
+    * @return void
+    */
    public static function getPkColumn() {
       return static::$_pk;
    }
