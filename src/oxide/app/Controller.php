@@ -267,8 +267,12 @@ abstract class Controller
       // calling methods in particular order
       $executer($method_init, $context, $data); // initialize method
       $executer($method_http, $context, $data); // http version method
-      $executer($method, $context, $data); // standard method
-      $view = $executer($method_view, $context, $data); // view method
+      $view = $executer($method, $context, $data); // standard method
+      $view1 = $executer($method_view, $context, $data); // view method
+      
+      if($view1) {
+	      $view = $view1;
+      }
       
       if(!$handled) {
          return $this->onUndefinedAction($context, $action);
