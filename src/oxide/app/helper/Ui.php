@@ -944,8 +944,12 @@ class Ui extends Html {
       if($error) $cls[] = 'has-error';
       if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
+      if(count($cls)) {
+	      $buffer .= $this->formRowOpen(['class' => implode(' ', $cls)]);
+      } else {
+	      $buffer .= $this->formRowOpen();
+      }
       
-      $buffer .= $this->formRowOpen(['class' => implode(' ', $cls)]);
 
       
       // label
