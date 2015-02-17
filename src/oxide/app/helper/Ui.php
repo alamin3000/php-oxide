@@ -991,7 +991,7 @@ class Ui extends Html {
     * @param Renderer $renderer
     * @return string
     */
-   public function render($renderer, $style = STYLE_NONE) {
+   public function render($renderer, $style = self::STYLE_NONE) {
       if($renderer instanceof Form) {
          return $this->renderForm($renderer, $style);
       } else if($renderer instanceof Control) {
