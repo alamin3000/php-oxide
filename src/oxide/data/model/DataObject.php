@@ -10,14 +10,11 @@ use Exception;
  * provides iteration and arary access
  */
 class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Serializable {
-	
-	protected static
-		$_schema = [];
-	
 	protected
 		$_data   = [],        // store all data
 		$_modified = [],      // store all modified data
-		$_strict	= false;     // allows only access to defined data
+		$_strict	= false;     // allows only access to schema defined data
+	
 	
 	/**
 	 * 
@@ -25,26 +22,12 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param array $data
 	 */
 	public function __construct(array $data = null) {
-		// merge the data of the schema with initial data
-		// so that if any data is missing from the schema will be added to the data with default value
-		$this->_data = array_merge(self::$_schema, $this->_data);
-		if($data) {
-			$this->addData($data); // since data is already initialized, we will do add, instead of set
-		}
-	
 		// initially we specify that nothing is modified
-		$this->_modified = [];
+		$this->_modified = [];		
+		if($data) {
+			$this->setData($data); // data is initailized already, we will perform add, not set
+		}
 	}
-
-
-   /**
-    * get class name
-    *
-    * @return string
-    */
-   public static function getClassName() {
-      return get_called_class();
-   }
 
    /**
     * get/set strict mode
@@ -65,11 +48,6 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
          return $this->_strict;
       }
 
-      if($bool == true) {
-         if(empty($this->_data))
-            throw new Exception('Can not enable strict mode when data is not found for ' . static::getClassName());
-      }
-      
       $this->_strict = $bool;
 	}
 	
@@ -77,11 +55,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     * @param array
     */
    public function setData(array $arr) {
-	   if(static::$_schema) {
-		   $this->_data = static::$_schema;
-	   } else {
-		   $this->_data = [];
-	   }
+	 	$this->_data = array_fill_keys(array_keys($this->_data), null);
+	 	$this->_modified = [];
    	$this->addData($arr);
    }
 
@@ -121,6 +96,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 		}
 	}
 	
+	
 	/**
 	 * Get modified key/value pairs.
 	 *
@@ -157,10 +133,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param string $key
 	 */
 	public function isModified($key = null) {
-      if($key)
-         return in_array($key, $this->_modified);
-      else
-         return (count($this->_modified) > 0);
+      if($key) return in_array($key, $this->_modified);
+      else return (count($this->_modified) > 0);
 	}
 	
    /**
@@ -175,11 +149,9 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
     */
    public function __set($key, $value) {	
 		if(!array_key_exists($key, $this->_data)) {
-			if($this->_strict) throw new Exception("key: $key NOT found while writing in " . static::getClassName());
-			$this->_data[$key] = null;
+			if($this->_strict) throw new \Exception('Access to undefined key: ' . $key . ' in ' . get_called_class());
+			else $this->_data[$key] = null;
 		}
-		
-		
 		
 		// if save data is being added
 		// we won't do anything
