@@ -72,7 +72,7 @@ class Ui extends Html {
       
       foreach($arr2 as $key => $val) {
          if($key == 'class' && isset($arr1[$key])) {
-            $arr1[$key] .= ' ' . $val;
+            $arr1[$key] = $arr1[$key] . ' ' . $val;
          } else {
             $arr1[$key] = $val;
          }
@@ -890,22 +890,21 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function renderForm(Form $form, $style = self::STYLE_STANDARD) {      
+   public function renderForm(Form $form, $style = self::STYLE_NONE) {      
       $form->errorTag   = new Tag('div', ['class' => 'alert alert-danger']);
       $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
+      
+      if($style & self::STYLE_INLINE) $cls = 'form-inline';
+      else if($style & self::STYLE_HORIZONTAL) $cls = 'form-horizontal';
+      else $cls = null;
+		$form->setAttribute('class', $cls, ' ');
 
       foreach($form->getControls() as $control) {
          $control->setRendererCallback(function($ctl) use ($style) {
             return $this->renderControl($ctl, $style);
          });
       }
-      if($style & self::STYLE_INLINE) {
-         $form->setAttribute('class', 'form-inline', ' ');
-      } else if($style & self::STYLE_HORIZONTAL) {
-         $form->setAttribute('class', 'form-horizontal', ' ');
-      } else {
-         
-      }
+     
       
       return $form->render();
    }
@@ -918,6 +917,7 @@ class Ui extends Html {
     */
    public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
       $ctlgrpcls = null;
+      // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
@@ -935,7 +935,10 @@ class Ui extends Html {
       } else {
          $ctl->setAttribute('class', 'form-control');
       }
+      
       $buffer = '';
+      
+      // setting up form group
       $cls = [];
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
@@ -984,11 +987,11 @@ class Ui extends Html {
     * @param Renderer $renderer
     * @return string
     */
-   public function render($renderer) {
+   public function render($renderer, $style = STYLE_NONE) {
       if($renderer instanceof Form) {
-         return $this->renderForm($renderer);
+         return $this->renderForm($renderer, $style);
       } else if($renderer instanceof Control) {
-         return $this->renderControl($renderer);
+         return $this->renderControl($renderer, $style);
       } else if($renderer instanceof Renderer) {
          return $renderer->render();
       } else {
