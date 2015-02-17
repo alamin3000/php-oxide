@@ -950,20 +950,24 @@ class Ui extends Html {
 	      $buffer .= $this->formRowOpen();
       }
       
-
-      
+		if($style & self::STYLE_NONE) {
+			$usegrid = false;
+		} else {
+			$usegrid = true;
+		}
+		      
       // label
-      $buffer .= $this->gridColumnOpen(12, 3);
+      $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 3) : '';
       if($ctl->getLabel()) {
          $lblTag = $ctl->getLabelTag();
          $lblTag->setAttribute('class', 'control-label', ' ');
          $lblTag->setAttribute('for', $ctl->getName());
          $buffer .= $lblTag->renderContent($ctl->getLabel());
       }
-      $buffer .= $this->gridColumnClose();
+      $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
       
       // control
-      $buffer .= $this->gridColumnOpen(12, 9);
+       $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 9) : '';
       if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
       $buffer .= $ctl->renderOpen();
       $buffer .= $ctl->renderInner();
@@ -979,7 +983,7 @@ class Ui extends Html {
          $errorTag->setAttribute('class', 'help-block', ' ');
          $buffer .= $errorTag->renderContent($error);
       }
-      $buffer .= $this->gridColumnClose();
+      $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
       $buffer .= $this->formRowClose();
       
       return $buffer;
