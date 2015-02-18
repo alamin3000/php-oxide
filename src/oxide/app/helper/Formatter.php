@@ -15,7 +15,7 @@ class Formatter {
 	 * @param mixed $format (default: null)
 	 * @return void
 	 */
-	public function dateFormat($date, $format = null) {
+	public function dateFormat($date, $format = null, $default = 'n/a') {
 		if(!$date) return null;
 		
 		if(is_string($date)) {
