@@ -130,13 +130,13 @@ abstract class ActiveRecord extends DataObject {
     * @return bool
     */
    public function save() {      
+      if(!$this->onPreSave()) return false;
       if(!$this->isModified()) {
 	      return false;
 	   }
       $pkfield = static::getPkColumn();
       $pkvalue = (isset($this->$pkfield)) ? $this->$pkfield : 0;
-		
-      if(!$this->onPreSave()) return false;
+      
       if($pkvalue) { // update
          $result = $this->_update();
       } else { // insert
