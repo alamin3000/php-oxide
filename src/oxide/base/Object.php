@@ -45,7 +45,7 @@ class Object
     */
    public static function serialized($data) {
 	   // if it isn't a string, it isn't serialized
-		return (@unserialize($string) !== false || $string == 'b:0;');
+		return (@unserialize($data) !== false || $string == 'b:0;');
    }
    
    
