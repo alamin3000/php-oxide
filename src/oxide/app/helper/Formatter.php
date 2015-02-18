@@ -16,14 +16,14 @@ class Formatter {
 	 * @return void
 	 */
 	public function dateFormat($date, $format = null, $default = 'n/a') {
-		if(!$date) return null;
+		if(!$date) return $default;
 		
 		if(is_string($date)) {
 			$date = strtotime($date);
 		}
 		
 		if($date < 0) {
-			return null;
+			return $default;
 		}
 		
 		if(!$format) {
