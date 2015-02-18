@@ -9,7 +9,7 @@ use Exception;
  * provides varies ways to store/access data in a single class
  * provides iteration and arary access
  */
-class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Serializable {
+class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	protected
 		$_data   = [],        // store all data
 		$_modified = [],      // store all modified data
