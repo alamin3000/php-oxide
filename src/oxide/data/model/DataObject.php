@@ -174,7 +174,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
    		return $this->_data[$key];
    	}
 		
-		if($this->_strict) throw new Exception("key $key not  found while reading from " . static::getClassName());
+		if($this->_strict) throw new Exception("key $key not defined. " . static::getClassName());
 		return null;
    }
 
@@ -194,19 +194,11 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Countable, \Seria
 	 * @param string $key
 	 */
 	public function __unset($key) {
-		$this->_data[$key] = null;
-	}
+		if(!array_key_exists($key, $this->_data)) {
+   		if($this->_strict) throw new Exception("key $key not defined. " . static::getClassName());
+   	}
 
-   
-   /**
-    * Implements Countable interface
-    * 
-    * Returns the number of data available
-    * @access public
-    * @return int 
-    */
-	public function count() {
-		return count($this->_data);
+		unset($this->_data[$key]);
 	}
 
 	/**
