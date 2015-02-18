@@ -44,7 +44,7 @@ class Object
     * @param mixed $str
     * @return void
     */
-   public static function serialized($str) {
+   public static function serialized($data) {
 	   // if it isn't a string, it isn't serialized
 		if (!is_string( $data ) )
 		  return false;
