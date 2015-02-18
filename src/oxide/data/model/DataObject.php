@@ -174,7 +174,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
    		return $this->_data[$key];
    	}
 		
-		if($this->_strict) throw new Exception("key $key not defined. " . static::getClassName());
+		if($this->_strict) throw new Exception("key $key not defined. " . get_called_class());
 		return null;
    }
 
@@ -195,7 +195,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	 */
 	public function __unset($key) {
 		if(!array_key_exists($key, $this->_data)) {
-   		if($this->_strict) throw new Exception("key $key not defined. " . static::getClassName());
+   		if($this->_strict) throw new Exception("key $key not defined. " . get_called_class());
    	}
 
 		unset($this->_data[$key]);
