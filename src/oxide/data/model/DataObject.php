@@ -54,7 +54,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	/**
     * @param array
     */
-   public function setData(array $arr) {
+   public function setData($arr) {
 	 	$this->_data = array_fill_keys(array_keys($this->_data), null);
 	 	$this->_modified = [];
    	$this->addData($arr);
@@ -67,7 +67,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
     * @param array $arr
 	 * @throws Exception when data is provided is not an array
     */
-   public function addData(array $arr) {
+   public function addData($arr) {
    	foreach($arr as $key => $val) {
    		$this->$key = $val;
    	}
