@@ -119,7 +119,10 @@ class Util {
    }
    
    public function dateString($time) {
-      return date("F j, Y \a\\t h:i a", strtotime($time));
+	   if(is_string($time)) {
+		   $time = strtotime($time);
+	   }
+      return date("F j, Y \a\\t h:i a", $time);
    }
    
    /**

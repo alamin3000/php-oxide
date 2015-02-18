@@ -24,7 +24,8 @@ class HelperContainer extends Container  {
          'ui' => 'oxide\app\helper\Ui',
          'master' => 'oxide\app\helper\Master',
          'url' => 'oxide\app\helper\Url',
-         'locale' => 'oxide\app\helper\Locale'
+         'locale' => 'oxide\app\helper\Locale',
+         'formatter' => 'oxide\app\helper\Formatter'
       ],
            
       $_context = null;

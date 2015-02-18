@@ -35,7 +35,6 @@ class Object
       return "[Object: ". get_called_class() . "]";
    }
    
-   
    /**
     * Check if given string is serialized
     * @access public
@@ -47,7 +46,6 @@ class Object
 	   // if it isn't a string, it isn't serialized
 		return (@unserialize($data) !== false || $string == 'b:0;');
    }
-   
    
    /**
     * serialize function.

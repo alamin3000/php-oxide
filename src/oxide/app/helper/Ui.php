@@ -21,46 +21,44 @@ class Ui extends Html {
 
 
    protected
-      $_head = null,
       $_attributes = [],
       $_wrappers = [],
       $_openStack = [],
       $_renderers = [];
    
    const
-      STYLE_NONE = 1,
-      STYLE_SMALL = 2,
-      STYLE_LARGE = 4,
-      STYLE_STANDARD = 8,
-      STYLE_INLINE = 16,
-      STYLE_HORIZONTAL = 32,
-      STYLE_PRIMARY = 64,
-      STYLE_ALERT = 128,
-      STYLE_SUCCESS = 256,
-      STYLE_INFO = 512,
-      STYLE_DANGER = 1024,
-      STYLE_WARNING = 2048,
-      STYLE_STRIPED = 4096,
-      STYLE_HOVERED = 8192,
-      STYLE_BORDERED = 16384,
-      STYLE_ROUNDED = 32768,
-      STYLE_THUMBNAIL = 65536,
-      STYLE_RESPONSIVE = 131072,
-      STYLE_TAB = 262144,
-      STYLE_PILL = 524288,
-      STYLE_BAR = 1048576,
-      STYLE_LEFT = 2097152,
-      STYLE_RIGHT = 4194304,
-      STYLE_CENTER = 8388608,
-      STYLE_INSIDE = 16777216,
-      STYLE_VERTICAL = 33554432,
-      STYLE_ORDERED = 67108864,
-      STYLE_UNORDERED = 134217728,
-      STYLE_LINK_VALUE = 268435456;
+      STYLE_NONE 			= 1,
+      STYLE_SMALL 		= 2,
+      STYLE_LARGE 		= 4,
+      STYLE_STANDARD 	= 8,
+      STYLE_INLINE 		= 16,
+      STYLE_HORIZONTAL 	= 32,
+      STYLE_PRIMARY 		= 64,
+      STYLE_ALERT 		= 128,
+      STYLE_SUCCESS 		= 256,
+      STYLE_INFO 			= 512,
+      STYLE_DANGER 		= 1024,
+      STYLE_WARNING 		= 2048,
+      STYLE_STRIPED 		= 4096,
+      STYLE_HOVERED 		= 8192,
+      STYLE_BORDERED 	= 16384,
+      STYLE_ROUNDED 		= 32768,
+      STYLE_THUMBNAIL 	= 65536,
+      STYLE_RESPONSIVE 	= 131072,
+      STYLE_TAB 			= 262144,
+      STYLE_PILL 			= 524288,
+      STYLE_BAR 			= 1048576,
+      STYLE_LEFT 			= 2097152,
+      STYLE_RIGHT 		= 4194304,
+      STYLE_CENTER 		= 8388608,
+      STYLE_INSIDE 		= 16777216,
+      STYLE_VERTICAL 	= 33554432,
+      STYLE_ORDERED 		= 67108864,
+      STYLE_UNORDERED 	= 134217728,
+      STYLE_LINK_VALUE 	= 268435456;
       
    
    public function __construct(HelperContainer $c) {
-      $this->_head = $c->get('head');
       $this->_url = $c->get('url');
    }
    
