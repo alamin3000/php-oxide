@@ -22,6 +22,10 @@ class Formatter {
 			$date = strtotime($date);
 		}
 		
+		if($date < 0) {
+			return null;
+		}
+		
 		if(!$format) {
 			$format = 'Y-m-d';
 		}
