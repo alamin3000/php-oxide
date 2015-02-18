@@ -130,7 +130,7 @@ abstract class ActiveRecord extends DataObject {
     * @return bool
     */
    public function save() {      
-      
+      $this->onSave();
       if(!$this->isModified()) {
 	      return false;
 	   }
