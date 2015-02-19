@@ -33,22 +33,6 @@ class SelectControl extends Control {
       $this->setAttribute('name', $name);
    }
    
-   /**
-    * 
-    * @param type $data
-    * @throws \Exception
-    */
-   public function setData($data) {
-      if(!is_array($data)) {
-         throw new \Exception('Data must be an assoicative array.');
-      }
-      if(count($data) == count($data, COUNT_RECURSIVE)) {
-         $this->addOptions($data, '');
-      } else {
-         parent::setData($data);
-      }
-   }
-   
 	/**
 	 * Set wheather or not user can select multiple options
 	 * 
@@ -109,13 +93,39 @@ class SelectControl extends Control {
       
       return $this->optgroupTag;
    }
+   
+   public function renderInner() {
+	   if(empty($this->_data)) return '';
+	   
+	   $buffer = new ArrayString();
+	   $tag = $this->getOptionTag();
+	   $group = $this->getOptGroupTag();
+	   
+	   foreach($this->_data as $key => $value) {
+		   if(is_array($value)) {
+			   // this is group
+			   $buffer[] = $tag->renderOpen();
+			   foreach($value as $gkey => $gval) {
+				   $tag->setAttribute('value', $gval);
+				   $buffer[] = $tag->renderContent($gkey);
+			   }
+			   $buffer[] = $tag->renderClose();
+		   } else {
+			   // simple option entry
+			   $tag->setAttribute('value', $value);
+			   $buffer[] = $tag->renderContent($key);
+		   }
+	   }
+	   
+	   return $buffer->__toString();
+   }
 
    /**
 	 * renders inner html
 	 * 
 	 * @return string
 	 */
-	public function renderInner() {
+	public function renderInners() {
       if(empty($this->_data)) return '';
       $buffer = new ArrayString();
       $selected = false;
