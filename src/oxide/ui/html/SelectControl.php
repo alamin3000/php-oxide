@@ -128,27 +128,34 @@ class SelectControl extends Control {
       
 		foreach($this->_data as $grouplabel => $item) {
 			$options = ''; // hold rendered item list
-         
-			foreach($item as $label => $value) {            
-	         if(in_array($value, $values)) $selected = true;
-	         else $selected = false;
-            
-            // build attributes
-            $tag->setAttribute('value', $value);
-            if($selected) $tag->setAttribute('selected', 'selected');
-            else $tag->removeAttribute('selected');
-            
-            // render the option tag
-            $options .= $tag->renderContent($label);
-			}
-         
-			if($grouplabel) {
-            // render the optgorup with the items and add to buffer
-            $groupTag->setAttribute('label', $grouplabel);
-            $buffer->append($groupTag->renderContent($options));
+         if(is_array($item)) {
+				foreach($item as $label => $value) {            
+		         if(in_array($value, $values)) $selected = true;
+		         else $selected = false;
+	            
+	            // build attributes
+	            $tag->setAttribute('value', $value);
+	            if($selected) $tag->setAttribute('selected', 'selected');
+	            else $tag->removeAttribute('selected');
+	            
+	            // render the option tag
+	            $options .= $tag->renderContent($label);
+				}
+	         
+				if($grouplabel) {
+	            // render the optgorup with the items and add to buffer
+	            $groupTag->setAttribute('label', $grouplabel);
+	            $buffer->append($groupTag->renderContent($options));
+				} else {
+	            // add the rendered option to the buffer
+					$buffer->append($options);
+				}
 			} else {
-            // add the rendered option to the buffer
-				$buffer->append($options);
+				$tag->setAttribute('value', $item);
+				if(in_array($value, $values)) $selected = true;
+		      else $selected = false;
+		      if($selected) $tag->setAttribute('selected', 'selected');
+				$buffer->append($tag->renderContent($grouplabel));
 			}
 		}
       
