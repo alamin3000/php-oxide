@@ -152,7 +152,7 @@ class SelectControl extends Control {
 				}
 			} else {
 				$tag->setAttribute('value', $item);
-				if(in_array($value, $values)) $selected = true;
+				if(in_array($item, $values)) $selected = true;
 		      else $selected = false;
 		      if($selected) $tag->setAttribute('selected', 'selected');
 				$buffer->append($tag->renderContent($grouplabel));
