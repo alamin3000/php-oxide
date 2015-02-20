@@ -14,7 +14,13 @@ abstract class ControlFactory {
 		   throw new \Exception("Control ({$type}) not found using class: {$class}");
 	   }
 	  
-		$control = new $fullclass($name, $value, $label, $data, $attribs);
+		$control = new $fullclass($name, $value, $label);
+		if($data) {
+			$control->setData($data);
+		}
+		if($attribs) {
+			$control->setAttributes($attribs);
+		}
 		return $control;
    }
 }
