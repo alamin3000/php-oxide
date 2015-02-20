@@ -175,6 +175,16 @@ class Url {
       
       return $path;
 	}
+	
+	
+	/**
+		Alias for pathUrl()
+		
+		@see pathUrl
+	 */
+	public function urlPath($relative = true) {
+		return $this->pathUrl($relative);
+	}
    
    /**
     * 
