@@ -298,9 +298,7 @@ class Ui extends Html {
     * @return string
     */
    public function control($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
-      $attribs = [
-        'name' => $name 
-      ];
+      $this->_merge_attributes($attribs, ['name' => $name]);
       
       $buffer = '';
       $ctl = '';
