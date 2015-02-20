@@ -6,7 +6,7 @@ use oxide\ui\html\Fieldset;
 use oxide\util\ArrayString;
 use oxide\ui\html\Control;
 use oxide\ui\html\Tag;
-
+use oxide\ui\html\ControlFactory;
 
 class Ui extends Html {
    
@@ -287,6 +287,12 @@ class Ui extends Html {
    public function formRowClose() {
       return $this->closeTag('div');
    }
+   
+   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
+	   $control = null;
+	   $control = ControlFactory::create($type, $name, $value, $label, $data, $$attribs);
+	   return $this->renderControl($control, $style);
+	}
   
    /**
     * 
@@ -297,50 +303,68 @@ class Ui extends Html {
     * @param array $attribs
     * @return string
     */
-   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
+   public function controls($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
+      $tag = '';
+      $inner = '';
+      $buffer = '';
+      $classes = [];
+      $void = false;
+      $wrap = null;
+      
+      if($style & self::STYLE_SMALL) $classes[] = 'form-group-sm';
+      else if($style & self::STYLE_LARGE) $classes[] = 'form-group-lg';
       $this->_merge_attributes($attribs, ['name' => $name]);
       
-      $buffer = '';
       $ctl = '';
       switch ($type) {
          case 'text':
          case 'email':
          case 'password':
          case 'hidden':
-            $attribs['class'] = 'form-control';
+            $classes[] = 'form-control';
             $attribs['value'] = $value;
             $attribs['type'] = $type;
-            $ctl = $this->tag('input', null, $attribs, true);
+            $tag = 'input';
+            $void = true;
             break;
          
          case 'submit':
-            $attribs['class'] = 'btn btn-primary';
+            $classes[] = 'btn btn-primary';
             $attribs['value'] = $value;
             $attribs['type'] = $type;
-            $ctl = $this->tag('input', null, $attribs, true);
+            $tag = 'input';
+            $void = true;
             break;
          
          case 'reset':
-            $attribs['class'] = 'btn btn-danger';
+            $classes[] = 'btn btn-danger';
             $attribs['value'] = $value;
             $attribs['type'] = $type;
-            $ctl = $this->tag('input', null, $attribs, true);
-         
+            $tag = 'input';
+            $void = true;
+				break;
+				
          case 'button':
-            $attribs['class'] = 'btn';
+            $classes[] = 'btn';
             $attribs['value'] = $value;
             $attribs['type'] = $type;
-            $ctl = $this->tag('button', $value, $attribs);
+            $tag = 'button';
+            $inner = $value;
+            $void = false;
             break;
          
          case 'textarea':
-            $attribs['class'] = 'form-control';
-            $ctl = $this->tag('textarea', $value, $attribs);
+            $classes[] = 'form-control';
+            $tag = 'textarea';
+            $void = false;
+            $inner = $value;
             break;
          
          case 'select':
-            $attribs['class'] = 'form-control';
-            $this->start('select', $attribs);
+            $classes[] = 'form-control';
+            $tag = 'select';
+            $void = false;
+            $inner = '';
             if($data) {
                if(!is_array($data)) throw new \Exception('Data for select must be an associative array.');
                $optattr = [];
@@ -348,20 +372,23 @@ class Ui extends Html {
                   if($val == $value) $optattr['selected'] = 'selected';
                   else if(isset($optattr['selected'])) unset($optattr['selected']);
                   $optattr['value'] = $val;
-                  echo $this->tag('option', $lbl, $optattr);
+                  $inner .= $this->tag('option', $lbl, $optattr);
                }
             }
-            
-            $ctl = $this->end('select');
             break;
             
          case 'checkbox':
             $attribs['type'] = $type;
+            $tag = 'input';
             if(!is_array($data)) {
                if($data == $value) {
                   $attribs['checked'] = 'checked';
                }
                $attribs['value'] = $data;
+               $inner = $data;
+               $wrap = ['label', [
+	               'class' => 'checkbox-inline'
+               ]];
                $ctl = $this->tag('label', $this->tag('input', null, $attribs) . $data,
                        ['class' => 'checkbox-inline']);
             } else {
@@ -405,6 +432,7 @@ class Ui extends Html {
             break;
       }
       
+      $ctl = $this->tag('input', null, $attribs, true);
       
       if($label) {
          $lblattr = ['for' => $name];

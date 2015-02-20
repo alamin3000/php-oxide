@@ -6,30 +6,13 @@ abstract class ControlFactory {
    protected static
       $controls = ['input', 'textarea', 'select', 'button'];
 
-   
-   
-   public static function create($name, $type, $value = null, $label = null, $options = null, $attributes = null) {
-      $control = null;
-      if($type == 'button' || $type == 'submit') {
-         $control = new ButtonControl($type, $name, $value, $label);
-      }else if(isset(Html::$inputTypes[$type])) {
-         $control = new InputControl($type, $name, $value, $label);
-      } else if($type == 'textarea') {
-         $control = new TextareaControl($name, $value, $label);
-      } else if($type == 'select') {
-         $control = new SelectControl($name, $value, $label, $options);
-      } 
-      
-      return $control;
-   }
-   
-   public static function setup(Form $form, array $definitions) {
-      
-      foreach($definitions as  $def) {
-         $label = (isset($def['label'])) ? $def['label'] : null;
-         $value = (isset($def['value'])) ? $def['value'] : null;
-         $attributes = (isset($def['attributes'])) ? $def['attributes'] : null;
-         
-      }
+   public static function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
+	   $class = ucfirst($type) . 'Control';
+	   if(!class_exists($class)) {
+		   throw new \Exception("Control ({$type}) not found using class: {$class}");
+	   }
+	  
+		$control = new $class($name, $value, $label, $data, $attribs);
+		return $control;
    }
 }
