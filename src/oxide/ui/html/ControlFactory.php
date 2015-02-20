@@ -8,13 +8,13 @@ abstract class ControlFactory {
 
    public static function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
 	   $class = ucfirst($type) . 'Control';
-/*
-	   if(!class_exists($class)) {
+	   $namespace = '\\oxide\\ui\\html\\';
+	   $fullclass = "{$namespace}{$class}";
+	   if(!class_exists($fullclass)) {
 		   throw new \Exception("Control ({$type}) not found using class: {$class}");
 	   }
-*/
 	  
-		$control = new $class($name, $value, $label, $data, $attribs);
+		$control = new $fullclass($name, $value, $label, $data, $attribs);
 		return $control;
    }
 }
