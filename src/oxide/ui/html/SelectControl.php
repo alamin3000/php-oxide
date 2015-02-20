@@ -97,6 +97,10 @@ class SelectControl extends Control {
    public function renderInner() {
 	   if(empty($this->_data)) return '';
 	   
+	   $values = $this->getValue();
+	   if(!is_array($values)) $values = [$values];
+	   $values = array_flip($values);
+	   
 	   $buffer = new ArrayString();
 	   $tag = $this->getOptionTag();
 	   $group = $this->getOptGroupTag();
@@ -106,12 +110,14 @@ class SelectControl extends Control {
 			   // this is group
 			   $buffer[] = $tag->renderOpen();
 			   foreach($value as $gkey => $gval) {
+				   if(isset($values[$gval])) $tag->setAttribute('selected', 'selected');
 				   $tag->setAttribute('value', $gval);
 				   $buffer[] = $tag->renderContent($gkey);
 			   }
 			   $buffer[] = $tag->renderClose();
 		   } else {
 			   // simple option entry
+			   if(isset($values[$value])) $tag->setAttribute('selected', 'selected');
 			   $tag->setAttribute('value', $value);
 			   $buffer[] = $tag->renderContent($key);
 		   }
