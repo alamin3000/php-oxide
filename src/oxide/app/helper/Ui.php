@@ -290,7 +290,7 @@ class Ui extends Html {
    
    public function control($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
 	   $control = null;
-	   $control = ControlFactory::create($type, $name, $value, $label, $data, $$attribs);
+	   $control = ControlFactory::create($type, $name, $value, $label, $data, $attribs);
 	   return $this->renderControl($control, $style);
 	}
   
