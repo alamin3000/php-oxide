@@ -8,9 +8,11 @@ abstract class ControlFactory {
 
    public static function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
 	   $class = ucfirst($type) . 'Control';
+/*
 	   if(!class_exists($class)) {
 		   throw new \Exception("Control ({$type}) not found using class: {$class}");
 	   }
+*/
 	  
 		$control = new $class($name, $value, $label, $data, $attribs);
 		return $control;
