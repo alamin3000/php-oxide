@@ -99,11 +99,7 @@ class SelectControl extends Control {
 	   
 	   $values = $this->getValue();
 	   if(!is_array($values)) $values = [$values];
-	   
-	   var_dump($values);
-	   $values = array_flip($values);
-	   var_dump($values);
-	   
+	   $values = array_flip($values);	   
 	   
 	   $buffer = new ArrayString();
 	   $tag = $this->getOptionTag();
