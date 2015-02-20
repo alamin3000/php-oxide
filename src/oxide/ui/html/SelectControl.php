@@ -75,7 +75,11 @@ class SelectControl extends Control {
 			$label = $value;
 		}
 		
-		$this->_data[$group][$value] = $label;
+		if($group) {
+			$this->_data[$group][$label] = $value;
+		} else {
+			$this->_data[$label] = $value;
+		}
 	}
    
    public function getOptionTag() {
