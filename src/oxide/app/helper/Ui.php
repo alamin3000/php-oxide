@@ -963,17 +963,20 @@ class Ui extends Html {
       $buffer = '';
       
       // setting up form group
-      $cls = [];
+      $cls = ['form-group'];
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
       if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
-      if(count($cls)) {
-	      $buffer .= $this->formRowOpen(['class' => implode(' ', $cls)]);
-      } else {
-	      $buffer .= $this->formRowOpen();
-      }
       
+      // control group
+      if(count($control->wrappers)) {
+	      $wrapper = array_values($$control->wrappers)[0];
+	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
+      } else {
+	      $control->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
+      }
+            
 		if($style & self::STYLE_NONE) {
 			$usegrid = false;
 		} else {
@@ -1008,7 +1011,6 @@ class Ui extends Html {
          $buffer .= $errorTag->renderContent($error);
       }
       $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
-      $buffer .= $this->formRowClose();
       
       return $buffer;
    }
