@@ -968,12 +968,14 @@ class Ui extends Html {
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
       
       // control group
+/*
       if(count($ctl->wrappers)) {
 	      $wrapper = array_values($ctl->wrappers)[0];
 	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
       } else {
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
+*/
             
 		if($style & self::STYLE_NONE) {
 			$usegrid = false;
@@ -981,6 +983,7 @@ class Ui extends Html {
 			$usegrid = true;
 		}
 		      
+/*
       // label
       if($ctl->getLabel()) {
          $lblTag = $ctl->getLabelTag();
@@ -1005,6 +1008,7 @@ class Ui extends Html {
       // control
       $ctl->before[] = $this->gridColumnOpen(12, 9);  
       $ctl->after[] = $this->gridColumnClose();
+*/
 
       return $ctl->render();
    }

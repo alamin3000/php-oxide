@@ -18,9 +18,7 @@ class Element
       /**
        * @var array Tag objects to be wrapped
        */
-      $wrappers = [],
-      $before = [],
-      $after = [];
+      $wrappers = [];
    
 	protected
       $_parent = null,
