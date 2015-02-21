@@ -941,6 +941,7 @@ class Ui extends Html {
     */
    public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
       $ctlgrpcls = null;
+      print 'inside';
       // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
