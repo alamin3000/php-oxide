@@ -939,45 +939,45 @@ class Ui extends Html {
     * @param Control $ctl
     * @return type
     */
-   public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
+   public function renderControl(Control $control, $style = self::STYLE_NONE) {
       $ctlgrpcls = null;
       print 'inside';
       // setting up the controls
-      if($ctl instanceof \oxide\ui\html\SubmitControl) {
-         $ctl->setAttribute('class', 'btn btn-primary');
-      } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
-         $grptag = $ctl->getTemplateCheckboxTag();
+      if($control instanceof \oxide\ui\html\SubmitControl) {
+         $control->setAttribute('class', 'btn btn-primary');
+      } else if($control instanceof \oxide\ui\html\CheckboxGroupControl) {
+         $grptag = $control->getTemplateCheckboxTag();
          $grptag->getLabelTag()->setAttribute('class', 'checkbox-inline', ' ');
          $grptag->labelWrapsControl = true;
          $grptag->labelPosition = Control::RIGHT;
-      } else if($ctl instanceof \oxide\ui\html\RadioGroupControl) {
-         $grptag = $ctl->getTemplateRadioTag();
+      } else if($control instanceof \oxide\ui\html\RadioGroupControl) {
+         $grptag = $control->getTemplateRadioTag();
          $grptag->getLabelTag()->setAttribute('class', 'radio-inline', ' ');
          $grptag->labelWrapsControl = true;
          $grptag->labelPosition = Control::RIGHT;
-      } else if($ctl instanceof \oxide\ui\html\FileControl) {
+      } else if($control instanceof \oxide\ui\html\FileControl) {
          
       } else {
-         $ctl->setAttribute('class', 'form-control');
+         $control->setAttribute('class', 'form-control');
       }
       
       $buffer = '';
       
       // setting up form group
       $cls = ['form-group'];
-      $error = $ctl->getError();
+      $error = $control->getError();
       if($error) $cls[] = 'has-error';
       if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
       
       // control group
-      if(count($ctl->wrappers)) {
+      if(count($control->wrappers)) {
 	      print 'control has wraper';
-	      $wrapper = array_values($ctl->wrappers)[0];
+	      $wrapper = array_values($control->wrappers)[0];
 	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
       } else {
 	      print 'control does NOT have wrapper';
-	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
+	      $control->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
             
 		if($style & self::STYLE_NONE) {
@@ -987,27 +987,28 @@ class Ui extends Html {
 		}
 		      
       // label
+      $control->renderLabel = false;
       $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 3) : '';
-      if($ctl->getLabel()) {
-         $lblTag = $ctl->getLabelTag();
+      if($control->getLabel()) {
+         $lblTag = $control->getLabelTag();
          $lblTag->setAttribute('class', 'control-label', ' ');
-         $lblTag->setAttribute('for', $ctl->getName());
-         $buffer .= $lblTag->renderContent($ctl->getLabel());
+         $lblTag->setAttribute('for', $control->getName());
+         $buffer .= $lblTag->renderContent($control->getLabel());
       }
       $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
       
       // control
        $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 9) : '';
       if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
-      $buffer .= $ctl->render();
+      $buffer .= $control->render();
       if($ctlgrpcls) $buffer .= $this->closeTag('div');
-      if($ctl->getInfo()) {
-         $infoTag = $ctl->getInfoTag();
+      if($control->getInfo()) {
+         $infoTag = $control->getInfoTag();
          $infoTag->setAttribute('class', 'help-block', ' ');
-         $buffer .= $infoTag->renderContent($ctl->getInfo());
+         $buffer .= $infoTag->renderContent($control->getInfo());
       }
       if($error) {
-         $errorTag = $ctl->getErrorTag();
+         $errorTag = $control->getErrorTag();
          $errorTag->setAttribute('class', 'help-block', ' ');
          $buffer .= $errorTag->renderContent($error);
       }
