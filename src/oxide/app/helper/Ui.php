@@ -987,7 +987,6 @@ class Ui extends Html {
 		}
 		      
       // label
-      $control->renderLabel = false;
       $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 3) : '';
       if($control->getLabel()) {
          $lblTag = $control->getLabelTag();
