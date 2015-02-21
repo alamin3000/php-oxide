@@ -9,7 +9,6 @@ use oxide\util\ArrayString;
  */
 class Control extends Element {
    public
-   	$renderLabel = true,
       $labelWrapsControl = false,
       $labelPosition = self::LEFT;
            
@@ -289,7 +288,7 @@ class Control extends Element {
       if($this->_info) $buffer->append($this->getInfoTag()->renderContent($this->_info));
       if($this->_error) $buffer->append($this->getErrorTag()->renderContent($this->_error));
       
-      if($this->renderLabel && $this->_label) { // adding label if any
+      if($this->_label) { // adding label if any
          if($this->labelWrapsControl) {
             if($this->labelPosition == self::LEFT) {
                $buffer->replace($this->getLabelTag()->renderContent($this->_label . $buffer));
