@@ -132,6 +132,7 @@ class Element
          // now perform the wrappers
          if(!empty($this->wrappers)) {
             reset($this->wrappers);
+            print 'here';
             foreach($this->wrappers as $wrapper) {
                $buffer->prepend($wrapper->renderOpen());
                $buffer->append($wrapper->renderClose());
