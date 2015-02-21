@@ -1005,7 +1005,7 @@ class Ui extends Html {
       if($renderer instanceof Form) {
          return $this->renderForm($renderer, $style);
       } else if($renderer instanceof Control) {
-	      $control->setRendererCallback(function($ctl) use ($style) {
+	      $renderer->setRendererCallback(function($ctl) use ($style) {
             $this->controlPrepareForRender($ctl, $style);
          });
          
