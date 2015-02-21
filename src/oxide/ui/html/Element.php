@@ -139,6 +139,7 @@ class Element
          $this->onPostRender($buffer); // notifying internal post render event
          
          // add before and after if available
+/*
          if($this->before) {
 	         foreach($this->before as $before) {
 		         $buffer->prepend($before);
@@ -158,6 +159,7 @@ class Element
                $buffer->append($wrapper->renderClose());
             }
          }
+*/
          return (string) $buffer;
       }
       catch (\Exception $e) {
