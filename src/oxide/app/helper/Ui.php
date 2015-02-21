@@ -923,7 +923,8 @@ class Ui extends Html {
       else $cls = null;
 		$form->setAttribute('class', $cls, ' ');
 		$form->setControlPrepareCallback(function($ctl) use ($style) {
-         $this->controlPrepareForRender($ctl, $style);
+         $this->controlRenderPrepare($ctl, $style);
+	      $ctl->setRendererCallback([$this, 'controlRenderCallback']);
       });
       
       return $form->render();
