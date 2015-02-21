@@ -94,8 +94,13 @@ class Element
    /**
     * Renderer callable
     * 
-    * Callback signature $callable($this, $buffer)
-    * If method returns TRUE, then internal rendering will be performed
+    * Callback signature $callable($this)
+    * The callback has few options
+    *		return void/NULL: rendering will continue to be performed.
+    								this is useful for additional customization before rendering
+    		return string		further rending will NOT be continued.
+    								return will be assumed to be performed in the callback.
+    								and return back the returned string from the callback.
     * @param callable $callable
     */
    public function setRendererCallback(callable $callback = null) {
@@ -126,7 +131,10 @@ class Element
       try {
          $this->onRender();
          if($this->_rendererCallback) {
-            return call_user_func($this->_rendererCallback, $this);
+            $return = call_user_func($this->_rendererCallback, $this);
+            if($return !== null) {
+	            return $return;
+            }
          }
          
          $buffer = new ArrayString();
