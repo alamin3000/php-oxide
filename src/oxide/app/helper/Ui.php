@@ -982,9 +982,11 @@ class Ui extends Html {
          $lblTag->setAttribute('for', $ctl->getName());
       }
       
-          
-      
-      // info
+      // control
+      $ctl->before[] = $this->gridColumnOpen(12, 9);  
+      $ctl->after[] = $this->gridColumnClose();
+		
+		// info
       if($ctl->getInfo()) {
          $infoTag = $ctl->getInfoTag();
          $infoTag->setAttribute('class', 'help-block', ' ');
@@ -995,11 +997,6 @@ class Ui extends Html {
          $errorTag = $ctl->getErrorTag();
          $errorTag->setAttribute('class', 'help-block', ' ');
       }
-      
-      // control
-      $ctl->before[] = $this->gridColumnOpen(12, 9);  
-      $ctl->after[] = $this->gridColumnClose();
-
       return $ctl->render();
    }
    
