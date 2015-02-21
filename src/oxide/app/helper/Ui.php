@@ -999,9 +999,7 @@ class Ui extends Html {
       // control
        $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 9) : '';
       if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
-      $buffer .= $ctl->renderOpen();
-      $buffer .= $ctl->renderInner();
-      $buffer .= $ctl->renderClose();
+      $buffer .= $ctl->render();
       if($ctlgrpcls) $buffer .= $this->closeTag('div');
       if($ctl->getInfo()) {
          $infoTag = $ctl->getInfoTag();
