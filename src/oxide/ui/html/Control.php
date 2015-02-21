@@ -9,7 +9,7 @@ use oxide\util\ArrayString;
  */
 class Control extends Element {
    public
-      $labelWrapsControl = false,
+   	$labelWrapsControl = false,
       $labelPosition = self::LEFT;
            
    protected 
@@ -29,8 +29,9 @@ class Control extends Element {
       $_labelTag = null;
    
    const
-      LEFT = 1,
-      RIGHT = 2;
+   	LABEL_LEFT = 1,
+   	LABEL_RIGHT = 2,
+   	LABEL_OUTER = 3;
 
    /**
     * construct
@@ -272,36 +273,38 @@ class Control extends Element {
     * @return boolean
     */
    protected function onRender() {
+	   // label setup
+	   if($this->_label) {
+		   $labelTag = $this->getLabelTag();
+		   $label = null;
+		   if($this->labelWrapsControl) {
+			   $label = $this->_label;
+			   $this->wrappers[] = $labelTag;
+		   } else {
+			   $label = $labelTag->renderContent($this->_label);
+		   }
+		   
+		   if($this->labelPosition == self::LABEL_RIGHT) {
+			   $this->after[] = $label;
+		   } else {
+			   $this->before[] = $label;
+		   }
+	   }
+	   
+	   // info setup
+	   if($this->_info) {
+		   $this->after[] = $this->getInfoTag()->renderContent($this->_info);
+	   }
+	   
+	   // error setup
+	   if($this->_error) {
+		   $this->after[] = $this->getErrorTag()->renderContent($this->_error);
+	   }
+	   
       if($this->_form) {
          // we have the control inside a form
          // we will need to inform the form about rendering
          $this->_form->onControlRender($this);
-      }
-   }
-   
-   /**
-    * Notify form, if available, after rendering the control
-    * @param \oxide\util\ArrayString $buffer
-    */
-   protected function onPostRender(ArrayString $buffer) {
-      // adding the messages
-      if($this->_info) $buffer->append($this->getInfoTag()->renderContent($this->_info));
-      if($this->_error) $buffer->append($this->getErrorTag()->renderContent($this->_error));
-      
-      if($this->_label) { // adding label if any
-         if($this->labelWrapsControl) {
-            if($this->labelPosition == self::LEFT) {
-               $buffer->replace($this->getLabelTag()->renderContent($this->_label . $buffer));
-            } else {
-               $buffer->replace($this->getLabelTag()->renderContent($buffer . $this->_label));
-            }
-         } else {
-            if($this->labelPosition == self::LEFT) {
-               $buffer->prepend($this->getLabelTag()->renderContent($this->_label));
-            } else {
-               $buffer->append($this->getLabelTag()->renderContent($this->_label));
-            }
-         }
       }
    }
 }

@@ -940,7 +940,6 @@ class Ui extends Html {
     * @return type
     */
    public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
-      $ctlgrpcls = null;
       // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
@@ -955,8 +954,9 @@ class Ui extends Html {
          $grptag->labelWrapsControl = true;
          $grptag->labelPosition = Control::RIGHT;
       } else if($ctl instanceof \oxide\ui\html\FileControl) {
-         
+         // don't do anything for the file control
       } else {
+	      // for every other controls
          $ctl->setAttribute('class', 'form-control');
       }
       
@@ -971,11 +971,9 @@ class Ui extends Html {
       
       // control group
       if(count($ctl->wrappers)) {
-	      print 'control has wraper';
 	      $wrapper = array_values($ctl->wrappers)[0];
 	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
       } else {
-	      print 'control does NOT have wrapper';
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
             
@@ -986,34 +984,32 @@ class Ui extends Html {
 		}
 		      
       // label
-      $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 3) : '';
       if($ctl->getLabel()) {
          $lblTag = $ctl->getLabelTag();
-         $lblTag->setAttribute('class', 'control-label', ' ');
+         $lblTag->setAttribute('class', 'control-label col col-sm-3', ' ');
          $lblTag->setAttribute('for', $ctl->getName());
          $buffer .= $lblTag->renderContent($ctl->getLabel());
       }
-      $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
       
-      // control
-       $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 9) : '';
-      if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
-      $buffer .= $ctl->renderOpen();
-      $buffer .= $ctl->renderInner();
-      $buffer .= $ctl->renderClose();
-      if($ctlgrpcls) $buffer .= $this->closeTag('div');
+          
+      
+      // info
       if($ctl->getInfo()) {
          $infoTag = $ctl->getInfoTag();
          $infoTag->setAttribute('class', 'help-block', ' ');
          $buffer .= $infoTag->renderContent($ctl->getInfo());
       }
+      
+      // error
       if($error) {
          $errorTag = $ctl->getErrorTag();
          $errorTag->setAttribute('class', 'help-block', ' ');
          $buffer .= $errorTag->renderContent($error);
       }
-      $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
       
+      // control
+      $ctl->before[] = $this->gridColumnOpen(12, 9);  
+      $ctl->after[] = $this->gridColumnClose();
       return $buffer;
    }
    

@@ -18,7 +18,9 @@ class Element
       /**
        * @var array Tag objects to be wrapped
        */
-      $wrappers = [];
+      $wrappers = [],
+      $before = [],
+      $after = [];
    
 	protected
       $_parent = null,
@@ -100,6 +102,13 @@ class Element
       $this->_rendererCallback = $callback;
    }
    
+   
+   /**
+    * getRendererCallback function.
+    * 
+    * @access public
+    * @return void
+    */
    public function getRendererCallback() {
       return $this->_rendererCallback;
    }
@@ -128,6 +137,18 @@ class Element
          $buffer[] = $this->renderClose();         
 
          $this->onPostRender($buffer); // notifying internal post render event
+         
+         // add before and after if available
+         if($this->before) {
+	         foreach($this->before as $before) {
+		         $buffer->prepend($before);
+	         }
+         }
+         if($this->after) {
+	         foreach($this->after as $after) {
+		         $buffer->append($after);
+	         }
+         }
          
          // now perform the wrappers
          if(!empty($this->wrappers)) {
