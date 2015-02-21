@@ -39,7 +39,7 @@ class Element
          $this->_t_array_storage[] = $inner;
       }
    }
-      
+         
    /**
     * Set the content for the element
     * 
@@ -88,6 +88,9 @@ class Element
 	public function reset() {
       $this->_tag = null;
 		$this->_t_array_storage = [];
+		$this->_wrappers = [];
+		$this->_before = [];
+		$this->_after = [];
 		$this->_attributes = [];
 	}
 
@@ -130,6 +133,8 @@ class Element
    public function render() {
       try {
          $this->onRender();
+         
+         // call renderer callback
          if($this->_rendererCallback) {
             $return = call_user_func($this->_rendererCallback, $this);
             if($return !== null) {
@@ -137,8 +142,9 @@ class Element
             }
          }
          
+         // start rendering process
+         // all rendering partial will be stored in $buffer
          $buffer = new ArrayString();
-         $this->onPreRender($buffer);
          // render before 
          if($this->before) {
 	         foreach($this->before as $before) {
@@ -147,7 +153,6 @@ class Element
          }
          // render element
          $buffer[] = $this->renderOpen();
-         $this->onInnerRender($buffer);
          $buffer[] = $this->renderInner();
          $buffer[] = $this->renderClose(); 
          // render after
@@ -156,7 +161,6 @@ class Element
 		         $buffer->append($after);
 	         }
          }        
-         $this->onPostRender($buffer);
          
          // now perform the wrappers
          if(!empty($this->wrappers)) {
@@ -227,7 +231,4 @@ class Element
    }
 
    protected function onRender() {}
-   protected function onInnerRender(ArrayString $buffer) {}
-   protected function onPreRender(ArrayString $buffer) { }
-   protected function onPostRender(ArrayString $buffer) {}
 }

@@ -935,8 +935,17 @@ class Ui extends Html {
     * @param Control $ctl
     * @return type
     */
-   protected function controlPrepareForRender(Control $ctl, $style = self::STYLE_NONE) {
-      // setting up the controls
+   public function controlRenderCallback(Control $ctl, $style = null) {
+     	if($style & self::STYLE_HORIZONTAL) {
+	     	array_unshift($ctl->before, $this->gridColumnOpen(12, 3));
+	     	$ctl->before[] = $this->gridColumnClose();
+		  	$ctl->before[] = $this->gridColumnOpen(12, 9);  
+	      $ctl->after[] = $this->gridColumnClose();
+      }
+   }
+   
+   protected function controlRenderPrepare(Control $ctl, $style = null) {
+	   // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
@@ -956,7 +965,7 @@ class Ui extends Html {
          $ctl->setAttribute('class', 'form-control');
       }
       
-      // setting up form group
+	   // setting up form group
       $cls = ['form-group'];
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
@@ -970,19 +979,15 @@ class Ui extends Html {
       } else {
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
-		      
-      // label
+      
+	   // label
       if($ctl->getLabel()) {
          $lblTag = $ctl->getLabelTag();
-         $lblTag->setAttribute('class', 'control-label col col-sm-3', ' ');
+         $lblTag->setAttribute('class', 'control-label', ' ');
          $lblTag->setAttribute('for', $ctl->getName());
       }
       
-      // control
-      $ctl->before[] = $this->gridColumnOpen(12, 9);  
-      $ctl->after[] = $this->gridColumnClose();
-		
-		// info
+      // info
       if($ctl->getInfo()) {
          $infoTag = $ctl->getInfoTag();
          $infoTag->setAttribute('class', 'help-block', ' ');
@@ -994,6 +999,7 @@ class Ui extends Html {
          $errorTag->setAttribute('class', 'help-block', ' ');
       }
    }
+
    
    /**
     * Render
@@ -1005,10 +1011,9 @@ class Ui extends Html {
       if($renderer instanceof Form) {
          return $this->renderForm($renderer, $style);
       } else if($renderer instanceof Control) {
-	      $renderer->setRendererCallback(function($ctl) use ($style) {
-            $this->controlPrepareForRender($ctl, $style);
-         });
-         
+	      
+	      $this->controlRenderPrepare($renderer, $style);
+	      $renderer->setRendererCallback([$this, 'controlRenderCallback']);
          return $renderer->render();
          
       } else if($renderer instanceof Renderer) {

@@ -273,6 +273,14 @@ class Control extends Element {
     * @return boolean
     */
    protected function onRender() {
+	   // need to call this before everythign else
+	   // since form may add any additional information
+	   if($this->_form) {
+         // we have the control inside a form
+         // we will need to inform the form about rendering
+         $this->_form->onControlRender($this);
+      }
+      
 	   // label setup
 	   if($this->_label) {
 		   $labelTag = $this->getLabelTag();
@@ -300,11 +308,5 @@ class Control extends Element {
 	   if($this->_error) {
 		   $this->after[] = $this->getErrorTag()->renderContent($this->_error);
 	   }
-	   
-      if($this->_form) {
-         // we have the control inside a form
-         // we will need to inform the form about rendering
-         $this->_form->onControlRender($this);
-      }
    }
 }
