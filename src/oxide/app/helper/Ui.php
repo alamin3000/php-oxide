@@ -970,11 +970,11 @@ class Ui extends Html {
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
       
       // control group
-      if(count($control->wrappers)) {
-	      $wrapper = array_values($$control->wrappers)[0];
+      if(count($ctl->wrappers)) {
+	      $wrapper = array_values($$ctl->wrappers)[0];
 	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
       } else {
-	      $control->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
+	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
             
 		if($style & self::STYLE_NONE) {
