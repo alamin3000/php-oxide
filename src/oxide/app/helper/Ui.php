@@ -914,7 +914,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-   public function renderForm(Form $form, $style = self::STYLE_NONE) {      
+   protected function renderForm(Form $form, $style = self::STYLE_NONE) {      
       $form->errorTag   = new Tag('div', ['class' => 'alert alert-danger']);
       $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
       
@@ -922,13 +922,9 @@ class Ui extends Html {
       else if($style & self::STYLE_HORIZONTAL) $cls = 'form-horizontal';
       else $cls = null;
 		$form->setAttribute('class', $cls, ' ');
-
-      foreach($form->getControls() as $control) {
-         $control->setRendererCallback(function($ctl) use ($style) {
-            return $this->renderControl($ctl, $style);
-         });
-      }
-     
+		$form->setControlPrepareCallback(function($ctl) use ($style) {
+         $this->controlPrepareForRender($ctl, $style);
+      });
       
       return $form->render();
    }
@@ -939,7 +935,7 @@ class Ui extends Html {
     * @param Control $ctl
     * @return type
     */
-   public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
+   protected function controlPrepareForRender(Control $ctl, $style = self::STYLE_NONE) {
       // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
@@ -997,7 +993,6 @@ class Ui extends Html {
          $errorTag = $ctl->getErrorTag();
          $errorTag->setAttribute('class', 'help-block', ' ');
       }
-      return $ctl->render();
    }
    
    /**
@@ -1010,7 +1005,12 @@ class Ui extends Html {
       if($renderer instanceof Form) {
          return $this->renderForm($renderer, $style);
       } else if($renderer instanceof Control) {
-         return $this->renderControl($renderer, $style);
+	      $control->setRendererCallback(function($ctl) use ($style) {
+            $this->controlPrepareForRender($ctl, $style);
+         });
+         
+         return $renderer->render();
+         
       } else if($renderer instanceof Renderer) {
          return $renderer->render();
       } else {

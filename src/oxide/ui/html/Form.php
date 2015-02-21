@@ -480,6 +480,7 @@ class Form extends Element {
    /**
     * Callback that will be called after form has prepared a control
     * 
+    * callback signature: $callback($control, $this)
     * @param \Closure $callback
     * @return \Closure
     */
@@ -487,6 +488,13 @@ class Form extends Element {
       $this->_controlPreparedCallback = $callback;
    }
    
+   
+   /**
+    * getControlPrepareCallback function.
+    * 
+    * @access public
+    * @return void
+    */
    public function getControlPrepareCallback() {
       return $this->_controlPreparedCallback;
    }
