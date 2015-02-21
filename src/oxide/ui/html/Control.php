@@ -274,6 +274,7 @@ class Control extends Element {
     */
    protected function onRender() {
 	   // label setup
+/*
 	   if($this->_label) {
 		   $labelTag = $this->getLabelTag();
 		   $label = null;
@@ -300,6 +301,7 @@ class Control extends Element {
 	   if($this->_error) {
 		   $this->after[] = $this->getErrorTag()->renderContent($this->_error);
 	   }
+*/
 	   
       if($this->_form) {
          // we have the control inside a form
