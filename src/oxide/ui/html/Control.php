@@ -306,7 +306,7 @@ class Control extends Element {
       if($this->_form) {
          // we have the control inside a form
          // we will need to inform the form about rendering
-         $this->_form->onControlRender($this);
+//          $this->_form->onControlRender($this);
       }
    }
 }

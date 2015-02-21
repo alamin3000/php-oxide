@@ -941,6 +941,7 @@ class Ui extends Html {
     */
    public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
       // setting up the controls
+/*
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
@@ -960,12 +961,15 @@ class Ui extends Html {
          $ctl->setAttribute('class', 'form-control');
       }
       
+*/
       // setting up form group
+/*
       $cls = ['form-group'];
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
       if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
+*/
       
       // control group
 /*
@@ -977,11 +981,13 @@ class Ui extends Html {
       }
 */
             
+/*
 		if($style & self::STYLE_NONE) {
 			$usegrid = false;
 		} else {
 			$usegrid = true;
 		}
+*/
 		      
 /*
       // label
