@@ -139,24 +139,24 @@ class Element
          
          $buffer = new ArrayString();
          $this->onPreRender($buffer);
+         // render before 
+         if($this->before) {
+	         foreach($this->before as $before) {
+		         $buffer->append($before);
+	         }
+         }
+         // render element
          $buffer[] = $this->renderOpen();
          $this->onInnerRender($buffer);
          $buffer[] = $this->renderInner();
-         $buffer[] = $this->renderClose();         
-
-         $this->onPostRender($buffer); // notifying internal post render event
-         
-         // add before and after if available
-         if($this->before) {
-	         foreach($this->before as $before) {
-		         $buffer->prepend($before);
-	         }
-         }
+         $buffer[] = $this->renderClose(); 
+         // render after
          if($this->after) {
 	         foreach($this->after as $after) {
 		         $buffer->append($after);
 	         }
-         }
+         }        
+         $this->onPostRender($buffer);
          
          // now perform the wrappers
          if(!empty($this->wrappers)) {
@@ -166,6 +166,7 @@ class Element
                $buffer->append($wrapper->renderClose());
             }
          }
+         
          return (string) $buffer;
       }
       catch (\Exception $e) {
