@@ -975,7 +975,6 @@ class Ui extends Html {
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
 		      
-/*
       // label
       if($ctl->getLabel()) {
          $lblTag = $ctl->getLabelTag();
@@ -1000,7 +999,6 @@ class Ui extends Html {
       // control
       $ctl->before[] = $this->gridColumnOpen(12, 9);  
       $ctl->after[] = $this->gridColumnClose();
-*/
 
       return $ctl->render();
    }
