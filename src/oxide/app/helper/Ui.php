@@ -922,9 +922,13 @@ class Ui extends Html {
       else if($style & self::STYLE_HORIZONTAL) $cls = 'form-horizontal';
       else $cls = null;
 		$form->setAttribute('class', $cls, ' ');
+		
+		
 		$form->setControlPrepareCallback(function($ctl) use ($style) {
          $this->controlRenderPrepare($ctl, $style);
-	      $ctl->setRendererCallback([$this, 'controlRenderCallback']);
+	      $ctl->setRendererCallback(function($ctl) use($style) {
+				$this->setRendererCallback($ctl, $style);
+			});
       });
       
       return $form->render();
@@ -937,9 +941,7 @@ class Ui extends Html {
     * @return type
     */
    public function controlRenderCallback(Control $ctl, $style = null) {
-	   print 'inside';
      	if($style & self::STYLE_HORIZONTAL) {
-	     	print 'morein';
 	     	array_unshift($ctl->before, $this->gridColumnOpen(12, 3));
 	     	$ctl->before[] = $this->gridColumnClose();
 		  	$ctl->before[] = $this->gridColumnOpen(12, 9);  
@@ -1016,7 +1018,9 @@ class Ui extends Html {
       } else if($renderer instanceof Control) {
 	      
 	      $this->controlRenderPrepare($renderer, $style);
-	      $renderer->setRendererCallback([$this, 'controlRenderCallback']);
+	      $renderer->setRendererCallback(function($ctr) use ($style) {
+		      $this->setRendererCallback($ctr, $style);
+	      });
          return $renderer->render();
          
       } else if($renderer instanceof Renderer) {
