@@ -971,7 +971,7 @@ class Ui extends Html {
       
       // control group
       if(count($ctl->wrappers)) {
-	      $wrapper = array_values($$ctl->wrappers)[0];
+	      $wrapper = array_values($ctl->wrappers)[0];
 	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
       } else {
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
