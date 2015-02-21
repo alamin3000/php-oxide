@@ -937,7 +937,9 @@ class Ui extends Html {
     * @return type
     */
    public function controlRenderCallback(Control $ctl, $style = null) {
+	   print 'inside';
      	if($style & self::STYLE_HORIZONTAL) {
+	     	print 'morein';
 	     	array_unshift($ctl->before, $this->gridColumnOpen(12, 3));
 	     	$ctl->before[] = $this->gridColumnClose();
 		  	$ctl->before[] = $this->gridColumnOpen(12, 9);  
