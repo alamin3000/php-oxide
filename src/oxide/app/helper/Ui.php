@@ -960,8 +960,6 @@ class Ui extends Html {
          $ctl->setAttribute('class', 'form-control');
       }
       
-      $buffer = '';
-      
       // setting up form group
       $cls = ['form-group'];
       $error = $ctl->getError();
@@ -988,7 +986,6 @@ class Ui extends Html {
          $lblTag = $ctl->getLabelTag();
          $lblTag->setAttribute('class', 'control-label col col-sm-3', ' ');
          $lblTag->setAttribute('for', $ctl->getName());
-         $buffer .= $lblTag->renderContent($ctl->getLabel());
       }
       
           
@@ -997,20 +994,19 @@ class Ui extends Html {
       if($ctl->getInfo()) {
          $infoTag = $ctl->getInfoTag();
          $infoTag->setAttribute('class', 'help-block', ' ');
-         $buffer .= $infoTag->renderContent($ctl->getInfo());
       }
       
       // error
       if($error) {
          $errorTag = $ctl->getErrorTag();
          $errorTag->setAttribute('class', 'help-block', ' ');
-         $buffer .= $errorTag->renderContent($error);
       }
       
       // control
       $ctl->before[] = $this->gridColumnOpen(12, 9);  
       $ctl->after[] = $this->gridColumnClose();
-      return $buffer;
+
+      return $ctr->render();
    }
    
    /**
