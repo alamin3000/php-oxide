@@ -927,7 +927,7 @@ class Ui extends Html {
 		$form->setControlPrepareCallback(function($ctl) use ($style) {
          $this->controlRenderPrepare($ctl, $style);
 	      $ctl->setRendererCallback(function($ctl) use($style) {
-				$this->setRendererCallback($ctl, $style);
+				$this->controlRenderCallback($ctl, $style);
 			});
       });
       
@@ -1019,7 +1019,7 @@ class Ui extends Html {
 	      
 	      $this->controlRenderPrepare($renderer, $style);
 	      $renderer->setRendererCallback(function($ctr) use ($style) {
-		      $this->setRendererCallback($ctr, $style);
+		      $this->controlRenderCallback($ctr, $style);
 	      });
          return $renderer->render();
          
