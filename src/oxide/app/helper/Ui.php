@@ -971,9 +971,11 @@ class Ui extends Html {
       
       // control group
       if(count($ctl->wrappers)) {
+	      print 'control has wraper';
 	      $wrapper = array_values($ctl->wrappers)[0];
 	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
       } else {
+	      print 'control does NOT have wrapper';
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
             
