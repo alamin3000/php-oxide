@@ -1006,7 +1006,7 @@ class Ui extends Html {
       $ctl->before[] = $this->gridColumnOpen(12, 9);  
       $ctl->after[] = $this->gridColumnClose();
 
-      return $ctr->render();
+      return $ctl->render();
    }
    
    /**
