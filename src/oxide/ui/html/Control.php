@@ -10,7 +10,7 @@ use oxide\util\ArrayString;
 class Control extends Element {
    public
    	$labelWrapsControl = false,
-      $labelPosition = self::LEFT;
+      $labelPosition = self::LABEL_LEFT;
            
    protected 
       $_name = null,
