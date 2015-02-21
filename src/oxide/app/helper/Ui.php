@@ -941,7 +941,6 @@ class Ui extends Html {
     */
    public function renderControl(Control $ctl, $style = self::STYLE_NONE) {
       $ctlgrpcls = null;
-      print 'inside';
       // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
@@ -999,15 +998,19 @@ class Ui extends Html {
       // control
        $buffer .= ($usegrid) ? $this->gridColumnOpen(12, 9) : '';
       if($ctlgrpcls) $buffer .= $this->openTag('div', ['class' => $ctlgrpcls]);
-      $buffer .= $ctl->render();
+      $buffer .= $ctl->renderOpen();
+      $buffer .= $ctl->renderInner();
+      $buffer .= $ctl->renderClose();
       if($ctlgrpcls) $buffer .= $this->closeTag('div');
       if($ctl->getInfo()) {
          $infoTag = $ctl->getInfoTag();
          $infoTag->setAttribute('class', 'help-block', ' ');
+         $buffer .= $infoTag->renderContent($ctl->getInfo());
       }
       if($error) {
          $errorTag = $ctl->getErrorTag();
          $errorTag->setAttribute('class', 'help-block', ' ');
+         $buffer .= $errorTag->renderContent($error);
       }
       $buffer .= ($usegrid) ? $this->gridColumnClose() : '';
       
