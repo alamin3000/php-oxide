@@ -287,7 +287,8 @@ class Control extends Element {
 		   $label = null;
 		   if($this->labelWrapsControl) {
 			   $label = $this->_label;
-			   array_unshift($this->wrappers[], $labelTag);
+			   // should be the first tag to wrap
+			   array_unshift($this->wrappers, $labelTag);
 		   } else {
 			   $label = $labelTag->renderContent($this->_label);
 		   }
