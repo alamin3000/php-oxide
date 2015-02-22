@@ -290,6 +290,7 @@ class Control extends Element {
 			   $label = $this->_label;
 			   $this->wrappers[] = $labelTag;
 		   } else {
+			   print 'nono';
 			   $label = $labelTag->renderContent($this->_label);
 		   }
 		   
