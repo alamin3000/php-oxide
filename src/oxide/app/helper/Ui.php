@@ -977,13 +977,19 @@ class Ui extends Html {
       if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
       else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
       
-      // control group
-      if(count($ctl->wrappers)) {
-	      $wrapper = array_values($ctl->wrappers)[0];
-	      $wrapper->setAttribute('class', implode(' ', $cls), ' ');
+   
+      
+      if($ctl->getForm()) {
+	      // if control is part of the form
+	      // we will use form to setup the wrapper
+	      $form = $ctl->getForm();
+	      $rowtag = $form->getRowTag();
+	      $rowtag->setTag('div');
+	      $rowtag->setAttribute('class', implode(' ', $cls), ' ');
       } else {
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
+      
       
 	   // label
       if($ctl->getLabel()) {
