@@ -10,6 +10,11 @@ class Flash  {
 	private static
       $_key		= "__oxide_helper_flash";
    
+   const
+   	TYPE_ERROR = 'error',
+   	TYPE_ALERT = 'alert',
+   	TYPE_DEFAULT = '';
+   
    protected
       $_session = null;
    
@@ -40,7 +45,7 @@ class Flash  {
 
 		$value = null;
 		if(isset($_SESSION[$key])) {
-			$value = $_SESSION[$key];
+			$value = unserialize($_SESSION[$key]);
 			unset($_SESSION[$key]);
 		}
 
@@ -54,13 +59,31 @@ class Flash  {
     * @param type $namespace
     * @param type $type 
     */
-	public function set($value, $namespace = null) {
+	public function set($value, $namespace = null, $type = '') {
 		$key = self::$_key;
 		if($namespace) {
 			$key .= "_{$namespace}";
 		}
+		
+		$message = new FlashMessage($value, $type);
 
-		$_SESSION[$key] = $value;
+		$_SESSION[$key] = serialize($message);
+	}
+}
+
+
+class FlashMessage {
+	public
+		$message = null,
+		$type = null;
+		
+	public function __construct($message, $type = null) {
+		$this->message = $message;
+		if($type !== null) $this->type = $type;
+	}
+	
+	public function __toString() {
+		return (string) $this->message;
 	}
 }
 
