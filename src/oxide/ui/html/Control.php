@@ -286,11 +286,9 @@ class Control extends Element {
 		   $labelTag = $this->getLabelTag();
 		   $label = null;
 		   if($this->labelWrapsControl) {
-			   print 'inside';
 			   $label = $this->_label;
-			   $this->wrappers[] = $labelTag;
+			   array_unshift($this->wrappers[], $labelTag);
 		   } else {
-			   print 'nono';
 			   $label = $labelTag->renderContent($this->_label);
 		   }
 		   
