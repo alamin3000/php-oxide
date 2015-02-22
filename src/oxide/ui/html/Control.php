@@ -286,6 +286,7 @@ class Control extends Element {
 		   $labelTag = $this->getLabelTag();
 		   $label = null;
 		   if($this->labelWrapsControl) {
+			   print 'inside';
 			   $label = $this->_label;
 			   $this->wrappers[] = $labelTag;
 		   } else {
