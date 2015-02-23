@@ -346,28 +346,22 @@ class Form extends Element {
 	 * @return bool
 	 */
    public function isSubmit() { return $this->isSubmitted(); }
-	public function isSubmitted() {   
-      static $issubmit = null;
-      
-      
-      // if once submit passed, we will return true
-      // multiple check/verification is not needed
-      if($issubmit == true) return true;
-      
+	public function isSubmitted($key = null) {         
 		/*
 		 * only way to find out if the form is submitted or not is to first check
 		 * if GET/POST value is preset with the form id
 		 * GET/POST is only available at input validator, not the form itself.
 		 */
-      $key = $this->_formid_key;
-		$formid = $this->getValue($key);  // secret from form
+      $frmkey = $this->_formid_key;
+		$formid = $this->getValue($frmkey);  // secret from form
       
       // if formid is found, then we know the form was submitted
-		if($formid) {    
-         $issubmit = true;
-		} else $issubmit = false;
-      
-      return $issubmit;
+		if($formid) {
+			if($key) !empty($this->getValue($key));
+         else return true;
+		} else {
+			return false;
+		}
 	}
    
    /**
