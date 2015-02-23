@@ -9,12 +9,13 @@ use Exception;
  * provides varies ways to store/access data in a single class
  * provides iteration and arary access
  */
-class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
+class DataObject 
+	implements \IteratorAggregate, \ArrayAccess, \Serializable, \SplSubject {
 	protected
 		$_data   = [],        // store all data
 		$_modified = [],      // store all modified data
-		$_strict	= false;     // allows only access to schema defined data
-	
+		$_strict	= false,     // allows only access to schema defined data
+		$_observers = null;	 
 	
 	/**
 	 * 
@@ -25,7 +26,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 		// initially we specify that nothing is modified
 		$this->_modified = [];		
 		if($data) {
-			$this->setData($data); // data is initailized already, we will perform add, not set
+			$this->setData($data);
 		}
 	}
 
@@ -100,7 +101,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	/**
 	 * Get modified key/value pairs.
 	 *
-	 * To get only modified keys, see getModifiedKeys()
+	 * This will return modified keys with *modified* data, not the original
 	 * @see getModifiedKeys()
 	 * @return array
 	 */
@@ -120,7 +121,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	 * @return array
 	 */
 	public function getModifiedKeys() {
-      return $this->_modified;
+      return array_keys($this->_modified);
 	}
 	
 	/**
@@ -133,8 +134,21 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	 * @param string $key
 	 */
 	public function isModified($key = null) {
-      if($key) return in_array($key, $this->_modified);
+      if($key) return (isset($this->_modified[$key]));
       else return (count($this->_modified) > 0);
+	}
+	
+	
+	/**
+	 * Restore modified values.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function restore() {
+		foreach($this->_modified as $key => $value) {
+			$this->_data[$key] = $value;
+		}
 	}
 	
    /**
@@ -158,8 +172,9 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 		if($this->_data[$key] === $value) return;
 		
 		// update data
+		$this->_modified[$key] = $this->_data[$key];
 		$this->_data[$key] = $value;
-		$this->_modified[] = $key;
+		$this->notify();
    }
 
    /**
@@ -196,10 +211,62 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	public function __unset($key) {
 		if(!array_key_exists($key, $this->_data)) {
    		if($this->_strict) throw new Exception("key $key not defined. " . get_called_class());
+   		else $this->_data[$key] = null;
    	}
-
+   	
+		$this->_modified[$key] = $this->_data[$key];
 		unset($this->_data[$key]);
+		$this->notify();
 	}
+	
+	## 
+	
+	/**
+	 * attach observer for model changes
+	 * 
+	 * @access public
+	 * @param \SplObserver $observer
+	 * @return void
+	 */
+	public function attach(\SplObserver $observer) {
+		if($this->_observers === null) {
+			$this->_observers = new \SplObjectStorage();
+		}
+		
+		$this->_observers->attach($observer);
+	}
+	
+	
+	/**
+	 * Remove observer from listening to changes.
+	 * 
+	 * @access public
+	 * @param \SplObserver $observer
+	 * @return void
+	 */
+	public function detach(\SplObserver $observer) {
+		if(!$this->_observers) return;
+		$this->_observers->detach($observer);
+	}
+
+	
+	/**
+	 * notify objservers.
+	 * 
+	 * Do not call this method directly.
+	 * This method will be called automatically when changes happen
+	 * @access public
+	 * @return void
+	 */
+	public function notify() {
+		if($this->_observers) {
+			foreach($this->_observers as $obj) {
+				$obj->update($this);
+			}
+		}
+	}
+	
+	## implementing 
 
 	/**
 	 * Returns the data iterator, implementing \IteratorAggregate
@@ -210,6 +277,7 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
    	return new \ArrayIterator($this->toArray());
    }
    
+   # implementing <ArrayAccess>
    
 	/**
 	 * offsetSet function.
@@ -258,6 +326,8 @@ class DataObject implements \IteratorAggregate, \ArrayAccess, \Serializable {
 	function offsetExists($offset) {
 		return $this->__isset($offset);
 	}
+	
+	## implementing <Serializable> 
 	
 	/**
 	 * serialize function.

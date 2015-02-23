@@ -38,6 +38,7 @@ class Ui extends Html {
       STYLE_SUCCESS 		= 256,
       STYLE_INFO 			= 512,
       STYLE_DANGER 		= 1024,
+      STYLE_ERROR			= 1024,
       STYLE_WARNING 		= 2048,
       STYLE_STRIPED 		= 4096,
       STYLE_HOVERED 		= 8192,
