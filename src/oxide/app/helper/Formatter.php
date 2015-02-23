@@ -7,7 +7,11 @@ class Formatter {
    }
    
    public function currency($amount) {
-	   return money_format('%', $amount);
+	   return money_format('%.2n', $amount);
+   }
+   
+   public function number($number) {
+	   return number_format($number,2);
    }
    
 	/**
