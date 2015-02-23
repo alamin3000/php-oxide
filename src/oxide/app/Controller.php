@@ -226,6 +226,9 @@ abstract class Controller
       
       $viewData = $this->_viewData;
       $viewData->setHelperContainer($helpers);
+      
+      // update context
+      $context->setHelperContainer($helpers);
    }
    
    /**

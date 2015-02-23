@@ -11,6 +11,7 @@ namespace oxide\validation;
  */
 class Result {
    protected
+   	$_messages = [],
       $_errors = [];
 
    public
@@ -47,6 +48,47 @@ class Result {
          return false;
       } else {
          return true;
+      }
+   }
+   
+   public function getMessages() {
+	   return $this->_messages;
+   }
+   
+   
+   /**
+    * Check if any message avialable.
+    * 
+    * @access public
+    * @param mixed $offset (default: null)
+    * @return void
+    */
+   public function hasMessage($offset = null) {
+	   if($offset) {
+		   return (isset($this->_messages[$offset]));
+	   } else {
+		   return count($this->_messages);
+	   }
+   }
+   
+   
+   /**
+    * Add message.
+    * 
+    * @access public
+    * @param mixed $message
+    * @param mixed $offset (default: null)
+    * @return void
+    */
+   public function addMessage($message, $offset = null) {
+	   if($offset) {
+         $this->_messages[$offset][] = $message;
+      } else {
+         if($this->currentOffset) {
+            $this->_messages[$this->currentOffset][] = $message;
+         } else {
+            $this->_messages[] = $message;
+         }
       }
    }
 
