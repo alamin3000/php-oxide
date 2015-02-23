@@ -357,7 +357,7 @@ class Form extends Element {
       
       // if formid is found, then we know the form was submitted
 		if($formid) {
-			if($key) !empty($this->getValue($key));
+			if($key) return !empty($this->getValue($key));
          else return true;
 		} else {
 			return false;
