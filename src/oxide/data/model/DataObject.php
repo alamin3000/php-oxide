@@ -107,7 +107,7 @@ class DataObject
 	 */
 	public function getModifiedData() {
 		$arr = [];
-		foreach($this->_modified as $key) {
+		foreach(array_keys($this->_modified) as $key) {
 			$arr[$key] = $this->$key;
 		}
 		
