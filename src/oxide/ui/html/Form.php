@@ -193,8 +193,8 @@ class Form extends Element {
     * @see process()
     * @param string $key
     */
-   public function getValue($key) {
-      return (isset($this->_values[$key])) ? $this->_values[$key] : null;
+   public function getValue($key, $default = null) {
+      return (isset($this->_values[$key])) ? $this->_values[$key] : $default;
    }
    
    /**
