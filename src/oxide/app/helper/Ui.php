@@ -79,22 +79,18 @@ class Ui extends Html {
    }
    
    protected function _class_style($style, $prefix) {
-	   print 'styling ' . $style . ' ' . $prefix;
-      switch ($style) {
-         case ($style & self::STYLE_PRIMARY):
-            return "{$prefix}-primary";
-         case ($style & self::STYLE_ERROR):
-         case ($style & self::STYLE_DANGER):
-            return "{$prefix}-danger";
-         case ($style & self::STYLE_SUCCESS):
-            return "{$prefix}-success";
-         case ($style & self::STYLE_INFO):
-         case ($style & self::STYLE_ALERT):
-            return "{$prefix}-info";
-         case ($style & self::STYLE_NONE):
-         default:
-            return "{$prefix}-default";
-      }
+      if($style & self::STYLE_PRIMARY) 
+      	return "{$prefix}-primary";
+      else if($style & self::STYLE_ERROR ||
+      			$style & self::STYLE_DANGER) 
+      	return "{$prefix}-danger";
+		else if($style & self::STYLE_SUCCESS) 
+			return "{$prefix}-success";
+      else if($style & self::STYLE_INFO || 
+         		$style & self::STYLE_ALERT)  
+         return "{$prefix}-info";
+      else
+      	return "{$prefix}-default";
    }
    
    protected function _class_size($style, $prefix) {
