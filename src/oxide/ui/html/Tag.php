@@ -106,7 +106,9 @@ class Tag implements Renderer {
     * @param array $attrs
     */
    public function setAttributes(array $attrs) {
-      $this->_attributes = $attrs;
+      foreach($attrs as $key => $value) {
+	      $this->_attributes[$key] = $value;
+      }
    }
    
    /**
