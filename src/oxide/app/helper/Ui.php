@@ -79,11 +79,11 @@ class Ui extends Html {
    }
    
    protected function _class_style($style, $prefix) {
-     
-      
+	   print 'styling ' . $style . ' ' . $prefix;
       switch ($style) {
          case ($style & self::STYLE_PRIMARY):
             return "{$prefix}-primary";
+         case ($style & self::STYLE_ERROR):
          case ($style & self::STYLE_DANGER):
             return "{$prefix}-danger";
          case ($style & self::STYLE_SUCCESS):
