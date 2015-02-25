@@ -256,7 +256,6 @@ abstract class ActiveRecord extends DataObject {
       return $stmt;
    }
 
-
    /**
     * returns a data row using primary key value
     * 
@@ -281,7 +280,6 @@ abstract class ActiveRecord extends DataObject {
       $stmt = static::select();
       return $stmt->fetchAll();      
    }
-	
 	
    /**
     *

@@ -96,7 +96,7 @@ class ValidationProcessor {
     * 
     * @return array
     */
-	public function getRequiredArray() {
+	public function getRequiredKeys() {
 		return $this->_requiredKeys;
 	}
 

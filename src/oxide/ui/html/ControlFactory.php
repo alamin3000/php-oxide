@@ -19,7 +19,7 @@ abstract class ControlFactory {
 			$control->setData($data);
 		}
 		if($attribs) {
-			$control->setAttributes($attribs);
+			$control->addAttributes($attribs);
 		}
 		return $control;
    }
