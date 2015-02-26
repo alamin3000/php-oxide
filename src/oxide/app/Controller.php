@@ -182,6 +182,13 @@ abstract class Controller
       return 'execute' . $action;
    }
 
+	
+   /**
+    * Get controller configuration
+    * 
+    * @access public
+    * @return void
+    */
    public function getConfig() {
       if($this->_config === null) {
          $cmanager = ConfigManager::sharedInstance();
