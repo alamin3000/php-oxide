@@ -61,6 +61,7 @@ class ConfigManager {
       }
       
       $data = $this->parseFile($file);
+      \oxide\util\Debug::dump($data);
       return new Dictionary($data);
    }
    
@@ -74,7 +75,6 @@ class ConfigManager {
    public function openConfigByDirectory($relative_dir, $name = 'config.json') {
       $dir = trim($relative_dir, '/');
       $filename = "{$dir}/{$name}";
-      var_dump($filename);
       return $this->openConfigByFilename($filename);
    }
    
