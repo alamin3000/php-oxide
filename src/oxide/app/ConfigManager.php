@@ -61,7 +61,6 @@ class ConfigManager {
       }
       
       $data = $this->parseFile($file);
-      \oxide\util\Debug::dump($data);
       return new Dictionary($data);
    }
    
