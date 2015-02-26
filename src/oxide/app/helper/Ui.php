@@ -285,8 +285,30 @@ class Ui extends Html {
       return $this->closeTag('div');
    }
    
-   public function control($type, $name, $value = null, $label = null, $data = null, $style = self::STYLE_NONE, array $attribs = null) {
+   
+   /**
+    * control function.
+    * 
+    * @access public
+    * @param mixed $type
+    * @param mixed $name
+    * @param mixed $value (default: null)
+    * @param mixed $label (default: null)
+    * @param mixed $data (default: null)
+    * @param mixed $style (default: null)
+    * @param array $attribs (default: null)
+    * @return void
+    */
+   public function control($type, $name, $value = null, $label = null, $data = null, $style = null, array $attribs = null) {
 	   $control = null;
+	   if($style === null) {
+         if(isset($this->_openedTags['form'])) {
+            $style = $this->_openedTags['form'];
+         } else {
+	         $style = self::STYLE_NONE;
+         }
+      } else $style = self::STYLE_NONE;
+      
 	   $control = ControlFactory::create($type, $name, $value, $label, $data, $attribs);
 	   return $this->render($control, $style);
 	}
