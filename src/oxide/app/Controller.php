@@ -202,8 +202,8 @@ abstract class Controller
       if($this->_config === null) {
          $cmanager = ConfigManager::sharedInstance();
          $namespace = $this->classBaseNamespace();
-         
-         $config     = $cmanager->openConfigByDirectory($this->classBaseNamespace());
+         var_dump($namespace);
+         $config     = $cmanager->openConfigByDirectory($namespace);
          $this->_config = $config;
       }
       
