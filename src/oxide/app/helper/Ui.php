@@ -660,8 +660,8 @@ class Ui extends Html {
    /**
     * Starts a panel
     */
-   public function panelOpen() {
-      return $this->openTag('div', ['class' => 'panel panel-default']);
+   public function panelOpen($style = self::STYLE_NONE) {
+      return $this->openTag('div', ['class' => 'panel ' . $this->_class_style($style, 'panel')]);
    }
    
    /**
