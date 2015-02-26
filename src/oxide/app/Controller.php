@@ -29,6 +29,15 @@ abstract class Controller
        * @var Route
        */
       $_route = null,
+      
+      
+      /**
+       * _config
+       * 
+       * @var Dictionary
+       * @access private
+       */
+      $_config = null,
            
       /**
        * Http Context object
@@ -194,7 +203,7 @@ abstract class Controller
          $cmanager = ConfigManager::sharedInstance();
          $namespace = $this->classBaseNamespace();
          
-         $config     = $configManager->openConfigByDirectory($this->classBaseNamespace());
+         $config     = $cmanager->openConfigByDirectory($this->classBaseNamespace());
          $this->_config = $config;
       }
       
