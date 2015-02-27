@@ -993,10 +993,10 @@ class Ui extends Html {
       $cls = ['form-group'];
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
-      if($style & self::STYLE_SMALL) $cls[] = 'form-group-sm';
-      else if($style & self::STYLE_LARGE) $cls[] = 'form-group-lg';
       
-   
+      // checking for control size
+      if($style & self::STYLE_SMALL) $ctl->setAttribute('class', 'input-sm', ' ');
+      else if($style & self::STYLE_LARGE) $ctl->setAttribute('class', 'input-lg', ' ');
       
       if($ctl->getForm()) {
 	      // if control is part of the form
