@@ -970,18 +970,14 @@ class Ui extends Html {
    
    protected function controlRenderPrepare(Control $ctl, $style = null) {
 	   $ctlcls = [];
-	   // checking for control size
-      if($style & self::STYLE_SMALL){
-	      $ctlcls[] = 'input-sm'; 
-	   }
-      else if($style & self::STYLE_LARGE) {
-	       $ctlcls[] ='input-lg';
-	   }
+	   $clsprefix = 'input-';
 	   
+	   	   
 	   // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
          $ctlcls[] = 'btn bt-primary';
+         $clsprefix = 'btn-';
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
          $grptag = $ctl->getTemplateCheckboxTag();
          $grptag->getLabelTag()->setAttribute('class', 'checkbox-inline', ' ');
@@ -999,6 +995,14 @@ class Ui extends Html {
 	      $ctlcls[] = 'form-control';
       }
       
+      // checking for control size
+      if($style & self::STYLE_SMALL){
+	      $ctlcls[] = "{$clsprefix}-sm"; 
+	   }
+      else if($style & self::STYLE_LARGE) {
+	       $ctlcls[] = "{$clsprefix}-lg";
+	   }
+
       $ctl->setAttribute('class', implode(' ', $ctlcls));
       
 	   // setting up form group
