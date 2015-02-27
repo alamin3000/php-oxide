@@ -969,9 +969,19 @@ class Ui extends Html {
    }
    
    protected function controlRenderPrepare(Control $ctl, $style = null) {
+	   $ctlcls = [];
+	   // checking for control size
+      if($style & self::STYLE_SMALL){
+	      $ctlcls[] = 'input-sm'; 
+	   }
+      else if($style & self::STYLE_LARGE) {
+	       $ctlcls[] ='input-lg';
+	   }
+	   
 	   // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctl->setAttribute('class', 'btn btn-primary');
+         $ctlcls[] = 'btn bt-primary';
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
          $grptag = $ctl->getTemplateCheckboxTag();
          $grptag->getLabelTag()->setAttribute('class', 'checkbox-inline', ' ');
@@ -986,23 +996,17 @@ class Ui extends Html {
          // don't do anything for the file control
       } else {
 	      // for every other controls
-         $ctl->setAttribute('class', 'form-control');
+	      $ctlcls[] = 'form-control';
       }
+      
+      $ctl->setAttribute('class', implode(' ', $ctlcls));
       
 	   // setting up form group
       $cls = ['form-group'];
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
       
-      // checking for control size
-      if($style & self::STYLE_SMALL){
-	      $ctl->setAttribute('class', 'input-sm', ' ');
-	      print 'small'; 
-	   }
-      else if($style & self::STYLE_LARGE) {
-	       $ctl->setAttribute('class', 'input-lg', ' ');
-	       print 'large';
-	   }
+      
       
       if($ctl->getForm()) {
 	      // if control is part of the form
