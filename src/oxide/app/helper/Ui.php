@@ -995,8 +995,14 @@ class Ui extends Html {
       if($error) $cls[] = 'has-error';
       
       // checking for control size
-      if($style & self::STYLE_SMALL) $ctl->setAttribute('class', 'input-sm', ' ');
-      else if($style & self::STYLE_LARGE) $ctl->setAttribute('class', 'input-lg', ' ');
+      if($style & self::STYLE_SMALL){
+	      $ctl->setAttribute('class', 'input-sm', ' ');
+	      print 'small'; 
+	   }
+      else if($style & self::STYLE_LARGE) {
+	       $ctl->setAttribute('class', 'input-lg', ' ');
+	       print 'large';
+	   }
       
       if($ctl->getForm()) {
 	      // if control is part of the form
