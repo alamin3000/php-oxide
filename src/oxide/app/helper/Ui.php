@@ -975,7 +975,7 @@ class Ui extends Html {
 	   	   
 	   // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
-         $ctlcls[] = 'btn bt-primary';
+         $ctlcls[] = 'btn btn-primary';
          $clsprefix = 'btn';
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
          $grptag = $ctl->getTemplateCheckboxTag();
