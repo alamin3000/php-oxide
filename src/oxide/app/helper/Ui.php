@@ -970,13 +970,13 @@ class Ui extends Html {
    
    protected function controlRenderPrepare(Control $ctl, $style = null) {
 	   $ctlcls = [];
-	   $clsprefix = 'input-';
+	   $clsprefix = 'input';
 	   
 	   	   
 	   // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctlcls[] = 'btn bt-primary';
-         $clsprefix = 'btn-';
+         $clsprefix = 'btn';
       } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
          $grptag = $ctl->getTemplateCheckboxTag();
          $grptag->getLabelTag()->setAttribute('class', 'checkbox-inline', ' ');
