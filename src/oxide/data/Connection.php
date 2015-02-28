@@ -21,11 +21,14 @@ class Connection {
     */
 	protected 
 		$_pdo = NULL,
-		$_config  = array(),
-		$_options = array(),
+		$_config  = [],
+		$_options = [],
 		$_dsn = '';
 	
 	const 
+		CNF_CATALOG		= 'catalog',
+		CNF_DRIVER		= 'driver',
+		CNF_HOST			= 'host',
 		OP_EQ				= '=',
 		OP_NOT_EQ		= '<>',
 		OP_GREATER_EQ	= '>=',
@@ -83,6 +86,43 @@ class Connection {
       
       return $this->_pdo;
    }
+   
+   
+   /**
+    * Get the connection host name
+    * 
+    * This information should be provided by the $config
+    * @access public
+    * @return string
+    */
+   public function getHostName() {
+	   if(!isset($this->_config[self::CNF_HOST])) return null;
+	   return $this->_config[self::CNF_HOST];
+   }
+   
+   
+   /**
+    * Get the catalog name.
+    * 
+    * @access public
+    * @return void
+    */
+   public function getCatalogName() {
+	   if(!isset($this->_config[self::CNF_CATALOG])) return null;
+	   return $this->_config[self::CNF_CATALOG];
+   }
+   
+   
+   /**
+    * Get the driver name.
+    * 
+    * @access public
+    * @return void
+    */
+   public function getDriverName() {
+	   if(!isset($this->_config[self::CNF_DRIVER])) return null;
+	   return $this->_config[self::CNF_DRIVER];
+   }
 	
 	/**
 	 * generate dsn string
@@ -92,27 +132,17 @@ class Connection {
 	 * @return string
 	 */
 	private function _generateDSN() {
-		// get the driver name
-      if(!isset($this->_config['driver'])) {
-         $driver = 'mysql';
-      } else {
-         $driver = $this->_config['driver'];
-      }
-      
-      // get the host name
-      if(!isset($this->_config['host'])) {
-         $host = 'localhost';
-      } else {
-         $host = $this->_config['host'];
-      }
-      
-      // get the database name
-      if(!isset($this->_config['catalog'])) {
-         throw new Exception("database catalog is missing");
-      }
+		$driver = $this->getDriverName();
+		$host = $this->getHostName();
+		$catalog = $this->getCatalogName();
+		
+		if(!$driver || !$host || !$catalog) {
+			throw new \Exception('Driver, host or catalog name is not found.  Check your config.');
+		}
       
       // generating the dsn string
-      return $this->_dsn = "{$driver}:host={$host};dbname={$this->_config['catalog']}";
+      $this->_dsn = "{$driver}:host={$host};dbname={$catalog}";
+      return $this->_dsn;
 	}
 
    /**

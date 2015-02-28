@@ -31,40 +31,33 @@ class InsertQuery extends Query {
    public function set($row = null) {
       if($row) {
 			$this->_set = $row;
-			$this->bind($row);
-      } else {
-			
-			// prepare set
-			$placeholders = array();
-			$keys = array();
-			foreach($this->_set as $key => $value) {
-				if(is_null($value)) {
-					unset($this->_set[$key]);
-					unset($this->_param[$key]);
-					continue;
-				}
-				$placeholders[] = ":{$key}";
-				$keys[] = "`{$key}`";
-			}
-			
-			// build sql query
-			$sql  = ' (' . implode(', ', $keys) . ') ';
-			$sql .= 'values ('. implode(', ', $placeholders) .') ';
-			
-			return $sql;
+			$this->param($row);
       }
+   }
+   
+   public function renderKeysValues() {
+	   // prepare set
+		$placeholders = [];
+		$keys = array();
+		foreach($this->_set as $key => $value) {
+			$placeholders[] = ":{$key}";
+			$keys[] = "`{$key}`";
+		}
+		
+		// build sql query
+		$sql  = ' (' . implode(', ', $keys) . ') ';
+		$sql .= 'values ('. implode(', ', $placeholders) .') ';
+		
+		return $sql;
    }
 
    /**
-    *
+    * 
     * @access public
     * @param type $sender
     * @return string 
     */	
    public function render($sender = null) {
-		/*
-		make sure multiple table is not allowed
-		*/
    	if($this->_ignore) {
    		$ignore = "IGNORE";
    	} else {
@@ -72,8 +65,8 @@ class InsertQuery extends Query {
    	}
       $sql = "INSERT {$ignore} INTO " . 
                   $this->table() . " " .
-                  $this->set();
-                  		
+                  $this->renderKeysValues();
+                  
       return $sql;
    }
 	
@@ -91,6 +84,7 @@ class InsertQuery extends Query {
 		if($params !== null) {
 		    $this->set($params);
 		}
+		
 		parent::execute();
       return $this->_db->lastInsertId();
 	}

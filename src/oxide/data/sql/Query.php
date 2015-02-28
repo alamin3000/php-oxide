@@ -15,30 +15,37 @@ abstract class Query implements Renderer {
        * @var int Query id
        */
       $_id = null,
+      
       /**
        * @var Connection database connection for the query
        */
       $_db = null,
+      
       /**
        * @var array Holds data params
        */
       $_param = [],
+      
       /**
        * @var string table name for the query
        */
       $_table = null,
+      
       /**
        * @var array Where clauses
        */
       $_where = [],
+      
       /**
        * @var array Or Where clauses
        */
       $_whereOr = [],
+      
       /**
        * @var array Join statements
        */
 		$_join = [],
+		
       /**
        * @var array Fetch mode options
        */
@@ -124,17 +131,6 @@ abstract class Query implements Renderer {
    }
 
 	/**
-	 * alias to param
-    * @access public
-	 * @see param
-	 * @param mixed $param
-	 * @param null|array $reset
-	 */
-	public function bind($param = null, $reset = false) {
-		return $this->param($param, $reset);
-	}
-
-	/**
 	 * Join a table
 	 *
 	 * you can use following syntax
@@ -147,7 +143,6 @@ abstract class Query implements Renderer {
 	 * @return void
 	 */
    public function join($table, $join_col, $type = Connection::JOIN_INNER) {
-      
       if(is_array($table)) {
          $tkey = key($table);
          $tvalue = current($table);
@@ -186,7 +181,7 @@ abstract class Query implements Renderer {
     * @return void
     */
    public function where($col, $val = null, $op = Connection::OP_EQ) {
-      $this->_where('AND', $col, $val, $op);
+      $this->addWhereClause('AND', $col, $val, $op);
    }
 
 	/**
@@ -199,10 +194,9 @@ abstract class Query implements Renderer {
 	 * @param <type> $op
 	 */
    public function whereOr($col, $val = null, $op = Connection::OP_EQ) {
-   	$this->_where('OR', $col, $val,  $op);
+   	$this->addWhereClause('OR', $col, $val,  $op);
    }
 
-	
    /**
 	 * execute the current and returns executed statement
 	 *
@@ -216,8 +210,13 @@ abstract class Query implements Renderer {
 		$param = $this->param($param);
       $stmt = $this->prepare();
 		
-		// execute with params
-		$stmt->execute($param);
+		// bind the param values
+		foreach($param as $key => $value) {
+			$stmt->bindValue($key, $value, $this->valueType($value));
+		}
+		
+		// execute
+		$stmt->execute();
 		return $stmt;
 	}
 	
@@ -228,6 +227,25 @@ abstract class Query implements Renderer {
 	public function executeOne($param = array()) {
 		$smnt = $this->execute($param);
 		return $smnt->fetchColumn();
+	}
+	
+	/**
+	 * valueType function.
+	 * 
+	 * @access public
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function valueType($value) {
+		if(is_null($value)) {
+			return \PDO::PARAM_NULL;	
+		} else if(is_bool($value)) {
+			return \PDO::PARAM_BOOL;
+		} else if(is_int($value)) {
+			return \PDO::PARAM_INT;
+		} else {
+			return \PDO::PARAM_STR;
+		}
 	}
 	
 	/**
@@ -249,7 +267,7 @@ abstract class Query implements Renderer {
 
 			// preparing the statement
 			$stmt = $this->_db->prepare($this->render());
-
+			
 			// set fetch mode if provided.
          $fetchMode = $this->_fetchMode;
          if($fetchMode) {
@@ -275,8 +293,7 @@ abstract class Query implements Renderer {
 	 * if this query has been executed, then this statement may be reused.
 	 * @return \oxide\data\Statement
 	 */
-	public function statement()
-	{
+	public function statement() {
 		if(isset(self::$_pstmts[$this->_id])) {
 			$stmt = self::$_pstmts[$this->_id];
 		} else $stmt = null;
@@ -291,8 +308,7 @@ abstract class Query implements Renderer {
 	 * and call this function i.e parent::reset();
 	 * @access public
 	 */
-	public function reset() 
-	{
+	public function reset() {
 		if(isset(self::$_pstmts[$this->_id])) {
 			self::$_pstmts[$this->_id] = null;
 		}
@@ -311,8 +327,7 @@ abstract class Query implements Renderer {
 	 * @param mixed $values string to be quoted
 	 * @return string safe quoted string
 	 */
-	public function quote($values) 
-	{
+	public function quote($values) {
       // quote array
       if(is_array($values)) {
 			$newvalues = array();
@@ -337,43 +352,12 @@ abstract class Query implements Renderer {
       }
 	}
 
-   
-   /**
-    *
-    * @access public 
-    */
-	public static function begin()
-	{
-		
-	}
-
-   
-   /**
-    *
-    * @access public 
-    */
-	public static function commit()
-	{
-
-	}
-
-   
-   /**
-    *
-    * @access public 
-    */
-	public static function rollback()
-	{
-		
-	}
-
 	/**
 	 * store where statements
 	 * @access protected
 	 * @todo complete implementation of other operations
 	 */
-   protected function _where($type, $col, $val = null, $op = Connection::OP_EQ)
-	{
+   protected function addWhereClause($type, $col, $val = null, $op = Connection::OP_EQ) {
       if($type == "AND") {
    		$storage = "_where";
    	} elseif($type == "OR") {
@@ -381,15 +365,6 @@ abstract class Query implements Renderer {
    	} else {
    		throw new Exception("SQL WHERE TYPE: $type IS NOT RECOGNIZED");
    	}
-
-		// @note not sure why this existed
-//		// if schema is present we need to remove for the placeholder
-//		if(strstr($col, '.')) {
-//			$col_parts = explode('.', $col);
-//			$placeholder = $col_parts[1];
-//		} else {
-//			$placeholder = $col;
-//		}
 
 		// adjust placeholder name. database has issue with (.) within the placeholder
 		if(strstr($col, '.')) {
@@ -448,8 +423,7 @@ abstract class Query implements Renderer {
 	 * @access protected
 	 * @return string
 	 */
-   protected function _whereSql()
-	{
+   protected function renderWhere() {
    	// check if where clause is provided
       // if so add it to the statement
       $sql = "";
@@ -475,7 +449,7 @@ abstract class Query implements Renderer {
     * @access protected
 	 * @return string
 	 */
-	protected function _joinSql() {
+	protected function renderJoin() {
 		// check to see if any joins available
 		if(count($this->_join)) {
 			$_joinSql = ''; // holds the final join sql statement
@@ -510,12 +484,31 @@ abstract class Query implements Renderer {
 	}
 	
 	/**
+    *
+    * @access public 
+    */
+	public static function begin() { throw new \Exception('This method is not implemented yet.') ;}
+
+   /**
+    *
+    * @access public 
+    */
+	public static function commit() { throw new \Exception('This method is not implemented yet.') ;}
+
+   /**
+    *
+    * @access public 
+    */
+	public static function rollback() { throw new \Exception('This method is not implemented yet.') ;}
+
+	
+	/**
 	 * allow string representation of the query object.
 	 * @access public
 	 * @return string
 	 */
 	public function __toString() {
-		return $this->render($this);
+		return $this->render();
 	}
    
    /**

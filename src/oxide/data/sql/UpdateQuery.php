@@ -21,9 +21,12 @@ class UpdateQuery extends Query {
    private $_set = array();
 
 	/**
-	 * sets columns to be updated
+	 * sets columns to be updated.
 	 *
+	 * This is different then param() in a sense that you can use to update mutliple information
+	 * Without affecting WHERE clause params. ?@#
 	 * must provide associative array
+	 * @see param
 	 * @access public
 	 * @param array $row
 	 * @return void | string
@@ -33,25 +36,8 @@ class UpdateQuery extends Query {
          $this->_set = $row;
 			$this->param($row);
 
-      } else {
-         $sql = '';
-			
-			$count = count($row);
-         foreach($this->_set as $col => $val) {
-         	if($val === null || strtoupper($val) == 'NULL') {
-         		$sql .= "{$col} = NULL,";
-//  					unset($this->_set[$col]);
-         		unset($this->_param[$col]);
-         		continue;
-         	}
-         	
-				$values[$col] = $val;
-            $sql .= "{$col} = :{$col},";
-         }
-         return rtrim($sql, ',');
       }
    }
-   
    
    /**
     *
@@ -59,8 +45,8 @@ class UpdateQuery extends Query {
     * @param type $params
     * @return type 
     */
-   public function execute($params = array()) {
-         $this->set($params);
+   public function execute($params = []) {
+      $this->set($params);
       return parent::execute()->rowCount();
    }
    
@@ -74,6 +60,23 @@ class UpdateQuery extends Query {
    	parent::reset();
    }
    
+   
+   /**
+    * Renders the SET clause for the update statement.
+    * 
+    * @access public
+    * @return void
+    */
+   public function renderSet() {
+      $sql = '';
+		
+      foreach($this->_set as $col => $val) {
+			$values[$col] = $val;
+         $sql .= "{$col} = :{$col},";
+      }
+      return "SET " . rtrim($sql, ',');
+   }
+   
    /**
  	 * render query for sql update
  	 * @access public
@@ -82,8 +85,8 @@ class UpdateQuery extends Query {
    public function render($sender = null) {
       $sql = "UPDATE " .
                $this->_table . " " .
-               "SET " . $this->set() . " ".
-               $this->_whereSql();
+               $this->renderSet() . " ".
+               $this->renderWhere();
       return $sql;
    }
 }

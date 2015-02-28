@@ -9,11 +9,6 @@ class SelectQuery extends Query {
 		$_order = [],
 		$_groups= [];
 
-	const
-	   SESSION_KEY_LAST_QUERY_SQL = '__oxide_data_SelectQuery:lastquerysql',
-      SESSION_KEY_LAST_QUERY_PARAM = '__oxide_data_SelectQuery:lastqueryparam',
-      SESSION_KEY_LAST_QUERY_COUNT = '__oxide_data_SelectQuery:lastquerycount';
-
    /**
     * Resets all internal data for new query
     * 
@@ -51,8 +46,7 @@ class SelectQuery extends Query {
     * @access public
 	 * @param bool $bool
 	 */
-	public function distinct($bool = true)
-	{
+	public function distinct($bool = true) {
 		$this->_distinct = $bool;
 	}
 	
@@ -66,8 +60,7 @@ class SelectQuery extends Query {
 	 * @param string $table
 	 * @param string $schema
 	 */
-	public function from($table, $as = null) 
-	{
+	public function from($table, $as = null) {
       if($as) {
          $table = "{$table} as $as";
       }
@@ -82,8 +75,7 @@ class SelectQuery extends Query {
 	 * @param string $name
 	 * @param string $expr
 	 */
-	public function column($name, $expr = null) 
-	{
+	public function column($name, $expr = null) {
 		if($expr) $this->_columns[$name] = "{$expr} as {$name}";
 		else $this->_columns[$name] = $name;
 	}
@@ -97,6 +89,8 @@ class SelectQuery extends Query {
 	 * @param string $table
 	 */		
 	public function columns($cols = null, $table = null) {
+		if($cols === null) return $this->_columns;
+		
 		if(!is_array($cols))
 			$cols = (array) $cols;
 		
@@ -110,63 +104,62 @@ class SelectQuery extends Query {
 	}
 
 	/**
-	 * add sort order to the query
+	 * Add sort order to the query
 	 *
     * @access public
 	 * @param string $field
 	 * @param string $order
 	 */
-	public function order($field, $order = '') 
-	{
-		$this->_order[] = array('field' => $field, 'order' => $order);
+	public function order($field, $order = '') {
+		$this->_order[] = ['field' => $field, 'order' => $order];
 	}
 	
    
    /**
+    * Set columns to be used for GROUP clause
     *
     * @access public
     * @param type $fields 
     */
-	public function group($fields) 
-	{
+	public function group($fields) {
 		$this->_groups = (array) $fields;
 	}
 	
    
    /**
+    * Set the LIMIT clause
     *
     * @access public
-    * @param type $offset
-    * @param type $count 
+    * @param int $offset
+    * @param int $count 
     */
-   public function limit($offset,$count) 
-	{
+   public function limit($offset,$count) {
 		$this->_limit['offset'] = (int) $offset;
 		$this->_limit['count']	= (int) $count;
 	}
 	
    
    /**
+    * Set page size using limit clause
     *
+    & @see limit
     * @access public
-    * @param type $num
-    * @param type $size 
+    * @param int $num
+    * @param int $size 
     */
-	public function page($num, $size) 
-	{
+	public function page($num, $size) {
 		$offset = max(0, ($num - 1) * $size);
 		$this->limit($offset, $size); 
 	}
 
    /**
-    * retrive data record from the current query
+    * retrive number of records for the current query
     * 
     * @access public
     * @return int
     */
-	public function retriveRecordCount($cache = true)
-	{
-		$sql = $this->_renderWithoutLimit();
+	public function retriveRecordCount($cache = true) {
+		$sql = $this->renderWithoutLimit();
 		$smnt = $this->_db->prepare($sql);
 		$smnt->execute($this->_param);
 		$count = $smnt->fetchColumn();
@@ -174,31 +167,31 @@ class SelectQuery extends Query {
 	}
 
    /**
-    * retrive data record page count
+    * retrive number of pages based on given $pagesize
     *
     * @access public
     * @param int $pagesize
     * @return int
     */
-	public function retrivePageCount($pagesize, $cache = true)
-	{
+	public function retrivePageCount($pagesize, $cache = true) {
 		return ceil($this->retriveRecordCount($cache) / max($pagesize, 1));
 	}
 	
    
    /**
-    *
+    * Renders a complete SQL statement, but omitting the LIMIT clause
+    * 
+    * This is specially useful for getting record count.
     * @access protected
     * @return type 
     */
-	protected function _renderWithoutLimit()
-	{
+	protected function renderWithoutLimit() {
 	   $sql = "SELECT count(*) as count ";
-      $sql .= $this->_fromSql();
-		$sql .= $this->_joinSql();
-		$sql .= $this->_whereSql();
-		$sql .= $this->_groupSql();
-		$sql .= $this->_orderSql();
+      $sql .= $this->renderFrom();
+		$sql .= $this->renderJoin();
+		$sql .= $this->renderWhere();
+		$sql .= $this->renderGroup();
+		$sql .= $this->renderOrder();
 		
    	return $sql;
 	}
@@ -206,23 +199,23 @@ class SelectQuery extends Query {
 	
    
    /**
-    *
+    * Renders FROM portion of the SQL statement
+    * 
     * @access protected
     * @return type 
     */
-	protected function _fromSql()
-	{
+	protected function renderFrom() {
 		return 'FROM ' . implode(', ', (array) $this->_table) . ' ';
 	}
 	
    
    /**
+    * Renders the SELECT portion of the SQL statement
     *
     * @access protected
     * @return type 
     */
-	protected function _selectSql()
-	{
+	public function renderSelect() {
 		if($this->_distinct) {
 			$distinct = "DISTINCT ";
 		} else {
@@ -233,12 +226,12 @@ class SelectQuery extends Query {
 	
    
    /**
+    * Renders Group portion of the SQL statement
     *
     * @access protected
     * @return string 
     */
-	protected function _groupSql()
-	{
+	public function renderGroup() {
 		if($this->_groups)
 			return 'GROUP BY ' . implode(', ', $this->_groups) . ' ';
 		else
@@ -247,12 +240,12 @@ class SelectQuery extends Query {
 	
    
    /**
+    * Renders ORDER portion of the SQL statement
     *
     * @access protected
     * @return string 
     */
-	protected function _orderSql()
-	{
+	public function renderOrder() {
 		$sql = '';
 		if(count($this->_order) > 0) {
 			$_order = '';
@@ -261,7 +254,6 @@ class SelectQuery extends Query {
 			}
          
          $_order = rtrim($_order, ',');
-         
 			$sql = ' ORDER BY ' . $_order . ' ';
 		}
 		
@@ -270,12 +262,12 @@ class SelectQuery extends Query {
 	
    
    /**
-    *
+    * Renders LIMIT portion of the SQL statement
+    * 
     * @access protected
     * @return string 
     */
-	protected function _limitSql()
-	{
+	public function renderLimit() {
 		if(count($this->_limit) > 0) {
 			return "LIMIT {$this->_limit['offset']}, {$this->_limit['count']} ";
 		}
@@ -283,35 +275,20 @@ class SelectQuery extends Query {
 	}
 	
 	/**
-	 * string representation of the query
+	 * Renders the complete SQL statement for the query
+	 *
 	 * @access public
 	 * @return string
 	 */
-   public function render($sender = null)
-	{
-      $sql = $this->_selectSql();
+   public function render() {
+      $sql = 	$this->renderSelect() .
+		   		$this->renderFrom() .
+					$this->renderJoin() .
+					$this->renderWhere() .
+					$this->renderOrder() . 
+					$this->renderOrder() . 
+					$this->renderLimit();
 
-      // from table
-      $sql .= $this->_fromSql();
-
-      // check to see if any joins available
-		$sql .= $this->_joinSql();
-		
-		// add where clause
-		$sql .= $this->_whereSql();
-		
-		// check for group by clause
-		$sql .= $this->_groupSql();
-		
-      // adding the order clause
-		$sql .= $this->_orderSql();
-		
- 		// adding limit when available
-		$sql .= $this->_limitSql();
-		
-      // finally return the sql statement
-		//dump($sql);
-		#dump($this->param());
       return trim($sql);
    }
 }

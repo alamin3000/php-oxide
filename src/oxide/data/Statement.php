@@ -33,6 +33,5 @@ class Statement extends \PDOStatement {
 	public function execute($param = null) {
       $this->bindArray = $param;
       parent::execute($param);
-
 	}
 }
