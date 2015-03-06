@@ -20,4 +20,9 @@ class DefaultController extends Controller {
 		$columns = $gateway->discoverSchema();
 		Debug::dump($columns);
    }
+   
+   protected function executeSomething() {
+	   $el = new \oxide\ui\html\Element('p', 'Testing default fall back action handling');
+	   return new \oxide\app\View($el);
+   }
 }

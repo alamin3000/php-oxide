@@ -53,11 +53,12 @@ class CommandFactory {
     * @return null|\oxide\http\class
     */
    public function create(Route $route, Container $config = null) {
+	   $instance = null;
       $class = $this->generateClassName($route);
       if($class) {
-         $instance = new $class($route, $config);
-      } else {
-         $instance = null;
+	      if(class_exists($class)) {
+	         $instance = new $class($route, $config);
+	      }
       }
 
 		return $instance;
