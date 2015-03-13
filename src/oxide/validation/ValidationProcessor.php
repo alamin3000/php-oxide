@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation;
-
+use oxide\base\AbstractClass;
 
 class ValidationProcessor {
    public
@@ -80,15 +80,17 @@ class ValidationProcessor {
    /**
     * Add key(s) whos value is required
     * 
-    * @param mixed $vars can be single key, or arry of keys
+    * @param string|array $vars can be single key, or arry of keys
     */
 	public function addRequiredKeys($vars) {
-		if(!is_array($vars)) $vars = [$vars];
-
-		foreach($vars as $var) {
-         if(in_array($var, $this->_requiredKeys)) continue;
-			$this->_requiredKeys[] = $var;
-		}
+		if(!is_array($vars)) {
+         $this->_requiredKeys[] = $vars;
+      } else {
+         foreach($vars as $var) {
+            if(in_array($var, $this->_requiredKeys)) continue;
+            $this->_requiredKeys[] = $var;
+         }
+      }
 	}
 
    /**
@@ -156,7 +158,8 @@ class ValidationProcessor {
          foreach($keys as $key) {
             if(isset($this->_filters[$key])) {
                foreach($this->_filters[$key] as $filter) {
-                  $values[$key] = $filter->filter($values[$key]);
+                  $instance = AbstractClass::instantiate($filter, '\oxide\validation\Filterer');
+                  $values[$key] = $instance->filter($values[$key]);
                }
             }
          }
@@ -201,9 +204,10 @@ class ValidationProcessor {
          foreach($keys as $key) {
             if(isset($this->_validators[$key])) {
                foreach($this->_validators[$key] as $validator) {
+                  $instance = AbstractClass::instantiate($validator, '\oxide\validation\Validator');
                   if(empty($values[$key])) continue;
                   $result->currentOffset = $key;
-                  $validator->validate($values[$key], $result);
+                  $instance->validate($values[$key], $result);
                   $result->currentOffset = null;
                   if(!$result->isValid() && $break) {
                      break 2;
