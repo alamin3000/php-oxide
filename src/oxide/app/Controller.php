@@ -30,6 +30,10 @@ abstract class Controller
        */
       $_route = null,
       
+      /**
+       * @var string
+       */
+      $_configFile = 'config.json',
       
       /**
        * _config
@@ -202,7 +206,7 @@ abstract class Controller
       if($this->_config === null) {
          $cmanager = ConfigManager::sharedInstance();
          $namespace = $this->classBaseNamespace();
-         $config     = $cmanager->openConfigByDirectory($namespace);
+         $config     = $cmanager->openConfigByDirectory($namespace, $this->_configFile);
          $this->_config = $config;
       }
       

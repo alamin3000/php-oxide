@@ -63,8 +63,13 @@ trait ArrayFunctionsTrait {
          }
       }
    }
-         
+   
+   /**
+    * Uses array_replace_recursive
+    * 
+    * @param array $arr
+    */
    public function merge(array $arr) {
-      $this->_t_array_storage = array_merge($this->_t_array_storage, $arr);
+      $this->_t_array_storage = array_replace_recursive($this->_t_array_storage, $arr);
    }
 }
