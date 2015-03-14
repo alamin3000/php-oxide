@@ -13,7 +13,7 @@ class Fieldset extends Element  {
       $_legend = null;
 
 
-   public function  __construct($name, $legend = null, $attributes = null) {
+   public function  __construct($legend = null, $attributes = null) {
 		parent::__construct('fieldset', null, $attributes);
       $this->setLegend($legend);
 	}
@@ -25,7 +25,6 @@ class Fieldset extends Element  {
    public function getLegend() {
       return $this->_legend;
    }
-   
    
    /**
     * 

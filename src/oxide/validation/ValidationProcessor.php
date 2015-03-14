@@ -41,7 +41,7 @@ class ValidationProcessor {
     * @param Filterer $filterer
     * @param type $keys
     */
-   public function addFilterer(Filterer $filterer, $keys) {
+   public function addFilterer($filterer, $keys) {
       if(is_array($keys)) {
          foreach($keys as $key) {
             $this->_filters[$key][] = $filterer;
@@ -56,7 +56,7 @@ class ValidationProcessor {
     * @param Validator $validator
     * @param string|array|null $keys
     */
-   public function addValidator(Validator $validator, $keys) {
+   public function addValidator($validator, $keys) {
       if(is_array($keys)) {
          foreach($keys as $key) {
             $this->_validators[$key][] = $validator;

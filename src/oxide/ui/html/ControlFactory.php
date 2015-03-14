@@ -3,6 +3,17 @@ namespace oxide\ui\html;
 
 
 abstract class ControlFactory {
+   public
+      $definitions = [
+         'button' => '\\oxide\\ui\\html\\ButtonControl',
+         'checkbox' => '\\oxide\\ui\\html\\CheckboxControl',
+         'chkgroup' => '\\oxide\\ui\\html\\CheckboxGroupControl',
+         'color' => '\\oxide\\ui\\html\\ColorControl',
+         'date' => '\\oxide\\ui\\html\\DateControl'
+         
+      ];
+   
+   
    protected static
       $controls = ['input', 'textarea', 'select', 'button'];
 
