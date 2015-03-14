@@ -24,8 +24,8 @@ class Session {
       $_options = [
          'session_id' => null,
          'cookie_path' => '/',
-         'cookie_timeout' => 60 * 60 * 6,
-         'garbage_timeout' => 60 * 60 * 60 + 600,
+         'cookie_timeout' => 21600,
+         'garbage_timeout' => 216600,
          'session_dir' => 'oxide_session',
          'cookie_secure' => false,
          'cookie_domain' => null
@@ -47,6 +47,7 @@ class Session {
          $this->_options = array_merge($this->_options, $options);
       }
       
+    
       $this->start();
 	}
  
