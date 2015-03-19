@@ -30,6 +30,7 @@ class Session {
          'cookie_secure' => false,
          'cookie_domain' => null
       ],
+           
 		$_namespace = '',
 		$_id = '';
    

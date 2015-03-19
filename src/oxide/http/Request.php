@@ -108,15 +108,15 @@ class Request {
    public static function currentServerRequest() {
       static $instance = null;
       if($instance === null) {
-         $host = filter_input(INPUT_SERVER, 'HTTP_HOST');
-         $uri = filter_input(INPUT_SERVER, 'REQUEST_URI');
+         $host = Server::vars('HTTP_HOST');
+         $uri = Server::vars('REQUEST_URI');
          $scheme = null;
-         $https = filter_input(INPUT_SERVER, 'HTTPS');
+         $https = Server::vars('HTTPS');
          if($https && $https == 1) /* Apache */ {
             $scheme = 'https';
          } elseif ($https && $https == 'on') /* IIS */ {
             $scheme = 'https';
-         } elseif (filter_input(INPUT_SERVER, 'SERVER_PORT') == 443) /* others */ {
+         } elseif (Server::vars('SERVER_PORT') == 443) /* others */ {
             $scheme = 'https';
          } else {
             $scheme = 'http';
@@ -126,7 +126,7 @@ class Request {
 
          // create request from the url and setup the additional information
          $instance = self::createFromUrl($url);
-         $instance->_method = filter_input(INPUT_SERVER, 'REQUEST_METHOD', FILTER_SANITIZE_STRING);
+         $instance->_method = Server::vars('REQUEST_METHOD');
          $instance->_posts = filter_input_array(INPUT_POST, FILTER_UNSAFE_RAW);
          $instance->_headers = getallheaders();
       }
@@ -340,18 +340,18 @@ class Request {
 	 * @return string
 	 */
 	public static function getIpAddress() {
-      $client_ip = filter_input(INPUT_SERVER, 'HTTP_CLIENT_IP', FILTER_UNSAFE_RAW);
+      $client_ip = Server::vars('HTTP_CLIENT_IP');
 		if($client_ip) {
 			return $client_ip;
 		} 
       
-      $forward_ip = filter_input(INPUT_SERVER, 'HTTP_X_FORWARDED_FOR', FILTER_UNSAFE_RAW);
+      $forward_ip = Server::vars('HTTP_X_FORWARDED_FOR');
       if ($forward_ip) {
 			return $forward_ip;
 		} 
       
       else {
-			return filter_input(INPUT_SERVER, 'REMOTE_ADDR', FILTER_UNSAFE_RAW);
+			return Server::vars('REMOTE_ADDR');
 		}
 	}
 }
