@@ -421,7 +421,8 @@ class Form extends Element {
       
       // notify internal event
       $this->onPreProcess($result);
-
+      
+      var_dump($this->_values);
       // now we get the processed/filtered values
       // if form process was not valid, this will return null
       $validationProcessor = $this->getValidationProcessor();
