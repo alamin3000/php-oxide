@@ -431,8 +431,7 @@ class Form extends Element {
       $this->_processed = true;
       $this->_processedValues = $processedValues;
       // notify internal event
-//      $this->onPostProcess($result, $processedValues);
-      var_dump($processedValues);
+      $this->onPostProcess($result, $processedValues);
       return $processedValues;
    }
    
