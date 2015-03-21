@@ -112,7 +112,7 @@ class SelectControl extends Control {
 	   foreach($this->_data as $key => $value) {
 		   if(is_array($value)) {
 			   // this is group
-            $group->setAttribute('value', $key);
+            $group->setAttribute('label', $key);
 			   $buffer[] = $group->renderOpen();
 			   foreach($value as $gkey => $gval) {
 				   if(isset($values[$gval])) $tag->setAttribute('selected', 'selected');
