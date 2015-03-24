@@ -43,7 +43,7 @@ class Dictionary
       	$keys = explode($pathseparator, $keypath);
       } else {
 	      $keys = $keypath;
-         $keypath = implode(' -> ', $keys);
+         $keypath = implode('.', $keys);
       }
       
       $var = null;
