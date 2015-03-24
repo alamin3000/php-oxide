@@ -88,13 +88,17 @@ class DataObject
 	 * 
 	 * Any other data provided in the $arr will be ignored
 	 * @param array $arr
+    * @param return $arr Any key/value that was not defined/set
 	 */
 	public function setDataForDefinedKeys($arr) {
 		foreach($arr as $key => $val) {
 			if(isset($this->$key)) {
 				$this->$key = $val;
+            unset($arr[$key]);
 			}
 		}
+      
+      return $arr;
 	}
 	
 	
