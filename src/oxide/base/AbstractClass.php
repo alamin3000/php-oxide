@@ -76,8 +76,7 @@ abstract class AbstractClass {
     */
    public static function create($class, array $args = null) {
       $instance = null;
-      \oxide\util\Debug::dump($class);
-      throw new \Exception();
+      
       if($args) {
          $reflector = new \ReflectionClass($class);
          $instance = $reflector->newInstanceArgs($args);
