@@ -1,6 +1,3 @@
-# disable magic quote.
-php_flag magic_quotes_gpc Off
-
 # rewriting rules for
 # phpoxide web engine
 RewriteEngine on

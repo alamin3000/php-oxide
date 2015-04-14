@@ -54,7 +54,7 @@ class Router {
    public function unregister($path) {
       unset($this->_registry[$path]);
    }
-   
+      
 	/**
 	 * create route from given url path
 	 *
@@ -101,6 +101,27 @@ class Router {
       $route->path = $path;
 		return $route;
 	}
+	
+	
+	/**
+	 * getPathRelativeToBase function.
+	 * 
+	 * @access public
+	 * @param mixed $request
+	 * @return void
+	 */
+	function getPathRelativeToBase($request) {
+		$path = $request->getUriComponents(Request::URI_PATH);
+      $base = '/'. trim($request->getBase(), '/') . '/';
+      
+      if (substr($path, 0, strlen($base)) == $base) {
+			$str = '/'. substr($path, strlen($base));
+		} else {
+			$str = $path;
+		}
+      
+      return $str;
+	}
    
    /**
     * Attempt to match the given route with current router registry
@@ -131,7 +152,7 @@ class Router {
     * @return Route|null
     */
    public function route(Request $request) {
-      $path = $request->getUriComponents(Request::URI_PATH);
+      $path = $this->getPathRelativeToBase($request);
       $route = $this->urlToRoute($path);
       if($this->match($route)) {
          $route->method = $request->getMethod();

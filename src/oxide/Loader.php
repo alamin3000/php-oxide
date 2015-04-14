@@ -8,7 +8,6 @@
  */
 
 namespace oxide;
-use oxide\helper\_util;
 use oxide\util\PSR4Autoloader;
 
 /**
@@ -111,11 +110,15 @@ class Loader {
       // creating the http context
       // set some default services
       // share the context
+      $request = http\Request::currentServerRequest();
+      $request->setBase($config['base']);
       $context = new http\Context(
-            http\Request::currentServerRequest(), 
+            $request, 
             new http\Response());
       $context->setNotifier($notifier);
       $context->setConfig($config);
+      
+      \oxide\util\Debug::setResponse($context->getResponse());
       
       // set session
       $context->setSession(function(http\Context $container) {
@@ -188,6 +191,14 @@ class Loader {
 		return $fc;
    }
    
+   
+   /**
+    * registerNamespaces function.
+    * 
+    * @access protected
+    * @param array $namespaces
+    * @return void
+    */
    protected function registerNamespaces(array $namespaces) {
       $autoloader = $this->getAutoloader();
       if($namespaces) {

@@ -1,4 +1,7 @@
 {
+	"base" : "/b1",
+	"domain" : "",
+	
     "site" : {
         "name" : "Oxide website",
         "title" : "Powered by oxide",

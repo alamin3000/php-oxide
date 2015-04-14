@@ -62,6 +62,30 @@ class Request {
 	private function __construct() {
       
 	}
+	
+	
+	/**
+	 * Set base path for the request.
+	 * 
+	 * Must be set before routing process begins
+	 * @access public
+	 * @param mixed $base
+	 * @return void
+	 */
+	public function setBase($base) {
+		$this->_base = $base;
+	}
+	
+	
+	/**
+	 * Get the current base for the request.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getBase() {
+		return $this->_base;
+	}
    
    /**
     * Create a request from given $url
