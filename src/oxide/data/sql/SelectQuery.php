@@ -111,7 +111,7 @@ class SelectQuery extends Query {
 	 * @param string $order
 	 */
 	public function order($field, $order = '') {
-		$this->_order[] = ['field' => $field, 'order' => $order];
+		$this->_order[$field] = 'order';
 	}
 	
    
@@ -249,13 +249,19 @@ class SelectQuery extends Query {
 		$sql = '';
 		if(count($this->_order) > 0) {
 			$_order = '';
-			foreach($this->_order as $order) {
-				$_order .= "{$order['field']} {$order['order']},";
+			foreach($this->_order as $field => $order) {
+				if(!empty($order)) {
+					$_order .= "{$field} {$order},";
+				} else {
+					$_order .= "{$field},";
+				}
 			}
          
          $_order = rtrim($_order, ',');
 			$sql = ' ORDER BY ' . $_order . ' ';
 		}
+		
+		
 		
 		return $sql;
 	}
@@ -285,7 +291,6 @@ class SelectQuery extends Query {
 		   		$this->renderFrom() .
 					$this->renderJoin() .
 					$this->renderWhere() .
-					$this->renderOrder() . 
 					$this->renderOrder() . 
 					$this->renderLimit();
 
