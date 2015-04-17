@@ -111,7 +111,7 @@ class SelectQuery extends Query {
 	 * @param string $order
 	 */
 	public function order($field, $order = '') {
-		$this->_order[$field] = 'order';
+		$this->_order[$field] = $order;
 	}
 	
    
