@@ -375,7 +375,7 @@ abstract class Controller
       if($this->_autoRender) {
          $viewManager = $this->getViewManager();
          $response = $context->getResponse();
-         $data = $this->getViewData();
+         $data = $this->getCurrentViewData();
 
          $prepview = $viewManager->prepareViewWithData($view, $data);
          $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
