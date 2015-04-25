@@ -116,7 +116,7 @@ abstract class Controller
     * All data set to the container will be available to the view
     * @return ArrayContainer
     */
-   public function getViewData() {
+   public function getCurrentViewData() {
       return $this->_viewData;
    }
    
@@ -259,7 +259,7 @@ abstract class Controller
 	 */
 	public function forward($action) {
       if(empty($action)) throw new Exception('Action name can not be empty.', 500);
-      $data = $this->getViewData();
+      $data = $this->getCurrentViewData();
       $this->_route->action = $action;
       $context = $this->getContext();
       $request = $context->getRequest();
