@@ -1,27 +1,25 @@
 {
+	"name" : "Oxide website",
+	"title" : "Powered by oxide",
+	"description" : "",
 	"base" : "/b1",
 	"domain" : "",
+	"url" : "http://phpoxide.com",
+	"authors" : [{
+	   "name" : "Alamin Ahmed",
+	   "organization" : "Softwarable Inc.",
+	   "email" : "al.ahmed@outlook.com"
+	}],
+
+    
 	
-    "site" : {
-        "name" : "Oxide website",
-        "title" : "Powered by oxide",
-        "description" : "",
-        "url" : "http://phpoxide.com",
-        "host" : "phpoxide.com",
-        "authors" : [{
-            "name" : "Alamin Ahmed",
-            "organization" : "Softwarable Inc.",
-            "email" : "al.ahmed@outlook.com"
-        }]
-    },
-    
-    "upload_folder" : "upload",
-    
-    "debug" : {
+	"debug" : {
         "display" : 1,
         "email" : 0,
         "email_to" : "webmaster@domain.com"
     },
+ 
+    "upload_folder" : "upload",
     
     "database" : {
         "driver" : "mysql",

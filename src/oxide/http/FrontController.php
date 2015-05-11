@@ -28,7 +28,6 @@ class FrontController {
       EVENT_EXCEPTION = 'FrontControllerException';
    
 	protected
-      $_config = null,
       $_context = null,
 		$_router = null,
 		$_dispatcher = null;
@@ -45,9 +44,8 @@ class FrontController {
     * Initializes the front controller
     * @param Context $context
     */
-   public function __construct(Context $context, Container $config = null) {
+   public function __construct(Context $context) {
       $this->_context = $context;
-      if($config) $this->_config = $config;
    }
    
    /**
@@ -87,7 +85,6 @@ class FrontController {
       $this->_dispatcher = $dispatcher;
    }
 	
-   
    /**
     * Get the 
     * @return Dispatcher

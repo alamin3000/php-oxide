@@ -52,13 +52,7 @@ trait ArrayAccessTrait {
     */
    public function offsetGet($offset)  {
       $this->_t_array_access_get($offset);
-      if(isset($this->_t_array_storage[$offset])) {
-         return $this->_t_array_storage[$offset];
-      } else {
-         $null = NULL;
-         return $null;
-      }
-      
+      return $this->_t_array_storage[$offset];
    }
    
    /**
@@ -106,6 +100,4 @@ trait ArrayAccessTrait {
    protected function _t_array_access_set($key, $value) {}
    protected function _t_array_access_get($key) {}
    protected function _t_array_access_unset($key, $value) {}
-      
-   
 }

@@ -31,7 +31,7 @@ trait SingletonTrait {
 	 */
 	final public static function getInstance() {
 		if(self::$_t_instance == null) {
-         if(self::$_tparams) {
+         if(self::$_t_params) {
             $class = get_called_class();
             self::$_t_instance = AbstractClass::create($class, self::$_t_params);
             self::$_t_params = null;

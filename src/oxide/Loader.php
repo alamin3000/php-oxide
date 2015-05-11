@@ -25,45 +25,14 @@ use oxide\util\PSR4Autoloader;
  * Typical application initialized and started by calling the bootstrap() method.
  */
 class Loader {
+   use base\pattern\SingletonTrait;
    
    protected 
-      $namespaces = [],
-      $helpers = [],
       $autoloader = null;
    
    const 
       EVENT_BOOTSTRAP_START = 'LoaderBootstrapStart',
       EVENT_BOOTSTRAP_END = 'LoaderBootstrapEnd';
-
-    /**
-    * Load given $classname using $dir if provided, else uses current $namespaes 
-    * 
-    * @param string $classname
-    * @param string $dir
-    * @throws \Exception
-    */
-   public function load($classname, $dir = null) {
-      $parts = explode('\\', $classname);
-      if(!$dir) {
-         if(count($parts) > 1) {
-            $namespace = $parts[0]; // first part is namespace/package
-            if(isset($this->namespaces[$namespace])) {
-               $dir = rtrim($this->namespaces[$namespace], '/');
-               $parts[0] = $dir; // replace the first entry with this directory
-            }
-         }
-         $filename = implode(DIRECTORY_SEPARATOR, $parts) . '.php';
-      } else {
-         $filename = $dir . DIRECTORY_SEPARATOR . end($parts) . '.php';
-      }
-
-      if(file_exists($filename)) {
-         require_once $filename;
-      } else {
-         throw new \Exception("Unable to load class: {$classname} using "
-         . "file: {$filename}", 9000);
-      }
-   }
    
    /**
     * Get the PSR4 Autoloader class
@@ -86,6 +55,24 @@ class Loader {
    }
    
    /**
+    * registerNamespaces function.
+    * 
+    * @access protected
+    * @param array $namespaces
+    * @return void
+    */
+   public function registerNamespaces(array $namespaces) {
+      $autoloader = $this->getAutoloader();
+      if($namespaces) {
+         foreach($namespaces as $defs) {
+            $dir = (isset($defs['dir'])) ? $defs['dir'] : trigger_error('dir key required for namespace.');
+            $namespace = (isset($defs['namespace'])) ? $defs['namespace'] : trigger_error('namespace key required for namespace definition.');
+            $autoloader->addNamespace($namespace, $dir);
+         }
+      }
+   }
+   
+   /**
     * Initializes the FrontController and returns the instance.
     * 
     * Performs various bootstrap processes for oxide application.
@@ -94,7 +81,13 @@ class Loader {
     * @return http\FrontController
     */
    public static function bootstrap($config_dir, $autorun = true) {
-      $loader = new self();
+	   static $boostrapping = false;
+	   if($boostrapping) {
+		   throw new \Exception("Bootstrapping already started.");
+	   }
+	   $boostrapping = true;
+	   
+      $loader = self::getInstance();
       $loader->register();
       
       // create the event notifier and share it
@@ -111,18 +104,17 @@ class Loader {
       // set some default services
       // share the context
       $request = http\Request::currentServerRequest();
-      $request->setBase($config['base']);
+      if(isset($config['base'])) { // set the request base url path, if provided
+	      $request->setBase($config['base']);
+	   }
       $context = new http\Context(
             $request, 
             new http\Response());
-      $context->setNotifier($notifier);
-      $context->setConfig($config);
-      
-      \oxide\util\Debug::setResponse($context->getResponse());
+      util\Debug::setResponse($context->getResponse());
       
       // set session
-      $context->setSession(function(http\Context $container) {
-         $request = $container->getRequest();
+      $context->bind('session', function(http\Context $container) {
+         $request = $container->get('request');
          $opt = [
             'cookie_domain' => $request->getUriComponents(http\Request::URI_HOST),
             'cookie_secure' => $request->isSecured()
@@ -131,43 +123,18 @@ class Loader {
       });
       
       // setup the authentication
-      $context->setAuth(function($container) {
+      $context->bind('auth', function($container) {
          return new app\auth\Authenticator(
-                 new app\auth\SessionStorage($container->getSession()));
+                 new app\auth\SessionStorage($container->get('session')));
       });
       
       // setup the connection
-      $context->setConnection(function() use ($config) {
+      $context->bind('connection', function() use ($config) {
          $conn = new data\Connection($config->get('database', null, TRUE), [
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
          return $conn;
-      });
-      
-      // setting up mail transport
-      $context->setMailer(function($c) {
-         $config = $c->getConfig();
-         $type = $config->getUsingKeyPath('email.transport', null, true);
-         if($type == 'smtp') {
-            $host       = $config->getUsingKeyPath('email.options.host', null, true);
-            $port       = $config->getUsingKeyPath('email.options.port', 25);
-            $encrypt    = $config->getUsingKeyPath('email.options.encrypt', null);
-            $username   = $config->getUsingKeyPath('email.options.username', null, true);
-            $password   = $config->getUsingKeyPath('email.options.password', null, true);
-            $transport  = \Swift_SmtpTransport::newInstance($host, $port, $encrypt);
-            $transport->setUsername($username);
-            $transport->setPassword($password);
-         } else if($type == 'sendmail') {
-            $args = $config->getusingKeyPath('email.options.command', null);
-            $transport = \Swift_SendmailTransport::newInstance($args);
-         } else if($type == 'mail') {
-            $transport = \Swift_MailTransport::newInstance();
-         } else {
-            throw new \Exception('Email transport is not recognized.');
-         }
-         
-         return \Swift_Mailer::newInstance($transport);
       });
 
       // create the front controller and share it
@@ -188,27 +155,12 @@ class Loader {
 			$fc->run();
 		}
 		
+		$boostrapping = false;
 		return $fc;
    }
    
    
-   /**
-    * registerNamespaces function.
-    * 
-    * @access protected
-    * @param array $namespaces
-    * @return void
-    */
-   protected function registerNamespaces(array $namespaces) {
-      $autoloader = $this->getAutoloader();
-      if($namespaces) {
-         foreach($namespaces as $defs) {
-            $dir = (isset($defs['dir'])) ? $defs['dir'] : trigger_error('dir key required for namespace.');
-            $namespace = (isset($defs['namespace'])) ? $defs['namespace'] : trigger_error('namespace key required for namespace definition.');
-            $autoloader->addNamespace($namespace, $dir);
-         }
-      }
-   }
+   
    
    /**
     * @param array $modules
@@ -224,35 +176,6 @@ class Loader {
             $namespace = $dic->get('namespace', NULL, TRUE);
             $autoloader->addNamespace($namespace, $dir);
             $router->register($name, $dir, $namespace);
-         }
-      }
-   }
-   
-   protected function loadPlugins(array $plugins) {
-      $plugin = function($namespace, $required = false) use ($context) {
-         $class = 'Plugin';
-         $fullclass = "{$namespace}\{$class}";
-         
-         if(class_exists($fullclass)) {
-            $instance = new $fullclass();
-            if($instance instanceof application\Pluggable) {
-               $instance->plug($context);
-            } else {
-               throw new \Exception("Class ({$fullclass}) is not Pluggable.");
-            }
-         } else {
-            if($required)
-               throw new \Exception("Plugin class not found at {$namespace}.");
-         }
-      };
-      
-      $plugins = _util::value($info, 'plugins', null);
-      if($plugins) {
-         foreach($plugins as $plugin => $dir) {
-            $subnamespace = str_replace('/', '\\', $dir);
-            $subnamespace = $namespace . '\\'. $subnamespace;
-
-            $plugin($subnamespace, true);
          }
       }
    }

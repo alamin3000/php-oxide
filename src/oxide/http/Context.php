@@ -11,13 +11,10 @@ use oxide\base\Container;
  * @subpackage http
  */
 class Context extends Container {
-   use \oxide\base\pattern\SharedInstanceTrait;
-
-   
 	public function __construct(Request $request, Response $response) {
 		parent::__construct();
-      $this->setRequest($request); 
-      $this->setResponse($response);
+      $this->set('request', $request); 
+      $this->set('response', $response);
 	}
   
    /**
@@ -25,7 +22,7 @@ class Context extends Container {
     * @return Request
     */
 	public function getRequest() {
-		return $this->get('Request');
+		return $this->get('request');
 	}
 
    /**
@@ -33,6 +30,6 @@ class Context extends Container {
     * @return Response
     */
 	public function getResponse() {
-      return $this->get('Response');
+      return $this->get('response');
 	}
 }

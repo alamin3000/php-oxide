@@ -221,16 +221,16 @@ abstract class Controller
     * @param Context $context
     */
    private function init(Context $context) {
-      $config = $context->getConfig();
+      $config = ConfigManager::sharedInstance()->getConfig();
       $route = $this->getRoute();
-      $context->setRoute($route);
+      $context->set('route', $route);
       
       // perform access validation
-      $auth = $context->getAuth();
+      $auth = $context->get('auth');
       $authManager = new auth\AuthManager($config, $auth);
       $authManager->validateAccess($route, EventNotifier::sharedInstance(), true);
       
-      $conn = $context->getConnection();
+      $conn = $context->get('connection');
       \oxide\data\Connection::setSharedInstance($conn);
       \oxide\data\model\ActiveRecord::sharedConnection($conn);
       
@@ -245,9 +245,6 @@ abstract class Controller
       
       $viewData = $this->_viewData;
       $viewData->setHelperContainer($helpers);
-      
-      // update context
-      $context->setHelperContainer($helpers);
    }
    
    /**

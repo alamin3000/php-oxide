@@ -7,80 +7,85 @@
  * @copyright (c) 2014, Alamin Ahmed
  * @license http://URL name 
  */
-
 namespace oxide\base;
 
-class Container 
-   extends Dictionary {
-   protected           
-      /**
-       * @var array Stores manually managed object instances from clousers
-       */
-      $_instances = [];
+/**
+ * Container class.
+ * Adds lazy loading support to Dictionary.
+ * Object/resource can be assigned using closure for lazy loading when accessed for the first time
+ * @note key/names will be stored in case insensitive
+ */
+class Container extends Dictionary {
+   protected       
+   	$_binds = [];
    
-   /**
-    * Get data from the container
-    * 
-    * Supports lazy loading using Closures.  If data is a Closure, it will be 
-    * invoked and returned data will be sent instead.
-    * @param string $key
-    * @param mixed $default
-    * @return mixed
-    */
-   public function get($key, $default = null, $required = false) {
-      if(isset($this->_instances[$key])) return $this->_instances[$key]; 
-      $value = parent::get($key, $default, $required);
-      if($value instanceof \Closure) {
-         $val = $value($this);
-         $this->_instances[$key] = $val;
-         return $val;
-      } else {
-         return $value;
-      }
-   }
-      
-   /**
-    * Sets a data
-    * 
-    * @param string $key
-    * @param mixed $data
-    */
-   public function set($key, $data) {
-      $this->offsetSet($key, $data);
-   }
+	/**
+	 * Bind a closure to the container for given $name.
+	 * 
+	 * @param string $name
+	 * @param \Closure $closure
+	 * @return void
+	 */
+	public function bind($name, \Closure $closure) {
+		$this->_binds[$name] = $closure;
+	}
    
-   /**
-    * Remove a data/service from the container
-    * 
-    * @param string $key
-    */
-   public function remove($key) {
-      unset($this->_t_array_storage[$key]);
-      if(isset($this->_instances[$key])) {
-         $this->_instances[$key] = null;
-         unset($this->_instances[$key]);
-      }
-   }
-   
-   public function offsetUnset($offset) {
-      $this->remove($offset);
-   }
-   
-   public function __call($name, $arguments) {
-      $action = substr($name, 0, 3);
-		$service = substr($name, 3);
+	/**
+	 * resolve function.
+	 * 
+	 * @access public
+	 * @param mixed $name
+	 * @return void
+	 */
+	public function resolve($name) {
+		if(!isset($this->_binds[$name])) {
+			return null;
+		}
 		
-		if(!$service) {
-         throw new \Exception("Invalid method called");
+		$closure = $this->_binds[$name];
+		$object = $closure($this);
+		return $object;
+	}
+	
+	
+	public function offsetExists($key) {
+		$bool = parent::offsetExists($key);
+		if(!$bool) {
+			return (isset($this->_binds[$key]));
+		} else {
+			return $bool;
 		}
+	}
+	
+	public function offsetGet($key) {
+		if(parent::offsetExists($key)) {
+			return parent::offsetGet($key);	
+		}
+		
+		$val = $this->resolve($key);
+		if($val) {
+			$this->_t_array_storage[$key] = $val;
+		}
+		
+		return $val;
+	}
+
       
-      if($action == 'get') {
-         return $this->get($service);
-      } else if($action == 'set') {
-         $param = current($arguments);
-         return $this->set($service, $param);
-      } else {
-			throw new \Exception("Invalid method called: \"$name\"");
-		}
-   }
+//   public function __call($name, $arguments) {
+//      $action = substr($name, 0, 3);
+//		$service = substr($name, 3);
+//		if(!$service) {
+//         throw new \Exception("Invalid method called");
+//		}
+//		
+//		$service = strtolower($service);
+//      if($action == 'get') {
+//         return $this->get($service);
+//      } else if($action == 'set') {
+//         $param = current($arguments);
+//         return $this->set($service, $param);
+//      } else {
+//			throw new \Exception("Invalid method called: \"$name\"");
+//		}
+//   }
 }

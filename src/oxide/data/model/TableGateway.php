@@ -211,6 +211,10 @@ class TableGateway {
       return $stmt->fetch();
 	}
 	
+	public function findAll() {
+		
+	}
+	
 	
 	/**
 	 * Selects data based on given $query

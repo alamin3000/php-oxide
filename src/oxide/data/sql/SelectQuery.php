@@ -62,7 +62,12 @@ class SelectQuery extends Query {
 	 */
 	public function from($table, $as = null) {
       if($as) {
+	      if(is_array($table)) {
+		      throw new \Exception('If table alias is provided, table param cannot be an array');
+	      }
          $table = "{$table} as $as";
+      } else {
+	      
       }
 		$this->table($table);
 	}
@@ -205,7 +210,7 @@ class SelectQuery extends Query {
     * @return type 
     */
 	protected function renderFrom() {
-		return 'FROM ' . implode(', ', (array) $this->_table) . ' ';
+		return 'FROM ' . implode(', ', (array)$this->_table) . ' ';
 	}
 	
    

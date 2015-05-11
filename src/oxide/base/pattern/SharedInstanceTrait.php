@@ -39,12 +39,7 @@ trait SharedInstanceTrait {
     * @param object $instance
     * @return null
     */
-   final public static function setSharedInstance($instance) {
-      if(!is_null($instance) && 
-         !is_a($instance, get_called_class())) {
-         throw new \Exception('Given instance is not a class type of: ' . get_called_class());
-      }
-      
+   final public static function setSharedInstance(self $instance) {
       self::$_t_defaultinstance = $instance;
    }
 }
