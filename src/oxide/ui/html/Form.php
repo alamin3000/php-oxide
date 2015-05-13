@@ -590,7 +590,7 @@ class Form extends Element {
       if($callback) $callback($control, $this);
    }
    
-   protected function _t_array_access_set(&$key, &$value) {
+   protected function _t_array_access_set($key, $value) {
       parent::_t_array_access_set($key, $value);
       if($value instanceof Control ||
          $value instanceof Fieldset) {
@@ -598,11 +598,11 @@ class Form extends Element {
       }
    }
    
-   protected function _t_array_access_get(&$key) {
+   protected function _t_array_access_get($key) {
       parent::_t_array_access_get($key);
    }
    
-   protected function _t_array_access_unset(&$key, &$value) {
+   protected function _t_array_access_unset($key, $value) {
       parent::_t_array_access_unset($key, $value);
       if($value instanceof Control ||
          $value instanceof Fieldset) {
