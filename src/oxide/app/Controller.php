@@ -90,7 +90,6 @@ abstract class Controller
 	 */
 	public final function  __construct(Route $route) {
 		$this->_route = $route;
-      $this->_viewData = new ViewData(); // create data dictionary for the view
 	}
    
    /**
@@ -223,7 +222,6 @@ abstract class Controller
    private function init(Context $context) {
       $config = ConfigManager::sharedInstance()->getConfig();
       $route = $this->getRoute();
-      $context->set('route', $route);
       
       // perform access validation
       $auth = $context->get('auth');
@@ -243,8 +241,10 @@ abstract class Controller
       }
       $helpers->set('auth', $auth);
       
-      $viewData = $this->_viewData;
-      $viewData->setHelperContainer($helpers);
+      
+      $viewData = new ViewData([], $context); // create data dictionary for the view
+      $viewData->helper = $helpers;
+      $this->_viewData = $viewData;
    }
    
    /**
@@ -319,11 +319,6 @@ abstract class Controller
          $this->onException($context, $e);
       }
 	}
-   
-   final public function render() {
-      $context = $this->getContext();
-      $this->onRender($context);
-   }
    
    /**
     * Subclassing controller must/should call parent::onInit if overriding

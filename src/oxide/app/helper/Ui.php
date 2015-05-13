@@ -9,8 +9,6 @@ use oxide\ui\html\Tag;
 use oxide\ui\html\ControlFactory;
 
 class Ui extends Html {
-   
-   
    protected           
       $_openedTags = [],
            

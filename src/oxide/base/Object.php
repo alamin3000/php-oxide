@@ -1,6 +1,7 @@
 <?php
 namespace oxide\base;
 use oxide\base\pattern\PropertyAccessTrait;
+use oxide\base\pattern\ExtendableTrait;
 
 /**
  * A Generic object
@@ -9,7 +10,7 @@ use oxide\base\pattern\PropertyAccessTrait;
 class Object 
    extends AbstractClass 
    implements Stringify, \Serializable {
-   use PropertyAccessTrait;
+   use PropertyAccessTrait, ExtendableTrait;
    
    protected
    	$_readyonly_vars = [];

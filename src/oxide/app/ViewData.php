@@ -10,20 +10,22 @@
 
 namespace oxide\app;
 use oxide\base\Container;
+use oxide\http\Context;
 
 /**
  */
 class ViewData extends Container {
-   protected
-      $_helpers = null;
+	public
+		$context = null;
    
    /**
     * Construct a new view data container
     * 
     * @param mixed $data
     */
-   public function __construct($data = null) {
+   public function __construct($data = null, Context $context = null) {
       parent::__construct($data);
+      if($context) $this->context = $context;
    }
    
    /**
@@ -36,6 +38,8 @@ class ViewData extends Container {
       if($this->_helpers == null) {
          if(helper\HelperContainer::hasSharedInstance()) {
             $this->_helpers = helper\HelperContainer::sharedInstance();
+         } else {
+	         throw new \Exception('Helper Container has not been set');
          }
       }
       
@@ -69,5 +73,23 @@ class ViewData extends Container {
     */
    public function getHelper($name) {
       return $this->getHelperContainer()->get($name);
+   }
+   
+   
+   /**
+    * getHelpers function.
+    * 
+    * @access public
+    * @param array $names
+    * @return void
+    */
+   public function getHelpers(array $names) {
+	   $helpers = [];
+	   $helperContainer = $this->getHelperContainer();
+	   foreach($names as $name) {
+		   $helpers[] = $helperContainer[$name];
+	   }
+	   
+	   return $helpers;
    }
 }

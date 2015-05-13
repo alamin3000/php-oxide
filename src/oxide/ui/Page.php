@@ -11,8 +11,8 @@
 namespace oxide\ui;
 use oxide\base\Dictionary;
 
-class Page implements Renderer {
-   protected 
+class Page implements Renderer, \ArrayAccess {
+   protected
       $_prerenders = [],
       $_parent = null,
       $_cache = null,
@@ -42,11 +42,19 @@ class Page implements Renderer {
       $this->_data = $data;
    }
    
+   
    /**
+    * getData function.
     * 
-    * @return Dictionary
+    * @access public
+    * @param mixed $key (default: null)
+    * @return void
     */
-   public function getData() {
+   public function getData($key = null) {
+	   if($key) {
+		   return $this->_data->get($key);
+	   }
+	   
       return $this->_data;
    }
    
@@ -161,5 +169,30 @@ class Page implements Renderer {
       }
       
       return $this->renderPage($script, $data);
+   }
+   
+   
+   public function offsetGet($key) {
+	   return $this->_data->offsetGet($key);
+   }
+   
+   public function offsetSet($key, $val) {
+	   $this->_data->offsetSet($key, $val);
+   }
+   
+   public function offsetExists($key) {
+	   return $this->_data->offsetExists($key);
+   }
+   
+   public function offsetUnset($key) {
+	   $this->_data->offsetUnset($key);
+   }
+   
+   public function __get($key) {
+	   return $this->_data->__get($key);
+   }
+   
+   public function __call($name, $args) {
+	   return call_user_func_array([$this->_data, $name], $args);
    }
 }

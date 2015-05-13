@@ -3,6 +3,7 @@ namespace app\module\home\controller;
 use oxide\app\Controller;
 use oxide\http\Context;
 use oxide\app\ViewData;
+use oxide\app\helper;
 
 
 /**
@@ -12,9 +13,7 @@ use oxide\app\ViewData;
  */
 class DefaultController extends Controller {
    protected function executeIndex(Context $context, ViewData $data) {
-	   
-	   
+			   
+	   $data['title'] = 'this is a title';
    }
-   
-   
 }

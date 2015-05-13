@@ -246,4 +246,8 @@ class ViewManager {
          return $view;
       }
    }
+   
+   public function renderView(View $view) {
+	   
+   }
 }

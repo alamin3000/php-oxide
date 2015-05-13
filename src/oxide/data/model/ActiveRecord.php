@@ -60,7 +60,7 @@ abstract class ActiveRecord extends DataObject {
          if($this->_connection) 
             return $this->_connection;
          else
-            return static::$_sharedConnection;
+            return static::sharedConnection();
       } 
    }
    
@@ -73,7 +73,12 @@ abstract class ActiveRecord extends DataObject {
       if($conn) {
          static::$_sharedConnection = $conn;
       } else {
-         return static::$_sharedConnection;
+	      if(static::$_sharedConnection) {
+		      return static::$_sharedConnection;
+	      } else {
+		      return data\Connection::sharedInstance();
+	      }
+         
       }
    }
 

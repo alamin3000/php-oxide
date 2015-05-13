@@ -21,6 +21,16 @@ trait SharedInstanceTrait {
 		if(self::$_t_defaultinstance == null) {
 			throw new \Exception('Default Instance not found for: ' . get_called_class());
 		}
+		
+		if(self::$_t_defaultinstance instanceof \Closure) {
+			$closure = self::$_t_defaultinstance;
+			self::$_t_defaultinstance = $closure();
+		}
+		
+		if(!self::$_t_defaultinstance instanceof self) {
+			throw new \Exception("Shared Instance is not of self kind.");
+		}
+		
 		return self::$_t_defaultinstance;
 	}
    
@@ -39,7 +49,7 @@ trait SharedInstanceTrait {
     * @param object $instance
     * @return null
     */
-   final public static function setSharedInstance(self $instance) {
+   final public static function setSharedInstance($instance) {
       self::$_t_defaultinstance = $instance;
    }
 }

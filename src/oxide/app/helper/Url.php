@@ -12,8 +12,8 @@ class Url {
    
    public function __construct(HelperContainer $container) {
       $context = $container->getContext();
-      $this->_request = $context->getRequest();
-      $this->_route = $context->getRoute();
+      $this->_request = $context->get('request');
+      $this->_route = $context->get('route');
    }
    
    /**

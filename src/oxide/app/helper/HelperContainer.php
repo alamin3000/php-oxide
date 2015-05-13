@@ -17,14 +17,14 @@ class HelperContainer extends Container  {
    
    protected
       $_helpers = [
-         'util' => 'oxide\app\helper\Util',         
-         'html' => 'oxide\app\helper\Html',
-         'flash' => 'oxide\app\helper\Flash', 
-         'head' => 'oxide\app\helper\Head', 
-         'ui' => 'oxide\app\helper\Ui',
-         'master' => 'oxide\app\helper\Master',
-         'url' => 'oxide\app\helper\Url',
-         'locale' => 'oxide\app\helper\Locale',
+         'util' 		=> 'oxide\app\helper\Util',         
+         'html' 		=> 'oxide\app\helper\Html',
+         'flash' 		=> 'oxide\app\helper\Flash', 
+         'head' 		=> 'oxide\app\helper\Head', 
+         'ui' 			=> 'oxide\app\helper\Ui',
+         'master' 	=> 'oxide\app\helper\Master',
+         'url' 		=> 'oxide\app\helper\Url',
+         'locale' 	=> 'oxide\app\helper\Locale',
          'formatter' => 'oxide\app\helper\Formatter'
       ],
            
@@ -48,7 +48,7 @@ class HelperContainer extends Container  {
     */
    public function registerHelpers(array $helpers) {
       foreach($helpers as $name => $helper) {
-         $this->set($name, function($c) use($helper) {
+         $this->addResolver($name, function($c) use($helper) {
             return new $helper($c);
          });
       }
@@ -63,30 +63,4 @@ class HelperContainer extends Container  {
    public function getContext() {
       return $this->_context;
    }
-   
-   public function __call($name, $arguments) {
-      throw new \Exception('not implemented yet.');
-      foreach($this->_container as $key => $instance) {
-         if(method_exists($instance, $name)) {
-            
-         }
-      }
-   }
-   
-   /**
-    * 
-    * @param type $name
-    * @param \Closure $function
-    */
-   public function extendClosure($name, \Closure $function) {
-      self::$_invokers[$name] = $function;
-   }
-   
-   public function extendClass($class) {
-      $reflector = new \ReflectionClass($class);
-      $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
-      foreach($methods as $method) {
-         $this->_t_methods[$method] = $object;
-      }
-   }  
 }

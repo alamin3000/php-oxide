@@ -12,33 +12,60 @@ namespace oxide\base\pattern;
 
 trait ExtendableTrait {
    protected
-      $_t_instance_methods = [],
-      $_t_static_methods = [];
+      $_t_callables = [];
    
-   public function extendObject($object) {
+   /**
+    * extendObject function.
+    * 
+    * @access public
+    * @param mixed $object
+    * @return void
+    */
+   public function extendObject(\stdClass $object) {
       $reflector = new \ReflectionClass($object);
       $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
       foreach($methods as $method) {
-         $this->_t_methods[$method] = $object;
+	      $this->extendCallable($method, [$object, $method]);
       }
    }
    
+   /**
+    * extendClosure function.
+    * 
+    * @access public
+    * @param mixed $name
+    * @param \Closure $closure
+    * @return void
+    */
    public function extendClosure($name, \Closure $closure) {
-      $this->_t_methods[$name] = $closure;
+      $this->extendCallable($name, $closure);
    }
    
-   public function callExtendedMethod($name, array $args = null) {
-      if(isset($this->_t_methods[$name])) {
-         $callable = $this->_t_methods[$name];
-         
-         if(is_object($callable)) {
-            
-         } else if($callable instanceof \Closure) {
-            
-         } else {
-            
-         }
-//         call_user_func_array($callback, $args)
-      }
+   /**
+    * extendCallable function.
+    * 
+    * @access public
+    * @param mixed $name
+    * @param callable $callable
+    * @return void
+    */
+   public function extendCallable($name, callable $callable) {
+	   if(isset($this->_t_callables[$name])) throw new \Exception("Method {$name} already exists.");
+	   $this->_t_callables[$name] = $callable;
    }
+   
+   /**
+    * callExtendedMethod function.
+    * 
+    * @access public
+    * @param mixed $name
+    * @param array $args (default: null)
+    * @return void
+    */
+   public function invokeExtended($name, array $args = null) {
+      if(isset($this->_t_callables[$name])) {
+         $callable = $this->_t_callables[$name];
+			return call_user_func_array($callable, $args);         
+      }
+   }   
 }

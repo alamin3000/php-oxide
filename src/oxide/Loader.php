@@ -113,7 +113,7 @@ class Loader {
       util\Debug::setResponse($context->getResponse());
       
       // set session
-      $context->bind('session', function(http\Context $container) {
+      $context->addResolver('session', function(http\Context $container) {
          $request = $container->get('request');
          $opt = [
             'cookie_domain' => $request->getUriComponents(http\Request::URI_HOST),
@@ -123,13 +123,13 @@ class Loader {
       });
       
       // setup the authentication
-      $context->bind('auth', function($container) {
+      $context->addResolver('auth', function($container) {
          return new app\auth\Authenticator(
                  new app\auth\SessionStorage($container->get('session')));
       });
       
       // setup the connection
-      $context->bind('connection', function() use ($config) {
+      $context->addResolver('connection', function() use ($config) {
          $conn = new data\Connection($config->get('database', null, TRUE), [
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
