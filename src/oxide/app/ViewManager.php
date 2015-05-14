@@ -105,6 +105,7 @@ class ViewManager {
       }
       $templateScript = $this->getTemplateScript($script); // get templatized script
       $page = new Page($templateScript, $data);
+      $page->setDataVariableName('view');
       $view = new View($page);
       
       return $view;
@@ -201,7 +202,7 @@ class ViewManager {
          $script = $this->getLayoutScript();
          $page = new Page($script);
          $page->setCodeScript($this->getCodeScriptForScript($script));
-         
+         $page->setDataVariableName('view');
          $this->_layoutPage = $page;
       }
       

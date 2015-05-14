@@ -11,8 +11,9 @@
 namespace oxide\ui;
 use oxide\base\Dictionary;
 
-class Page implements Renderer, \ArrayAccess {
+class Page implements Renderer {
    protected
+   	$_dataVariableName = null,
       $_prerenders = [],
       $_parent = null,
       $_cache = null,
@@ -31,6 +32,19 @@ class Page implements Renderer, \ArrayAccess {
          $this->setData($data);
       }
       if($codeScript) $this->setCodeScript ($codeScript);
+   }
+   
+   
+   /**
+    * Change the data variable name for the view script.
+    * 
+    * By default variable named 'data' ($data) will be available to the view script
+    * @access public
+    * @param mixed $varname
+    * @return void
+    */
+   public function setDataVariableName($varname) {
+	   $this->_dataVariableName = $varname;
    }
    
    /**
@@ -146,6 +160,11 @@ class Page implements Renderer, \ArrayAccess {
       if(!file_exists($script)) {
          trigger_error("View script '{$script}' not found", E_USER_ERROR);
       }
+      
+      if($this->_dataVariableName) {
+	      ${$this->_dataVariableName} = $data;
+      }
+      
       include $script;
       return ob_get_clean();
    }
@@ -169,30 +188,5 @@ class Page implements Renderer, \ArrayAccess {
       }
       
       return $this->renderPage($script, $data);
-   }
-   
-   
-   public function offsetGet($key) {
-	   return $this->_data->offsetGet($key);
-   }
-   
-   public function offsetSet($key, $val) {
-	   $this->_data->offsetSet($key, $val);
-   }
-   
-   public function offsetExists($key) {
-	   return $this->_data->offsetExists($key);
-   }
-   
-   public function offsetUnset($key) {
-	   $this->_data->offsetUnset($key);
-   }
-   
-   public function __get($key) {
-	   return $this->_data->__get($key);
-   }
-   
-   public function __call($name, $args) {
-	   return call_user_func_array([$this->_data, $name], $args);
    }
 }
