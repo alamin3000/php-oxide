@@ -16,6 +16,7 @@ use oxide\http\Context;
  */
 class ViewData extends Container {
 	public
+		$helper = null,
 		$context = null;
    
    /**
@@ -23,9 +24,10 @@ class ViewData extends Container {
     * 
     * @param mixed $data
     */
-   public function __construct($data = null, Context $context = null) {
+   public function __construct($data = null, Context $context = null, Container $helper = null) {
       parent::__construct($data);
       if($context) $this->context = $context;
+      if($helper) $this->helper = $helper;
    }
    
    /**
@@ -35,15 +37,15 @@ class ViewData extends Container {
     * @return Container
     */
    public function getHelperContainer() {
-      if($this->_helpers == null) {
+      if($this->helper == null) {
          if(helper\HelperContainer::hasSharedInstance()) {
-            $this->_helpers = helper\HelperContainer::sharedInstance();
+            $this->helper = helper\HelperContainer::sharedInstance();
          } else {
 	         throw new \Exception('Helper Container has not been set');
          }
       }
       
-      return $this->_helpers;
+      return $this->helper;
    }
    
    /**
@@ -52,7 +54,7 @@ class ViewData extends Container {
     * @param Container $container
     */
    public function setHelperContainer(helper\HelperContainer $container) {
-      $this->_helpers = $container;
+      $this->helpers = $container;
    }
    
    /**

@@ -19,7 +19,7 @@ use oxide\base\pattern\ExtendableTrait;
  * @note key/names will be stored in case insensitive
  */
 class Container extends Dictionary {
-   use ResolverTrait, PropertyAccessTrait, ExtendableTrait;
+   use ResolverTrait;
    
 	public function offsetExists($key) {
 		return parent::offsetExists($key) || $this->hasResolver($key);
