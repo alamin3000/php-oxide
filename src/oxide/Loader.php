@@ -157,7 +157,7 @@ class Loader {
             throw new \Exception('Email transport is not recognized.');
          }
          
-         return \Swift_Mailer::newInstance($transport);
+         return util\Mailer::newInstance($transport);
       });
       
       // create the front controller and share it
