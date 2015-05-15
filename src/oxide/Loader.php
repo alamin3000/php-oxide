@@ -138,7 +138,6 @@ class Loader {
       
       // setup default mailer instance
       util\Mailer::setSharedInstance(function() use ($config) {
-         $config = $c->getConfig();
          $type = $config->getUsingKeyPath('email.transport', null, true);
          if($type == 'smtp') {
             $host       = $config->getUsingKeyPath('email.options.host', null, true);
