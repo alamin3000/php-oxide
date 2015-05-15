@@ -136,8 +136,9 @@ class Loader {
          ]);
       });
       
-      // setup default mailer instance
+      
       util\Mailer::setSharedInstance(function() use ($config) {
+         $config = $c->getConfig();
          $type = $config->getUsingKeyPath('email.transport', null, true);
          if($type == 'smtp') {
             $host       = $config->getUsingKeyPath('email.options.host', null, true);
@@ -160,6 +161,11 @@ class Loader {
          return util\Mailer::newInstance($transport);
       });
       
+      // setting up mail transport
+      $context->addResolver('mailer', function($c) {
+         
+      });
+
       // create the front controller and share it
       $fc = new http\FrontController($context);
       http\FrontController::setSharedInstance($fc);

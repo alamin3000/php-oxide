@@ -11,5 +11,7 @@
 namespace oxide\util;
 
 class Mailer extends \Swift_Mailer {
-   use \oxide\base\pattern\SharedInstanceTrait;  
+   use \oxide\base\pattern\SharedInstanceTrait;
+   
+   
 }
