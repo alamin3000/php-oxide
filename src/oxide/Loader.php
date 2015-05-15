@@ -139,7 +139,7 @@ class Loader {
       // setup mailer
       util\Mailer::setSharedInstance(function() use ($config) {
          return new util\Mailer(true, 
-                 new base\Dictionary($config->get('mail', null, true)));
+                 new base\Dictionary($config->get('email', null, true)));
       });
       
       // create the front controller and share it
