@@ -9,9 +9,50 @@
  */
 
 namespace oxide\util;
+use oxide\base\Dictionary;
 
-class Mailer extends \Swift_Mailer {
+class Mailer extends \PHPMailer {
    use \oxide\base\pattern\SharedInstanceTrait;
    
+   public function __construct($exceptions = false, Dictionary $config = null) {
+      parent::__construct($exceptions);
+      
+      if($config) {
+         $type = $config->get('transport', null, true);
+         if($type == 'smtp') {
+            // getting smpt related configurations 
+            $host       = $config->getUsingKeyPath('options.host', null, true);
+            $port       = $config->getUsingKeyPath('options.port', 25);
+            $encrypt    = $config->getUsingKeyPath('options.encrypt', null);
+            $username   = $config->getUsingKeyPath('options.username', null, true);
+            $password   = $config->getUsingKeyPath('options.password', null, true);
+            
+            // setting up the
+            $this->isSMTP();
+            $this->Host = $host;
+            $this->Port = $port;
+            $this->SMTPAuth = true;
+            if($encrypt) $this->SMTPSecure = $encrypt;
+            $this->Username = $username;
+            $this->Password = $password;
+            
+         } else if($type == 'sendmail') {
+            $this->isSendmail();
+         } else if($type == 'mail') {
+            // nothing to do
+         } else {
+            throw new \Exception('Email transport is not recognized.');
+         }
+      }
+   }
    
+   public function resetAll() {
+      $this->clearAddresses();
+      $this->clearAllRecipients();
+      $this->clearAttachments();
+      $this->clearBCCs();
+      $this->clearCCs();
+      $this->clearReplyTos();
+      $this->clearCustomHeaders();
+   }
 }

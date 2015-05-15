@@ -136,35 +136,11 @@ class Loader {
          ]);
       });
       
-      
+      // setup mailer
       util\Mailer::setSharedInstance(function() use ($config) {
-         $type = $config->getUsingKeyPath('email.transport', null, true);
-         if($type == 'smtp') {
-            $host       = $config->getUsingKeyPath('email.options.host', null, true);
-            $port       = $config->getUsingKeyPath('email.options.port', 25);
-            $encrypt    = $config->getUsingKeyPath('email.options.encrypt', null);
-            $username   = $config->getUsingKeyPath('email.options.username', null, true);
-            $password   = $config->getUsingKeyPath('email.options.password', null, true);
-            $transport  = \Swift_SmtpTransport::newInstance($host, $port, $encrypt);
-            $transport->setUsername($username);
-            $transport->setPassword($password);
-         } else if($type == 'sendmail') {
-            $args = $config->getusingKeyPath('email.options.command', null);
-            $transport = \Swift_SendmailTransport::newInstance($args);
-         } else if($type == 'mail') {
-            $transport = \Swift_MailTransport::newInstance();
-         } else {
-            throw new \Exception('Email transport is not recognized.');
-         }
-         
-         return util\Mailer::newInstance($transport);
+         return new util\Mailer(true, $config);
       });
       
-      // setting up mail transport
-      $context->addResolver('mailer', function($c) {
-         
-      });
-
       // create the front controller and share it
       $fc = new http\FrontController($context);
       http\FrontController::setSharedInstance($fc);
