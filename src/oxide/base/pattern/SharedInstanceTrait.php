@@ -28,7 +28,7 @@ trait SharedInstanceTrait {
 		}
 		
 		if(!self::$_t_defaultinstance instanceof self) {
-			throw new \Exception("Shared Instance is not of self kind.");
+			throw new \Exception("Shared Instance is not of self kind: " . get_class(self::$_t_defaultinstance));
 		}
 		
 		return self::$_t_defaultinstance;
