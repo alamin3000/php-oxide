@@ -9,8 +9,6 @@
  */
 namespace oxide\base;
 use oxide\base\pattern\ResolverTrait;
-use oxide\base\pattern\PropertyAccessTrait;
-use oxide\base\pattern\ExtendableTrait;
 
 /**
  * Container class.
@@ -20,7 +18,7 @@ use oxide\base\pattern\ExtendableTrait;
  */
 class Container extends Dictionary {
    use ResolverTrait;
-   
+      
 	public function offsetExists($key) {
 		return parent::offsetExists($key) || $this->hasResolver($key);
 	}

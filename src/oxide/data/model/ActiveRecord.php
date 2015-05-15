@@ -78,7 +78,6 @@ abstract class ActiveRecord extends DataObject {
 	      } else {
 		      return data\Connection::sharedInstance();
 	      }
-         
       }
    }
 

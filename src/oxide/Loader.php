@@ -128,15 +128,39 @@ class Loader {
                  new app\auth\SessionStorage($container->get('session')));
       });
       
-      // setup the connection
-      $context->addResolver('connection', function() use ($config) {
-         $conn = new data\Connection($config->get('database', null, TRUE), [
+      // configure the shared database conneciton
+      data\Connection::setSharedInstance(function() use ($config){
+         return new data\Connection($config->get('database', null, TRUE), [
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
-         return $conn;
       });
-
+      
+      // setup default mailer instance
+      util\Mailer::setSharedInstance(function() use ($config) {
+         $config = $c->getConfig();
+         $type = $config->getUsingKeyPath('email.transport', null, true);
+         if($type == 'smtp') {
+            $host       = $config->getUsingKeyPath('email.options.host', null, true);
+            $port       = $config->getUsingKeyPath('email.options.port', 25);
+            $encrypt    = $config->getUsingKeyPath('email.options.encrypt', null);
+            $username   = $config->getUsingKeyPath('email.options.username', null, true);
+            $password   = $config->getUsingKeyPath('email.options.password', null, true);
+            $transport  = \Swift_SmtpTransport::newInstance($host, $port, $encrypt);
+            $transport->setUsername($username);
+            $transport->setPassword($password);
+         } else if($type == 'sendmail') {
+            $args = $config->getusingKeyPath('email.options.command', null);
+            $transport = \Swift_SendmailTransport::newInstance($args);
+         } else if($type == 'mail') {
+            $transport = \Swift_MailTransport::newInstance();
+         } else {
+            throw new \Exception('Email transport is not recognized.');
+         }
+         
+         return \Swift_Mailer::newInstance($transport);
+      });
+      
       // create the front controller and share it
       $fc = new http\FrontController($context);
       http\FrontController::setSharedInstance($fc);
@@ -158,8 +182,6 @@ class Loader {
 		$boostrapping = false;
 		return $fc;
    }
-   
-   
    
    
    /**
