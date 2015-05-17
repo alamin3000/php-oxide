@@ -36,7 +36,7 @@ class ViewData extends Container {
     * @return mixed
     */
    public function getHelper($name) {
-      return $this->$helper->get($name);
+      return $this->helper->get($name);
    }
    
    
@@ -49,7 +49,7 @@ class ViewData extends Container {
     */
    public function getHelpers(array $names) {
 	   $helpers = [];
-	   $helper = $this->$helper;
+	   $helper = $this->helper;
 	   foreach($names as $name) {
 		   $helpers[] = $helper->get($name);
 	   }
