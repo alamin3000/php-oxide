@@ -47,13 +47,8 @@ class ViewData extends Container {
     * @param array $names
     * @return void
     */
-   public function getHelpers(array $names) {
-	   $helpers = [];
+   public function getHelpers() {
 	   $helper = $this->helper;
-	   foreach($names as $name) {
-		   $helpers[] = $helper->get($name);
-	   }
-	   
-	   return $helpers;
+	   return call_user_func_array([$this, '__invoke', func_get_args());
    }
 }
