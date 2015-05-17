@@ -35,7 +35,7 @@ class Url {
 		   }
 	   }
    }
-   
+      
    /**
     * Return site url, optionally appending given $append param.
     *
@@ -83,6 +83,14 @@ class Url {
 	   }
    }
    
+   
+   /**
+    * Get the current url location.
+    * 
+    * @access public
+    * @param bool $relative (default: true)
+    * @return void
+    */
    public function location($relative = true) {
 	   return $this->_request->getUrl($relative);
    }
