@@ -3,40 +3,29 @@ namespace oxide\app\auth;
 use oxide\http\Session;
 use Zend\Authentication\Storage\StorageInterface;
 
-class SessionStorage implements StorageInterface 
-{
+class SessionStorage implements StorageInterface {
 	private 
       $_session,
       $_namespace;
 	
-	public function __construct(Session $session) 
-   {
+	public function __construct(Session $session) {
 		$this->_session = $session;
 		$this->_namespace = 'OXIDE_AUTH';
 	}
 	
-	public function isEmpty() 
-   {
-		if($this->_session->read($this->_namespace, false)) {
-			return false;
-		} else {
-			return true;
-		}
+	public function isEmpty() {
+		return !isset($this->_session[$this->_namespace]);
 	}
 	
-	public function read() 
-   {
-		$result = unserialize($this->_session->read($this->_namespace));
-		return $result;
+	public function read() {
+		return unserialize($this->_session[$this->_namespace]);
 	}
 	
-	public function write($content) 
-   {
-		$this->_session->write($this->_namespace, serialize($content));
+	public function write($content) {
+		$this->_session[$this->_namespace] = serialize($content);
 	}
 	
-	public function clear() 
-   {
-		$this->_session->delete($this->_namespace);
+	public function clear() {
+		unset($this->_session[$this->_namespace]);
 	}
 }

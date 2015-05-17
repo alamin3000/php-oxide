@@ -37,6 +37,7 @@ class Master extends Container {
       $this->_html = $container->get('html');
    }
    
+   
    /**
     * <TITLE> string for the webpage
     * 

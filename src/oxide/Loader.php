@@ -87,6 +87,9 @@ class Loader {
 	   }
 	   $boostrapping = true;
 	   
+	   $errorhandler = new util\ErrorHandler();
+	   $errorhandler->register();
+	   
       $loader = self::getInstance();
       $loader->register();
       
@@ -119,7 +122,7 @@ class Loader {
             'cookie_domain' => $request->getUriComponents(http\Request::URI_HOST),
             'cookie_secure' => $request->isSecured()
          ];
-         return new http\Session(null, $opt);
+         return new http\Session($opt);
       });
       
       // setup the authentication

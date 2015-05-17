@@ -21,7 +21,7 @@ class Request {
        * @var string Holds the current request url
        */
       $_url = null,
-      $_base = '',
+      $_base = '/',
            
       $_relativeUrl = null,
            
@@ -73,7 +73,7 @@ class Request {
 	 * @return void
 	 */
 	public function setBase($base) {
-		$this->_base = $base;
+		$this->_base = '/' . trim($base, '/') ;
 	}
 	
 	

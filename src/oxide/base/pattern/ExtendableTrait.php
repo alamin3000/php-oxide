@@ -12,8 +12,27 @@ namespace oxide\base\pattern;
 
 trait ExtendableTrait {
    protected
+   	$_t_extendedObjects = [],
       $_t_callables = [];
    
+   public function hasExtendedClass($object, $strict = false) {
+	   if(isset($this->_t_extendedObjects[get_class($object)])) {
+		   if($strict) {
+			   $obj = $this->_t_extendedObjects[get_class($object)];
+			   if($obj ===  $object) return true;
+			   else return false;
+		   } else {
+			   return true;
+		   }
+	   } 
+	   
+	   return false;
+   }
+   
+   public function hasExtendedMethod($name) {
+	   return (isset($this->_t_callables[$name]));
+   }
+      
    /**
     * extendObject function.
     * 
@@ -21,11 +40,23 @@ trait ExtendableTrait {
     * @param mixed $object
     * @return void
     */
-   public function extendObject(\stdClass $object) {
+   public function extendObject($object, $prefix = '') {
+	   if(!is_object($object)) throw new \Exception("Not object.");
       $reflector = new \ReflectionClass($object);
+      $this->_t_extendedObjects[$reflector->getName()] = $object;
       $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
       foreach($methods as $method) {
-	      $this->extendCallable($method, [$object, $method]);
+	      $name = $prefix . $method->getName();
+	      $this->extendCallable($name, [$object, $name]);
+      }
+   }
+   
+   public function extendClass($classname, $instance, $prefix = '') {
+	   $reflector = new \ReflectionClass($object);
+      $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
+      foreach($methods as $method) {
+	      $name = $prefix . $method->getName();
+	      $this->extendCallable($name, [$instance, $name]);
       }
    }
    
@@ -37,8 +68,8 @@ trait ExtendableTrait {
     * @param \Closure $closure
     * @return void
     */
-   public function extendClosure($name, \Closure $closure) {
-      $this->extendCallable($name, $closure);
+   public function extendClosure($name, \Closure $closure, $overide = false) {
+      $this->extendCallable($name, $closure, $overide);
    }
    
    /**
@@ -49,8 +80,13 @@ trait ExtendableTrait {
     * @param callable $callable
     * @return void
     */
-   public function extendCallable($name, callable $callable) {
-	   if(isset($this->_t_callables[$name])) throw new \Exception("Method {$name} already exists.");
+   public function extendCallable($name, callable $callable, $override = false) {
+	   if(isset($this->_t_callables[$name])) {
+		   if(!$override) { 
+			   throw new \Exception("Method {$name} already exists.");
+			}
+		}
+			
 	   $this->_t_callables[$name] = $callable;
    }
    

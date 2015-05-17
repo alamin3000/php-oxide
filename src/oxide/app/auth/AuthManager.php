@@ -68,7 +68,12 @@ class AuthManager  {
     */
    public function validateAccess(Route $route, EventNotifier $notifier = null, $throwException = false) {
       $result = new Result();
-      $identity = $this->getAuth()->getIdentity();
+      if($this->getAuth()->hasIdentity()) {
+	      $identity = $this->getAuth()->getIdentity();
+      } else {
+	      $identity = null;
+      }
+      
       $validator = new AccessValidator($route, $this->getRoles(), $this->getRules());
       $args = ['route' => $route, 'identity' => $identity, 'result' => $result];
       

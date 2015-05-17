@@ -12,23 +12,28 @@ class Flash  {
    
    const
    	TYPE_ERROR = 'error',
-   	TYPE_ALERT = 'alert',
+   	TYPE_ALERT = 'info',
    	TYPE_DEFAULT = '';
    
    protected
+      /**
+       * @var \oxide\http\Session
+       */
       $_session = null;
    
    public function __construct(HelperContainer $container) {
       $this->_session = $container->getContext()->get('session');
    }
    
-   public function has($namespace = null) {
-      $key = self::$_key;
-      if($namespace) {
-			$key .= "_{$namespace}";
-		}
-      
-      return isset($_SESSION[$key]);
+   /**
+    * Checks if flash message exists
+    * 
+    * @param string $namespace
+    * @return bool
+    */
+   public function has($namespace = '') {
+      $key = self::$_key . $namespace;
+      return $this->_session[$key];
    }
   
    /**
@@ -38,15 +43,13 @@ class Flash  {
     * @return type 
     */
    public function get($namespace = null) {
-		$key = self::$_key;
-		if($namespace) {
-			$key .= "_{$namespace}";
-		}
-
+		$key = self::$_key.$namespace;
+      $session = $this->_session;
+      
 		$value = null;
-		if(isset($_SESSION[$key])) {
-			$value = unserialize($_SESSION[$key]);
-			unset($_SESSION[$key]);
+		if($session->exists($key)) {
+			$value = unserialize($session[$key]);
+			unset($session[$key]);
 		}
 
 		return $value;
@@ -60,14 +63,10 @@ class Flash  {
     * @param type $type 
     */
 	public function set($value, $namespace = null, $type = '') {
-		$key = self::$_key;
-		if($namespace) {
-			$key .= "_{$namespace}";
-		}
+		$key = self::$_key.$namespace;
 		
 		$message = new FlashMessage($value, $type);
-
-		$_SESSION[$key] = serialize($message);
+		$this->_session[$key] = serialize($message);
 	}
 }
 

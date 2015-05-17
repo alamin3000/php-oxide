@@ -39,6 +39,7 @@ class Html {
 
    protected
       $_openedTagInfo = [];
+      
    /**
     * 
     * @param type $tag
@@ -175,7 +176,7 @@ class Html {
     * @param string $text
     * @param array $attrib
     */
-	public function a($link = null, $text = null, $attrib = null) {
+	public function a($link = null, $text = null, array $attrib = null) {
 		if($link) {
 			if($attrib) {
 				$attrib['href'] = $link;

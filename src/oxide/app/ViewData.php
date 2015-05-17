@@ -31,50 +31,12 @@ class ViewData extends Container {
    }
    
    /**
-    * Get the internal helper container
-    * 
-    * If no container found, it will create an empty container and return
-    * @return Container
-    */
-   public function getHelperContainer() {
-      if($this->helper == null) {
-         if(helper\HelperContainer::hasSharedInstance()) {
-            $this->helper = helper\HelperContainer::sharedInstance();
-         } else {
-	         throw new \Exception('Helper Container has not been set');
-         }
-      }
-      
-      return $this->helper;
-   }
-   
-   /**
-    * Set the helper container for the view data
-    * 
-    * @param Container $container
-    */
-   public function setHelperContainer(helper\HelperContainer $container) {
-      $this->helpers = $container;
-   }
-   
-   /**
-    * Set helper
-    * 
-    * Helper will be shared among ALL views
-    * @param type $name
-    * @param type $helper
-    */
-   public function setHelper($name, $helper) {
-      $this->getHelperContainer()->set($name, $helper);
-   }
-   
-   /**
     * Get helper by name
     * @param string $name
     * @return mixed
     */
    public function getHelper($name) {
-      return $this->getHelperContainer()->get($name);
+      return $this->$helper->get($name);
    }
    
    
@@ -87,9 +49,9 @@ class ViewData extends Container {
     */
    public function getHelpers(array $names) {
 	   $helpers = [];
-	   $helperContainer = $this->getHelperContainer();
+	   $helper = $this->$helper;
 	   foreach($names as $name) {
-		   $helpers[] = $helperContainer[$name];
+		   $helpers[] = $helper->get($name);
 	   }
 	   
 	   return $helpers;

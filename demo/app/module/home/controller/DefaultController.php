@@ -13,7 +13,5 @@ use oxide\app\helper;
  */
 class DefaultController extends Controller {
    protected function executeIndex(Context $context, ViewData $data) {
-			   
-	   $data['title'] = 'this is a title';
    }
 }

@@ -6,10 +6,26 @@ class Formatter {
 		
    }
    
+   
+   /**
+    * Format currency.
+    * 
+    * @access public
+    * @param mixed $amount
+    * @return void
+    */
    public function currency($amount) {
 	   return money_format('%.2n', $amount);
    }
    
+   
+   /**
+    * Format number.
+    * 
+    * @access public
+    * @param mixed $number
+    * @return void
+    */
    public function number($number) {
 	   return number_format($number,2);
    }

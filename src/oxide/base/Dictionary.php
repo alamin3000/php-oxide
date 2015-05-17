@@ -21,6 +21,11 @@ class Dictionary
    implements \ArrayAccess, \Countable, \IteratorAggregate {
    use ArrayAccessTrait;
    
+   protected 
+      $_modifiedKeys = [];
+   
+
+
    /**
     * Construct the dictionary with given $data, if any
     * 
@@ -119,5 +124,10 @@ class Dictionary
       foreach ($this->_t_array_storage as $item) {
           yield $item;
       }
+   }
+   
+   
+   protected function _t_array_access_set($key, $value) {
+      
    }
 }
