@@ -49,6 +49,6 @@ class ViewData extends Container {
     */
    public function getHelpers() {
 	   $helper = $this->helper;
-	   return call_user_func_array([$this, '__invoke', func_get_args());
+	   return call_user_func_array([$this, '__invoke'], func_get_args());
    }
 }
