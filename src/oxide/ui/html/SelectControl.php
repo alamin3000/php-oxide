@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\util\ArrayString;
+use oxide\ui\ArrayString;
 
 /**
  * SelectControl class
