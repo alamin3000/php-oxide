@@ -104,6 +104,7 @@ class Page implements Renderer {
     * @param type $key
     */
    public function addPartial(Renderer $renderer, $key) {
+	   if($renderer instanceof self) $renderer->setParent($this);
       $this->_partials[$key] = $renderer;
    }
    

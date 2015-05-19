@@ -13,9 +13,12 @@ trait ArrayFunctionsTrait {
     * 
     * @param mixed $content
     */
-   public function append($content) {
+   public function append($content, $offset = null) {
       $this->_t_array_access_set(null, $content);
-      $this->_t_array_storage[] = $content;
+      if($offset === null) 
+	      $this->_t_array_storage[] = $content;
+	   else 
+	   	$this->_t_array_storage[$offset] = $content;
    }
    
    /**
@@ -23,9 +26,12 @@ trait ArrayFunctionsTrait {
     * 
     * @param mixed $content
     */
-   public function prepend($content)  {     
+   public function prepend($content, $offset = null)  {     
       $this->_t_array_access_set(null, $content);
-      array_unshift($this->_t_array_storage, $content);
+      if($offset === null) 
+      	array_unshift($this->_t_array_storage, $content);
+      else
+      	$this->_t_array_storage = [$offset => $content] + $this->_t_array_storage;
    }
    
    /**
@@ -40,6 +46,7 @@ trait ArrayFunctionsTrait {
    /**
     * Insert object.  
     * 
+    * If $offset is given
     * If $index is given, it will inserted at that location
     * @param mixed $value
     * @param mixed $offset

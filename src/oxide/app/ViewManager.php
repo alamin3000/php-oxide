@@ -241,14 +241,10 @@ class ViewManager {
       if(!$this->disableLayout) {
          $layoutPage = $this->getLayoutPage();
          $layoutPage->setData($data);
-         $layoutPage->addPartial($view, null);
+         $layoutPage->addPartial($view->getRenderer(), null);
          return new View($layoutPage);
       } else {
          return $view;
       }
-   }
-   
-   public function renderView(View $view) {
-	   
    }
 }

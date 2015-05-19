@@ -40,6 +40,17 @@ trait ResolverTrait {
 		$this->_t_defaultResolver = $closure;
 	}
 	
+	protected function createWithDependecyInjected($class) {
+	   $reflector = new \ReflectionClass($class);
+	   $constructor = $reflector->getConstructor();
+	   if($constructor->getNumberOfParameters() > 0) {
+		   $params = $constructor->getParameters();
+		   foreach($params as $param) {
+			   $paramClass = $param->getClass();
+			   $paramName = $param->getName();
+		   }
+	   }
+   }
 	
 	/**
 	 * getDefaultBind function.
@@ -50,7 +61,7 @@ trait ResolverTrait {
 	public function getDefaultResolver() {
 		return $this->_t_defaultResolver;
 	}
-   
+	   
 	/**
 	 * resolve function.
 	 * 

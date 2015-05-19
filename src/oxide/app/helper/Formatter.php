@@ -6,7 +6,6 @@ class Formatter {
 		
    }
    
-   
    /**
     * Format currency.
     * 

@@ -17,10 +17,14 @@ class Master extends Container {
        * @var string Head title
        */
       $title = null,
+      
       /**
+	    * Stores meta information using Html tag tuple ie [$tagname, $content, $attributes, $void]
+	    *
        * @var array meta tags using 3 or 4 tuples
        */
       $metas = [],
+      
       $stylesheets = [],
       $styles = [],
       $links = [],
@@ -67,7 +71,7 @@ class Master extends Container {
    }
    
    /**
-    * <LINK> tag for the html head.  
+    * LINK tag for the html head.  
     * 
     * Usually used for adding stylesheets.
     * @param type $href
@@ -142,7 +146,14 @@ class Master extends Container {
       }
    }
    
-      
+    
+   /**
+    * cssAttributeString function.
+    * 
+    * @access public
+    * @param array $styles
+    * @return void
+    */
    public function cssAttributeString(array $styles) {
       $css = '';
       foreach($styles as $key => $val) {

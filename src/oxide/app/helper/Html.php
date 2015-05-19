@@ -1,5 +1,6 @@
 <?php
 namespace oxide\app\helper;
+use oxide\ui\ArrayString;
 
 /** 
  * html helper class
@@ -40,6 +41,22 @@ class Html {
    protected
       $_openedTagInfo = [];
       
+    
+   /**
+    * Create a tag tuple array with given information.
+    * 
+    * 
+    * @access public
+    * @param mixed $tag
+    * @param mixed $content (default: null)
+    * @param array $attributes (default: null)
+    * @param bool $isVoid (default: false)
+    * @return void
+    */
+   public function tuple($tag, $content = null, array $attributes = null, $isVoid = false) {
+	   return [$tag, $content, $attributes, $isVoid];
+   }  
+    
    /**
     * 
     * @param type $tag
@@ -103,27 +120,12 @@ class Html {
       }
       
       return $this->openTag($tag, $attributes, $void) .
-              $this->toString($inner) .
+              ArrayString::toString($inner) .
               $this->closeTag($tag, $void);
       
 	}
    
-   /**
-    * Make any content into a string
-    * 
-    * @param mixed $content
-    * @return string
-    */
-   public function toString($content) {
-      if(is_scalar($content)) return (string) $content;
-      else if($content instanceof \oxide\ui\Renderer) return $content->render();
-      else if($content instanceof \oxide\util\Stringify) return (string)$content;
-      else if($content instanceof \Closure) return $content();
-      else if(is_array($content)) return implode (' ', $content);
-      else if(is_object($content)) return implode (' ', (array) $content);
-      else if(is_null($content)) return '';
-      else null;
-   }
+
    
    /**
     * this allows to render independed tags from 4-tuple array

@@ -1,11 +1,11 @@
 <?php
-namespace oxide\util;
+namespace oxide\ui;
 use oxide\base\Stringify;
 use oxide\base\Dictionary;
 
 class ArrayString 
    extends Dictionary 
-   implements Stringify { 
+   implements Stringify, Renderer { 
    use \oxide\base\pattern\ArrayFunctionsTrait;
    
    protected 
@@ -15,10 +15,20 @@ class ArrayString
     * 
     * @param \Closure $callback
     */
-   public function registerStringifyCallback(\Closure $callback) {
+   public function setStringifyCallback(\Closure $callback) {
       $this->_stringify_callback = $callback;
    }
    
+   
+   /**
+    * get current stringify callback.
+    * 
+    * @access public
+    * @return void
+    */
+   public function getStringifyCallback() {
+	   return $this->_stringify_callback;
+   }
    
    /**
     * Replaces current string with the given string.
@@ -63,5 +73,9 @@ class ArrayString
          return $buf;
       }
       else return (string) $arg;
+   }
+   
+   public function render() {
+	   return $this->__toString();
    }
 }
