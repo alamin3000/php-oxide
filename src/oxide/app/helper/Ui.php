@@ -61,6 +61,15 @@ class Ui extends Html {
       $this->_url = $c->get('url');
    }
    
+   
+   /**
+    * _merge_attributes function.
+    * 
+    * @access protected
+    * @param array &$arr1 (default: null)
+    * @param array $arr2 (default: null)
+    * @return void
+    */
    protected function _merge_attributes(array &$arr1 = null, array $arr2 = null) {
       if(!$arr2) return;
       if($arr1 === null) {
@@ -76,6 +85,15 @@ class Ui extends Html {
       }
    }
    
+   
+   /**
+    * _class_style function.
+    * 
+    * @access protected
+    * @param mixed $style
+    * @param mixed $prefix
+    * @return void
+    */
    protected function _class_style($style, $prefix) {
       if($style & self::STYLE_PRIMARY) 
       	return "{$prefix}-primary";
@@ -91,6 +109,15 @@ class Ui extends Html {
       	return "{$prefix}-default";
    }
    
+   
+   /**
+    * _class_size function.
+    * 
+    * @access protected
+    * @param mixed $style
+    * @param mixed $prefix
+    * @return void
+    */
    protected function _class_size($style, $prefix) {
       if($style & self::STYLE_SMALL) {
          return "{$prefix}-sm";
@@ -516,7 +543,7 @@ class Ui extends Html {
     * @param type $style
     * @return type
     */
-	   protected function renderForm(Form $form, $style = self::STYLE_NONE) {      
+	protected function renderForm(Form $form, $style = self::STYLE_NONE) {      
       $form->errorTag   = new Tag('div', ['class' => 'alert alert-danger']);
       $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
       
@@ -555,7 +582,6 @@ class Ui extends Html {
 	   $ctlcls = [];
 	   $clsprefix = 'input';
 	   
-	   	   
 	   // setting up the controls
       if($ctl instanceof \oxide\ui\html\SubmitControl) {
          $ctlcls[] = 'btn btn-primary';
@@ -592,8 +618,6 @@ class Ui extends Html {
       $error = $ctl->getError();
       if($error) $cls[] = 'has-error';
       
-      
-      
       if($ctl->getForm()) {
 	      // if control is part of the form
 	      // we will use form to setup the wrapper
@@ -604,7 +628,6 @@ class Ui extends Html {
       } else {
 	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
       }
-      
       
 	   // label
       if($ctl->getLabel()) {

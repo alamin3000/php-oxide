@@ -12,7 +12,7 @@ use oxide\base\pattern\ArrayAccessTrait;
  * @subpackage ui
  */
 class Element 
-   extends Tag implements \ArrayAccess, \Countable {   
+   extends Tag implements \ArrayAccess, \Countable , \IteratorAggregate {   
    use  ArrayAccessTrait, ArrayFunctionsTrait;   
    public 
       /**
@@ -92,6 +92,17 @@ class Element
 		$this->_before = [];
 		$this->_after = [];
 		$this->_attributes = [];
+	}
+	
+	
+	/**
+	 * getIterator function.
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function getIterator() {
+		return new \ArrayIterator($this->_t_array_storage);
 	}
 
    /**

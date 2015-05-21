@@ -2,9 +2,6 @@
 namespace oxide\app\helper;
 
 class Formatter {
-	public function __construct(HelperContainer $container) {
-		
-   }
    
    /**
     * Format currency.
