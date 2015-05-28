@@ -2,17 +2,31 @@
 namespace oxide\ui\html;
 use oxide\ui\Renderer;
 
-
+/**
+ * 
+ */
 class Tag implements Renderer {
-   public 
+   public
       /**
-       * @var bool Indicates if the tag is void tag or not
+       * @var bool Indicates if the current tag is void-tag or not
        */
-      $void = false;
+      $isVoid = false;
    
    protected 
-      $_attributes = [],
-      $_tag = null;
+      /**
+       * @var string Name of the tag
+       */
+      $_tagName = null,
+           
+      /**
+       * @var Tag Tag to be wrapped
+       */
+      $_wrapperTag = null,
+           
+      /**
+       * @var array Attributes
+       */
+      $_attributes = [];
    
    /**
     * Create a new Html $tag
@@ -21,36 +35,36 @@ class Tag implements Renderer {
     * @param array $attributes
     */
    public function __construct($tag = null, $attributes = null, $void = false) {
-      if($tag) $this->_tag = $tag;
+      if($tag) $this->_tagName = $tag;
       if($attributes) $this->_attributes = $attributes;
-      if($void) $this->void = $void;
+      $this->isVoid = $void;
    }
-      
+   
    /**
     * Set the $tag name
     * 
-    * @param type $tag
+    * @param string $tag
     */
-   public function setTag($tag) {
-      $this->_tag = $tag;
+   public function setTagName($tag) {
+      $this->_tagName = $tag;
    }
    
    /**
     * Get the Html tag name
     * 
-    * @return type
+    * @return string
     */
-   public function getTag() {
-      return $this->_tag;
+   public function getTagName() {
+      return $this->_tagName;
    }
    
    /**
     * Get attribute by $key
     * 
     * If not found, $default value will be return
-    * @param type $key
-    * @param type $default
-    * @return type
+    * @param string $key
+    * @param null|string $default
+    * @return string
     */
    public function getAttribute($key, $default = null) {
       if(isset($this->_attributes[$key])) return $this->_attributes[$key];
@@ -60,8 +74,8 @@ class Tag implements Renderer {
    /**
     * Set an attribute by the $key name
     * 
-    * @param type $key
-    * @param type $value
+    * @param string $key
+    * @param string $value
     */
    public function setAttribute($key, $value = null, $appendChar = null) {
       if($appendChar && isset($this->_attributes[$key])) {
@@ -77,7 +91,7 @@ class Tag implements Renderer {
     * @param string $key
     */
    public function removeAttribute($key) {
-      if(isset($this->_attributes[$key])) unset($this->_attributes[$key]);
+      if($this->hasAttribute($this->_attributes[$key])) unset($this->_attributes[$key]);
    }
    
    /**
@@ -87,7 +101,7 @@ class Tag implements Renderer {
     * @return bool
     */
    public function hasAttribute($key) {
-      return isset($this->_attributes[$key]);
+      return array_key_exists($key, $this->_attributes);
    }
    
    /**
@@ -109,22 +123,105 @@ class Tag implements Renderer {
       foreach($attrs as $key => $value) {
 	      $this->_attributes[$key] = $value;
       }
+      
+      return $this;
+   }
+   
+   /**
+    * Removes all attributes from the tag
+    * 
+    * @return self fluent interface
+    */
+   public function clearAttributes() {
+      $this->_attributes = [];
+      
+      return $this;
+   }
+   
+   /**
+    * Set Tag to wrap this tag
+    * 
+    * @return Tag
+    */
+   public function getWrapperTag() {
+      return $this->_wrapperTag;
+   }
+   
+   /**
+    * Get current tag
+    * 
+    * @param Tag $tag
+    */
+   public function setWrapperTag(Tag $tag) {
+      $this->_wrapperTag = $tag;
+      
+      return $this;
+   }
+   
+   /**
+    * Render the content
+    * 
+    * @return string
+    */
+   public function render() {
+      return   $this->renderOpen() . 
+               $this->renderClose(); 
+   }
+   
+   /**
+    * Render the opening tag
+    * 
+    * If the tag is void tag, then it will self close
+    * @return string
+    */
+   final public function renderOpen() {
+      if($this->_wrapperTag) 
+         $wrapperOpen = $this->_wrapperTag->renderOpen();
+      else
+         $wrapperOpen = '';
+      
+      return $wrapperOpen.self::renderOpenTag($this->_tagName, $this->_attributes, $this->isVoid);
+   }
+   
+   /**
+    * Render the close tag
+    * 
+    * If this tag is void, then it will simply return empty string.
+    * @return string
+    */
+   final public function renderClose() {
+      if($this->_wrapperTag) 
+         $wrapperClose = $this->_wrapperTag->renderClose();
+      else
+         $wrapperClose = '';
+      return self::renderCloseTag($this->_tagName, $this->isVoid).$wrapperClose;
+   }
+   
+   /**
+    * Render the tag with given $content
+    * 
+    * @param mixed $content
+    * @return string
+    */
+   public function renderWithContent($content) {
+      return $this->renderOpen() .
+         $content.
+         $this->renderClose(); 
    }
    
    /**
     * Convert array into key=value string
     * 
     * @param array $attributes
-    * @return string
-    * @throws \Exception
+    * @return string Will always return an extra empty space
     */
-   public function attributeString() {
-      if(empty($this->_attributes)) return '';
+   static public function attributeString(array $attributes = null) {
+      if(!$attributes) return '';
 		
       $str = '';
-      foreach ($this->_attributes as $key => $value) {
+      foreach ($attributes as $key => $value) {
          if($value === null) {
-            $str .= "$key ";
+            $str .= $key . ' ';
          } else {
             if(!is_scalar($value)) {
                trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
@@ -138,57 +235,38 @@ class Tag implements Renderer {
    }
      
    /**
+    * Escape for html entities
     * 
-    * @param type $string
-    * @return type
+    * @param string $string
+    * @return string
     */
-   public function escape($string) {
+   static public function escape($string) {
       return htmlentities($string, ENT_QUOTES);
    }
    
    /**
-    * Render the opening tag
+    * Render open tag
     * 
-    * If the tag is void tag, then it will self close
-    * @see oxide\helper\Html::rstart()
+    * @param string $tagName
+    * @param array $attributes
+    * @param bool $void
     * @return string
     */
-   public function renderOpen() {
-      if(!$this->_tag) return '';
-      if($this->void) $close = ' /';
-      else $close = '';
-      
-      return '<'. $this->_tag . $this->attributeString() . $close . '>';
+   static public function renderOpenTag($tagName, array $attributes = null, $void = false) {
+      if(!$tagName) return '';
+      return '<'. $tagName . self::attributeString($attributes) . 
+              (($void) ? ' /' : '') . 
+              '>';
    }
    
    /**
+    * Render close tag
     * 
+    * @param string $tagName
+    * @param bool $void
     * @return string
     */
-   public function renderClose() {
-      if(!$this->_tag) return '';
-      if(!$this->void) 
-         return "</{$this->_tag}>";
-   }
-      
-   /**
-    * 
-    * @return string
-    */
-   public function render() {
-      return $this->renderOpen() .
-        $this->renderClose();
-   }
-   
-   /**
-    * Render the tag with given $content
-    * 
-    * @param type $content
-    * @return type
-    */
-   public function renderContent($content) {
-      return $this->renderOpen() .
-            $content.
-            $this->renderClose(); 
+   static public function renderCloseTag($tagName, $void = false) {
+      return ($tagName && !$void) ? '</'.$tagName.'>' : '';
    }
 }

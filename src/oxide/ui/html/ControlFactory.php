@@ -3,20 +3,19 @@ namespace oxide\ui\html;
 
 
 abstract class ControlFactory {
-   public
-      $definitions = [
-         'button' => '\\oxide\\ui\\html\\ButtonControl',
-         'checkbox' => '\\oxide\\ui\\html\\CheckboxControl',
-         'chkgroup' => '\\oxide\\ui\\html\\CheckboxGroupControl',
-         'color' => '\\oxide\\ui\\html\\ColorControl',
-         'date' => '\\oxide\\ui\\html\\DateControl'
-         
-      ];
-   
-   
-   protected static
-      $controls = ['input', 'textarea', 'select', 'button'];
-
+   /**
+    * create function.
+    * 
+    * @access public
+    * @static
+    * @param mixed $type
+    * @param mixed $name
+    * @param mixed $value (default: null)
+    * @param mixed $label (default: null)
+    * @param mixed $data (default: null)
+    * @param array $attribs (default: null)
+    * @return void
+    */
    public static function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
 	   $class = ucfirst($type) . 'Control';
 	   $namespace = '\\oxide\\ui\\html\\';
@@ -29,6 +28,7 @@ abstract class ControlFactory {
 		if($data) {
 			$control->setData($data);
 		}
+      
 		if($attribs) {
 			$control->setAttributes($attribs);
 		}

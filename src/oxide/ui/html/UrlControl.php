@@ -12,6 +12,7 @@ namespace oxide\ui\html;
 
 class UrlControl extends InputControl {
    public function __construct($name, $value = null, $label = null) {
-      parent::__construct('url', $name, $value, $label);
+      parent::__construct($name, $value, $label);
+      $this->setType('url');
    }
 }

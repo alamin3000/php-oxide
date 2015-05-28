@@ -2,10 +2,10 @@
 namespace oxide\ui\html;
 
 
-class LinkControl extends Control
-{
-   public function __construct($name, $value = null, $label = null, $attributes = null) {
-      parent::__construct('a', $name, $value, $label, $attributes);
+class LinkControl extends Control {
+   public function __construct($name, $value = null, $label = null, $data = null, $attributes = null) {
+      parent::__construct($name, $value, $label, $data, $attributes);
+      $this->setTagName('a');
    }
    
    protected function setName($name) {

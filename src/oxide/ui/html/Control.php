@@ -1,37 +1,62 @@
 <?php
 namespace oxide\ui\html;
-use oxide\util\ArrayString;
+use oxide\base\String;
 
 /**
  * Defines an abstract class for creating HTML Control
  *
  * privides functionalities for control name, value & label
  */
-class Control extends Element {
+class Control extends Element implements FormAware { 
    public
-   	$labelWrapsControl = false,
-      $labelPosition = self::LABEL_LEFT;
+      /**
+       * @var Tag Tag for rendering label, if any
+       */
+      $labelTag = null,
+      
+      /**
+       * @var Tag Tag for rendering error, if any
+       */
+      $errorTag = null,
            
+      /**
+       * @var Tag Tag for rendering info, if any
+       */
+      $infoTag = null,
+           
+      /**
+       * @var Tag Tag for wrapping the control as a whole
+       */
+      $rowTag = null,
+           
+      /**
+       * @var bool Indicates if label should wrap the control.
+       */
+   	$labelWrapsControl = true,
+           
+      /**
+       * @var int Indicates label position (LEFT|RIGHT)
+       */
+      $labelPosition = self::LEFT;
+
+   
    protected 
       $_name = null,
-      $_error = null,
-      $_info = null,
 		$_label = null,
       $_value = null,
       $_data = null,
+      $_error = null,
+      $_info = null,
+           
       /**
        * @var Form form container element for the control
        */
-      $_form = null,
-           
-      $_infoTag = null,
-      $_errorTag = null,
-      $_labelTag = null;
+      $_form = null;
    
    const
-   	LABEL_LEFT = 1,
-   	LABEL_RIGHT = 2,
-   	LABEL_OUTER = 3;
+   	LEFT = 1,
+   	RIGHT = 2;
+
 
    /**
     * construct
@@ -168,12 +193,12 @@ class Control extends Element {
    public function getInfo() {
       return $this->_info;
    }
-
+   
    /**
     * Set the form reference for this control
     * 
     * This will also set the control's attribute form appropriately (HTML5 standard)
-    * @param \oxide\ui\html\Form $form
+    * @param Form $form
     */
    public function setForm(Form $form = null) {
       if($form === null) {
@@ -181,10 +206,12 @@ class Control extends Element {
             $this->_form->removeControlRef($this);
             $this->_form = null;
          }
-         unset($this->_attributes['form']);
+         if($this->hasAttribute('form')) {
+            $this->removeAttribute('form');
+         }
       } else {
          $form->addControlRef($this);
-         $this->_attributes['form'] = $form->getName();
+         $this->setAttribute('form', $form->getName());
          $this->_form = $form;
       }
    }
@@ -199,115 +226,70 @@ class Control extends Element {
    }
    
    /**
-    * Get the Tag object used for rendering the label tag
-    * 
-    * If no object is assigned, a new tag object will be created
-    * @return Tag
-    */
-   public function getLabelTag() {
-      if($this->_labelTag === null) {
-         $this->_labelTag = new Tag('label', ['for' => $this->getName()]);
-      }
-      
-      return $this->_labelTag;
-   }
-   
-   /**
-    * Set tag object to be used for the label rendering
-    * 
-    * @param Tag $tag
-    */
-   public function setLabelTag(Tag $tag = null) {
-      $this->_labelTag = $tag;
-   }
-   
-   /**
-    * Get the Tag instance used for rendering control info
-    * 
-    * If no object instance is assigned, new instance will be created
-    * Defaults to 'small' tag
-    * @return Tag
-    */
-   public function getInfoTag() {
-      if($this->_infoTag === null) {
-         $this->_infoTag = new Tag('small');
-      }
-      
-      return $this->_infoTag;
-   }
-   
-   /**
-    * 
-    * @param Tag $tag
-    */
-   public function setInfoTag(Tag $tag) {
-      $this->_infoTag = $tag;
-   }
-   
-   /**
-    * Get the error tag
-    * 
-    * If no tag instance is assigned, new instance will be created
-    * @return Tag
-    */
-   public function getErrorTag() {
-      if($this->_errorTag === null) {
-         $this->_errorTag = new Tag('strong');
-      }
-      
-      return $this->_errorTag;
-   }
-   
-   /**
-    * 
-    * @param Tag $tag
-    */
-   public function setErrorTag(Tag $tag) {
-      $this->_errorTag = $tag;
-   }
-   
-   /**
-    * Notify form, if available, before rendering the control
-    * This will allow form to do any additional process/modifying
-    * @param \oxide\util\ArrayString $buffer
-    * @return boolean
+    * Before rendering starts, we need to notify form, if available.
     */
    protected function onRender() {
-	   // need to call this before everythign else
-	   // since form may add any additional information
-	   if($this->_form) {
-         // we have the control inside a form
-         // we will need to inform the form about rendering
-         $this->_form->onControlRender($this);
+      parent::onRender();
+      // notify form
+      if(($form = $this->getForm())) {
+         $form->onControlRender($this);
+      }
+   }
+         
+   /**
+    * Perform additional rendering
+    * 
+    * @param ArrayString $buffer
+    */
+   protected function onRenderClose(String $buffer) {
+      parent::onRenderClose($buffer);
+      // render label, if available
+      if(($label = $this->_label)) {
+         $labelTag = ($this->labelTag) ? $this->labelTag : new Tag('label');
+         
+         // deal with wrapping and label positions
+         if($this->labelWrapsControl) {
+            if($this->labelPosition == self::LEFT) { 
+               $buffer->prepend($label . ' '); 
+            } else { 
+               $buffer->append(' ' . $label); 
+            }   
+            $buffer->prepend($labelTag->renderOpen())->append($labelTag->renderClose());
+         } 
+         else {
+            $labelTag->setAttribute('for', $this->getName());
+            if($this->labelPosition == self::LEFT) { 
+               $buffer->prepend($labelTag->renderWithContent($label) . ' '); 
+            } else {
+               $buffer->append(' ' . $labelTag->renderWithContent($label)); 
+            }
+         }
       }
       
-	   // label setup
-	   if($this->_label) {
-		   $labelTag = $this->getLabelTag();
-		   $label = null;
-		   if($this->labelWrapsControl) {
-			   $label = $this->_label;
-			   // should be the first tag to wrap
-			   array_unshift($this->wrappers, $labelTag);
-		   } else {
-			   $label = $labelTag->renderContent($this->_label);
-		   }
-		   
-		   if($this->labelPosition == self::LABEL_RIGHT) {
-			   $this->after[] = $label;
-		   } else {
-			   $this->before[] = $label;
-		   }
-	   }
-	   
-	   // info setup
-	   if($this->_info) {
-		   $this->after[] = $this->getInfoTag()->renderContent($this->_info);
-	   }
-	   
-	   // error setup
-	   if($this->_error) {
-		   $this->after[] = $this->getErrorTag()->renderContent($this->_error);
-	   }
+      // render info, if available
+      if(($info = $this->getInfo())) {
+         $infoTag = ($this->infoTag) ? $this->infoTag : new Tag('small');
+         $buffer->append(' ' . $infoTag->renderWithContent($info));
+      }
+      
+      // render error, if avalable
+      if(($error = $this->getError())) {
+         $errorTag = ($this->errorTag) ? $this->errorTag : new Tag('strong');
+         $buffer->append(' ' . $errorTag->renderWithContent($error));
+      }
+      
+      // wrap the control if rowtag provided
+      if(($rowTag = $this->rowTag)) {
+         $buffer->prepend($rowTag->renderOpen())->append($rowTag->renderClose());
+      }
+   }
+   
+   /**
+    * 
+    * @param type $key
+    * @param \oxide\ui\html\Element $value
+    */
+   protected function _t_array_access_set($key, $value) {
+      throw new \Exception('Direct access to inner contents of Control is not allowed.  Use setData instead.');
    }
 }

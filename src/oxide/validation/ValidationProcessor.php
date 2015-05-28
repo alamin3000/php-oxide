@@ -34,6 +34,9 @@ class ValidationProcessor {
    public function addValidationComponent(ValidationComponent $component, $key) {
       $this->addFilterer($component, $key);
       $this->addValidator($component, $key);
+      if($component->isRequired()) {
+         $this->addRequiredKeys($key);
+      }
    }
    
    /**

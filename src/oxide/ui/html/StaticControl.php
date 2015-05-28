@@ -13,7 +13,7 @@ namespace oxide\ui\html;
 class StaticControl extends Control {
    
    public function __construct($name, $value = null, $label = null, $data = null, $attributes = null) {
-      parent::__construct($name, $value, $label, $attributes);
+      parent::__construct($name, $value, $label, $data, $attributes);
    }
 
    public function setValue($value) {

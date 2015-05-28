@@ -12,6 +12,7 @@ namespace oxide\ui\html;
 
 class RadioControl extends InputControl {
    public function __construct($name, $value = null, $label = null) {
-      parent::__construct('radio', $name, $value, $label);
+      parent::__construct($name, $value, $label);
+      $this->setType('radio');
    }
 }

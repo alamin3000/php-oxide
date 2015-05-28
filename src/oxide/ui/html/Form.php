@@ -1,7 +1,7 @@
 <?php
 namespace oxide\ui\html;
+use oxide\base\String;
 use oxide\validation;
-use oxide\util\ArrayString;
 
 /**
  * Form class
@@ -15,26 +15,26 @@ use oxide\util\ArrayString;
  * @subpackage ui
  */
 class Form extends Element {
-   use ControlAccessTrait;
    
-   public
-      $labelTag = null,
+   public           
+      $controlLabelTag = null,
+      $controlRowTag = null,
+      $rowTag = null,
       $errorTag = null,
       $successTag = null,
       $infoTag = null,
-      $rowTag = null,
+      
       $disabledMessage = 'Form is disabled.',
   		$submitErrorMessage = 'Form validation failed.',
 		$submitSuccessMessage = 'Form submission was successful.',
       $requiredIndicator = '*',
       $requiredMessage = '* Indicates required field(s).';
 
-   protected
-      $_errorTag = null,
-      $_successTag = null,
-      $_headerElement = null,
-      $_footerElement = null,
-      $_controlRefs = [],
+   protected           
+           
+      /**
+       * @var string
+       */
       $_method = null,
       $_action = null,
 		$_result = null,
@@ -42,6 +42,7 @@ class Form extends Element {
       $_name = null,
       $_processedValues = null,
       $_processed = false,
+      $_controlRefs = [],     
       $_controlPreparedCallback = null,
       /**
        * @var validation\ValidationProcessor holds input validation for the form
@@ -84,14 +85,16 @@ class Form extends Element {
 		$this->setAction($action);      
       $this->setValues($values);    // store the raw values
       $this->_generateSubmitId($name);   // generating a unique id for the form
+      $this->_attributes['name'] = $this->_attributes['id'] = $this->_name;
 	}
    
    /**
+    * Get/Set disabled value of the form
     * 
-    * @param type $bool
-    * @param type $message
+    * @param boolean $bool
+    * @param string $message
     */
-   public function disable($bool = null, $message = null) {
+   public function disabled($bool = null, $message = null) {
       if($bool === null) return $this->hasAttribute('disabled');
       else {
          $this->setAttribute('disabled', 'disabled');
@@ -205,7 +208,7 @@ class Form extends Element {
    public function setValue($key, $value) {
       $this->_values[$key] = $value;
    }
-   
+     
    /**
     * 
     * @param arrray $values
@@ -229,33 +232,6 @@ class Form extends Element {
    public function getValues() {
       return $this->_values;
    }
-   
-   /**
-    * return processed value for the $key if avaliable 
-    * 
-    * if the form still hasn't processed, it will return null
-    * @param string $key
-    * @return string
-    */
-   public function getProcessedValue($key) {
-      if(!$this->_processed) return null;
-      
-      if(isset($this->_processedValues[$key])) return $this->_processedValues[$key];
-      else return null;
-   }
-   
-   /**
-    * return all processed values
-    * 
-    * if form hasn't been processed yet, it will return null
-    * @return array
-    */
-   public function getProcessedValues() {
-      if(!$this->_processed) return null;
-      
-      return $this->_processedValues;
-   }
-   
 
 	/**
 	 * resets all form values
@@ -268,84 +244,11 @@ class Form extends Element {
 		$this->_values = [];
    }
    
-   /**
-    * Stores a reference of the given Control.
-    * 
-    * This is used to easiy access all controls belong to the form.
-    * Usually this method would be automatically called by Control instance
-    * when setForm is called 
-    * @param Control $control
-    */
-   public function addControlRef(Control $control) {
-      $this->_controlRefs[$control->getName()] = $control;
-   }
-   
-   /**
-    * Removes a reference to the control
-    * 
-    * This will remove an assoication of the control from the form
-    * This does not necessery removes the control from the 
-    * @param \oxide\ui\html\Control $control
-    */
-   public function removeControlRef(Control $control) {
-      unset($this->_controlRefs[$control->getName()]);
-   }
-   
-   /**
-    * Remove a control by given name from the collection
-    * 
-    * If success, removed control will be returned.
-    * @param string $name
-    * @return oxide\ui\html\Control
-    */
-   public function removeControl($name) {
-      $control = $this->getControl($name);
-      if($control) {
-         $this->removeControlRef($control);
-         // now remove
-         $parent = $control->getParent();
-         if($parent) {
-            $pos = $parent->search($control);
-            if($pos !== FALSE) {
-               unset($parent[$pos]);
-            }
-         }
-      }
-      
-      return $control;
-   }
-   
-   /**
-    * Add a control
-    * 
-    * @param Control $control
-    */
-   public function addControl(Control $control) {
-      $this->append($control);
-   }
-   
-   /**
-    * Get control $name from the 
-    * @param type $name
-    * @return type
-    */
-   public function getControl($name) {
-      return (isset($this->_controlRefs[$name])) ?
-         $this->_controlRefs[$name] :
-         null;
-   }
-   
-   public function getControls() {
-      return $this->_controlRefs;
-   }
-   
 	/**
 	 * Checks if form has been submitted or not
     * Optionally checks if form submit validation using session
-    * @param boolean $session_check this checks the submit with session, to make sure it is not form spoofing
 	 * @return bool
 	 */
-   public function isSubmit() { return $this->isSubmitted(); }
 	public function isSubmitted($key = null) {         
 		/*
 		 * only way to find out if the form is submitted or not is to first check
@@ -408,9 +311,10 @@ class Form extends Element {
    public function process(validation\Result &$result = null) {
       // if form is disabled,
       // we will not process this
-      if($this->disable()) {
+      if($this->disabled()) {
          // this is an error
-         throw new \Exception('Form is disabled, therefore cannot be processed.');
+         throw new \Exception('Form is disabled, therefore cannot be processed: ' . 
+                 $this->disabledMessage);
       }
       
 		if($result) {
@@ -418,9 +322,6 @@ class Form extends Element {
 		} else {
 			$result = $this->getResult();
 		}
-      
-      // notify internal event
-      $this->onPreProcess($result);
 
       // now we get the processed/filtered values
       // if form process was not valid, this will return null
@@ -430,8 +331,6 @@ class Form extends Element {
       // indicate the form has been processed already
       $this->_processed = true;
       $this->_processedValues = $processedValues;
-      // notify internal event
-      $this->onPostProcess($result, $processedValues);
       return $processedValues;
    }
    
@@ -440,6 +339,32 @@ class Form extends Element {
     */
    public function isProcessed() {
       return $this->_processed;
+   }
+   
+   /**
+    * return processed value for the $key if avaliable 
+    * 
+    * if the form still hasn't processed, it will return null
+    * @param string $key
+    * @return string
+    */
+   public function getProcessedValue($key) {
+      if(!$this->_processed) return null;
+      
+      if(isset($this->_processedValues[$key])) return $this->_processedValues[$key];
+      else return null;
+   }
+   
+   /**
+    * return all processed values
+    * 
+    * if form hasn't been processed yet, it will return null
+    * @return array
+    */
+   public function getProcessedValues() {
+      if(!$this->_processed) return null;
+      
+      return $this->_processedValues;
    }
    
    /**
@@ -454,34 +379,147 @@ class Form extends Element {
       return new InputControl('hidden', $this->_formid_key, $this->_formid);
    }
    
-   public function getErrorTag() {
-      if($this->errorTag === null) {
-         $this->errorTag = new Tag('strong');
-      }
-      
-      return $this->errorTag;
+   /**
+    * Get control $name from the 
+    * 
+    * @param string $name
+    * @return null|Control
+    */
+   public function getControl($name) {
+      return (isset($this->_controlRefs[$name])) ?
+         $this->_controlRefs[$name] :
+         null;
    }
    
-   public function getRowTag() {
-      if($this->rowTag === null) {
-         $this->rowTag = new Tag('p');
-      }
-      
-      return $this->rowTag;
+   /**
+    * Get all controls added to this form
+    * 
+    * @return array
+    */
+   public function getControls() {
+      return $this->_controlRefs;
    }
    
+   /**
+    * Remove a control by given name from the collection
+    * 
+    * If success, removed control will be returned.
+    * @param string $name
+    * @return null|\oxide\ui\html\Control Returns Control if control was found and removed, else null
+    */
+   public function removeControl($name) {
+      if(($control = $this->getControl($name))) {
+         $this->removeControlRef($control);
+         return $control->remove();
+      }
+      
+      return null;
+   }
+   
+   /**
+    * Stores a reference of the given Control.  
+    * This will NOT add the control in inner form, but only reference
+    * 
+    * This is used to easiy access all controls belong to the form.
+    * Usually this method would be automatically called by Control instance
+    * when setForm is called 
+    * @param Control $control
+    */
+   public function addControlRef(Control $control) {
+      $this->_controlRefs[$control->getName()] = $control;
+   }
+   
+   /**
+    * Removes a reference to the control
+    * This will not remove control but only remove the reference
+    * 
+    * This will remove an assoication of the control from the form
+    * @param \oxide\ui\html\Control $control
+    */
+   public function removeControlRef(Control $control) {
+      unset($this->_controlRefs[$control->getName()]);
+   }
+      
+   /**
+    * Adding the name and id attributes
+    */
+   protected function onRender() {
+      parent::onRender();
+      
+      if(!$this->rowTag) $this->rowTag = new Tag('p');
+      if(!$this->errorTag) $this->errorTag = new Tag('strong');
+      if(!$this->infoTag) $this->infoTag = new Tag('small');
+      if(!$this->successTag) $this->successTag = new Tag('b');
+   }
+   
+   /**
+    * render for header
+    *
+    * @param Form $form
+    * @return string
+    */
+	public function renderFormHeader() {
+      $rowTag = $this->rowTag;
+      $msgs = ''; // message buffer
+      
+      if($this->disabled()) {
+         $msgs .= $rowTag->renderWithContent($this->disabledMessage);
+      } else {
+         if($this->isProcessed()) {
+            // check validations
+            if(($result = $this->getResult()) && !$result->isValid()) { // validation failed
+               $errorTag = $this->getErrorTag();
+               $msgs .= $rowTag->renderWithContent(
+                           $errorTag->renderWithContent($this->submitErrorMessage));
+               if($result->hasError($this->getId())) {
+                  $msgs .= $rowTag->renderWithContent(
+                          $errorTag->renderWithContent($result->getErrorString($this->getId())));
+               }
+            } else { // for submission success
+               $msgs .= $rowTag->renderWithContent(
+                       $this->getSuccessTag()->renderWithContent($this->submitSuccessMessage));
+            }
+         }
+      }
+      
+      return $msgs;
+	}
+   
+   /**
+    * return form footer
+    * 
+    * @param Form $form
+    * @return string
+    */
+	public function renderFormFooter() {
+      if($this->getValidationProcessor()->isRequired()) {
+         return $this->rowTag->renderWithContent(
+                 $this->infoTag->renderWithContent($this->requiredMessage));
+      }
+      
+      return '';
+	}
+   
+   /**
+    * Rendering headers and footers for the form
+    * 
+    * @param ArrayString $buffer
+    */
+   protected function onRenderInner(String $buffer) {
+      $buffer->append($this->renderFormHeader());
+      parent::onRenderInner($buffer);
+      $buffer->append($this->renderFormFooter());
+   }
    
    /**
     * Callback that will be called after form has prepared a control
     * 
     * callback signature: $callback($control, $this)
-    * @param \Closure $callback
-    * @return \Closure
+    * @param callable $callback
     */
-   public function setControlPrepareCallback(\Closure $callback = null) {
+   public function setControlPrepareCallback(callable $callback = null) {
       $this->_controlPreparedCallback = $callback;
    }
-   
    
    /**
     * getControlPrepareCallback function.
@@ -492,83 +530,18 @@ class Form extends Element {
    public function getControlPrepareCallback() {
       return $this->_controlPreparedCallback;
    }
-   
-   public function onRender() {
-      parent::onRender();
-      $this->_attributes['name'] = $this->_attributes['id'] = $this->_name;
-      if(!$this->errorTag) $this->errorTag = new Tag ('strong');
-      if(!$this->infoTag) $this->infoTag = new Tag('small');
-      if(!$this->successTag) $this->successTag = new Tag('b');
-      if(!$this->rowTag) $this->rowTag = new Tag('p');
-   }
-   
-   /**
-    * render for header
-    *
-    * @param Form $form
-    * @return string
-    */
-	public function renderFormHeader() {            
-		$result = $this->getResult();
-      if($this->disable()) {
-         return $this->rowTag->renderContent($this->disabledMessage);
-      }
-      if($this->isProcessed()) {
-         $msgs = '';
-         if(!$result->isValid()) {
-            $msgs .= $this->errorTag->renderContent($this->submitErrorMessage);
-            if($result->hasError($this->getId())) {
-               $msgs .= $this->errorTag->renderContent($result->getErrorString($this->getId()));
-            }
-         } else { // for submission success
-            $msgs .= $this->successTag->renderContent($this->submitSuccessMessage);
-         }
-         
-         return $this->rowTag->renderContent($msgs);
-      }
-	}
-
-   /**
-    * return form footer
-    * 
-    * @param Form $form
-    * @return string
-    */
-	public function renderFormFooter() {
-      $str = '';
-      if($this->getValidationProcessor()->isRequired()) {
-         $str .= $this->rowTag->renderContent(
-                 $this->infoTag->renderContent($this->requiredMessage));
-      }
       
-      $str .= $this->getIdentifierControl()->render();
-      return $str;
-	}
-   
-	/**
-	 * overriding the inner html render routine
-	 *
-    * We will render the header and footer for the form in addition to the inner tag (controls)
-	 * @param /oxide/ui/Element $element
-	 */
-	public function renderInner() {
-		return 
-         $this->renderFormHeader() .
-         parent::renderInner() .
-         $this->renderFormFooter();
-	}
-
    /**
-    * This method is called by Control objects before it starts rendering
+    * Prepares control for rendering
     * 
-    * This method basically update the control if required.
-    * @param Control $control
-    * @param ArrayString $buffer Holds the current rendrered buffer for the control
+    * If a control is part of a form,
+    * this method will automatically get called by control before rendering.
+    * @param \oxide\ui\html\Control $control
+    * @param ArrayString $buffer
     */
    public function onControlRender(Control $control) {
-		$name          = $control->getName();      
-      $value         = $this->getValue($name);
-		$validation    = $this->getValidationProcessor();
+		$name        = $control->getName();      
+		$validation  = $this->getValidationProcessor();
 		$result      = $this->getResult();
       
       if($validation->isRequired($name)) {
@@ -580,36 +553,46 @@ class Form extends Element {
          $control->setError($result->getErrorString($name));
 		}
       
-      if($value !== null) {
+      if(($value = $this->getValue($name)) !== null) {
          $control->setValue($value); // setting the form submitted value
       }
       
-      $control->wrappers[] = $this->getRowTag();
+      // setup/reuse tags
+      if(!$control->rowTag) $control->rowTag = $this->rowTag;
+      if(!$control->errorTag) $control->errorTag = $this->errorTag;
+      if(!$control->infoTag) $control->infoTag = $this->infoTag;
       
-      $callback = $this->_controlPreparedCallback;
-      if($callback) $callback($control, $this);
+      // callback if available
+      if(($callback = $this->_controlPreparedCallback)) {
+         call_user_func($callback, $control, $this);
+      }
    }
    
+   /**
+    * Override the element add method
+    * 
+    * We will only allow Control and Fieldset to be added
+    * @param type $key
+    * @param type $value
+    */
    protected function _t_array_access_set($key, $value) {
       parent::_t_array_access_set($key, $value);
-      if($value instanceof Control ||
-         $value instanceof Fieldset) {
-         $value->setForm($this);
+      if($value instanceof FormAware) {
+         $value->setForm($this); // this will add control ref
+      } else {
+         throw new \Exception('Only controls and fieldset are allowed');
       }
    }
    
-   protected function _t_array_access_get($key) {
-      parent::_t_array_access_get($key);
-   }
-   
+   /**
+    * 
+    * @param type $key
+    * @param type $value
+    */
    protected function _t_array_access_unset($key, $value) {
       parent::_t_array_access_unset($key, $value);
-      if($value instanceof Control ||
-         $value instanceof Fieldset) {
+      if($value instanceof FormAware) {
          $value->setForm(null);
       }
-   }
-
-   protected function onPreProcess(validation\Result $result) {}
-   protected function onPostProcess(validation\Result $result, array $processedvalues = null) {}
+   }   
 }

@@ -14,7 +14,8 @@ class FileControl extends InputControl {
     * @param type $attrbs
     */
    public function __construct($name, $value = null, $label = null) {
-      parent::__construct('file', $name, $value, $label);
+      parent::__construct($name, $value, $label);
+      $this->setType('file');
    }
       
    /**

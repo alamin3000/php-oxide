@@ -30,6 +30,16 @@ class ViewData extends Container {
       if($helper) $this->helper = $helper;
    }
    
+   
+   /**
+    * get the application context.
+    * 
+    * @return Context
+    */
+   public function getContext() {
+	   return $this->context;
+   }
+   
    /**
     * Get helper by name
     * @param string $name

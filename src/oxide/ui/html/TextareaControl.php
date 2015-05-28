@@ -19,7 +19,7 @@ class TextareaControl extends Control {
 	 */
 	public function __construct($name, $value = '', $label = null,  $attrbs = null) {
 		parent::__construct($name, $value, $label,  $attrbs);
-      $this->setTag('textarea');
+      $this->setTagName('textarea');
 		$this->setHtml($value);
 	}
    

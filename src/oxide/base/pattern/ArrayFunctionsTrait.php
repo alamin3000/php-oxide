@@ -6,6 +6,7 @@ namespace oxide\base\pattern;
  * 
  * Must have ArrayAccessTraits using.  The reason this trait doesn't use the 'use'
  * statement for auto loading ArrayAccessTrait is because unneccessary method overloading
+ * ** Also it will throw notices on extended class **
  */
 trait ArrayFunctionsTrait {
    /**
@@ -19,6 +20,8 @@ trait ArrayFunctionsTrait {
 	      $this->_t_array_storage[] = $content;
 	   else 
 	   	$this->_t_array_storage[$offset] = $content;
+      
+      return $this;
    }
    
    /**
@@ -32,6 +35,8 @@ trait ArrayFunctionsTrait {
       	array_unshift($this->_t_array_storage, $content);
       else
       	$this->_t_array_storage = [$offset => $content] + $this->_t_array_storage;
+      
+      return $this;
    }
    
    /**
@@ -69,6 +74,8 @@ trait ArrayFunctionsTrait {
             array_splice($this->_t_array_storage, $index, 0, $value);
          }
       }
+      
+      return $this;
    }
    
    /**
@@ -78,5 +85,7 @@ trait ArrayFunctionsTrait {
     */
    public function merge(array $arr) {
       $this->_t_array_storage = array_replace_recursive($this->_t_array_storage, $arr);
+      
+      return $this;
    }
 }

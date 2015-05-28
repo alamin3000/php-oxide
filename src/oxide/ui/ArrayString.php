@@ -75,6 +75,10 @@ class ArrayString
       else return (string) $arg;
    }
    
+   /**
+    * 
+    * @return string
+    */
    public function render() {
 	   return $this->__toString();
    }

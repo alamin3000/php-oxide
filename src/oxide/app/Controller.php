@@ -268,7 +268,6 @@ abstract class Controller
       // various methods that will be called
 		$method = $this->generateActionMethod($action_filtered);
       $method_init = "{$method}__init";
-      $method_view = "{$method}__view";
       $method_http = "{$method}__{$httpmethod}";
 
       // method executer
@@ -283,13 +282,8 @@ abstract class Controller
       $executer($method_init, $context, $data); // initialize method
       $executer($method_http, $context, $data); // http version method
       $view = $executer($method, $context, $data); // standard method
-      $view1 = $executer($method_view, $context, $data); // view method
-      
-      if($view1) {
-	      $view = $view1;
-      }
-      
       if(!$handled) {
+         print 'here';
          return $this->onUndefinedAction($context, $action);
       }
       

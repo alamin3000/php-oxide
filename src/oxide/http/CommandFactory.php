@@ -1,8 +1,6 @@
 <?php
 namespace oxide\http;
 use oxide\validation\misc\VariableNameValidator;
-use oxide\base\Container;
-
 
 /**
  * Command Controller
@@ -52,12 +50,12 @@ class CommandFactory {
     * @param \oxide\http\Route $route
     * @return null|\oxide\http\class
     */
-   public function create(Route $route, Container $config = null) {
+   public function create(Route $route) {
 	   $instance = null;
       $class = $this->generateClassName($route);
       if($class) {
 	      if(class_exists($class)) {
-	         $instance = new $class($route, $config);
+	         $instance = new $class($route);
 	      }
       }
 

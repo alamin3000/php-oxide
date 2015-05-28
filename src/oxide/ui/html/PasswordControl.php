@@ -12,6 +12,7 @@ namespace oxide\ui\html;
 
 class PasswordControl extends InputControl {
    public function __construct($name, $value = null, $label = null) {
-      parent::__construct('password', $name, $value, $label);
+      parent::__construct($name, $value, $label);
+      $this->setType('password');
    }
 }

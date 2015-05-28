@@ -20,10 +20,14 @@ class InputControl extends Control {
          'color' => true, 'datetime' => true, 'date' => true, 'month' => true, 'week' => true, 
          'time' => true, 'datetime-local' => true, 'button' => true];
 
-      protected function setName($name) {
-         parent::setName($name);
-         $this->setAttribute('name', $name);
-      }
+   /**
+    * 
+    * @param type $name
+    */
+   protected function setName($name) {
+      parent::setName($name);
+      $this->setAttribute('name', $name);
+   }
    
    /**
 	 * construct the input control
@@ -35,25 +39,43 @@ class InputControl extends Control {
 	 * @param string $label
 	 * @param array $attrbs
 	 */
-	public function __construct($type, $name, $value = null, $label = null) {
-		if(isset(self::$inputTypes[$type])) {
-			$this->_type = $type;
+	public function __construct($name, $value = null, $label = null) {
+		parent::__construct($name, $value, $label);
+      $this->setTagName('input');
+      $this->isVoid = true;
+	}
+   
+   /**
+    * 
+    * @param type $type
+    * @throws \Exception
+    */
+   public function setType($type) {
+      if(isset(self::$inputTypes[$type])) {
+			$this->_type = strtolower($type);
 		} else {
 			throw new \Exception('Invalid input type provided: ' . $type);
 		}
       
-		parent::__construct($name, $value, $label);
-      $this->setTag('input');
-      $this->void = true;
-      $this->_attributes['type'] = $type;
-	}
+      $this->setAttribute('type', $type);
+   }
    
+   /**
+    * getType function.
+    * 
+    * @access public
+    * @return void
+    */
    public function getType() {
       return $this->_type;
    }
    
+   /**
+    * 
+    * @param type $value
+    */
    public function setValue($value) {
       parent::setValue($value);
-      $this->_attributes['value'] = $value;
+      $this->setAttribute('value', $value);
    }
 }

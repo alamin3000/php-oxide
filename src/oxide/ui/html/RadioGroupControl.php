@@ -14,8 +14,8 @@ class RadioGroupControl extends Control {
    protected
       $radioTag = null;
    
-   public function __construct($name, $value = null, $label = null) {
-      parent::__construct($name, $value, $label);
+   public function __construct($name, $value = null, $label = null, $data = null, array $attr = null) {
+      parent::__construct($name, $value, $label, $data, $attr);
    }
    
    public function setData($data) {

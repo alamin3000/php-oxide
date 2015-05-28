@@ -2,10 +2,7 @@
 namespace oxide\app\helper;
 use oxide\ui\Renderer;
 use oxide\ui\html\Form;
-use oxide\ui\html\Fieldset;
-use oxide\util\ArrayString;
 use oxide\ui\html\Control;
-use oxide\ui\html\Tag;
 use oxide\ui\html\ControlFactory;
 
 class Ui extends Html {
@@ -26,7 +23,7 @@ class Ui extends Html {
    
    const
       STYLE_NONE 			= 1,
-      STYLE_SMALL 		= 2,
+      STYLE_SMALL       = 2,
       STYLE_LARGE 		= 4,
       STYLE_STANDARD 	= 8,
       STYLE_INLINE 		= 16,
@@ -51,7 +48,7 @@ class Ui extends Html {
       STYLE_RIGHT 		= 4194304,
       STYLE_CENTER 		= 8388608,
       STYLE_INSIDE 		= 16777216,
-      STYLE_VERTICAL 	= 33554432,
+      STYLE_VERTICAL    	= 33554432,
       STYLE_ORDERED 		= 67108864,
       STYLE_UNORDERED 	= 134217728,
       STYLE_LINK_VALUE 	= 268435456;
@@ -60,7 +57,6 @@ class Ui extends Html {
    public function __construct(HelperContainer $c) {
       $this->_url = $c->get('url');
    }
-   
    
    /**
     * _merge_attributes function.
@@ -85,7 +81,6 @@ class Ui extends Html {
       }
    }
    
-   
    /**
     * _class_style function.
     * 
@@ -107,93 +102,6 @@ class Ui extends Html {
          return "{$prefix}-info";
       else
       	return "{$prefix}-default";
-   }
-   
-   
-   /**
-    * _class_size function.
-    * 
-    * @access protected
-    * @param mixed $style
-    * @param mixed $prefix
-    * @return void
-    */
-   protected function _class_size($style, $prefix) {
-      if($style & self::STYLE_SMALL) {
-         return "{$prefix}-sm";
-      } else if($style & self::STYLE_LARGE) {
-         return "{$prefix}-lg";
-      } else {
-         return '';
-      }
-   }
-   
-   /**
-    * Text label
-    * 
-    * @param type $text
-    * @param type $style
-    * @return type
-    */
-   public function textLabel($text, $style = self::STYLE_NONE, array $attrib = null) {
-      $this->_merge_attributes($attrib, [
-         'class' => 'label ' . self::_class_style($style, 'label')
-      ]);
-   
-      return $this->tag('span', $text, $attrib);
-   }
-   
-   /**
-    * Icon/glyphicon
-    * @styles STYLE_LEFT, STYLE_RIGHT
-    * @param string $name
-    * @param string $text
-    * @param int $style
-    * @return string
-    */
-   public function icon($name, $text = null, $style = self::STYLE_NONE) {
-      return $this->tag('span', null, ['class' => 'glyphicon glyphicon-' . $name]).$text;
-   }
-
-   /**
-    * Creates a data table
-    * 
-    * @param array $data
-    * @param array $cols
-    * @param \Closure $thcallback
-    * @param \Closure $tdcallback
-    * @return type
-    */
-   public function table(array $data, array $cols = null, \Closure $thcallback = null, \Closure $tdcallback = null, $style = null) {
-      $this->start();
-      echo $this->tableOpen($style);
-      if(!$thcallback) { // default header callback
-         $thcallback = function($key) {
-            return ucwords(str_replace(['-', '_'], ' ', $key));
-         };
-      }
-      
-      if(!$tdcallback) { // default row columns callback
-         $tdcallback = function($key, $row) {
-            return (isset($row[$key])) ? $row[$key] : '';
-         };
-      }
-      echo '<thead>', '<tr>';
-      foreach($cols as $key) {
-         echo '<th>' . $thcallback($key) . '</th>';
-      }
-      echo '</tr>' , '</thead>', '<tbody>';
-      foreach($data as $row) {
-         echo '<tr>';
-         foreach($cols as $key) {
-            echo '<td>' , $tdcallback($key, $row) , '</td>';
-         }
-         echo '</tr>';
-      }
-      echo '</tbody>';
-      
-      echo $this->tableClose();
-      return $this->end();
    }
    
    /**
@@ -247,26 +155,6 @@ class Ui extends Html {
       if($text === null) $text = $link;
       return $this->tag('a', $text, ['href' => $link, 'target' => $target]);
    }
-   
-   /**
-    * 
-    * @param type $href
-    * @param type $text
-    * @param type $style
-    * @param type $size
-    * @param type $attribs
-    * @return type
-    */
-   public function linkButton($href, $text, $style = self::STYLE_NONE) {
-      $attribs = [];
-      $cls_size = $this->_class_size($style, 'btn');
-      $cls_style = $this->_class_style($style, 'btn');
-      
-      $attribs['class'] = "btn {$cls_size} {$cls_style}";
-      $attribs['href'] = $href;
-      $attribs['role'] = 'button';
-      return $this->tag('a', $text, $attribs);
-   }
 
    /**
     * Start a form element
@@ -310,7 +198,6 @@ class Ui extends Html {
       return $this->closeTag('div');
    }
    
-   
    /**
     * control function.
     * 
@@ -325,7 +212,6 @@ class Ui extends Html {
     * @return void
     */
    public function control($type, $name, $value = null, $label = null, $data = null, $style = null, array $attribs = null) {
-	   $control = null;
 	   if($style === null) {
          if(isset($this->_openedTags['form'])) {
             $style = $this->_openedTags['form'];
@@ -346,6 +232,97 @@ class Ui extends Html {
    public function formClose() {
       unset($this->_openedTags['form']);
       return $this->closeTag('form');
+   }
+      
+   /**
+    * Render a Form element
+    * 
+    * @param Form $form
+    * @param type $style
+    * @return type
+    */
+	public function renderForm(Form $form, $style = self::STYLE_NONE) { 
+//      $form->getRowTag()->setTagName('div');
+      $form->addAttribute('class', 'form-horizontal');
+      $form->getErrorTag()->addAttribute('class', 'text-danger bg-danger');
+      $form->getSuccessTag()->addAttribute('class', 'bg-success text-success');
+      $form->setControlPrepareCallback(function(Control $control) {
+         $control->setRenderCallbacks(function($control, $buffer) {
+            $buffer->append($this->renderControl($control));
+            return true; // disable rendering by the control
+         });
+      });
+      
+      return $form;
+   }
+   
+   
+   public function prepareControl(Control $control) {
+      $classes = '';
+      if($control instanceof \oxide\ui\html\InputControl) {
+         switch($control->getType()) {
+            case 'hidden': $classes = 'hide'; break;
+            case 'submit': $classes = 'btn btn-primary'; break;
+            case 'button': $classes = 'btn btn-default'; break;
+            case 'reset':  $classes = 'btn btn-danger'; break;
+            case 'checkbox': 
+               break;
+            case 'radio': break;
+            default: $classes = 'form-control';
+         }
+      } else if($control instanceof \oxide\ui\html\ButtonControl) {
+         switch ($control->getType()) {
+            case 'submit': $classes = 'btn btn-primary'; break;
+            case 'reset':  $classes = 'btn btn-danger'; break;            
+            default: $classes = 'btn btn-default'; break;
+         }
+      } else if($control instanceof \oxide\ui\html\SelectControl ||
+              $control instanceof \oxide\ui\html\TextareaControl) {
+         $classes = 'form-control';
+      }
+      
+      $control->addAttribute('class', $classes);
+   }
+   
+   /**
+    * Prepares and renders a control
+    * 
+    * @param Control $control
+    * @param type $style
+    * @return type
+    */
+   public function renderControl(Control $control, $style = self::STYLE_NONE) {
+      
+      $rowTag  = $control->getWrapperTag()->setTagName('p')->addAttribute('class', 'form-group');
+      $error   = $control->getError();
+      if($error) {
+         $rowTag->addAttribute('class', 'has-error');
+      } else {
+         $rowTag->removeAttributeValue('class', 'has-error');
+      }
+      
+      $this->prepareControl($control);
+      
+      $this->start();
+      echo $rowTag->renderOpen();
+      echo $control->getLabelTag()->addAttribute('class', 'control-label col-sm-2')->renderWithContent($control->getLabel());
+      
+      echo $this->openTag('span', ['class'=>'col-sm-10']);
+      // render the control
+      echo $control->renderOpen();
+      echo $control->renderInner();
+      echo $control->renderClose();
+      
+      if(($info = $control->getInfo())) {
+         echo $control->getInfoTag()->addAttribute('class', 'help-block')->renderWithContent($info);
+      }
+      
+      if($error) {
+         echo $control->getErrorTag()->addAttribute('class', 'help-block')->renderWithContent($error);
+      }
+      echo $this->closeTag('span');
+      echo $rowTag->renderClose();
+      return $this->end();
    }
       
 
@@ -454,7 +431,6 @@ class Ui extends Html {
       if($style & self::STYLE_ROUNDED) $cls[] = 'img-rounded';
       if($style & self::STYLE_THUMBNAIL) $cls[] = 'img-thumbnail';
       if($style & self::STYLE_RESPONSIVE) $cls[] = 'img-responsive';
-//      if($style & self::IMG_MEDIA) $cls[] = 'media-object';
       $attr['class'] = implode(' ', $cls);
       if($size) {
          if(is_array($size)) {
@@ -505,24 +481,6 @@ class Ui extends Html {
    }
    
    /**
-    * Prints a a media component box
-    * 
-    * @param type $src
-    * @param type $title
-    * @param type $description
-    * @return type
-    */
-   public function media($src, $title, $description = null) {
-      $this->start('div', ['class' => 'media']);
-      echo $this->tag('a', $this->img($src, $title, null, self::IMG_MEDIA), ['class' => 'pull-left']);
-      echo $this->tag('div', 
-         $this->tag('h4', $title, ['class' => 'media-heading']) .  
-         $description
-         , ['class' => 'media-body']);
-      return $this->end('div');
-   }
-   
-   /**
     * Prints an alert message box with given $message
     * 
     * @param string $message
@@ -536,119 +494,6 @@ class Ui extends Html {
       return $this->tag('div', $message, ['class' => "{$cls}", 'role' => 'alert']);
    }
    
-   /**
-    * Render a Form element
-    * 
-    * @param Form $form
-    * @param type $style
-    * @return type
-    */
-	protected function renderForm(Form $form, $style = self::STYLE_NONE) {      
-      $form->errorTag   = new Tag('div', ['class' => 'alert alert-danger']);
-      $form->successTag = new Tag('div', ['class' => 'alert alert-success']);
-      
-      if($style & self::STYLE_INLINE) $cls = 'form-inline';
-      else if($style & self::STYLE_HORIZONTAL) $cls = 'form-horizontal';
-      else $cls = null;
-		$form->setAttribute('class', $cls, ' ');
-		
-		
-		$form->setControlPrepareCallback(function($ctl) use ($style) {
-         $this->controlRenderPrepare($ctl, $style);
-	      $ctl->setRendererCallback(function($ctl) use($style) {
-				$this->controlRenderCallback($ctl, $style);
-			});
-      });
-      
-      return $form->render();
-   }
-   
-   /**
-    * Render a Control element
-    * 
-    * @param Control $ctl
-    * @return type
-    */
-   public function controlRenderCallback(Control $ctl, $style = null) {
-     	if($style & self::STYLE_HORIZONTAL) {
-	     	array_unshift($ctl->before, $this->gridColumnOpen(12, 3));
-	     	$ctl->before[] = $this->gridColumnClose();
-		  	$ctl->before[] = $this->gridColumnOpen(12, 9);  
-	      $ctl->after[] = $this->gridColumnClose();
-      }
-   }
-   
-   protected function controlRenderPrepare(Control $ctl, $style = null) {
-	   $ctlcls = [];
-	   $clsprefix = 'input';
-	   
-	   // setting up the controls
-      if($ctl instanceof \oxide\ui\html\SubmitControl) {
-         $ctlcls[] = 'btn btn-primary';
-         $clsprefix = 'btn';
-      } else if($ctl instanceof \oxide\ui\html\CheckboxGroupControl) {
-         $grptag = $ctl->getTemplateCheckboxTag();
-         $grptag->getLabelTag()->setAttribute('class', 'checkbox-inline', ' ');
-         $grptag->labelWrapsControl = true;
-         $grptag->labelPosition = Control::RIGHT;
-      } else if($ctl instanceof \oxide\ui\html\RadioGroupControl) {
-         $grptag = $ctl->getTemplateRadioTag();
-         $grptag->getLabelTag()->setAttribute('class', 'radio-inline', ' ');
-         $grptag->labelWrapsControl = true;
-         $grptag->labelPosition = Control::RIGHT;
-      } else if($ctl instanceof \oxide\ui\html\FileControl) {
-         // don't do anything for the file control
-      } else {
-	      // for every other controls
-	      $ctlcls[] = 'form-control';
-      }
-      
-      // checking for control size
-      if($style & self::STYLE_SMALL){
-	      $ctlcls[] = "{$clsprefix}-sm"; 
-	   }
-      else if($style & self::STYLE_LARGE) {
-	       $ctlcls[] = "{$clsprefix}-lg";
-	   }
-
-      $ctl->setAttribute('class', implode(' ', $ctlcls));
-      
-	   // setting up form group
-      $cls = ['form-group'];
-      $error = $ctl->getError();
-      if($error) $cls[] = 'has-error';
-      
-      if($ctl->getForm()) {
-	      // if control is part of the form
-	      // we will use form to setup the wrapper
-	      $form = $ctl->getForm();
-	      $rowtag = $form->getRowTag();
-	      $rowtag->setTag('div');
-	      $rowtag->setAttribute('class', implode(' ', $cls), ' ');
-      } else {
-	      $ctl->wrappers[] = new Tag('div', ['class' => implode(' ', $cls)]);
-      }
-      
-	   // label
-      if($ctl->getLabel()) {
-         $lblTag = $ctl->getLabelTag();
-         $lblTag->setAttribute('class', 'control-label', ' ');
-         $lblTag->setAttribute('for', $ctl->getName());
-      }
-      
-      // info
-      if($ctl->getInfo()) {
-         $infoTag = $ctl->getInfoTag();
-         $infoTag->setAttribute('class', 'help-block', ' ');
-      }
-      
-      // error
-      if($error) {
-         $errorTag = $ctl->getErrorTag();
-         $errorTag->setAttribute('class', 'help-block', ' ');
-      }
-   }
-
    
    /**
     * Render
@@ -659,17 +504,17 @@ class Ui extends Html {
    public function render($renderer, $style = self::STYLE_NONE) {
       if($renderer instanceof Form) {
          return $this->renderForm($renderer, $style);
-      } else if($renderer instanceof Control) {
-	      
-	      $this->controlRenderPrepare($renderer, $style);
-	      $renderer->setRendererCallback(function($ctr) use ($style) {
-		      $this->controlRenderCallback($ctr, $style);
-	      });
+      } 
+      
+      else if($renderer instanceof Control) {
+         return $this->renderControl($renderer, $style);
+      } 
+      
+      else if($renderer instanceof Renderer) {
          return $renderer->render();
-         
-      } else if($renderer instanceof Renderer) {
-         return $renderer->render();
-      } else {
+      } 
+      
+      else {
          return (string)$renderer;
       }
    }

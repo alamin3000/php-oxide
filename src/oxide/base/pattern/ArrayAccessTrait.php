@@ -15,7 +15,7 @@ trait ArrayAccessTrait {
       $_t_array_storage = [];
    
    /**
-    * Get array
+    * Get a copy of the internal array
     * 
     * @return array
     */
@@ -23,10 +23,23 @@ trait ArrayAccessTrait {
       return $this->_t_array_storage;
    }
    
+   /**
+    * 
+    * @param array $arr
+    */
    public function setArray(array $arr) {
-      $this->_t_array_storage = $arr;
+      foreach($arr as $key => $val) {
+         $this->offsetSet($key, $val);
+      }
+      
+      return $this;
    }
    
+   /**
+    * Get the internal array reference
+    * 
+    * @return type
+    */
    public function &arrayRef() {
       return $this->_t_array_storage;
    }
@@ -51,7 +64,6 @@ trait ArrayAccessTrait {
     * @return mixed
     */
    public function offsetGet($offset)  {
-      $this->_t_array_access_get($offset);
       return $this->_t_array_storage[$offset];
    }
    
@@ -98,6 +110,5 @@ trait ArrayAccessTrait {
    
    
    protected function _t_array_access_set($key, $value) {}
-   protected function _t_array_access_get($key) {}
    protected function _t_array_access_unset($key, $value) {}
 }

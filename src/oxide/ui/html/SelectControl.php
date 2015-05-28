@@ -25,7 +25,7 @@ class SelectControl extends Control {
 	 */
 	public function __construct($name, $value = null, $label = null, $data = null, array $attributes = null) {
       parent::__construct($name, $value, $label, $data, $attributes);      
-      $this->setTag('select');
+      $this->setTagName('select');
    }
    
    protected function setName($name) {
@@ -118,7 +118,7 @@ class SelectControl extends Control {
 				   if(isset($values[$gval])) $tag->setAttribute('selected', 'selected');
 				   else $tag->removeAttribute('selected');
 				   $tag->setAttribute('value', $gval);
-				   $buffer[] = $tag->renderContent($gkey);
+				   $buffer[] = $tag->renderWithContent($gkey);
 			   }
 			   $buffer[] = $group->renderClose();
 		   } else {
@@ -126,62 +126,10 @@ class SelectControl extends Control {
 			   if(isset($values[$value])) $tag->setAttribute('selected', 'selected');
 			   else $tag->removeAttribute('selected');
 			   $tag->setAttribute('value', $value);
-			   $buffer[] = $tag->renderContent($key);
+			   $buffer[] = $tag->renderWithContent($key);
 		   }
 	   }
 	   
 	   return $buffer->__toString();
    }
-
-   /**
-	 * renders inner html
-	 * 
-	 * @return string
-	 */
-	public function renderInners() {
-      if(empty($this->_data)) return '';
-      $buffer = new ArrayString();
-      $selected = false;
-      $values = $this->getValue();
-      $tag = $this->getOptionTag();
-      $groupTag = $this->getOptGroupTag();
-      if(!is_array($values)) $values = [$values];
-      if(!$tag) $tag = new Tag('option');
-      if(!$groupTag) $groupTag = new Tag('optgroup');
-      
-		foreach($this->_data as $grouplabel => $item) {
-			$options = ''; // hold rendered item list
-         if(is_array($item)) {
-				foreach($item as $label => $value) {            
-		         if(in_array($value, $values)) $selected = true;
-		         else $selected = false;
-	            
-	            // build attributes
-	            $tag->setAttribute('value', $value);
-	            if($selected) $tag->setAttribute('selected', 'selected');
-	            else $tag->removeAttribute('selected');
-	            
-	            // render the option tag
-	            $options .= $tag->renderContent($label);
-				}
-	         
-				if($grouplabel) {
-	            // render the optgorup with the items and add to buffer
-	            $groupTag->setAttribute('label', $grouplabel);
-	            $buffer->append($groupTag->renderContent($options));
-				} else {
-	            // add the rendered option to the buffer
-					$buffer->append($options);
-				}
-			} else {
-				$tag->setAttribute('value', $item);
-				if(in_array($item, $values)) $selected = true;
-		      else $selected = false;
-		      if($selected) $tag->setAttribute('selected', 'selected');
-				$buffer->append($tag->renderContent($grouplabel));
-			}
-		}
-      
-      return (string) $buffer;
-	}
 }

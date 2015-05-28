@@ -12,6 +12,7 @@ namespace oxide\ui\html;
 
 class TextControl extends InputControl {
    public function __construct($name, $value = null, $label = null) {
-      parent::__construct('text', $name, $value, $label);
+      parent::__construct($name, $value, $label);
+      $this->setType('text');
    }
 }

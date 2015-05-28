@@ -10,6 +10,7 @@
 
 namespace oxide\app\helper;
 use oxide\base\Container;
+use oxide\ui\Renderer;
 
 class Master extends Container {     
    public
@@ -31,7 +32,8 @@ class Master extends Container {
       $scripts = [],
       $breadcrumbs = [],
       $actions = [],
-      $navigations = [];
+      $navigations = [],
+      $content = null;
    
    protected
       $_html = null;
@@ -161,6 +163,22 @@ class Master extends Container {
       }
       
       return $css;
+   }
+   
+   
+   /**
+    * Store the main content.
+    * 
+    * @access public
+    * @param Renderer $content (default: null)
+    * @return void
+    */
+   public function content(Renderer $content = null) {
+	   if($content) {
+		   $this->content = $content;
+	   } else {
+		   return $this->content->render();
+	   }
    }
    
    /**

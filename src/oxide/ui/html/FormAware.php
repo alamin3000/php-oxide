@@ -10,9 +10,6 @@
 
 namespace oxide\ui\html;
 
-class TelControl extends InputControl {
-   public function __construct($name, $value = null, $label = null) {
-      parent::__construct($name, $value, $label);
-      $this->setType('tel');
-   }
+interface FormAware {
+   public function setForm(Form $form);
 }

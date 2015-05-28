@@ -14,10 +14,21 @@ class CheckboxGroupControl extends Control {
    protected
       $_checkboxTemplateTag = null;
    
-   public function __construct($name, $value = null, $label = null) {
-      parent::__construct($name, $value, $label);
+   /**
+    * 
+    * @param string $name
+    * @param type $value
+    * @param type $label
+    */
+   public function __construct($name, $value = null, $label = null, $data = null, array $attr = null) {
+      parent::__construct($name, $value, $label, $data, $attr);
    }
    
+   /**
+    * 
+    * @param type $data
+    * @throws \Exception
+    */
    public function setData($data) {
       parent::setData($data);
       if(!is_array($data)) {
@@ -37,16 +48,21 @@ class CheckboxGroupControl extends Control {
       return $this->_checkboxTemplateTag;
    }
    
+   /**
+    * 
+    * @return string
+    */
    public function renderInner() {
       if(empty($this->_data)) return '';
+      $values = $this->_data;
       
       $buffer = '';
       $tag = $this->getTemplateCheckboxTag();
       $tag->labelPosition = self::RIGHT;
-      foreach($this->_data as $label => $value) {
+      foreach($values as $label => $value) {
          $tag->setLabel($label);
          $tag->setValue($value);
-         $buffer .= $tag->render();
+         $buffer .= ' ' . $tag->render();
       }
       
       return $buffer;

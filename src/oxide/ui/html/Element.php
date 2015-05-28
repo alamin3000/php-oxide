@@ -1,7 +1,7 @@
 <?php
 namespace oxide\ui\html;
+use oxide\base\String;
 use oxide\ui\Renderer;
-use oxide\ui\ArrayString;
 use oxide\base\pattern\ArrayFunctionsTrait;
 use oxide\base\pattern\ArrayAccessTrait;
 /**
@@ -12,19 +12,20 @@ use oxide\base\pattern\ArrayAccessTrait;
  * @subpackage ui
  */
 class Element 
-   extends Tag implements \ArrayAccess, \Countable , \IteratorAggregate {   
-   use  ArrayAccessTrait, ArrayFunctionsTrait;   
-   public 
-      /**
-       * @var array Tag objects to be wrapped
-       */
-      $wrappers = [],
-      $before = [],
-      $after = [];
+   extends Tag 
+   implements \ArrayAccess, \Countable , \IteratorAggregate {   
+   use ArrayAccessTrait, ArrayFunctionsTrait; 
    
 	protected
+      /**
+       * @var Element
+       */
       $_parent = null,
-      $_rendererCallback = null;
+           
+      /**
+       * @var Renderer
+       */
+      $_renderer = null;
          
    /**
 	 * construct the element
@@ -48,6 +49,8 @@ class Element
     */
    public function setHtml($html) {
       $this->_t_array_storage = [$html];
+      
+      return $this;
    }
    
    /**
@@ -59,7 +62,18 @@ class Element
    public function getHtml() {
       return $this->renderInner();
    }
-   
+      
+   /**
+	 * resets the element
+	 *
+	 * This is useful to reuse the object for different element
+	 * All information about current element will be removed (tag name, attributes, renderer..)
+	 */
+	public function reset() {
+      $this->clearAttributes();
+		$this->_t_array_storage = [];
+	}
+	
    /**
     * Sets the parent for the element
     * 
@@ -68,6 +82,8 @@ class Element
     */
    public function setParent(Element $element = null) {
       $this->_parent = $element;
+      
+      return $this;
    }
    
    /**
@@ -78,23 +94,7 @@ class Element
    public function getParent() {
       return $this->_parent;
    }
-      
-   /**
-	 * resets the element
-	 *
-	 * This is useful to reuse the object for different element
-	 * All information about current element will be removed (tag name, attributes, renderer..)
-	 */
-	public function reset() {
-      $this->_tag = null;
-		$this->_t_array_storage = [];
-		$this->_wrappers = [];
-		$this->_before = [];
-		$this->_after = [];
-		$this->_attributes = [];
-	}
-	
-	
+   
 	/**
 	 * getIterator function.
 	 * 
@@ -102,34 +102,45 @@ class Element
 	 * @return void
 	 */
 	public function getIterator() {
-		return new \ArrayIterator($this->_t_array_storage);
+		foreach ($this->_t_array_storage as $item) {
+         yield $item;
+      }
 	}
+   
+   /**
+    * Removes the element from the parent tree, 
+    * @return self
+    */
+   public function remove() {
+      if(($parent = $this->getParent())) {
+         if(($pos = $parent->search($this))) {
+            $parent->offsetUnset($pos);
+         }
+      }
+      
+      return $this;
+   }
 
    /**
     * Renderer callable
     * 
-    * Callback signature $callable($this)
-    * The callback has few options
-    *		return void/NULL: rendering will continue to be performed.
-    								this is useful for additional customization before rendering
-    		return string		further rending will NOT be continued.
-    								return will be assumed to be performed in the callback.
-    								and return back the returned string from the callback.
-    * @param callable $callable
+    * Callback signature $callable(Element $this, ArrayString $buffer)
+    * If any of the callback functions returns anything other than null,
+    * Futher rendering will be terminated
+    * @param Renderer $renderer
     */
-   public function setRendererCallback(callable $callback = null) {
-      $this->_rendererCallback = $callback;
+   public function setRendererDelegate(Renderer $renderer) {
+      $this->_renderer = $renderer;
    }
-   
    
    /**
     * getRendererCallback function.
     * 
     * @access public
-    * @return void
+    * @return Renderer
     */
-   public function getRendererCallback() {
-      return $this->_rendererCallback;
+   public function getRendererDelegate() {
+      return $this->_renderer;
    }
    
    /**
@@ -141,49 +152,26 @@ class Element
     * @access public
     * @return string
     */
-   public function render() {
+   final public function render() {
       try {
          $this->onRender();
          
-         // call renderer callback
-         if($this->_rendererCallback) {
-            $return = call_user_func($this->_rendererCallback, $this);
-            if($return !== null) {
-	            return $return;
-            }
-         }
-         
          // start rendering process
          // all rendering partial will be stored in $buffer
-         $buffer = new ArrayString();
-         // render before 
-         if($this->before) {
-	         foreach($this->before as $before) {
-		         $buffer->append($before);
-	         }
-         }
-         // render element
-         $buffer[] = $this->renderOpen();
-         $buffer[] = $this->renderInner();
-         $buffer[] = $this->renderClose(); 
-         // render after
-         if($this->after) {
-	         foreach($this->after as $after) {
-		         $buffer->append($after);
-	         }
-         }        
+         $buffer = new String();
          
-         // now perform the wrappers
-         if(!empty($this->wrappers)) {
-            reset($this->wrappers);
-            foreach($this->wrappers as $wrapper) {
-               $buffer->prepend($wrapper->renderOpen());
-               $buffer->append($wrapper->renderClose());
-            }
+         // if renderer delegate is assigned, it will be pased
+         if(($renderer = $this->getRendererDelegate())) {
+            return $renderer->render();
          }
          
-         return (string) $buffer;
+         $this->onRenderOpen($buffer);
+         $this->onRenderInner($buffer);
+         $this->onRenderClose($buffer);    
+         
+         return $buffer->__toString();
       }
+      
       catch (\Exception $e) {
          $msg = 'Error in Element rendering: ' . get_called_class().
                '. ('.
@@ -200,7 +188,7 @@ class Element
     * @param ArrayString $buffer Current rendering string buffer 
 	 * @return void
     */
-   public function renderInner() {      
+   public function renderInner() {
       $buffer = '';
       foreach($this->_t_array_storage as $inner) {
          if($inner instanceof Renderer) {
@@ -213,33 +201,51 @@ class Element
       return $buffer;
    }
    
+   protected function onRender() {}
+   
    /**
-    * Renders a HTML element based on given $tag and $content
-    * 
-    * @param \oxide\ui\html\Tag $tag
-    * @param type $content
+    * Internal event to Render the opening tag
+    * @param ArrayString $buffer
     */
-   public static function renderTag($tag, $content = null, array $attributes = null, $void = false) {
-      if($tag instanceof self) {
-         return $tag->renderOpen() .
-            $content.
-            $tag->renderClose();    
-      } else {
-         $tag = new Tag($tag, $attributes, $void);
-         return $tag->renderContent($content);
-      }
+   protected function onRenderOpen(String $buffer) {
+      $buffer->append($this->renderOpen());
    }
    
+   /**
+    * Internal event to render the inner tag
+    * @param ArrayString $buffer
+    */
+   protected function onRenderInner(String $buffer) {
+      $buffer->append($this->renderInner());
+   }
+   
+   /**
+    * Internal event to render the close tag
+    * @param ArrayString $buffer
+    */
+   protected function onRenderClose(String $buffer) {
+      $buffer->append($this->renderClose());
+   }
+   
+   /**
+    * 
+    * @param type $key
+    * @param \oxide\ui\html\Element $value
+    */
    protected function _t_array_access_set($key, $value) {
       if($value instanceof Element) {
          $value->setParent($this);
       }
    }
+   
+   /**
+    * 
+    * @param type $key
+    * @param \oxide\ui\html\Element $value
+    */
    protected function _t_array_access_unset($key, $value) {
       if($value instanceof Element) {
          $value->setParent(null);
       }
    }
-
-   protected function onRender() {}
 }
