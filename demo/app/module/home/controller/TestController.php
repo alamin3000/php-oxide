@@ -12,25 +12,27 @@ namespace app\module\home\controller;
 use oxide\app\Controller;
 use oxide\http\Context;
 use oxide\app\ViewData;
-use oxide\app\helper;
-use oxide\util\Debug;
 use oxide\ui\html;
 use oxide\app\View;
 
 
 class TestController extends Controller {
+
+
    public function onInit(Context $context) {
       parent::onInit($context);
-   }
-   
-   protected function onExecute(Context $context, \oxide\http\Route $route) {
-      return parent::onExecute($context, $route);
    }
    
    
    public function executeIndex(Context $context, ViewData $data) {
       
    }
+   
+   public function executeCore(Context $context) {
+      
+   }
+   
+   
    
    public function executeUiControl(Context $context, ViewData $data) {
       $section = new html\Element('section');

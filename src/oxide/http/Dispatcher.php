@@ -41,20 +41,19 @@ class Dispatcher {
       $notifier = EventNotifier::sharedInstance();
       $notifier->notify('DispatcherDispatch', $this, ['route' => $route]);
 
-		$context->route = $route;
       $factory = new CommandFactory();
 		$command = $factory->create($route);
       
 		// if controller is not loaded, usaully means controller does not exits
 		// then we will attempt to send to default controller and adjust the Route
-		if(!$command) {
-        $router = $context->get('router');  
-        if($router) {
-           $router->rerouteToDefaultController($route);
-           // try again to crate command using new route info
-           $command = $factory->create($route);
-        }
-		}
+//		if(!$command) {
+//        $router = $context->get('router');  
+//        if($router) {
+//           $router->rerouteToDefaultController($route);
+//           // try again to crate command using new route info
+//           $command = $factory->create($route);
+//        }
+//		}
 		
 		// if controller failed to load
 		// we will throw exception

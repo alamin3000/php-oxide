@@ -1,6 +1,5 @@
 <?php
 namespace oxide\util;
-use oxide\util\Exception;
 
 /**
  * Event Notifier class
@@ -13,7 +12,10 @@ class EventNotifier {
    use \oxide\base\pattern\SharedInstanceTrait;
    
    protected
-		$_listeners = array();
+      /**
+       * @var array Holds all listeneres
+       */
+		$_listeners = [];
 
    /**
     * construction
@@ -23,15 +25,8 @@ class EventNotifier {
 	}
    
    /**
-    * 
-    * @return self
-    */
-   public static function sharedNotifier() {
-      return self::sharedInstance();
-   }
-   
-   /**
     * Register a $callable for an $event broadcast
+    * 
     * @param string $event
     * @param callable $callback
     * @param mixed $scope
@@ -47,6 +42,7 @@ class EventNotifier {
 
    /**
     * Unregister given $callback from the given $event
+    * 
     * @param string $event
     * @param callable $callback
     */
@@ -63,6 +59,7 @@ class EventNotifier {
 
    /**
     * Request an $event to be broadcast in $scope with given $args
+    * 
     * @param string $event
     * @param mixed $scope 
     * @param mixed $args arguments to be passed to the listener
@@ -80,21 +77,6 @@ class EventNotifier {
             throw new \Exception('Unable to broadcast to [' . $listener_name . ']');
          }
       }
-   }   
-   
-   /**
-    * 
-    * @param type $event
-    * @param type $listener
-    * @param type $method
-    * @param type $object
-    * @throws Exception
-    */
-   public function registerListener($event, $listener, $method, $object = null) {
-      // listener must be an object
-      if(!is_object($listener)) { throw new Exception('Listener must be an object');  }
-      if(!$method) { throw new Exception('Invalid method name'); }
-      $this->register($event, [$listener, $method], $object);
    }
 
 	/**
@@ -109,19 +91,4 @@ class EventNotifier {
 		}
 		return (count($this->_listeners) > 0 );
 	}
-   
-	/**
-	 * notify listener
-	 * 
-	 * notify listeners about givent $event occurance.
-	 * all listeners registered to the event will be notified.
-	 * @param string $event
-	 * @param object $object[optional] the object that is notifying
-    * @param array   $args[optional] additional arguments sent to the listeners
-    * @param mixed $ret
-	 * @return array
-	 */
-   public function notifyListeners($event, $object, $args = null) {
-      return $this->notify($event, $object, $args);
-   }
 }

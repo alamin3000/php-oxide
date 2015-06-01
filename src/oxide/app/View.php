@@ -10,9 +10,8 @@
 
 namespace oxide\app;
 use oxide\ui\Renderer;
-use oxide\base\Stringify;
 
-class View implements Renderer, Stringify {
+class View implements Renderer {
    public
       $identifier = null,
       $title = null;
@@ -33,9 +32,12 @@ class View implements Renderer, Stringify {
     * NOTE: for subclasses, calling parent::__construct() you can pass $this
     * @param Renderer $renderer
     */
-   public function __construct(Renderer $renderer = null) {
+   public function __construct(Renderer $renderer = null, ViewData $data = null) {
       if($renderer)
          $this->_renderer = $renderer;
+      
+      if($data)
+         $this->_data = $data;
    }
    
    /**
@@ -83,6 +85,23 @@ class View implements Renderer, Stringify {
    }
    
    /**
+    * Get the view data
+    * 
+    * @return ViewData
+    */
+   public function getData() {
+      return $this->_data;
+   }
+   
+   /**
+    * 
+    * @param ViewData $data
+    */
+   public function setData(ViewData $data) {
+      $this->_data = $data;
+   }
+   
+   /**
     * Set the renderer for the view
     * 
     * @param Renderer $renderer
@@ -100,6 +119,10 @@ class View implements Renderer, Stringify {
       return $this->_renderer;
    }
    
+   /**
+    * 
+    * @return type
+    */
    public function render() {
       if($this->_cache === null) {
          if($this->_isRendering) { // rendering within rendering :/
@@ -126,15 +149,5 @@ class View implements Renderer, Stringify {
       }
       
       return '';
-   }
-   
-   /**
-    * Get the rendered string
-    * 
-    * Always uses cache if available
-    * @return string
-    */
-   public function __toString() {
-      return $this->render();
    }
 }

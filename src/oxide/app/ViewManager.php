@@ -105,9 +105,8 @@ class ViewManager {
       }
       $templateScript = $this->getTemplateScript($script); // get templatized script
       $page = new Page($templateScript, $data);
-      $page->setDataVariableName('viewData');
       $view = new View($page);
-      
+      $view->setData($data);
       return $view;
    }
    
@@ -202,7 +201,6 @@ class ViewManager {
          $script = $this->getLayoutScript();
          $page = new Page($script);
          $page->setCodeScript($this->getCodeScriptForScript($script));
-         $page->setDataVariableName('viewData');
          $this->_layoutPage = $page;
       }
       
@@ -233,15 +231,11 @@ class ViewManager {
     * @param \oxide\app\ViewData $data
     * @return View
     */
-   public function prepareViewWithData(View $view = null, ViewData $data = null) {
-      if(!$view) {
-         $view = $this->createView($data);
-      }
-      
+   public function prepareView(View $view) {
       if(!$this->disableLayout) {
-         $layoutPage = $this->getLayoutPage();
-         $layoutPage->setData($data);
-         $layoutPage->addPartial($view->getRenderer(), null);
+         $layoutPage = $this->getLayoutPage(); 
+         $layoutPage->setData($view->getData()); // share the data with layout page
+         $layoutPage->addPartial($view->getRenderer(), null); 
          return new View($layoutPage);
       } else {
          return $view;

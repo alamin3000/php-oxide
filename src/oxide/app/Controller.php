@@ -62,6 +62,11 @@ abstract class Controller
       $_catchAll = false,
            
       /**
+       * @var View 
+       */
+      $_view = null,
+           
+      /**
        * Data container for view.
        * 
        * @var ViewData 
@@ -90,6 +95,20 @@ abstract class Controller
 	 */
 	public final function  __construct(Route $route) {
 		$this->_route = $route;
+      $action_name = $route->action;
+      if($this->_catchAll) {
+         if(!empty($action_name)) {
+            array_unshift($route->params, $action_name); // the action name part of the params
+            $route->params = array_filter($route->params); // remove any empty
+         }
+         
+         $route->action = $this->_defaultActionName;
+      } else {
+         // for to appropriate action method
+         if(empty($action_name)) {
+            $route->action = $this->_defaultActionName;
+         }
+      }
 	}
    
    /**
@@ -115,20 +134,20 @@ abstract class Controller
     * All data set to the container will be available to the view
     * @return ArrayContainer
     */
-   public function getCurrentViewData() {
+   public function getViewData() {
+      if($this->_viewData == null) {
+         $this->_viewData = new ViewData(null, $this->getContext());
+      }
       return $this->_viewData;
    }
    
    /**
-    * Assign a data to the data dictionary
     * 
-    * @param type $key
-    * @param type $value
+    * @param \oxide\app\ViewData $data
     */
-   public function assign($key, $value) {
-      $this->_viewData[$key] = $value;
+   public function setViewData(ViewData $data) {
+      $this->_viewData = $data;
    }
-   
    
    /**
     * Get Params passed to the route
@@ -144,8 +163,7 @@ abstract class Controller
       if(is_int($index)) {
          return (isset($params[$index])) ? $params[$index] : $default;
       } else {
-         $keypos = array_search($index, $params);
-         if($keypos !== FALSE) {
+         if(($keypos = array_search($index, $params)) !== FALSE) {
             if(isset($params[$keypos+1])) {
                return $params[$keypos+1];
             } 
@@ -155,6 +173,11 @@ abstract class Controller
       return $default;
    }
    
+   /**
+    * 
+    * @param type $cardinality
+    * @param type $names
+    */
    public function getAcceptedParams($cardinality, $names = null) {
       
    }
@@ -194,7 +217,6 @@ abstract class Controller
       return 'execute' . $action;
    }
 
-	
    /**
     * Get controller configuration
     * 
@@ -213,34 +235,19 @@ abstract class Controller
    }
    
    /**
-    * Initializes the controllers
-    * - set the controller route to the context
-    * - performs controller access check
-    * - setup the hepers
+    * 
     * @param Context $context
     */
-   private function init(Context $context) {
+   private function validateAccess(Context $context) {
       $config = ConfigManager::sharedInstance()->getConfig();
+      $roles = $config->get('roles', null, true);
+      $rules = $config->get('rules', null, true);
       $route = $this->getRoute();
       
       // perform access validation
       $auth = $context->get('auth');
-      $authManager = new auth\AuthManager($config, $auth);
+      $authManager = new auth\AuthManager($roles, $rules, $auth);
       $authManager->validateAccess($route, EventNotifier::sharedInstance(), true);
-            
-      // setup helpers
-      if(!helper\HelperContainer::hasSharedInstance()) {
-         $helpers = new helper\HelperContainer($context);
-         helper\HelperContainer::setSharedInstance($helpers);
-      } else {
-         $helpers = helper\HelperContainer::sharedInstance();
-      }
-      $helpers->set('auth', $auth);
-      
-      
-      $viewData = new ViewData([], $context); // create data dictionary for the view
-      $viewData->helper = $helpers;
-      $this->_viewData = $viewData;
    }
    
    /**
@@ -250,14 +257,13 @@ abstract class Controller
 	 * @param string $action
     * @throws Exception
 	 */
-	public function forward($action) {
+	public function forward($action, ViewData $data) {
       if(empty($action)) throw new Exception('Action name can not be empty.', 500);
-      $data = $this->getCurrentViewData();
+      
       $this->_route->action = $action;
       $context = $this->getContext();
       $request = $context->getRequest();
       $httpmethod = strtoupper($request->getMethod());
-      $handled = false;
 
       // generate and validate method name
       $action_filtered = CommandFactory::stringToName($action);
@@ -267,27 +273,15 @@ abstract class Controller
       
       // various methods that will be called
 		$method = $this->generateActionMethod($action_filtered);
-      $method_init = "{$method}__init";
       $method_http = "{$method}__{$httpmethod}";
 
-      // method executer
-      $executer = function($method, $context, $data) use (&$handled) {
-         if(method_exists($this, $method)) {
-            $handled = true;
-            return $this->{$method}($context, $data);
-         }
-      };
-      
-      // calling methods in particular order
-      $executer($method_init, $context, $data); // initialize method
-      $executer($method_http, $context, $data); // http version method
-      $view = $executer($method, $context, $data); // standard method
-      if(!$handled) {
-         print 'here';
+      if(method_exists($this, $method_http)) { // calling specialized HTTP method
+         return $this->{$method_http}($context, $data);
+      } else if(method_exists($this, $method)) { // calling generic method
+         return $this->{$method}($context, $data);
+      } else { // no method is provided
          return $this->onUndefinedAction($context, $action);
       }
-      
-      return $view;
 	}   
    
    /**
@@ -298,14 +292,22 @@ abstract class Controller
 	 */
 	final public function execute(Context $context) {
       $this->_context = $context;
+      
       try {
-         $this->init($context);
+         $data = $this->getViewData();
+         $this->validateAccess($context);
          $this->onInit($context); // call initializer
-         $route = $this->_route;
-         $view = $this->onExecute($context, $route);
-         $this->onRender($context, $view);
+         $view = $this->onExecute($context, $data);
+         
+         // rendering the view, if enabled (default)
+         if($this->_autoRender) {
+            $this->onRender($context, $view);
+         }
+         
          $this->onExit($context);
-      } catch(\Exception $e) {
+      } 
+      
+      catch(\Exception $e) {
          $this->onException($context, $e);
       }
 	}
@@ -322,28 +324,17 @@ abstract class Controller
    /**
     * 
     * @param Context $context
-    * @param Route $route
+    * @param ViewData $data
     * @return View
     */
-   protected function onExecute(Context $context, Route $route) {
-      $action_name = $route->action;
-      if($this->_catchAll) {
-         if(!empty($action_name)) {
-            array_unshift($route->params, $action_name);
-            $route->params = array_filter($route->params);
-            $context->getRequest()->setParams($route->params); // update the request params
-         }
-         
-         $action_name = $this->_defaultActionName;
-      } else {
-         // for to appropriate action method
-         if(empty($action_name)) {
-            $action_name = $this->_defaultActionName;
-         }
+   protected function onExecute(Context $context, ViewData $data) {
+      $view =  $this->forward($this->_route->action, $data);
+      if($view === null) {
+         $viewManager = $this->getViewManager();
+         $view = $viewManager->createView($data);
       }
       
-      // forward to the action
-      return $this->forward($action_name);
+      return $view;
    }
    
    /**
@@ -353,16 +344,13 @@ abstract class Controller
     * @param \oxide\app\View $view
     * @throws Exception
     */
-   protected function onRender(Context $context, View $view = null) {
-      if($this->_autoRender) {
-         $viewManager = $this->getViewManager();
-         $response = $context->getResponse();
-         $data = $this->getCurrentViewData();
+   protected function onRender(Context $context, View $view) {
+      $viewManager = $this->getViewManager();
+      $response = $context->getResponse();
 
-         $prepview = $viewManager->prepareViewWithData($view, $data);
-         $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
-         $response->addBody($prepview->render());
-      }
+      $prepview = $viewManager->prepareView($view);
+      $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
+      $response->addBody($prepview->render());
    }
    
    /**

@@ -16,7 +16,6 @@ use oxide\http\Context;
  */
 class ViewData extends Container {
 	public
-		$helper = null,
 		$context = null;
    
    /**
@@ -24,10 +23,9 @@ class ViewData extends Container {
     * 
     * @param mixed $data
     */
-   public function __construct($data = null, Context $context = null, Container $helper = null) {
+   public function __construct($data = null, Context $context = null) {
       parent::__construct($data);
       if($context) $this->context = $context;
-      if($helper) $this->helper = $helper;
    }
    
    
@@ -38,27 +36,5 @@ class ViewData extends Container {
     */
    public function getContext() {
 	   return $this->context;
-   }
-   
-   /**
-    * Get helper by name
-    * @param string $name
-    * @return mixed
-    */
-   public function getHelper($name) {
-      return $this->helper->get($name);
-   }
-   
-   
-   /**
-    * getHelpers function.
-    * 
-    * @access public
-    * @param array $names
-    * @return void
-    */
-   public function getHelpers() {
-	   $helper = $this->helper;
-	   return call_user_func_array([$helper, '__invoke'], func_get_args());
    }
 }

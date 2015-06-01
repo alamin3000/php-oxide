@@ -10,7 +10,6 @@
 
 namespace oxide\app\auth;
 use oxide\validation\Result;
-use oxide\base\Dictionary;
 use oxide\util\EventNotifier;
 use oxide\http\Route;
 
@@ -23,11 +22,20 @@ class AuthManager  {
    
    protected
       $_authenticator = null,
+      $_roles = null,
+      $_rules = null,
       $_config = null,
       $_storage = null;
    
-   public function __construct(Dictionary $config, Authenticator $auth) {
-      $this->_config = $config;
+   /**
+    * 
+    * @param array $roles
+    * @param array $rules
+    * @param \oxide\app\auth\Authenticator $auth
+    */
+   public function __construct(array $roles, array $rules, Authenticator $auth) {
+      $this->_roles = $roles;
+      $this->_rules = $rules;
       $this->_authenticator = $auth;
       $this->_storage = $auth->getStorage();
    }
@@ -46,7 +54,7 @@ class AuthManager  {
     * @return array
     */
    public function getRoles() {
-      return $this->_config->get('roles', NULL, TRUE);
+      return $this->_roles;
    }
    
    /**
@@ -54,7 +62,7 @@ class AuthManager  {
     * @return array
     */
    public function getRules() {
-      return $this->_config->get('rules', NULL, TRUE);
+      return $this->_rules;
    }
    
    /**

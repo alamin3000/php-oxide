@@ -11,6 +11,36 @@ namespace oxide;
 use oxide\util\PSR4Autoloader;
 
 /**
+ * 
+ * @param type $var
+ */
+function dump($var) {
+   util\Debug::dump($var);
+}
+
+/**
+ * Convinient function for accessing shared helper container
+ * 
+ * @param type $helper1
+ * @return type
+ * @throws \Exception
+ */
+function helper($helper1 = null) {
+   if(!app\helper\HelperContainer::hasSharedInstance()) {
+      throw new \Exception("Default Helper has not been set.");
+   }
+   
+   $helperContainer = app\helper\HelperContainer::sharedInstance();
+   if($helper1 === null) return $helperContainer;
+   else {
+      if(func_num_args() == 1)
+         return $helperContainer->offsetGet($helper1);
+      else
+         return $helperContainer->offsetGet(func_get_args());
+   }
+}
+
+/**
  * Oxide Loader
  * 
  * Manages namespaces
@@ -45,6 +75,7 @@ class Loader {
       
       return $this->autoloader;
    }
+   
    
    public function register() {
       // registering autoload for phpoxide
@@ -137,6 +168,11 @@ class Loader {
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
+      });
+      
+      // configure helper container
+      app\helper\HelperContainer::setSharedInstance(function() use ($context) {
+         return new app\helper\HelperContainer($context);
       });
       
       // setup mailer

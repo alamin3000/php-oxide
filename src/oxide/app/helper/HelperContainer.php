@@ -12,7 +12,7 @@ namespace oxide\app\helper;
 use oxide\base\Container;
 use oxide\http\Context;
 
-class HelperContainer extends Container  {
+class HelperContainer extends Container {
    use \oxide\base\pattern\SharedInstanceTrait;
    
    protected
@@ -28,7 +28,10 @@ class HelperContainer extends Container  {
            
       $_context = null;
    
-   
+   /**
+    * 
+    * @param Context $context
+    */
    public function __construct(Context $context) {
       parent::__construct();
       $this->_context = $context;
@@ -62,23 +65,22 @@ class HelperContainer extends Container  {
       }
    }
    
-   public function __invoke() {
-	   $args = func_get_args();
-	   if(empty($args)) {
-		   return $this;
-	   }
-	   
-	   if(count($args) > 1) {
-		   $helpers = [];
-		   foreach($args as $name) {
-			   $helpers[] = $this->get($name);
-		   }
-		   
-		   return $helpers;
-	   } else {
-		  	return $this->get($args[0]);
-	   }
-	   
+   /**
+    * Override getter to allow multiple get using array
+    * 
+    * @param type $key
+    * @return type
+    */
+   public function offsetGet($key) {
+      if(!is_array($key)) return parent::offsetGet($key);
+      else {
+         $vals = [];
+         foreach($key as $akey) {
+            $vals[] = parent::offsetGet($akey);
+         }
+         
+         return $vals;
+      }
    }
    
    public function __get($key) {
@@ -92,5 +94,4 @@ class HelperContainer extends Container  {
 		   $this->set($key, $value);
 	   }
    }
-
 }

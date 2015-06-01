@@ -156,7 +156,6 @@ class Router {
       $route = $this->urlToRoute($path);
       if($this->match($route)) {
          $route->method = $request->getMethod();
-         $request->setParams($route->params);
          return $route;
       } else {
          return NULL;

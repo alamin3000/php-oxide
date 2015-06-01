@@ -107,11 +107,24 @@ abstract class Debug {
     */
    public static function dump($var, $returnString = false) {
       $trace = debug_backtrace();
+      $html = <<<EOF
+        <div>
+          <p>Debug info: <strong>Line</strong> ({$trace[0]["line"]})
+              
+        </div>
+              
+              
+EOF;
+      
+      
+      
+//      echo "<div style='position: fixed; bottom:0px; left:0px;'>";
       echo "<pre>";      
       ob_start();
       echo call_user_func_array('var_dump', func_get_args());
       echo htmlentities(ob_get_clean());
       echo "</pre>";     
-      echo "<p><strong>File:</strong> {$trace[0]["file"]} <strong>Line:</strong> {$trace[0]["line"]}</p>";      
+      echo "<p><strong>File:</strong> {$trace[0]["file"]} <strong>Line:</strong> {$trace[0]["line"]}</p>"; 
+//      echo "</div>";
    }
 }
