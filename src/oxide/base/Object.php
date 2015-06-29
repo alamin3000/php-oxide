@@ -8,8 +8,7 @@ use oxide\base\pattern\ExtendableTrait;
  * Supports readonly properties and modification tracking
  */
 class Object 
-   extends AbstractClass 
-   implements Stringify, \Serializable {
+   implements \Serializable {
    use PropertyAccessTrait, ExtendableTrait;
    
    protected

@@ -10,7 +10,7 @@ use ReflectionClass;
  * @package oxide
  * @subpackage base
  */
-abstract class AbstractClass {
+abstract class ReflectingClass {
    private
       $_classDir = null,
       $_reflector = null,
@@ -66,6 +66,29 @@ abstract class AbstractClass {
       }
       
       return null;
+   }
+   
+   /**
+    * Invoke internal method (with given args) with signature validation
+    * 
+    * @param type $method
+    * @param array $args
+    * @throws \Exception
+    */
+   protected function invokeMethod($method, array $args = null) {
+      $reflection = new \ReflectionMethod($this, $method);
+      $argsCount = ($args === null) ? 0 : count($args);
+      
+      if($argsCount < $reflection->getNumberOfRequiredParameters()) {
+         throw new \InvalidArgumentException("Invalid Param count. (less than required)");
+      }
+      
+      if($argsCount > $reflection->getNumberOfParameters()) { 
+         throw new \InvalidArgumentException("Invalid Param count. (more than allowed)");
+      }
+      
+      $reflection->setAccessible(true);
+      return $reflection->invokeArgs($this, $args);
    }
    
    /**

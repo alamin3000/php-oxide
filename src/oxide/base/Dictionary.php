@@ -9,7 +9,6 @@
  */
 
 namespace oxide\base;
-use oxide\base\pattern\ArrayAccessTrait;
 
 /**
  * Dictionary
@@ -17,17 +16,17 @@ use oxide\base\pattern\ArrayAccessTrait;
  * Standard dictionary object
  * Provides assoicative array interface for storing key/value data
  */
-class Dictionary 
-   implements \ArrayAccess, \Countable, \IteratorAggregate {
-   use ArrayAccessTrait;
-
+class Dictionary extends \ArrayObject {
    /**
     * Construct the dictionary with given $data, if any
     * 
     * @param mixed $data
     */
    public function __construct($data = null) {
-      if($data) $this->setArray ($data);
+      parent::__construct();
+      if($data) {
+         $this->exchangeArray($data);
+      }
    }
    
    /**
@@ -72,56 +71,43 @@ class Dictionary
     * @return void
     */
    public function get($key, $default = null, $required = false) {
-	   if(!$this->offsetExists($key)) {
-		   if($required) {
-            throw new \Exception("Required key: {$key} not found.");
-         } else {
-            return $default;
+      if(is_array($key)) {
+         $vals = [];
+         foreach($key as $akey) {
+            $vals[] = $this->get($akey, $default, $required);
          }
-	   }
-      
-      return $this->offsetGet($key);
+         
+         return $vals;
+      } else {
+         if(!isset($this[$key])) {
+            if($required) {
+               throw new \Exception("Required key: {$key} not found.");
+            } else {
+               return $default;
+            }
+         }
+         
+         return $this[$key];
+      }
    }
-   
+
    /**
     * set function.
     * 
     * @access public
-    * @param mixed $key
+    * @param mixed $keys
     * @param mixed $value
-    * @return void
+    * @return self influet interface
     */
-   public function set($key, $value) {
-	   $this->offsetSet($key, $value);
-      
-      return $this;
-   }
-   
-   /**
-    * Overrides to add Dictionary $data param support
-    * 
-    * @param \oxide\base\Dictionary $data
-    * @throws \InvalidArgumentException
-    */
-   public function setArray($data) {
-      if(is_array($data)) {
-         $this->_t_array_storage = $data;
-      } else if($data instanceof Dictionary) {
-         $this->_t_array_storage = $data->toArray();
+   public function set($keys, $value = null) {
+      if(is_array($keys)) {
+         foreach($keys as $key => $value) {
+            $this[$key] = $value;
+         }
       } else {
-         throw new \InvalidArgumentException('Invalid data passed.');
+         $this[$keys] = $value;
       }
       
       return $this;
-   }
-   
-   /**
-    * Get the iterator
-    * Implementing IteratorAggregate interface
-    */
-   public function getIterator() {
-      foreach ($this->_t_array_storage as $item) {
-          yield $item;
-      }
    }
 }

@@ -3,7 +3,6 @@ namespace oxide\base\pattern;
 
 trait ResolverTrait {
 	protected       
-   	$_t_defaultResolver = null,
    	$_t_resolvers = [];
    
 	/**
@@ -17,7 +16,6 @@ trait ResolverTrait {
 		$this->_t_resolvers[$name] = $closure;
 	}
 	
-	
 	/**
 	 * hasResolver function.
 	 * 
@@ -28,40 +26,11 @@ trait ResolverTrait {
 	public function hasResolver($name) {
 		return isset($this->_t_resolvers[$name]);
 	}
+   
+   
+   	
+   
 	
-	/**
-	 * bindDefault function.
-	 * 
-	 * @access public
-	 * @param \Closure $closure
-	 * @return void
-	 */
-	public function setDefaultResolver(\Closure $closure) {
-		$this->_t_defaultResolver = $closure;
-	}
-	
-	protected function createWithDependecyInjected($class) {
-	   $reflector = new \ReflectionClass($class);
-	   $constructor = $reflector->getConstructor();
-	   if($constructor->getNumberOfParameters() > 0) {
-		   $params = $constructor->getParameters();
-		   foreach($params as $param) {
-			   $paramClass = $param->getClass();
-			   $paramName = $param->getName();
-		   }
-	   }
-   }
-	
-	/**
-	 * getDefaultBind function.
-	 * 
-	 * @access public
-	 * @return void
-	 */
-	public function getDefaultResolver() {
-		return $this->_t_defaultResolver;
-	}
-	   
 	/**
 	 * resolve function.
 	 * 
@@ -70,15 +39,11 @@ trait ResolverTrait {
 	 * @return void
 	 */
 	public function resolve($name) {
-		$closure = null;
-		if(isset($this->_t_resolvers[$name])) {
-			$closure = $this->_t_resolvers[$name];
-		} else if($this->_t_defaultResolver) {
-			$closure = $this->_t_defaultResolver;
-		} else {
-			return null;
-		}
+		if(!isset($this->_t_resolvers[$name])) {
+         return null;
+      }
 		
+      $closure = $this->_t_resolvers[$name];
 		$object = $closure($this, $name);
 		return $object;
 	}

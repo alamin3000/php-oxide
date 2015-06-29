@@ -104,7 +104,7 @@ trait ArrayAccessTrait {
     * Class using this trait should implement Countable in the declaration
     * @return int
     */
-   public function count($mode = 'COUNT_NORMAL') {
+   public function count($mode = COUNT_NORMAL) {
       return count($this->_t_array_storage, $mode);
    }
    
