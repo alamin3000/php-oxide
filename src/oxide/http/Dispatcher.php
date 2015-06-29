@@ -1,6 +1,5 @@
 <?php
 namespace oxide\http;
-use oxide\util\EventNotifier;
 
 /**
  * dispatcher
@@ -37,10 +36,6 @@ class Dispatcher {
     * @notifies DispatcherPostDispatch
 	 */
 	public function dispatch(Route $route, Context $context) {
-		// retrive the routed module and action.
-      $notifier = EventNotifier::sharedInstance();
-      $notifier->notify('DispatcherDispatch', $this, ['route' => $route]);
-
       $factory = new CommandFactory();
 		$command = $factory->create($route);
       

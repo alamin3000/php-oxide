@@ -17,13 +17,11 @@ class Router {
 		$defaultModule = 'home',
 		$defaultController = 'default',
       $indexFile = 'index.php',
-		$defaultAction = '';
+		$defaultAction = 'index';
 	
 	protected
       $_config = null,
       $_registry = [],
-      $_routes = [],
-		$_schema = ['module', 'controller', 'action', 'params'],
 		$_separator = '/';
    
 	const
@@ -32,7 +30,7 @@ class Router {
 		ACTION      = 'action',
 		PARAMS      = 'params';
    
-   public function __construct(Container $config = null) {
+   public function __construct(array $config = null) {
       if($config)
          $this->_config = $config;
    }
@@ -54,6 +52,23 @@ class Router {
    public function unregister($path) {
       unset($this->_registry[$path]);
    }
+   
+   /**
+    * Create a route based on given array
+    * 
+    * @param array $arr
+    * @return Route
+    */
+   public function arrayToRoute(array $arr) {
+      $route = new Route();
+      $route->module = isset($arr['module']) ? $arr['module'] : $this->defaultModule;
+      $route->controller = isset($arr['controller']) ? $arr['controller'] : $this->defaultController;
+      $route->action = isset($arr['action']) ? $arr['action'] : $this->defaultAction;
+      $route->params = isset($arr['params']) ? (array) $arr['params'] : [];
+      $route->path = isset($arr['path']) ? $arr['path'] : implode('/', array_values($arr));
+      
+      return $route;
+   }
       
 	/**
 	 * create route from given url path
@@ -72,31 +87,17 @@ class Router {
       $url = str_replace('//', '/', str_replace($this->indexFile, '', $path));
       
       $route = new Route();
-		$schema = $this->_schema;
 		$parsed = \parse_url($url);
 		$parts = explode($this->_separator, trim($parsed['path'], '/'));
-		
-		$imodule			= \array_search(self::MODULE, $schema);
-		$icontroller	= \array_search(self::CONTROLLER, $schema);
-		$iaction			= \array_search(self::ACTION, $schema);
-		$iparam			= \array_search(self::PARAMS, $schema);
-
-		$route->module = (($imodule !== FALSE) 
-              && isset($parts[$imodule]) 
-              && !empty($parts[$imodule]))
-				  ? $parts[$imodule] : $this->defaultModule;
-		$route->controller = (($icontroller !== FALSE) 
-              && isset($parts[$icontroller]) 
-              && !empty($parts[$icontroller]))
-				  ? $parts[$icontroller] : $this->defaultController;
-		$route->action = (($iaction !== FALSE) 
-              && isset($parts[$iaction]) 
-              && !empty($parts[$iaction]))
-				  ? $parts[$iaction] : $this->defaultAction;
-		$route->params = (($iparam !== FALSE) 
-              && isset($parts[$iparam]) 
-              && !is_null($parts[$iparam]))
-				  ? \array_slice($parts, $iparam) : array();
+      
+      $shiftParts = function($default = null) use (&$parts) {
+         return (isset($parts[0]) && !empty($parts[0])) ? array_shift($parts) : $default;
+      };
+      
+      $route->module = $shiftParts($this->defaultModule);
+      $route->controller = $shiftParts($this->defaultController);
+      $route->action = $shiftParts($this->defaultAction);
+      $route->params = array_filter($parts);
 
       $route->path = $path;
 		return $route;
@@ -107,10 +108,10 @@ class Router {
 	 * getPathRelativeToBase function.
 	 * 
 	 * @access public
-	 * @param mixed $request
-	 * @return void
+	 * @param Request $request
+	 * @return string
 	 */
-	function getPathRelativeToBase($request) {
+	function getPathRelativeToBase(Request $request) {
 		$path = $request->getUriComponents(Request::URI_PATH);
       $base = '/'. trim($request->getBase(), '/') . '/';
       
@@ -176,9 +177,11 @@ class Router {
       /*
        * we will also shift the routing parts to make space for the default module name
        */
-      array_unshift($route->params, $route->action); 	# glue the action part as param
+      if($route->action) {
+         array_unshift($route->params, $route->action); 	# glue the action part as param
+      }
       $route->action = $route->controller;				# set controller as action
-      $route->controller = $this->defaultController;# using default controller
+      $route->controller = $this->defaultController;  # using default controller
 
       // unshift may create an empty param
       // we need to remove that
@@ -197,7 +200,9 @@ class Router {
     * @param \oxide\http\Route $route
     */
    public function rerouteToDefaultAction(Route $route) {
-      array_unshift($route->params, $route->action); 	# glue the action part as param
+      if($route->action) {
+         array_unshift($route->params, $route->action); 	# glue the action part as param
+      }
       $route->action = $this->defaultAction;
       
       // unshift may create an empty param

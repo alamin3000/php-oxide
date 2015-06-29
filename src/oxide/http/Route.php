@@ -55,7 +55,6 @@ class Route {
        */
       $namespace = null,
 
-           
       /**
        * Directory path for the module.
        * This is useful to access the module directory in the various controllers.
@@ -63,7 +62,6 @@ class Route {
        * @var string
        */
       $dir = null,
-           
            
 		/**
 		 * array of param strings

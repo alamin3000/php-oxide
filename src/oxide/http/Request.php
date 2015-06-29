@@ -129,7 +129,7 @@ class Request {
     * 
     * @return \self
     */
-   public static function currentServerRequest() {
+   public static function currentServerRequest($base = null) {
       static $instance = null;
       if($instance === null) {
          $host = Server::vars('HTTP_HOST');
@@ -153,6 +153,10 @@ class Request {
          $instance->_method = Server::vars('REQUEST_METHOD');
          $instance->_posts = filter_input_array(INPUT_POST, FILTER_UNSAFE_RAW);
          $instance->_headers = getallheaders();
+      }
+      
+      if($base) {
+         $instance->setBase($base);
       }
       
       return $instance;

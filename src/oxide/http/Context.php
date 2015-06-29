@@ -11,10 +11,23 @@ use oxide\base\Container;
  * @subpackage http
  */
 class Context extends Container {
-	public function __construct(Request $request, Response $response) {
+   /**
+    * Create http context
+    * 
+    * @param \oxide\http\Request $request
+    * @param \oxide\http\Response $response
+    * @param \oxide\http\Session $session
+    */
+	public function __construct(Request $request, Response $response, Session $session) {
 		parent::__construct();
       $this->set('request', $request); 
       $this->set('response', $response);
+      $this->set('session', $session);
+      
+      // setup the authentication based on the session
+      $this->addResolver('auth', function() {
+         return new Auth(new AuthStorage($this->get('session')));
+      });
 	}
   
    /**
@@ -32,4 +45,21 @@ class Context extends Container {
 	public function getResponse() {
       return $this->get('response');
 	}
+   
+   /**
+    * 
+    * @return Session
+    */
+   public function getSession() {
+      return $this->get('session');
+   }
+   
+   /**
+    * Get user auth
+    * 
+    * @return Auth
+    */
+   public function getAuth() {
+      return $this->get('auth');
+   }
 }

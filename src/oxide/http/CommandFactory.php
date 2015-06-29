@@ -63,6 +63,7 @@ class CommandFactory {
    }
 
    
+   
    /**
     * Convert string to a controller/action name
     * @param type $string
@@ -70,6 +71,6 @@ class CommandFactory {
     */
    public static function stringToName($string) {
       return
-         str_replace(' ', '', ucwords(str_replace(['-','_'], ' ', $string)));
+         str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
    }
 }

@@ -32,14 +32,6 @@ class FrontController {
 		$_dispatcher = null;
    
    /**
-    * 
-    * @return self
-    */
-   public static function sharedController() {
-      return self::sharedInstance();
-   }
-   
-   /**
     * Initializes the front controller
     * @param Context $context
     */
@@ -75,26 +67,6 @@ class FrontController {
 		
 		return $this->_router;
 	}
-   
-   /**
-    * 
-    * @param Dispatcher $dispatcher
-    */
-   public function setDispatcher(Dispatcher $dispatcher) {
-      $this->_dispatcher = $dispatcher;
-   }
-	
-   /**
-    * Get the 
-    * @return Dispatcher
-    */
-	public function getDispatcher() {
-		if($this->_dispatcher === null) {
-			$this->_dispatcher = new Dispatcher();
-		}
-		
-		return $this->_dispatcher;
-	}
 	
 	
    /**
@@ -125,13 +97,11 @@ class FrontController {
          }
          
          // dispatch using the routing information
-         $dispatcher = $this->getDispatcher();
-         $context->set('dispatcher', $dispatcher);
-         $notifier->notify(self::EVENT_PRE_DISPTACH, $this, $dispatcher, $route);
+         $notifier->notify(self::EVENT_PRE_DISPTACH, $this, $route);
          if(!$route->completed) {
-            $dispatcher->dispatch($route,$context);
+            $this->dispatch($route,$context);
          }
-         $notifier->notify(self::EVENT_POST_DISPATCH, $this, $dispatcher, $route);
+         $notifier->notify(self::EVENT_POST_DISPATCH, $this, $route);
       }
       
       catch(\Exception $exception) {
@@ -146,5 +116,47 @@ class FrontController {
          $response->send(false);
          $notifier->notify(self::EVENT_END, $this);
 		}
+   }
+   
+   
+   /**
+    * Dispatches the $route to command for executing
+    * 
+    * @param \oxide\http\Route $route
+    * @throws exception\HttpException
+    */
+   public function dispatch(Route $route) {
+      $context = $this->getContext();
+      
+      // attempt to create the command using the route
+      $factory = new CommandFactory();
+      $command = $factory->create($route);
+      
+      // if unable to find the controller
+      // attempt to reroute to the default controller
+		if(!$command) {
+        $router = $this->getRouter();  
+        if($router) {
+           $router->rerouteToDefaultController($route);
+           // try again to crate command using new route info
+           $command = $factory->create($route);
+        }
+		}
+      
+      // if controller failed to load
+		// we will throw exception
+		if(!$command) {
+			// requested module's controller file was not found
+			// this is basically an internal error.
+		  	throw new exception\HttpException("Unable dispatch. [Module: '{$route->module}', "
+         . "Controller: '{$route->controller}', Directory: '{$route->dir}']", 500);
+      }
+      
+      if(!$command instanceof Command) {
+         throw new exception\HttpException("Command is not instace of Command");
+      }
+      
+      // finally dispatching
+      $command->execute($context);
    }
 }
