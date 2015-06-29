@@ -14,6 +14,12 @@ use oxide\base\Dictionary;
 class Mailer extends \PHPMailer {
    use \oxide\base\pattern\SharedInstanceTrait;
    
+   /**
+    * 
+    * @param bool $exceptions
+    * @param Dictionary $config
+    * @throws \Exception
+    */
    public function __construct($exceptions = false, Dictionary $config = null) {
       parent::__construct($exceptions);
       
@@ -46,6 +52,9 @@ class Mailer extends \PHPMailer {
       }
    }
    
+   /**
+    * 
+    */
    public function resetAll() {
       $this->clearAddresses();
       $this->clearAllRecipients();

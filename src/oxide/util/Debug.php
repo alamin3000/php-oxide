@@ -105,26 +105,16 @@ abstract class Debug {
     * @param mixed $var
     * @param bool $returnString
     */
-   public static function dump($var, $returnString = false) {
+   public static function dump($var, $returnString = false, $index = 0) {
       $trace = debug_backtrace();
-      $html = <<<EOF
-        <div>
-          <p>Debug info: <strong>Line</strong> ({$trace[0]["line"]})
-              
-        </div>
-              
-              
-EOF;
-      
-      
-      
 //      echo "<div style='position: fixed; bottom:0px; left:0px;'>";
       echo "<pre>";      
       ob_start();
-      echo call_user_func_array('var_dump', func_get_args());
+      print_r($var);
+//      echo var_dump($var);
       echo htmlentities(ob_get_clean());
       echo "</pre>";     
-      echo "<p><strong>File:</strong> {$trace[0]["file"]} <strong>Line:</strong> {$trace[0]["line"]}</p>"; 
+      echo "<p><strong>File:</strong> {$trace[$index]["file"]} <strong>Line:</strong> {$trace[$index]["line"]}</p>"; 
 //      echo "</div>";
    }
 }
