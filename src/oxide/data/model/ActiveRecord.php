@@ -48,6 +48,16 @@ abstract class ActiveRecord extends DataObject {
    }
    
    /**
+    * 
+    * @param string $tablename
+    * @param string $pkfield
+    */
+   static protected function setTableInfo($tablename, $pkfield) {
+      static::$_table = $tablename;
+      static::$_pk = $pkfield;
+   }
+   
+   /**
     * Get active connection for the record
     * 
     * If local connection not found, it will attempt to return the shared connection
@@ -169,7 +179,7 @@ abstract class ActiveRecord extends DataObject {
       
       $conn = $this->connection();
       $pkfield = static::getPkColumn();
-      $pkvalue = $this->_data[$pkfield];
+      $pkvalue = $this[$pkfield];
       if(!$pkvalue) return false;
 
       $query = new sql\DeleteQuery(static::getTable(), $conn);
@@ -219,7 +229,7 @@ abstract class ActiveRecord extends DataObject {
       $db = $this->connection();
       $table = static::getTable();
       $pkfield = static::getPkColumn();
-      $pkvalue = $this->_data[$pkfield];
+      $pkvalue = $this[$pkfield];
 		$data = $this->getModifiedData();
 
       // update data in the database

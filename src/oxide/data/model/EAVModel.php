@@ -33,7 +33,12 @@ class EAVModel implements \IteratorAggregate {
 		$this->_filters = $filters;
 	}
    
-   public function configure($param) {
+   /**
+    * Configure the model
+    * 
+    * @param array $param
+    */
+   public function configure(array $param) {
       if(isset($param['key'])) $this->_keyField = $param['key'];
       if(isset($param['value'])) $this->_valueField = $param['value'];
    }
@@ -42,9 +47,9 @@ class EAVModel implements \IteratorAggregate {
    /**
     *
     * @access public
-    * @param type $config 
+    * @param array $config 
     */
-   public static function createWithParam($config) {
+   public static function createWithParam(array $config) {
       
    }
 
@@ -166,19 +171,19 @@ class EAVModel implements \IteratorAggregate {
 	 * @param string $value
 	 */
 	public function set($key, $value) {
-	   $this->__set($key, $value);
+	   $this->$key = $value;
 	}
    
    public function get($key) {
-      return $this->__get($key);
+      return $this->$key;
    }
    
    public function remove($key) {
-      $this->__unset($key);
+      unset($this->$key);
    }
    
    public function has($key) {
-      return $this->__isset($key);
+      return isset($this->$key);
    }
 
 	/**

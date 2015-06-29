@@ -410,4 +410,7 @@ class Connection {
       $this->_pdo = NULL;
    }
 
+   public function __destruct() {
+      $this->close();
+   }
 }
