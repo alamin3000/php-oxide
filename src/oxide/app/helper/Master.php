@@ -66,7 +66,7 @@ class Master extends Container {
     */
    public function metas($name = null, $content = null, $nameKey = 'name', $contentKey = 'content') {
       if($name) {
-         $this->metas[] = ['meta', null, [$nameKey => $name, $contentKey => $content]];
+         $this->metas[] = ['meta', null, [$nameKey => $name, $contentKey => $content], true];
       } else {
          return $this->_html->tags($this->metas);
       }

@@ -17,6 +17,8 @@ namespace oxide\base;
  * Provides assoicative array interface for storing key/value data
  */
 class Dictionary extends \ArrayObject {
+   use pattern\ObserableTrait;
+   
    /**
     * Construct the dictionary with given $data, if any
     * 

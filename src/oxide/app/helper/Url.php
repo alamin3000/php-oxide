@@ -1,6 +1,7 @@
 <?php
 namespace oxide\app\helper;
 use oxide\http\Request;
+use oxide\http\Route;
 
 /**
  * 
@@ -10,10 +11,14 @@ class Url {
       $_route = null,
       $_request = null;
    
-   public function __construct(HelperContainer $container) {
-      $context = $container->getContext();
-      $this->_request = $context->get('request');
-      $this->_route = $context->get('route');
+   /**
+    * 
+    * @param Request $request
+    * @param Route $route
+    */
+   public function __construct(Request $request, Route $route) {
+      $this->_request = $request;
+      $this->_route = $route;
    }
    
    public function build($path, $query = null, $fragment = null) {

@@ -1,12 +1,13 @@
 <?php
 
 namespace oxide\app;
-use oxide\base\AbstractClass;
+use oxide\base\ReflectingClass;
 use oxide\http\Command;
 use oxide\http\CommandFactory;
 use oxide\http\Route;
 use oxide\http\Context;
-use oxide\util\EventNotifier;
+use oxide\base\Dictionary;
+use oxide\util\ConfigManager;
 
 /**
  * Action Controller
@@ -21,19 +22,56 @@ use oxide\util\EventNotifier;
  * @subpackage application
  */
 abstract class Controller 
-   extends AbstractClass 
+   extends ReflectingClass 
    implements Command {
    
-	protected  
+   protected
+      /**
+       * If set to true, the Controller will forward all actions to the default action (index)
+       * 
+       * Action name will be treated as param and  added to the params array
+       * Must be set during initialization (onInit method)
+       * @var bool
+       */
+      $forwardAllToIndex = false,
+           
+      /**
+       * @var bool
+       */
+      $autoRender = true,
+           
+      /**
+       * @var string
+       */
+      $configFile = 'config.json',           
+      
+      /**
+       * @var ViewData Data container for the view
+       */
+      $viewData = null,
+           
+      /**
+       * @var HelperContainer Helper container class
+       */
+      $helpers = null;
+   
+	private  
+      /**
+       * @var string
+       */
+      $_defaultActionName = 'index',
+           
+           
       /**
        * @var Route
        */
       $_route = null,
-      
+           
       /**
-       * @var string
+       * @var Context
        */
-      $_configFile = 'config.json',
+      $_context = null,
+           
       
       /**
        * _config
@@ -44,36 +82,6 @@ abstract class Controller
       $_config = null,
            
       /**
-       * Http Context object
-       * @var Context
-       */
-      $_context = null,
-           
-      /**
-       * Default action.  If no action provided, this action name will be used.
-       * @var string 
-       */
-      $_defaultActionName = 'index',
-           
-      /**
-       * Indicates if all actions should be forwarded to $_defaultActionName
-       * @var bool 
-       */
-      $_catchAll = false,
-           
-      /**
-       * @var View 
-       */
-      $_view = null,
-           
-      /**
-       * Data container for view.
-       * 
-       * @var ViewData 
-       */
-      $_viewData = null,
-           
-      /**
        * View manager responsible for rendering view and layout
        * 
        * @var ViewManager
@@ -81,9 +89,9 @@ abstract class Controller
       $_viewManager = null,
            
       /**
-       * @var bool Indicates if rendering should be performed after action execution
-       */     
-      $_autoRender = true;
+       * 
+       */
+      $_aclManager = null;
       
 	/**
 	 * initialize the controller
@@ -94,23 +102,9 @@ abstract class Controller
 	 * @param Route $route
 	 */
 	public final function  __construct(Route $route) {
-		$this->_route = $route;
-      $action_name = $route->action;
-      if($this->_catchAll) {
-         if(!empty($action_name)) {
-            array_unshift($route->params, $action_name); // the action name part of the params
-            $route->params = array_filter($route->params); // remove any empty
-         }
-         
-         $route->action = $this->_defaultActionName;
-      } else {
-         // for to appropriate action method
-         if(empty($action_name)) {
-            $route->action = $this->_defaultActionName;
-         }
-      }
+      $this->_route = $route;
 	}
-   
+      
    /**
     * Get the route object for the controller
     * 
@@ -129,59 +123,20 @@ abstract class Controller
    }
    
    /**
-    * Get the data container
     * 
-    * All data set to the container will be available to the view
-    * @return ArrayContainer
+    * @return AclManager
     */
-   public function getViewData() {
-      if($this->_viewData == null) {
-         $this->_viewData = new ViewData(null, $this->getContext());
-      }
-      return $this->_viewData;
-   }
-   
-   /**
-    * 
-    * @param \oxide\app\ViewData $data
-    */
-   public function setViewData(ViewData $data) {
-      $this->_viewData = $data;
-   }
-   
-   /**
-    * Get Params passed to the route
-    * 
-    * If $index is int, it will use simple array access
-    * If $index is string, it will use paired path to get value
-    *    /module/controller/action/key/value
-    * @return array
-    */
-   public function getParams($index = null, $default = null) {
-      $params = $this->_route->params;
-      if($index === null) return $params;
-      if(is_int($index)) {
-         return (isset($params[$index])) ? $params[$index] : $default;
-      } else {
-         if(($keypos = array_search($index, $params)) !== FALSE) {
-            if(isset($params[$keypos+1])) {
-               return $params[$keypos+1];
-            } 
-         }
+   public function getAclManager() {
+      if($this->_aclManager == null) {
+         $config = ConfigManager::sharedInstance()->getConfig();
+         $roles = $config->get('roles', null, true);
+         $rules = $config->get('rules', null, true);
+         $this->_aclManager = new AclManager($this->getRoute(), $roles, $rules);
       }
       
-      return $default;
+      return $this->_aclManager;
    }
-   
-   /**
-    * 
-    * @param type $cardinality
-    * @param type $names
-    */
-   public function getAcceptedParams($cardinality, $names = null) {
-      
-   }
-	
+         
 	/**
 	 * get the view manager for the action controller
 	 *
@@ -227,62 +182,60 @@ abstract class Controller
       if($this->_config === null) {
          $cmanager = ConfigManager::sharedInstance();
          $namespace = $this->classBaseNamespace();
-         $config     = $cmanager->openConfigByDirectory($namespace, $this->_configFile);
+         $config     = $cmanager->openConfigByDirectory($namespace, $this->configFile);
          $this->_config = $config;
       }
       
       return $this->_config;
    }
    
-   /**
-    * 
-    * @param Context $context
-    */
-   private function validateAccess(Context $context) {
-      $config = ConfigManager::sharedInstance()->getConfig();
-      $roles = $config->get('roles', null, true);
-      $rules = $config->get('rules', null, true);
-      $route = $this->getRoute();
-      
-      // perform access validation
-      $auth = $context->get('auth');
-      $authManager = new auth\AuthManager($roles, $rules, $auth);
-      $authManager->validateAccess($route, EventNotifier::sharedInstance(), true);
-   }
    
    /**
 	 * forward to given $action immediately
 	 * 
+    * Route object will be updated accordinly
     * @access public
 	 * @param string $action
     * @throws Exception
 	 */
-	public function forward($action, ViewData $data) {
+	private function forward($action, array $params = null) {
       if(empty($action)) throw new Exception('Action name can not be empty.', 500);
       
-      $this->_route->action = $action;
-      $context = $this->getContext();
-      $request = $context->getRequest();
-      $httpmethod = strtoupper($request->getMethod());
-
       // generate and validate method name
       $action_filtered = CommandFactory::stringToName($action);
       if(!is_callable($action_filtered, true)) {
          throw new \BadMethodCallException("Invalid method: ".htmlentities($action_filtered));
       }
       
+      // get some data handy
+      $route = $this->getRoute();
+      $route->action = $action; // update the action in route
+      $route->params = $params;
+      
+      // we should perform access validation
+      $this->onAccessValidation();
+      
+      // start forwarding
+      $httpmethod = strtoupper($route->method);
+      
       // various methods that will be called
 		$method = $this->generateActionMethod($action_filtered);
       $method_http = "{$method}__{$httpmethod}";
-
+      
       if(method_exists($this, $method_http)) { // calling specialized HTTP method
-         return $this->{$method_http}($context, $data);
+         $action_method = $method_http;
       } else if(method_exists($this, $method)) { // calling generic method
-         return $this->{$method}($context, $data);
+         $action_method = $method;
       } else { // no method is provided
-         return $this->onUndefinedAction($context, $action);
+         $action_method = null;
       }
-	}   
+      
+      if($action_method) {
+         return $this->invokeMethod($method, $params);
+      } else {
+         return $this->onUndefinedAction($action, $params);
+      }
+	}
    
    /**
 	 * this method determine which action method to call and the attempts to call
@@ -292,15 +245,19 @@ abstract class Controller
 	 */
 	final public function execute(Context $context) {
       $this->_context = $context;
+      $route = $this->getRoute();
       
       try {
-         $data = $this->getViewData();
-         $this->validateAccess($context);
          $this->onInit($context); // call initializer
-         $view = $this->onExecute($context, $data);
+         
+         $view = $this->onExecute($context, $route);
          
          // rendering the view, if enabled (default)
-         if($this->_autoRender) {
+         if($this->autoRender) {
+            if($view === null || !($view instanceof View)) {
+               throw new \Exception("onExecute must return a view.");
+            }
+            
             $this->onRender($context, $view);
          }
          
@@ -313,12 +270,25 @@ abstract class Controller
 	}
    
    /**
+    * Performs access validations
+    * 
+    * @param Context $context
+    */
+   protected function onAccessValidation() {
+      $this->getAclManager()->performValidation($this->getContext()->getAuth());
+   }
+
+   
+
+   /**
     * Subclassing controller must/should call parent::onInit if overriding
     * 
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      
+      $helpers = helper\HelperContainer::sharedInstance();
+      $this->viewData = new ViewData(null, $helpers);
+      $this->helpers = $helpers;
    }
    
    /**
@@ -327,11 +297,25 @@ abstract class Controller
     * @param ViewData $data
     * @return View
     */
-   protected function onExecute(Context $context, ViewData $data) {
-      $view =  $this->forward($this->_route->action, $data);
+   protected function onExecute(Context $context, Route $route) {
+      $params = $route->params;
+      $action = null;
+      if($this->forwardAllToIndex) {
+         array_unshift($params, $route->action);
+         $action = $this->_defaultActionName;
+      } else {
+         $params = $route->params;
+         if($route->action === null) {
+            $action = $this->_defaultActionName;
+         } else {
+            $action = $route->action;
+         }
+      }
+      
+      $view =  $this->forward($action, $params);
       if($view === null) {
          $viewManager = $this->getViewManager();
-         $view = $viewManager->createView($data);
+         $view = $viewManager->createView($route->action, $this->viewData);
       }
       
       return $view;
@@ -345,12 +329,10 @@ abstract class Controller
     * @throws Exception
     */
    protected function onRender(Context $context, View $view) {
-      $viewManager = $this->getViewManager();
       $response = $context->getResponse();
-
-      $prepview = $viewManager->prepareView($view);
-      $response->setContentType($prepview->getContentType(), $prepview->getEncoding());
-      $response->addBody($prepview->render());
+      
+      $response->setContentType($view->getContentType(), $view->getEncoding());
+      $response->addBody($view->render());
    }
    
    /**
@@ -375,7 +357,7 @@ abstract class Controller
     * @param type $action
     * @throws Exception
     */
-   protected function onUndefinedAction(Context $context, $action) {
-      throw new \Exception("Action: [$action] is not found defined in: [" . get_called_class() . "] controller.");
-   }  
+   protected function onUndefinedAction($action, array $params) {
+      throw new \Exception("Action: [$action] is not defined in: [" . get_called_class() . "] controller.");
+   }
 }

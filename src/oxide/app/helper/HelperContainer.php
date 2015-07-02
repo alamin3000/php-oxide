@@ -34,6 +34,8 @@ class HelperContainer extends Container {
     */
    public function __construct(Context $context) {
       parent::__construct();
+      $this->setFlags(self::ARRAY_AS_PROPS);
+      
       $this->_context = $context;
       $this->registerBuiltInHelpers();
    }
@@ -64,6 +66,24 @@ class HelperContainer extends Container {
          });
       }
    }
+   
+//   public static function get($helpers = null) {
+//      $instance = static::sharedInstance();
+//      
+//      if($helpers) {
+//         if(is_array($helpers)) {
+//            return $instance->getTuple($helpers);
+//         } else {
+//            if(func_num_args() > 1) {
+//               return $instance->getTuple(func_num_args());
+//            } else {
+//               return $instance->offsetGet($helpers);
+//            }
+//         }
+//      }
+//   
+//      return $instance;
+//   }
    
    /**
     * Override getter to allow multiple get using array

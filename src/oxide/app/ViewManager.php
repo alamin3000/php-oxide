@@ -2,6 +2,7 @@
 namespace oxide\app;
 use oxide\http\Route;
 use oxide\ui\Page;
+use oxide\ui\Renderer;
 
 /**
  * View Controller
@@ -33,6 +34,7 @@ class ViewManager {
       $_contentView = null,
       $_defaultTemplateKey = 0,
       $_view = null,
+      $_viewData = null,
       $_layoutView = null;
 
    /**
@@ -90,7 +92,7 @@ class ViewManager {
     */
    public function setRoute(Route $route) {
       $this->_route = $route;
-   }
+   }  
    
    /**
     * Create a new view using given $script
@@ -99,17 +101,29 @@ class ViewManager {
     * @param string|null $script
     * @return Page
     */
-   public function createView(ViewData $data, $script = null) {
-      if($script === null) {
-         $script = $this->_route->action;
-      }
+   public function createView($script, ViewData $data) {
       $templateScript = $this->getTemplateScript($script); // get templatized script
-      $page = new Page($templateScript, $data);
-      $view = new View($page);
-      $view->setData($data);
+      $page = new Page($templateScript);
+      $page->setData($data);
+      
+      // use layout page if not disabled
+      if(!$this->disableLayout) {
+         $layoutPage = $this->getLayoutPage();
+         $layoutPage->addPartial($page, null); 
+         $layoutPage->setData($data);
+         $view = new View($layoutPage);
+      } else {
+         $view = new View($page);
+      }
       return $view;
    }
    
+   public function createViewWithRenderer(Renderer $renderer) {
+      $layout = $this->getLayoutPage();
+      $layout->addPartial($renderer, null); 
+      return new View($layout);
+   }
+      
    /**
     * returns the current active template directory
     * if template found for the module, it will return that
@@ -232,13 +246,8 @@ class ViewManager {
     * @return View
     */
    public function prepareView(View $view) {
-      if(!$this->disableLayout) {
-         $layoutPage = $this->getLayoutPage(); 
-         $layoutPage->setData($view->getData()); // share the data with layout page
-         $layoutPage->addPartial($view->getRenderer(), null); 
-         return new View($layoutPage);
-      } else {
-         return $view;
-      }
+      
+      
+      return $view;
    }
 }

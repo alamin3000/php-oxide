@@ -1,8 +1,7 @@
 <?php
 namespace oxide\ui\html;
-use oxide\base\String;
+use oxide\base\ArrayString as String;
 use oxide\ui\Renderer;
-use oxide\base\pattern\ArrayFunctionsTrait;
 use oxide\base\pattern\ArrayAccessTrait;
 /**
  * Html Element
@@ -14,7 +13,7 @@ use oxide\base\pattern\ArrayAccessTrait;
 class Element 
    extends Tag 
    implements \ArrayAccess, \Countable , \IteratorAggregate {   
-   use ArrayAccessTrait, ArrayFunctionsTrait; 
+   use ArrayAccessTrait; 
    
 	protected
       /**
@@ -48,7 +47,7 @@ class Element
     * @param mixed $html
     */
    public function setHtml($html) {
-      $this->_t_array_storage = [$html];
+      $this->exchangeArray($html);
       
       return $this;
    }
@@ -102,8 +101,8 @@ class Element
 	 * @return void
 	 */
 	public function getIterator() {
-		foreach ($this->_t_array_storage as $item) {
-         yield $item;
+		foreach ($this->_t_array_storage as $offset => $item) {
+         yield $offset => $item;
       }
 	}
    
@@ -165,11 +164,12 @@ class Element
             return $renderer->render();
          }
          
+         
          $this->onRenderOpen($buffer);
          $this->onRenderInner($buffer);
          $this->onRenderClose($buffer);    
          
-         return $buffer->__toString();
+         return (string) $buffer;
       }
       
       catch (\Exception $e) {
@@ -190,7 +190,7 @@ class Element
     */
    public function renderInner() {
       $buffer = '';
-      foreach($this->_t_array_storage as $inner) {
+      foreach($this as $inner) {
          if($inner instanceof Renderer) {
             $buffer .= $inner->render();
          } else {
@@ -232,7 +232,7 @@ class Element
     * @param type $key
     * @param \oxide\ui\html\Element $value
     */
-   protected function _t_array_access_set($key, $value) {
+   protected function onArrayAccessSet($key, $value) {
       if($value instanceof Element) {
          $value->setParent($this);
       }
@@ -243,7 +243,7 @@ class Element
     * @param type $key
     * @param \oxide\ui\html\Element $value
     */
-   protected function _t_array_access_unset($key, $value) {
+   protected function onArrayAccessUnset($key, $value) {
       if($value instanceof Element) {
          $value->setParent(null);
       }

@@ -11,14 +11,15 @@
 namespace oxide\ui;
 use oxide\base\Dictionary;
 
-class Page implements Renderer {
+class Page implements Renderer, \ArrayAccess {
    protected
-   	$_dataVariableName = null,
+      $data = null;
+   
+   protected
       $_prerenders = [],
       $_parent = null,
       $_cache = null,
       $_partials = [],
-      $_data = null,
       $_codeScript = null,
       $_script = null;
    
@@ -26,7 +27,7 @@ class Page implements Renderer {
     * 
     * @param string $script
     */
-   public function __construct($script = null, Dictionary $data = null, $codeScript = null) {
+   public function __construct($script = null, \ArrayObject $data = null, $codeScript = null) {
       $this->_script = $script;
       if($data) {
          $this->setData($data);
@@ -34,26 +35,13 @@ class Page implements Renderer {
       if($codeScript) $this->setCodeScript ($codeScript);
    }
    
-   
-   /**
-    * Change the data variable name for the view script.
-    * 
-    * By default variable named 'data' ($data) will be available to the view script
-    * @access public
-    * @param mixed $varname
-    * @return void
-    */
-   public function setDataVariableName($varname) {
-	   $this->_dataVariableName = $varname;
-   }
-   
    /**
     * Set data for the page script
     * 
     * @param Dictionary $data
     */
-   public function setData(Dictionary $data) {
-      $this->_data = $data;
+   public function setData(\ArrayObject $data) {
+      $this->data = $data;
    }
    
    
@@ -64,12 +52,8 @@ class Page implements Renderer {
     * @param mixed $key (default: null)
     * @return void
     */
-   public function getData($key = null) {
-	   if($key) {
-		   return $this->_data->get($key);
-	   }
-	   
-      return $this->_data;
+   public function getData() {      	   
+      return $this->data;
    }
    
    /**
@@ -161,11 +145,7 @@ class Page implements Renderer {
       if(!file_exists($script)) {
          trigger_error("View script '{$script}' not found", E_USER_ERROR);
       }
-      
-      if($this->_dataVariableName) {
-	      ${$this->_dataVariableName} = $data;
-      }
-      
+            
       include $script;
       return ob_get_clean();
    }
@@ -176,7 +156,7 @@ class Page implements Renderer {
     */
    public function render() {
       $script = $this->getScript();
-      $data = $this->_data;
+      $data = $this->data;
 
       // first execute the behind the page code if available
       if($this->_codeScript) {
@@ -189,5 +169,37 @@ class Page implements Renderer {
       }
       
       return $this->renderPage($script, $data);
+   }
+   
+   public function offsetExists($offset) {
+      return isset($this->data[$offset]);
+   }
+   
+   public function offsetGet($offset) {
+      return $this->data[$offset];
+   }
+   
+   public function offsetSet($offset, $value) {
+      $this->data[$offset] =  $value;
+   }
+   
+   public function offsetUnset($offset) {
+      unset($this->data[$offset]);
+   }
+   
+   public function __set($name, $value) {
+      $this->data->{$name} = $value;
+   }
+   
+   public function __get($name) {
+      return $this->data->{$name};
+   }
+   
+   public function __isset($name) {
+      return isset($this->data->{$name});
+   }
+   
+   public function __unset($name) {
+      unset($this->data->{$name});
    }
 }

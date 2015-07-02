@@ -191,7 +191,6 @@ class Connection {
 	 * @return Statement
 	 */
    public function prepare($sql) {
-		$this->connect();
 		return $this->getPDO()->prepare($sql);
 	}
    
@@ -207,7 +206,6 @@ class Connection {
 	 * @return Statement
 	 */
    public function query($sql) {
-		$this->connect();
 		return $this->getPDO()->query($sql);
 	}
    
@@ -220,7 +218,6 @@ class Connection {
 	 * @return int
 	 */
    public function exec($sql) {
-		$this->connect();
 		return $this->getPDO()->exec($sql);
 	}
 	

@@ -15,30 +15,21 @@ use oxide\util\PSR4Autoloader;
  * @param type $var
  */
 function dump($var) {
-   util\Debug::dump($var);
+   util\Debug::dump($var, false, 1);
 }
 
 /**
- * Convinient function for accessing shared helper container
+ * Function throws exception.
  * 
- * @param type $helper1
- * @return type
+ * Useful when can not use throw syntax (such as ternary operation)
+ * @param type $str
+ * @param type $code
  * @throws \Exception
  */
-function helper($helper1 = null) {
-   if(!app\helper\HelperContainer::hasSharedInstance()) {
-      throw new \Exception("Default Helper has not been set.");
-   }
-   
-   $helperContainer = app\helper\HelperContainer::sharedInstance();
-   if($helper1 === null) return $helperContainer;
-   else {
-      if(func_num_args() == 1)
-         return $helperContainer->offsetGet($helper1);
-      else
-         return $helperContainer->offsetGet(func_get_args());
-   }
+function exception($str = null, $code = null) {
+   throw new \Exception($str, $code);
 }
+
 
 /**
  * Oxide Loader
@@ -76,7 +67,9 @@ class Loader {
       return $this->autoloader;
    }
    
-   
+   /**
+    * Register the autoloader
+    */
    public function register() {
       // registering autoload for phpoxide
       $autoloader = $this->getAutoloader();
@@ -112,15 +105,18 @@ class Loader {
     * @return http\FrontController
     */
    public static function bootstrap($config_dir, $autorun = true) {
-	   static $boostrapping = false;
+	   static $boostrapping = null;
 	   if($boostrapping) {
 		   throw new \Exception("Bootstrapping already started.");
 	   }
 	   $boostrapping = true;
 	   
+      // register error handler
+      // this is needed to get exception thrown for standard php errors
 	   $errorhandler = new util\ErrorHandler();
 	   $errorhandler->register();
 	   
+      // get singleton loader and register it.
       $loader = self::getInstance();
       $loader->register();
       
@@ -130,37 +126,23 @@ class Loader {
       $notifier->notify(self::EVENT_BOOTSTRAP_START, null);
       
       // create the config manager and share it
-      $configManager = new app\ConfigManager($config_dir);
+      $configManager = new util\ConfigManager($config_dir);
       $config = $configManager->getConfig();
-      app\ConfigManager::setSharedInstance($configManager);
+      util\ConfigManager::setSharedInstance($configManager);
       
       // creating the http context
       // set some default services
-      // share the context
-      $request = http\Request::currentServerRequest();
-      if(isset($config['base'])) { // set the request base url path, if provided
-	      $request->setBase($config['base']);
-	   }
       $context = new http\Context(
-            $request, 
-            new http\Response());
+         $request = http\Request::currentServerRequest((isset($config['base']) ? $config['base'] : null)), 
+         new http\Response(),
+         new http\Session([
+               'cookie_domain' => $request->getUriComponents(http\Request::URI_HOST),
+               'cookie_secure' => $request->isSecured()
+            ])
+         );
+            
+      //
       util\Debug::setResponse($context->getResponse());
-      
-      // set session
-      $context->addResolver('session', function(http\Context $container) {
-         $request = $container->get('request');
-         $opt = [
-            'cookie_domain' => $request->getUriComponents(http\Request::URI_HOST),
-            'cookie_secure' => $request->isSecured()
-         ];
-         return new http\Session($opt);
-      });
-      
-      // setup the authentication
-      $context->addResolver('auth', function($container) {
-         return new app\auth\Authenticator(
-                 new app\auth\SessionStorage($container->get('session')));
-      });
       
       // configure the shared database conneciton
       data\Connection::setSharedInstance(function() use ($config){
@@ -177,8 +159,8 @@ class Loader {
       
       // setup mailer
       util\Mailer::setSharedInstance(function() use ($config) {
-         return new util\Mailer(true, 
-                 new base\Dictionary($config->get('email', null, true)));
+         $options = isset($config['email']) ? $config['email'] : exception('Email configuration not set.');
+         return new util\Mailer(true, new base\Dictionary($options));
       });
       
       // create the front controller and share it
@@ -186,14 +168,15 @@ class Loader {
       http\FrontController::setSharedInstance($fc);
       
       // load modules
-      $modules = $config->get('modules', NULL, TRUE);
+      $modules = isset($config['modules']) ? $config['modules'] : exception("Modules are required.");
       $loader->loadModules($modules, $fc->getRouter());
       
       // load libraries
-      $libraries = $config->get('libraries');
+      $libraries = isset($config['libraries']) ? $config['libraries'] : null;
       if($libraries) $loader->registerNamespaces ($libraries);
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);
+      
       // if autorun, run the front controller
 		if($autorun) {
 			$fc->run();
@@ -212,10 +195,9 @@ class Loader {
       $autoloader = $this->getAutoloader();
       if($modules) {
          foreach($modules as $module) {
-            $dic = new base\Dictionary($module);
-            $name = $dic->get('name', NULL, TRUE);
-            $dir = $dic->get('dir', NULL, TRUE);
-            $namespace = $dic->get('namespace', NULL, TRUE);
+            $name = isset($module['name']) ? $module['name'] : exception('Module name is required.');
+            $dir = isset($module['dir']) ? $module['dir'] : exception('Module dire is require.');
+            $namespace = isset($module['namespace']) ? $module['namespace'] : exception('Module namespace is required.');
             $autoloader->addNamespace($namespace, $dir);
             $router->register($name, $dir, $namespace);
          }

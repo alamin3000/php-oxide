@@ -2,7 +2,7 @@
 namespace oxide\base;
 
 class ArrayString extends \ArrayObject { 
-   use \oxide\base\pattern\ArrayObjectExtTrait;
+   use \oxide\base\pattern\ArrayObjectTrait;
    
    protected 
       $_stringify_callback = null;
@@ -48,26 +48,26 @@ class ArrayString extends \ArrayObject {
          $callback = $this->_stringify_callback;
          return $callback($this);
       } else {
-         return self::toString($this);
+         return implode('', $this->getArrayCopy());
       }
    }
-   
-   /**
-    * Get string from given $args
-    * 
-    * @param mixed $arg
-    * @return string
-    */
-   public static function toString($arg) {
-      if(is_scalar($arg)) return $arg;
-      else if($arg instanceof \oxide\ui\Renderer) return $arg->render();
-      else if(is_array ($arg) || $arg instanceof \Iterator) {
-         $buf = '';
-         foreach($arg as $val) {
-            $buf .= self::toString($val);
-         }
-         return $buf;
-      }
-      else return (string) $arg;
-   }
+//   
+//   /**
+//    * Get string from given $args
+//    * 
+//    * @param mixed $arg
+//    * @return string
+//    */
+//   public static function toString($arg) {
+//      if(is_scalar($arg)) return $arg;
+//      else if($arg instanceof \oxide\ui\Renderer) return $arg->render();
+//      else if(is_array ($arg) || $arg instanceof \Iterator) {
+//         $buf = '';
+//         foreach($arg as $val) {
+//            $buf .= self::toString($val);
+//         }
+//         return $buf;
+//      }
+//      else return (string) $arg;
+//   }
 }

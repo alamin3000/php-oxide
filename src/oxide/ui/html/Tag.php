@@ -10,23 +10,25 @@ class Tag implements Renderer {
       /**
        * @var bool Indicates if the current tag is void-tag or not
        */
-      $isVoid = false;
+      $isVoid = false,
+           
+      /**
+       * @var Tag
+       */
+      $wrapperTag = null;
+   
+   protected
+      /**
+       * @var array
+       */
+      $attributes = [];
+   
    
    protected 
       /**
        * @var string Name of the tag
        */
-      $_tagName = null,
-           
-      /**
-       * @var Tag Tag to be wrapped
-       */
-      $_wrapperTag = null,
-           
-      /**
-       * @var array Attributes
-       */
-      $_attributes = [];
+      $_tagName = null;
    
    /**
     * Create a new Html $tag
@@ -36,7 +38,7 @@ class Tag implements Renderer {
     */
    public function __construct($tag = null, $attributes = null, $void = false) {
       if($tag) $this->_tagName = $tag;
-      if($attributes) $this->_attributes = $attributes;
+      if($attributes) $this->attributes = $attributes;
       $this->isVoid = $void;
    }
    
@@ -67,7 +69,7 @@ class Tag implements Renderer {
     * @return string
     */
    public function getAttribute($key, $default = null) {
-      if(isset($this->_attributes[$key])) return $this->_attributes[$key];
+      if(isset($this->attributes[$key])) return $this->attributes[$key];
       else return $default;
    }
    
@@ -78,10 +80,10 @@ class Tag implements Renderer {
     * @param string $value
     */
    public function setAttribute($key, $value = null, $appendChar = null) {
-      if($appendChar && isset($this->_attributes[$key])) {
-         $value = $this->_attributes[$key] . $appendChar . $value;
+      if($appendChar && isset($this->attributes[$key])) {
+         $value = $this->attributes[$key] . $appendChar . $value;
       } else {
-         $this->_attributes[$key] = $value;
+         $this->attributes[$key] = $value;
       }
    }
    
@@ -91,7 +93,7 @@ class Tag implements Renderer {
     * @param string $key
     */
    public function removeAttribute($key) {
-      if($this->hasAttribute($this->_attributes[$key])) unset($this->_attributes[$key]);
+      if($this->hasAttribute($this->attributes[$key])) unset($this->attributes[$key]);
    }
    
    /**
@@ -101,7 +103,7 @@ class Tag implements Renderer {
     * @return bool
     */
    public function hasAttribute($key) {
-      return array_key_exists($key, $this->_attributes);
+      return array_key_exists($key, $this->attributes);
    }
    
    /**
@@ -110,52 +112,7 @@ class Tag implements Renderer {
     * @return array
     */
    public function getAttributes() {
-      return $this->_attributes;
-   }
-   
-   /**
-    * Sets attributes for the tag
-    * 
-    * Replaces current attributes.
-    * @param array $attrs
-    */
-   public function setAttributes(array $attrs) {
-      foreach($attrs as $key => $value) {
-	      $this->_attributes[$key] = $value;
-      }
-      
-      return $this;
-   }
-   
-   /**
-    * Removes all attributes from the tag
-    * 
-    * @return self fluent interface
-    */
-   public function clearAttributes() {
-      $this->_attributes = [];
-      
-      return $this;
-   }
-   
-   /**
-    * Set Tag to wrap this tag
-    * 
-    * @return Tag
-    */
-   public function getWrapperTag() {
-      return $this->_wrapperTag;
-   }
-   
-   /**
-    * Get current tag
-    * 
-    * @param Tag $tag
-    */
-   public function setWrapperTag(Tag $tag) {
-      $this->_wrapperTag = $tag;
-      
-      return $this;
+      return $this->attributes;
    }
    
    /**
@@ -175,12 +132,8 @@ class Tag implements Renderer {
     * @return string
     */
    final public function renderOpen() {
-      if($this->_wrapperTag) 
-         $wrapperOpen = $this->_wrapperTag->renderOpen();
-      else
-         $wrapperOpen = '';
-      
-      return $wrapperOpen.self::renderOpenTag($this->_tagName, $this->_attributes, $this->isVoid);
+      return (($this->wrapperTag) ? $this->wrapperTag->renderOpen() : '') .
+               self::renderOpenTag($this->_tagName, $this->attributes, $this->isVoid);
    }
    
    /**
@@ -190,11 +143,8 @@ class Tag implements Renderer {
     * @return string
     */
    final public function renderClose() {
-      if($this->_wrapperTag) 
-         $wrapperClose = $this->_wrapperTag->renderClose();
-      else
-         $wrapperClose = '';
-      return self::renderCloseTag($this->_tagName, $this->isVoid).$wrapperClose;
+      return self::renderCloseTag($this->_tagName, $this->isVoid).
+           (($this->wrapperTag) ? $this->wrapperTag->renderClose() : '');
    }
    
    /**

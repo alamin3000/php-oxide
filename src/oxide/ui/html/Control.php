@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\base\String;
+use oxide\base\ArrayString as String;
 
 /**
  * Defines an abstract class for creating HTML Control
@@ -67,13 +67,12 @@ class Control extends Element implements FormAware {
     * @param string $value
     * @param string $label
     */
-   public function __construct($name, $value = null, $label = null, $data = null, array $attributes = null) {
+   public function __construct($name, $value = null, $label = null, $data = null) {
       parent::__construct();
       $this->setName($name);      
       if($label) $this->setLabel($label);
       if($value) $this->setValue($value);
       if($data) $this->setData($data);
-      if($attributes) $this->setAttributes ($attributes);
    }
       
    /**
@@ -206,6 +205,7 @@ class Control extends Element implements FormAware {
             $this->_form->removeControlRef($this);
             $this->_form = null;
          }
+         
          if($this->hasAttribute('form')) {
             $this->removeAttribute('form');
          }
@@ -255,7 +255,7 @@ class Control extends Element implements FormAware {
                $buffer->append(' ' . $label); 
             }   
             $buffer->prepend($labelTag->renderOpen())->append($labelTag->renderClose());
-         } 
+         }
          else {
             $labelTag->setAttribute('for', $this->getName());
             if($this->labelPosition == self::LEFT) { 
@@ -289,7 +289,7 @@ class Control extends Element implements FormAware {
     * @param type $key
     * @param \oxide\ui\html\Element $value
     */
-   protected function _t_array_access_set($key, $value) {
+   protected function onArrayAccessSet($key, $value) {
       throw new \Exception('Direct access to inner contents of Control is not allowed.  Use setData instead.');
    }
 }

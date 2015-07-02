@@ -179,7 +179,6 @@ class DataObject extends \ArrayObject implements \SplSubject {
 	 * @return void
 	 */
 	function offsetSet($key, $value) {
-//      print 'here';
       $curval = isset($this[$key]) ? $this[$key] : null;
       if($curval === $value) return; // same value, do nothing
 		

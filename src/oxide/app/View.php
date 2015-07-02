@@ -12,16 +12,11 @@ namespace oxide\app;
 use oxide\ui\Renderer;
 
 class View implements Renderer {
-   public
-      $identifier = null,
-      $title = null;
-   
    protected
       $_rendering = false,
       $_cache = null,
       $_contentType = 'text/html',
       $_encoding = 'utf-8',
-      $_data = null,
       $_isRendering = false,
       $_renderer = null;
    
@@ -32,12 +27,10 @@ class View implements Renderer {
     * NOTE: for subclasses, calling parent::__construct() you can pass $this
     * @param Renderer $renderer
     */
-   public function __construct(Renderer $renderer = null, ViewData $data = null) {
-      if($renderer)
+   public function __construct(Renderer $renderer = null) {
+      if($renderer) {
          $this->_renderer = $renderer;
-      
-      if($data)
-         $this->_data = $data;
+      }
    }
    
    /**
@@ -82,23 +75,6 @@ class View implements Renderer {
     */
    public function getEncoding() {
       return $this->_encoding;
-   }
-   
-   /**
-    * Get the view data
-    * 
-    * @return ViewData
-    */
-   public function getData() {
-      return $this->_data;
-   }
-   
-   /**
-    * 
-    * @param ViewData $data
-    */
-   public function setData(ViewData $data) {
-      $this->_data = $data;
    }
    
    /**

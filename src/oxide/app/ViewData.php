@@ -10,31 +10,41 @@
 
 namespace oxide\app;
 use oxide\base\Container;
-use oxide\http\Context;
+use oxide\app\helper\HelperContainer;
 
 /**
  */
-class ViewData extends Container {
-	public
-		$context = null;
+class ViewData extends Container {	
+   public
+      $title = null,
+           
+       
+           
+      /**
+       * @var HelperContainer
+       */
+      $helpers = null;
+   
    
    /**
     * Construct a new view data container
     * 
     * @param mixed $data
     */
-   public function __construct($data = null, Context $context = null) {
+   public function __construct($data = null, HelperContainer $helpers = null) {
       parent::__construct($data);
-      if($context) $this->context = $context;
+      if($helpers) $this->helpers = $helpers;
    }
    
-   
    /**
-    * get the application context.
+    * getHelpers function.
     * 
-    * @return Context
+    * @access public
+    * @param array $names
+    * @return void
     */
-   public function getContext() {
-	   return $this->context;
+   public function getHelpers($helpers = null) {
+	   $helpers = $this->helpers;
+	   return $helpers->getTuple(func_get_args());
    }
 }

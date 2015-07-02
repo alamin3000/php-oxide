@@ -11,8 +11,14 @@
 namespace oxide\app\helper;
 use oxide\base\Dictionary;
 
-class Locale extends Dictionary {
-	
+class Locale  {
+	protected
+      $_dictionary = null;
+   
+   public function __construct() {
+      $this->_dictionary = new Dictionary();
+   }
+   
    /**
     * Translate the given text.
     * 
@@ -21,6 +27,6 @@ class Locale extends Dictionary {
     * @return void
     */
    public function translate($text) {
-      return $this->get($text, $text);
+      return $this->_dictionary->get($text, $text);
    }
 }

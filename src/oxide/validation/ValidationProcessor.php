@@ -136,6 +136,19 @@ class ValidationProcessor {
    }
    
    /**
+    * Get the current result
+    * 
+    * @return Result
+    */
+   public function getResult() {
+      if($this->_result === null) {
+         $this->_result = new Result();
+      }
+      
+      return $this->_result;
+   }
+   
+   /**
     * Perform the validation process
     * 
     * This method will perform following processes in the order

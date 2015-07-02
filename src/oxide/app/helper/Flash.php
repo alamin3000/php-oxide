@@ -1,5 +1,6 @@
 <?php
 namespace oxide\app\helper;
+use oxide\http\Session;
 
 class Flash  {
    /**
@@ -21,8 +22,8 @@ class Flash  {
        */
       $_session = null;
    
-   public function __construct(HelperContainer $container) {
-      $this->_session = $container->getContext()->get('session');
+   public function __construct(Session $session) {
+      $this->_session = $session;
    }
    
    /**

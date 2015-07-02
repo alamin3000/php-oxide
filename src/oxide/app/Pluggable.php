@@ -1,7 +1,6 @@
 <?php
-namespace oxide\plugin;
-use oxide\http\Context;
+namespace oxide\app;
 
 interface Pluggable {
-   public function plug(Context $context);
+   public function plug();
 }

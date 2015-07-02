@@ -11,7 +11,10 @@
 namespace oxide\base\pattern;
 
 
-trait ArrayObjectExtTrait {
+/**
+ * Adds additional functionalities to ArrayObject
+ */
+trait ArrayObjectTrait {
    /**
     * Add $content at the begining of the array
     * 

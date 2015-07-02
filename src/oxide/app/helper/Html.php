@@ -1,6 +1,7 @@
 <?php
 namespace oxide\app\helper;
-use oxide\ui\ArrayString;
+use oxide\base\ArrayString;
+use oxide\ui\html\Tag;
 
 /** 
  * html helper class
@@ -67,9 +68,7 @@ class Html {
     * @return type
     */
    public function openTag($tag, array $attributes = null, $void = false) {
-      if($void) $close = ' /';
-      else $close = '';
-      return '<'. $tag . $this->attributeString($attributes) . $close . '>';
+      return Tag::renderOpenTag($tag, $attributes, $void);
    }
    
    /**
@@ -78,8 +77,7 @@ class Html {
     * @return type
     */
    public function closeTag($tag, $void = false) {
-      if($void) return '';
-      return "</{$tag}>";
+      return Tag::renderCloseTag($tag, $void);
    }
    
 	/**
@@ -127,8 +125,6 @@ class Html {
       
 	}
    
-
-   
    /**
     * this allows to render independed tags from 4-tuple array
     * 
@@ -151,26 +147,10 @@ class Html {
       return $buffer;
 	}
 
-   /**
-    * Generates HTML tag attribute string from given array
-    *
-    * @param array $attributes
-    * @return string
-    */
-   public function attributeString(array $attributes = null) {
-      if(empty($attributes)) return '';
-		
-      $str = '';
-      foreach ($attributes as $key => $value) {
-         if(!empty($value) && !is_scalar($value)) {
-            trigger_error('both value for attribute key {' . $key . '} must be scalar data type');
-         }
-         $value = self::escape($value);
-         $str .= "{$key}=\"{$value}\" ";
-      }
+   public function meta($arrs) {
       
-      return ' ' . trim($str);
    }
+   
 	
 	/**
     * creates HTML A tag
@@ -318,15 +298,6 @@ class Html {
    private function _list($list, $type = 'ul', $attrib = null, $opt = self::LIST_VALUE) {
       if(!$list) return;
       
-      if(!is_array($list)) {
-         // first we will check for some special object those are recognized by the oxide
-         if($list instanceof oxide\base\Dictionary) {
-            $list = $list->toArray();
-         }
-         
-         else $list = (array) $list;
-      }
-      
       $this->start($type, $attrib);
       foreach($list as $name => $value) {
          if(is_int($name)) $name = "";
@@ -438,7 +409,7 @@ class Html {
 	 * @return string
 	 */
 	public function escape($str) {
-      return htmlentities($str, ENT_QUOTES);
+      return Tag::escape($str);
    }
    
    /**
@@ -457,13 +428,13 @@ class Html {
    * @param type $arguments
    * @return type
    */
-//   public function __call($name, $arguments) {
-//      if(!$arguments) {
-//         return $this->tag($name, '');
-//      } else {
-//         $inner = array_shift($arguments);
-//         $attributes = (!empty($arguments)) ? array_shift($arguments) : null;
-//         return $this->tag($name, $inner, $attributes);
-//      }
-//   }
+   public function __call($name, $arguments) {
+      if(!$arguments) {
+         return $this->tag($name, null);
+      } else {
+         $inner = array_shift($arguments);
+         $attributes = (!empty($arguments)) ? array_shift($arguments) : null;
+         return $this->tag($name, $inner, $attributes);
+      }
+   }
 }

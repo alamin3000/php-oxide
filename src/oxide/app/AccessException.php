@@ -8,5 +8,5 @@
  * @license http://URL name 
  */
 
-namespace oxide\app\auth;
+namespace oxide\app;
 class AccessException extends \Exception {}

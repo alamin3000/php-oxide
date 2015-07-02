@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\base\String;
+use oxide\base\ArrayString as String;
 use oxide\validation;
 
 /**
@@ -15,10 +15,8 @@ use oxide\validation;
  * @subpackage ui
  */
 class Form extends Element {
-   
    public           
-      $controlLabelTag = null,
-      $controlRowTag = null,
+      $LabelTag = null,
       $rowTag = null,
       $errorTag = null,
       $successTag = null,
@@ -70,9 +68,9 @@ class Form extends Element {
 	 * @param string $action url here form processing will be performed
     * @param string $name name/id of the form.  this is important when there are multiple forms in the page
     */
-	public function __construct($name = null, $method = self::METHOD_POST, $action = null, $attrib = []) {
+	public function __construct($name, $method = self::METHOD_POST, $action = null) {
       self::$_counter++;
-      parent::__construct('form', null, $attrib);
+      parent::__construct('form');
       if(!$action) $action = '';
       if(!$name) $name = "_form-" . self::$_counter;
       if($method == self::METHOD_POST) $values = filter_input_array(INPUT_POST);
@@ -85,7 +83,7 @@ class Form extends Element {
 		$this->setAction($action);      
       $this->setValues($values);    // store the raw values
       $this->_generateSubmitId($name);   // generating a unique id for the form
-      $this->_attributes['name'] = $this->_attributes['id'] = $this->_name;
+      $this->attributes['name'] = $this->attributes['id'] = $this->_name;
 	}
    
    /**
@@ -108,7 +106,7 @@ class Form extends Element {
     * @param string $method
     */
    public function setMethod($method) {
-      $this->_attributes['method'] = $method;
+      $this->attributes['method'] = $method;
    }
    
    /**
@@ -117,7 +115,7 @@ class Form extends Element {
     * @return string
     */
    public function getMethod() {
-      return $this->_attributes['method'];
+      return $this->attributes['method'];
    }
    
    /**
@@ -126,7 +124,7 @@ class Form extends Element {
     * @param string $action
     */
    public function setAction($action) {
-      $this->_attributes['action'] = $action;
+      $this->attributes['action'] = $action;
    }
    
    /**
@@ -135,7 +133,7 @@ class Form extends Element {
     * @return string
     */
    public function getAction() {
-      return $this->_attributes['action'];
+      return $this->attributes['action'];
    }
    
    /**
@@ -459,13 +457,13 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormHeader() {
-      $rowTag = $this->rowTag;
+      $rowTag = new Tag('p');
       $msgs = ''; // message buffer
       
-      if($this->disabled()) {
+      if($this->disabled()) { // for is disabled
          $msgs .= $rowTag->renderWithContent($this->disabledMessage);
-      } else {
-         if($this->isProcessed()) {
+      } else { 
+         if($this->isProcessed()) { // form already has been processed
             // check validations
             if(($result = $this->getResult()) && !$result->isValid()) { // validation failed
                $errorTag = $this->getErrorTag();
@@ -558,6 +556,7 @@ class Form extends Element {
       }
       
       // setup/reuse tags
+      if(!$control->labelTag) $control->labelTag = $this->LabelTag;
       if(!$control->rowTag) $control->rowTag = $this->rowTag;
       if(!$control->errorTag) $control->errorTag = $this->errorTag;
       if(!$control->infoTag) $control->infoTag = $this->infoTag;
@@ -575,8 +574,8 @@ class Form extends Element {
     * @param type $key
     * @param type $value
     */
-   protected function _t_array_access_set($key, $value) {
-      parent::_t_array_access_set($key, $value);
+   protected function onArrayAccessSet($key, $value) {
+      parent::onArrayAccessSet($key, $value);
       if($value instanceof FormAware) {
          $value->setForm($this); // this will add control ref
       } else {
@@ -589,8 +588,8 @@ class Form extends Element {
     * @param type $key
     * @param type $value
     */
-   protected function _t_array_access_unset($key, $value) {
-      parent::_t_array_access_unset($key, $value);
+   protected function onArrayAccessUnset($key, $value) {
+      parent::onArrayAccessUnset($key, $value);
       if($value instanceof FormAware) {
          $value->setForm(null);
       }

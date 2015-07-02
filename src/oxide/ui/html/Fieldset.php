@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-use oxide\base\String;
+use oxide\base\ArrayString as String;
 
 /**
  * 
@@ -90,7 +90,36 @@ class Fieldset extends Element implements FormAware  {
       parent::onRenderOpen($buffer);
       if(($legend = $this->getLegend())) {
          $tag = ($this->legendTag) ? $this->legendTag : new Tag('legend');
-         $buffer->append($tag->renderWithContent($legend));
+         $buffer[] = $tag->renderWithContent($legend);
+      }
+   }
+   
+   
+   /**
+    * Override the element add method
+    * 
+    * We will only allow Control and Fieldset to be added
+    * @param type $key
+    * @param type $value
+    */
+   protected function onArrayAccessSet($key, $value) {
+      parent::onArrayAccessSet($key, $value);
+      if($value instanceof FormAware) {
+         if($this->_form) $value->setForm($this->_form); // this will add control ref
+      } else {
+         throw new \Exception('Only controls and fieldset are allowed');
+      }
+   }
+   
+   /**
+    * 
+    * @param type $key
+    * @param type $value
+    */
+   protected function onArrayAccessUnset($key, $value) {
+      parent::onArrayAccessUnset($key, $value);
+      if($value instanceof FormAware) {
+         $value->setForm(null);
       }
    }
 }

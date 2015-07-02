@@ -12,7 +12,7 @@ trait PropertyAccessTrait {
 	 * @param mixed $value
 	 */
 	public function __set($key, $value) {
-		$this->_t_prop_access_set($key, $value);
+		$this->onPropertyAccessSet($key, $value);
       $this->_t_property_storage[$key] = $value;
 	}
 	
@@ -23,7 +23,6 @@ trait PropertyAccessTrait {
 	 * @param string $key
 	 */
 	public function __get($key) {
-		$this->_t_prop_access_get($key);
       $value = $this->_t_property_storage[$key];
       if(is_array($value)) {
          return $value;
@@ -48,14 +47,13 @@ trait PropertyAccessTrait {
    public function __unset($key) {
 	   if(isset($this->_t_property_storage[$key])) {
 		   $value = $this->_t_property_storage[$key];
-		   $this->_t_array_access_unset($key, $value);
+		   $this->onPropertyAccessUnset($key, $value);
 			unset($this->_t_property_storage[$key]);
 	   }
    }
    
    
-   protected function _t_prop_access_set($key, $value) {}
-   protected function _t_prop_access_get($key) {}
-   protected function _t_prop_access_unset($key, $value) {}
+   protected function onPropertyAccessSet($key, $value) {}
+   protected function onPropertyAccessUnset($key, $value) {}
 
 }
