@@ -219,4 +219,23 @@ class Tag implements Renderer {
    static public function renderCloseTag($tagName, $void = false) {
       return ($tagName && !$void) ? '</'.$tagName.'>' : '';
    }
+   
+   /**
+    * Attempt to convert given $arg to string
+    * 
+    * @param mixed $arg
+    * @return string
+    */
+   public static function toString($arg) {
+      if(is_scalar($arg)) return $arg;
+      else if($arg instanceof \oxide\ui\Renderer) return $arg->render();
+      else if(is_array ($arg) || $arg instanceof \Iterator) {
+         $buf = '';
+         foreach($arg as $val) {
+            $buf .= self::toString($val);
+         }
+         return $buf;
+      }
+      else return (string) $arg;
+   }
 }

@@ -120,10 +120,12 @@ class Html {
       }
       
       return $this->openTag($tag, $attributes, $void) .
-              ArrayString::toString($inner) .
+              Tag::toString($inner) .
               $this->closeTag($tag, $void);
       
 	}
+   
+   
    
    /**
     * this allows to render independed tags from 4-tuple array
