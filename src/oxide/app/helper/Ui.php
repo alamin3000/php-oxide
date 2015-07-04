@@ -54,7 +54,7 @@ class Ui extends Html {
       STYLE_LINK_VALUE 	= 268435456;
       
    
-   public function __construct(HelperContainer $c) {
+   public function __construct(HelperContainer $helpers) {
       $this->_url = $c->get('url');
    }
    

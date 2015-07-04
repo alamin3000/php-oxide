@@ -17,13 +17,13 @@ class HelperContainer extends Container {
    
    protected
       $_helpers = [
-         'html' 		=> 'oxide\app\helper\Html',
-         'flash' 		=> 'oxide\app\helper\Flash', 
-         'ui' 			=> 'oxide\app\helper\Ui',
-         'master' 	=> 'oxide\app\helper\Master',
-         'url' 		=> 'oxide\app\helper\Url',
-         'locale' 	=> 'oxide\app\helper\Locale',
-         'formatter' => 'oxide\app\helper\Formatter'
+         'html' 		=> '\oxide\app\helper\Html',
+         'flash' 		=> '\oxide\app\helper\Flash', 
+         'ui' 			=> '\oxide\app\helper\Ui',
+         'master' 	=> '\oxide\app\helper\Master',
+         'url' 		=> '\oxide\app\helper\Url',
+         'locale' 	=> '\oxide\app\helper\Locale',
+         'formatter' => '\oxide\app\helper\Formatter'
       ],
            
       $_context = null;
@@ -60,9 +60,12 @@ class HelperContainer extends Container {
     */
    protected function registerBuiltInHelpers() {
 	   $helpers = $this->_helpers;
+      $context = $this->getContext();
+      
       foreach($helpers as $name => $helper) {
-         $this->addResolver($name, function($c) use($helper) {
-            return new $helper($c);
+         $this->addResolver($name, function($c) use($context) {
+            $instance = $context->instanciate($name);
+            return $instance;
          });
       }
    }

@@ -38,7 +38,7 @@ class Master extends Container {
    protected
       $_html = null;
    
-   public function __construct(HelperContainer $container) {
+   public function __construct(HelperContainer $helpers) {
       parent::__construct();
       $this->_html = $container->get('html');
    }
