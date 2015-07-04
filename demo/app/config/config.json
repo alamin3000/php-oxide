@@ -38,6 +38,10 @@
             "name" : "home",
             "dir" : "../app/module/home",
             "namespace" : "app\\module\\home"
+        }, {
+            "name" : "blog",
+            "dir" : "../app/module/blog",
+            "namespace" : "app\\module\\blog"
         }
     ],
     
@@ -51,9 +55,17 @@
         "admin" : null
     },
     
-    "rules" : {
-        "guest" : "+, -admin, +user,  -user/account, -content/manage",
-        "member" : "+user, +content, +admin",
-        "admin" : "+"
-    }
+    "rules" : [
+        {
+            "role" : "guest",
+            "access" : "allow",
+            "route" : {
+                "module" : "home",
+                "controller" : null,
+                "action" : null
+            }
+        }
+    ]
+       
+    
 }

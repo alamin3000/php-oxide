@@ -11,80 +11,59 @@
 namespace app\module\home\controller;
 use oxide\app\Controller;
 use oxide\http\Context;
-use oxide\app\ViewData;
+use oxide\data\model\ActiveRecord;
 use oxide\ui\html;
-use oxide\app\View;
+
+class User extends ActiveRecord {
+   static protected 
+           $_pk = 'user_pk',
+           $_table = 'user';
+   
+   public function __construct(array $data = null, \oxide\data\Connection $conn = null) {
+      parent::__construct($data, $conn);
+   }
+}
 
 
 class TestController extends Controller {
-
-
-   public function onInit(Context $context) {
+   
+   protected function onInit(Context $context) {
       parent::onInit($context);
-   }
-   
-   
-   public function executeIndex(Context $context, ViewData $data) {
+      
       
    }
-   
-   public function executeCore(Context $context) {
-      
-   }
-   
-   
-   
-   public function executeUiControl(Context $context, ViewData $data) {
-      $section = new html\Element('section');
-      $section[] = new html\Element('h1', 'Form Control testing');
 
-      // creating form
-      $form = new html\Form();
-      $textInput = new html\TextControl('text', null, 'Text');
-      $textInput->setInfo('Any string.');
-      $textInput->setError('Some error happend.');
-      $form[] = $textInput;
+ 
+   protected function executeIndex() {
+      $form = new html\Form('myform');
+      $form[] = new html\TextControl('name', null, 'Full Name');
+      $form[] = new html\EmailControl('email', null, 'Email');
       
-      $fieldset = new html\Fieldset('fieldset', 'My Info');
-      $sex = new html\CheckboxGroupControl('sex', 'female', 'Your sex', ['male' => 'Male', 'female' => 'Female', 'unknown' => 'Unknown']);
-      $fieldset[] = $sex;
+      $fieldset = new html\Fieldset('myfields', 'Basic info');
+      $fieldset[] = new html\PasswordControl('password', null, 'Password');
+      $fieldset[] = new html\PasswordControl('repassword', null, 'Retype password');
       $form[] = $fieldset;
       
-      
-      
-      
-      $section[] = $form;      
-      return new View($section);
+      $group = new html\Fieldset('sexgroup', 'Personal');
+      $group[] = new html\RadioGroupControl('sex', null, 'Your gender', ['Male' => 'male', 'Female' => 'female']);
+      $form[] = $group;
+      return new \oxide\app\View($form);
    }
    
-   /**
-    * Test ui package's Tag and Elements
-    * 
-    * @param Context $context
-    * @param ViewData $data
-    */
-   public function executeUiElement(Context $context, ViewData $data) {
-      $this->_autoRender = false;
+   protected function executeFilter() {
+      $filter = new \oxide\validation\InputFilter(FILTER_VALIDATE_EMAIL);
+      $filtered = $filter->filter('abcx*9(');
+      $val = $filter->validate('abcx*9(');
       
-      $section = new html\Element('section');
-      $section[] = new html\Element('h1', 'Hellow World');
-      $hr = new html\Tag('hr', null, true);
-      $hr->setWrapperTag(new html\Tag('p'));
-      $section[] = $hr;
+      var_dump($filtered);
+      var_dump($val);
       
-      echo $section->render();
+      return new \oxide\app\View();
    }
-   
-   
-   protected function onRender(Context $context, View $view = null) {
-      parent::onRender($context, $view);
-   }
-   
-   protected function onException(Context $context, \Exception $e) {
-      parent::onException($context, $e);
-   }
-   
-   protected function onExit(Context $context) {
-      parent::onExit($context);
+
+
+   protected function onUndefinedAction($action, array $params) {
+      array_unshift($params, $action);
+      $this->forward('index', $params);
    }
 }

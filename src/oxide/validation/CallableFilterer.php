@@ -6,7 +6,6 @@ class CallableFilterer implements Filterer {
    protected 
       $_callable = null;
 
-
    /**
     * 
     * @param callable $callable
@@ -22,10 +21,6 @@ class CallableFilterer implements Filterer {
     */
    public function filter($value) {
       $callable = $this->_callable;
-      if($callable) {
-         return call_user_func($callback, $value);
-      } else {
-         return $value;
-      }
+      return call_user_func($callable, $value);
    }
 }

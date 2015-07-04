@@ -29,7 +29,6 @@ class Form extends Element {
       $requiredMessage = '* Indicates required field(s).';
 
    protected           
-           
       /**
        * @var string
        */

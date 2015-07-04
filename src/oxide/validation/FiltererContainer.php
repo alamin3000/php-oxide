@@ -2,9 +2,7 @@
 namespace oxide\validation;
 use oxide\base\Container;
 
-class FiltererArray extends Container implements Filterer {
-   use \oxide\base\pattern\ArrayFunctionsTrait;
-   
+class FiltererContainer extends Container implements Filterer {
    /**
     * 
     * @param type $value
