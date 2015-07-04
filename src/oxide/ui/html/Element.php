@@ -47,7 +47,7 @@ class Element
     * @param mixed $html
     */
    public function setHtml($html) {
-      $this->exchangeArray($html);
+      $this->exchangeArray([$html]);
       
       return $this;
    }
