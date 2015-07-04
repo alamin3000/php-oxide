@@ -40,7 +40,7 @@ class Master extends Container {
    
    public function __construct(HelperContainer $helpers) {
       parent::__construct();
-      $this->_html = $container->get('html');
+      $this->_html = $helpers->get('html');
    }
    
    
