@@ -87,7 +87,8 @@ class FrontController {
          
          // get the routing object
          $router = $this->getRouter();
-			$context->set('router', $router);
+			$context['router'] = $router;
+         
          $notifier->notify(self::EVENT_PRE_ROUTE, $this, $router,  $request);      
          $route = $router->route($request);
          $notifier->notify(self::EVENT_POST_ROUTE, $this, $router,  $route);      
@@ -97,6 +98,7 @@ class FrontController {
          }
          
          // dispatch using the routing information
+         $context['route'] = $route; // store the route in the context
          $notifier->notify(self::EVENT_PRE_DISPTACH, $this, $route);
          if(!$route->completed) {
             $this->dispatch($route,$context);
