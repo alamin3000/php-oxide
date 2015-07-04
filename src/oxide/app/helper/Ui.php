@@ -55,7 +55,7 @@ class Ui extends Html {
       
    
    public function __construct(HelperContainer $helpers) {
-      $this->_url = $c->get('url');
+      $this->_url = $helpers->get('url');
    }
    
    /**
