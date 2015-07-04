@@ -289,7 +289,7 @@ class Control extends Element implements FormAware {
     * @param type $key
     * @param \oxide\ui\html\Element $value
     */
-   protected function onArrayAccessSet($key, $value) {
+   protected function onArrayAccessSet(&$key, $value) {
       throw new \Exception('Direct access to inner contents of Control is not allowed.  Use setData instead.');
    }
 }

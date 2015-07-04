@@ -47,6 +47,8 @@ class TestController extends Controller {
       $group = new html\Fieldset('sexgroup', 'Personal');
       $group[] = new html\RadioGroupControl('sex', null, 'Your gender', ['Male' => 'male', 'Female' => 'female']);
       $form[] = $group;
+      
+      \oxide\dump($form);
       return new \oxide\app\View($form);
    }
    

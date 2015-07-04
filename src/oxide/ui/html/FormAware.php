@@ -11,5 +11,6 @@
 namespace oxide\ui\html;
 
 interface FormAware {
+   public function getName();
    public function setForm(Form $form);
 }

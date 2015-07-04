@@ -21,7 +21,7 @@ trait ArrayObjectTrait {
     * @param mixed $content
     */
    public function prepend($content, $offset = null)  {     
-      $this->onArrayAccessSet(null, $content);
+      $this->onArrayAccessSet($offset, $content);
       $array = $this->getArrayCopy();
       
       if($offset === null) {
@@ -100,6 +100,6 @@ trait ArrayObjectTrait {
       parent::offsetUnset($offset);
    }
    
-   protected function onArrayAccessSet($key, $value) { }
-   protected function onArrayAccessUnset($key, $value) { }
+   protected function onArrayAccessSet(&$key, $value) { }
+   protected function onArrayAccessUnset(&$key, $value) { }
 }

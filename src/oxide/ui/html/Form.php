@@ -573,13 +573,15 @@ class Form extends Element {
     * @param type $key
     * @param type $value
     */
-   protected function onArrayAccessSet($key, $value) {
-      parent::onArrayAccessSet($key, $value);
+   protected function onArrayAccessSet(&$key, $value) {
       if($value instanceof FormAware) {
          $value->setForm($this); // this will add control ref
+         $key = $value->getName();
+         parent::onArrayAccessSet($key, $value);
       } else {
          throw new \Exception('Only controls and fieldset are allowed');
       }
+      
    }
    
    /**
@@ -587,7 +589,7 @@ class Form extends Element {
     * @param type $key
     * @param type $value
     */
-   protected function onArrayAccessUnset($key, $value) {
+   protected function onArrayAccessUnset(&$key, $value) {
       parent::onArrayAccessUnset($key, $value);
       if($value instanceof FormAware) {
          $value->setForm(null);

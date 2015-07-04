@@ -201,6 +201,6 @@ trait ArrayAccessTrait {
    }
    
    
-   protected function onArrayAccessSet($key, $value) {}
-   protected function onArrayAccessUnset($key, $value) {}
+   protected function onArrayAccessSet(&$key, $value) {}
+   protected function onArrayAccessUnset(&$key, $value) {}
 }

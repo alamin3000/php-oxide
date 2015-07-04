@@ -232,7 +232,7 @@ class Element
     * @param type $key
     * @param \oxide\ui\html\Element $value
     */
-   protected function onArrayAccessSet($key, $value) {
+   protected function onArrayAccessSet(&$key, $value) {
       if($value instanceof Element) {
          $value->setParent($this);
       }
@@ -243,7 +243,7 @@ class Element
     * @param type $key
     * @param \oxide\ui\html\Element $value
     */
-   protected function onArrayAccessUnset($key, $value) {
+   protected function onArrayAccessUnset(&$key, $value) {
       if($value instanceof Element) {
          $value->setParent(null);
       }

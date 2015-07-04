@@ -102,7 +102,7 @@ class Fieldset extends Element implements FormAware  {
     * @param type $key
     * @param type $value
     */
-   protected function onArrayAccessSet($key, $value) {
+   protected function onArrayAccessSet(&$key, $value) {
       parent::onArrayAccessSet($key, $value);
       if($value instanceof FormAware) {
          if($this->_form) $value->setForm($this->_form); // this will add control ref
@@ -116,7 +116,7 @@ class Fieldset extends Element implements FormAware  {
     * @param type $key
     * @param type $value
     */
-   protected function onArrayAccessUnset($key, $value) {
+   protected function onArrayAccessUnset(&$key, $value) {
       parent::onArrayAccessUnset($key, $value);
       if($value instanceof FormAware) {
          $value->setForm(null);
