@@ -63,8 +63,8 @@ class HelperContainer extends Container {
       $context = $this->getContext();
       
       foreach($helpers as $name => $helper) {
-         $this->addResolver($name, function($c) use($context) {
-            $instance = $context->instanciate($name);
+         $this->addResolver($name, function($c) use($context, $helper) {
+            $instance = $context->instanciate($helper);
             return $instance;
          });
       }
