@@ -156,7 +156,8 @@ class Form extends Element {
       else $key = '';
       $key = md5($key);
       
-      if(isset(self::$_form_ids[$key])) throw new \Exception('Duplicate Form key was generated. Please check your Form name property.');
+      if(isset(self::$_form_ids[$key])) 
+         throw new \Exception('Duplicate Form key was generated. Please check your Form name property.');
 
       $this->_formid_key = $key;
       $id = uniqid();
@@ -489,12 +490,14 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormFooter() {
+      $str = '';
       if($this->getValidationProcessor()->isRequired()) {
-         return $this->rowTag->renderWithContent(
+         $str.= $this->rowTag->renderWithContent(
                  $this->infoTag->renderWithContent($this->requiredMessage));
       }
       
-      return '';
+      $str .= $this->getIdentifierControl()->render();
+      return $str;
 	}
    
    /**
