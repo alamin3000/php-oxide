@@ -466,16 +466,16 @@ class Form extends Element {
          if($this->isProcessed()) { // form already has been processed
             // check validations
             if(($result = $this->getResult()) && !$result->isValid()) { // validation failed
-               $errorTag = $this->getErrorTag();
+               $errorTag = $this->errorTag;
                $msgs .= $rowTag->renderWithContent(
-                           $errorTag->renderWithContent($this->submitErrorMessage));
+                        $errorTag->renderWithContent($this->submitErrorMessage));
                if($result->hasError($this->getId())) {
                   $msgs .= $rowTag->renderWithContent(
-                          $errorTag->renderWithContent($result->getErrorString($this->getId())));
+                           $errorTag->renderWithContent($result->getErrorString($this->getId())));
                }
             } else { // for submission success
                $msgs .= $rowTag->renderWithContent(
-                       $this->getSuccessTag()->renderWithContent($this->submitSuccessMessage));
+                        $this->getSuccessTag()->renderWithContent($this->submitSuccessMessage));
             }
          }
       }
