@@ -374,7 +374,7 @@ class Form extends Element {
     * @return \oxide\ui\html\InputControl
     */
    public function getIdentifierControl() {
-      return new InputControl('hidden', $this->_formid_key, $this->_formid);
+      return new HiddenControl($this->_formid_key, $this->_formid);
    }
    
    /**
