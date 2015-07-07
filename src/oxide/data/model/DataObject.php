@@ -11,9 +11,11 @@ use Exception;
  */
 class DataObject extends \ArrayObject implements \SplSubject {
 	protected
-      $_schema = [],
 		$_modified = [],      // store all modified data
 		$_observers = null;	 
+   
+   protected static
+      $_schema = null;
 	
 	/**
 	 * 
@@ -23,26 +25,18 @@ class DataObject extends \ArrayObject implements \SplSubject {
 	public function __construct(array $data = null) {
       parent::__construct();
       $this->setFlags(self::ARRAY_AS_PROPS); // both array and property has same storage
+      
+      if(self::$_schema) {
+         $this->exchangeArray(array_fill_keys(array_keys(self::$_schema), null));
+      }
 
       // initially we specify that nothing is modified
-		$this->_modified = [];		
 		if($data) {
-			$this->setData($data);
+			$this->addData($data);
 		}
+      $this->_modified = [];
 	}
-	
-	/**
-    * Set data
-    * 
-    * This will replace all current values and replace with given $arr
-    * @param array
-    */
-   public function setData($arr) {
-	 	$schema = array_fill_keys(array_keys($this->getArrayCopy()), null);
-      $this->exchangeArray($schema);
-	 	$this->_modified = [];
-   	$this->addData($arr);
-   }
+
 
    /**
     * appends/modifies data to current data

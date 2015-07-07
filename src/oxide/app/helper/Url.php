@@ -57,15 +57,6 @@ class Url {
    }
    
    /**
-    * 
-    * @param type $path
-    * @return type
-    */
-   public function relative($path) {
-      return rtrim($this->location(true), '/') . '/' . ltrim($path, '/');
-   }
-      
-   /**
     * Return site url, optionally appending given $append param.
     *
     * Site url includes the schema, domain and port information if any. 
