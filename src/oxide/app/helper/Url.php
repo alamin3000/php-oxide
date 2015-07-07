@@ -28,7 +28,7 @@ class Url {
     * @param string $fragment
     * @return string
     */
-   public function relative($path, $query = null, $fragment = null) {
+   public function path($path, $query = null, $fragment = null) {
 	   $url = '';
 	   
 	   if(is_array($path)) {
@@ -49,7 +49,20 @@ class Url {
          $url .= '#'.$fragment;
 	   }
       
-      return $this->base($url);
+      if(substr($path, 0, 1) !== '/') { // relative
+         return $url;
+      } else {
+         return $this->base(rtrim($this->location(true), '/') . '/' . ltrim($path, '/'));
+      }
+   }
+   
+   /**
+    * 
+    * @param type $path
+    * @return type
+    */
+   public function relative($path) {
+      return rtrim($this->location(true), '/') . '/' . ltrim($path, '/');
    }
       
    /**
