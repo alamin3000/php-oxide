@@ -100,10 +100,10 @@ class Url {
     */
    public function base($append = null) {
 	   $base = $this->_request->getBase();
-	   
+	   $append = ltrim($append, '/');
 	   if($append) {
 		   if($base == '/') {
-			   return $base .  trim($append);
+			   return $base .  trim($append, '/');
 		   } else {
 			   return $base . '/' .  trim($append);
 		   }
