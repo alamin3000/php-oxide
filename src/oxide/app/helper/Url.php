@@ -50,9 +50,9 @@ class Url {
 	   }
       
       if(substr($path, 0, 1) !== '/') { // relative
-         return $url;
+         return rtrim($this->location(true), '/') . '/' . ltrim($path, '/');
       } else {
-         return $this->base(rtrim($this->location(true), '/') . '/' . ltrim($path, '/'));
+         return $this->base($path);
       }
    }
    
