@@ -21,24 +21,35 @@ class Url {
       $this->_route = $route;
    }
    
-   public function build($path, $query = null, $fragment = null) {
+   /**
+    * 
+    * @param string|array $path
+    * @param string|array $query
+    * @param string $fragment
+    * @return string
+    */
+   public function relative($path, $query = null, $fragment = null) {
 	   $url = '';
 	   
 	   if(is_array($path)) {
-		   $path = implode('/', $path);
-	   }
+		   $url = implode('/', $path);
+	   } else {
+         $url = $path;
+      }
 	  
 	   if($query) {
 		   if(is_array($query)) {
 			   $query = implode('&', $query);
 		   }
+         
+         $url .= '?'.$query;
 	   }
 	   
 	   if($fragment) {
-		   if(is_array($fragment)) {
-//			   $f
-		   }
+         $url .= '#'.$fragment;
 	   }
+      
+      return $this->base($url);
    }
       
    /**
@@ -54,7 +65,7 @@ class Url {
 	   if($site === null) {
 		   $site = $this->_request->getUriComponents(Request::URI_SCHEME);
 			$site .= '://';
-			$site .= $this->_request->getUriComponents(Request::URI_HOST);;
+			$site .= $this->_request->getUriComponents(Request::URI_HOST);
 			$port = $this->_request->getUriComponents(Request::URI_PORT);
       
 			if($port != '' && $port != '80' && $port != '443') {
