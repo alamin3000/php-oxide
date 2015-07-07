@@ -208,7 +208,7 @@ abstract class ActiveRecord extends DataObject {
 
       $query = new sql\InsertQuery($table, $db);
 		$id = $query->execute($data);
-		$this->__set($pkfield, $id);
+		$this->$pkfield =  $id;
 
       // event call
       $this->onPostInsert($id);
