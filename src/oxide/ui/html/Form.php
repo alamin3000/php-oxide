@@ -475,7 +475,7 @@ class Form extends Element {
                }
             } else { // for submission success
                $msgs .= $rowTag->renderWithContent(
-                        $this->getSuccessTag()->renderWithContent($this->submitSuccessMessage));
+                        $this->successTag->renderWithContent($this->submitSuccessMessage));
             }
          }
       }

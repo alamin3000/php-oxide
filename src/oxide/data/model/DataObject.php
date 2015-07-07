@@ -84,7 +84,7 @@ class DataObject extends \ArrayObject implements \SplSubject {
 	 */
 	public function getModifiedData() {
 		$arr = [];
-		foreach(array_keys($this->getModifiedKeys()) as $key) {
+		foreach($this->getModifiedKeys() as $key) {
 			$arr[$key] = $this[$key];
 		}
 		

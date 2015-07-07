@@ -226,7 +226,7 @@ class Tag implements Renderer {
     * @param mixed $arg
     * @return string
     */
-   public static function toString($arg) {
+   static public function toString($arg) {
       if(is_scalar($arg)) return $arg;
       else if($arg instanceof \oxide\ui\Renderer) return $arg->render();
       else if(is_array ($arg) || $arg instanceof \Iterator) {
