@@ -26,8 +26,8 @@ class DataObject extends \ArrayObject implements \SplSubject {
       parent::__construct();
       $this->setFlags(self::ARRAY_AS_PROPS); // both array and property has same storage
       
-      if(self::$_schema) {
-         $this->exchangeArray(array_fill_keys(array_keys(self::$_schema), null));
+      if(static::$_schema) {
+         $this->exchangeArray(array_fill_keys(array_keys(static::$_schema), null));
       }
 
       // initially we specify that nothing is modified
