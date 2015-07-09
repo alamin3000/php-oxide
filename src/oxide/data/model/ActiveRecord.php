@@ -159,6 +159,8 @@ abstract class ActiveRecord extends DataObject {
       }
       
 		$this->onPostSave();
+      
+      $this->clearModified();
 		return $result;
    }
 
@@ -187,6 +189,7 @@ abstract class ActiveRecord extends DataObject {
 		$result = $query->execute();
 
       $this->onPostDelete($result);
+      $this->clearModified();
 		return $result;
    }
 
