@@ -34,6 +34,8 @@ class DataObject extends \ArrayObject implements \SplSubject {
 		if($data) {
 			$this->addData($data);
 		}
+      
+      $this->clearModified();
 	}
 
 
