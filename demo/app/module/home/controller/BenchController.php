@@ -63,7 +63,7 @@ class BenchController extends Controller {
       $array = [];
       $array['test3'] = 'value 3';
       
-      $b = new \oxide\ui\ArrayString();
+      $b = new \oxide\data\model\DataObject();
       $b['test4'] = 'value 4';
       
       
@@ -82,8 +82,12 @@ class BenchController extends Controller {
          $array['test3'];
       }, $iteration);
       
-      $viewData["ArrayString get"] = $benchmarker->benchmark(function() use ($b) {
+      $viewData["DataObject array get"] = $benchmarker->benchmark(function() use ($b) {
          $b['test4'];
+      }, $iteration);
+      
+      $viewData["DataObject object get"] = $benchmarker->benchmark(function() use ($b) {
+         $b->test4;
       }, $iteration);
    }
    

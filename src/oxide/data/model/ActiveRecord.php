@@ -251,7 +251,7 @@ abstract class ActiveRecord extends DataObject {
     * @param oxide\data\sql\SelectQuery $query
     * @return Statement
     */
-   public static function select(sql\SelectQuery $query = null) {
+   public static function select(sql\SelectQuery &$query = null) {
       $table = static::getTable();
       if($query == null) {
          $query = new sql\SelectQuery();

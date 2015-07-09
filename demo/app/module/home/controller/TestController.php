@@ -11,13 +11,14 @@
 namespace app\module\home\controller;
 use oxide\app\Controller;
 use oxide\http\Context;
-use oxide\data\model\ActiveRecord;
+use oxide\data\model;
 use oxide\ui\html;
 
-class User extends ActiveRecord {
+class User extends model\ActiveRecord {
    static protected 
            $_pk = 'user_pk',
-           $_table = 'user';
+           $_table = 'user',
+           $_schema = null;
    
    public function __construct(array $data = null, \oxide\data\Connection $conn = null) {
       parent::__construct($data, $conn);
@@ -35,21 +36,18 @@ class TestController extends Controller {
 
  
    protected function executeIndex() {
-      $form = new html\Form('myform');
-      $form[] = new html\TextControl('name', null, 'Full Name');
-      $form[] = new html\EmailControl('email', null, 'Email');
+      $div = new html\Element('div');
+      $model = User::find(1);
       
-      $fieldset = new html\Fieldset('myfields', 'Basic info');
-      $fieldset[] = new html\PasswordControl('password', null, 'Password');
-      $fieldset[] = new html\PasswordControl('repassword', null, 'Retype password');
-      $form[] = $fieldset;
+      $model->email = 'something';
+      $model['email'] = 'something else';
       
-      $group = new html\Fieldset('sexgroup', 'Personal');
-      $group[] = new html\RadioGroupControl('sex', null, 'Your gender', ['Male' => 'male', 'Female' => 'female']);
-      $form[] = $group;
+      var_dump(isset($model['name']));
       
-      \oxide\dump($form);
-      return new \oxide\app\View($form);
+//      var_dump($model->getModifiedKeys());
+      \oxide\dump($model);
+      
+      return new \oxide\app\View($div);
    }
    
    protected function executeFilter() {

@@ -27,14 +27,13 @@ class DataObject extends \ArrayObject implements \SplSubject {
       $this->setFlags(self::ARRAY_AS_PROPS); // both array and property has same storage
       
       if(static::$_schema) {
-         $this->exchangeArray(array_fill_keys(array_keys(static::$_schema), null));
+//         $this->exchangeArray(array_fill_keys(array_keys(static::$_schema), null));
       }
 
       // initially we specify that nothing is modified
 		if($data) {
 			$this->addData($data);
 		}
-      $this->_modified = [];
 	}
 
 
@@ -94,6 +93,10 @@ class DataObject extends \ArrayObject implements \SplSubject {
 	public function getModifiedKeys() {
       return array_keys($this->_modified);
 	}
+   
+   public function clearModified() {
+      $this->_modified = [];
+   }
 	
 	/**
 	 * Check if any value has been modifed.
@@ -173,9 +176,13 @@ class DataObject extends \ArrayObject implements \SplSubject {
 	 * @return void
 	 */
 	function offsetSet($key, $value) {
+      // first we need to check against schema
+      if(static::$_schema !== null && !array_key_exists($key, static::$_schema)) {
+         throw new \Exception("Key `{$key}` not found in the schema defined.");
+      }
+      
       $curval = isset($this[$key]) ? $this[$key] : null;
       if($curval === $value) return; // same value, do nothing
-		
 		// update data
 		$this->_modified[$key] = $curval;
       
@@ -200,4 +207,13 @@ class DataObject extends \ArrayObject implements \SplSubject {
       parent::offsetUnset($key);
 		$this->notify();
 	}
+   
+   /**
+    * Need to override so that delayed construction call by Statement fetching has correct behaviour.
+    * @param type $name
+    * @param type $value
+    */
+   public function __set($name, $value) {
+      $this[$name] = $value;
+   }
 }
