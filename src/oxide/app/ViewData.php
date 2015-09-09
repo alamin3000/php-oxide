@@ -43,8 +43,8 @@ class ViewData extends Container {
     * @param array $names
     * @return void
     */
-   public function getHelpers($helpers = null) {
+   public function getHelpers() {
 	   $helpers = $this->helpers;
-	   return $helpers->getTuple(func_get_args());
+	   return $helpers->get(func_get_args());
    }
 }
