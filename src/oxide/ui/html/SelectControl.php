@@ -116,7 +116,10 @@ class SelectControl extends Control {
 			   $buffer[] = $group->renderOpen();
 			   foreach($value as $gkey => $gval) {
 				   if(isset($values[$gval])) $tag->setAttribute('selected', 'selected');
-				   else $tag->removeAttribute('selected');
+				   else {
+                  if($tag->hasAttribute('selected'))
+                     $tag->removeAttribute('selected');
+               }
 				   $tag->setAttribute('value', $gval);
 				   $buffer[] = $tag->renderWithContent($gkey);
 			   }
@@ -124,7 +127,10 @@ class SelectControl extends Control {
 		   } else {
 			   // simple option entry
 			   if(isset($values[$value])) $tag->setAttribute('selected', 'selected');
-			   else $tag->removeAttribute('selected');
+			   else {
+               if($tag->hasAttribute('selected'))
+                  $tag->removeAttribute('selected');
+            }
 			   $tag->setAttribute('value', $value);
 			   $buffer[] = $tag->renderWithContent($key);
 		   }
