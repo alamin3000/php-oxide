@@ -161,8 +161,6 @@ class ViewManager {
           $this->getTemplateDir() . "/{$module}/{$controller}",
           $route->dir  . '/' . $this->_viewDirName . "/{$controller}"
       ];
-          
-      var_dump($dirs);
       
       $fileinfo = pathinfo($script);
       if(!isset($fileinfo['extension'])) {
@@ -173,7 +171,6 @@ class ViewManager {
       foreach($dirs as $dir) {
          $file = "{$dir}/{$scriptfile}";
          if (file_exists($file)) {
-            print $file;
             return $file;
          }
       }
