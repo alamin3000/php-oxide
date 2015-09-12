@@ -466,7 +466,7 @@ class Form extends Element {
          if($this->isProcessed()) { // form already has been processed
             // check validations
             if(($result = $this->getResult()) && !$result->isValid()) { // validation failed
-               $errorTag = $this->errorTag;
+               $errorTag = ($this->errorTag) ? $this->errorTag : new Tag('strong');
                $msgs .= $rowTag->renderWithContent(
                         $errorTag->renderWithContent($this->submitErrorMessage));
                if($result->hasError($this->getId())) {
@@ -474,8 +474,9 @@ class Form extends Element {
                            $errorTag->renderWithContent($result->getErrorString($this->getId())));
                }
             } else { // for submission success
+               $successTag = isset($this->successTag) ? $this->successTag : new Tag('b');
                $msgs .= $rowTag->renderWithContent(
-                        $this->successTag->renderWithContent($this->submitSuccessMessage));
+                        $successTag->renderWithContent($this->submitSuccessMessage));
             }
          }
       }
@@ -492,8 +493,11 @@ class Form extends Element {
 	public function renderFormFooter() {
       $str = '';
       if($this->getValidationProcessor()->isRequired()) {
-         $str.= $this->rowTag->renderWithContent(
-                 $this->infoTag->renderWithContent($this->requiredMessage));
+         $rowtag = isset($this->rowTag) ? $this->rowTag : new Tag('p');
+         $infotag = isset($this->infoTag) ? $this->infoTag : new Tag('small');
+         
+         $str.= $rowtag->renderWithContent(
+                 $infotag->renderWithContent($this->requiredMessage));
       }
       
       $str .= $this->getIdentifierControl()->render();
