@@ -5,19 +5,20 @@
         "This file is @generated automatically"
     ],
     "hash": "fcf7f96c39a056608bfd48c28703311a",
+    "content-hash": "9f5b5f99b63f3747542c11732ef3655f",
     "packages": [
         {
             "name": "phpmailer/phpmailer",
-            "version": "v5.2.10",
+            "version": "v5.2.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7"
+                "reference": "45df3a88f7f46071e10d0b600f228d19f95911b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7",
-                "reference": "07005ecbb80d11ec8c0f067bb37e8909cc7fcbb7",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/45df3a88f7f46071e10d0b600f228d19f95911b3",
+                "reference": "45df3a88f7f46071e10d0b600f228d19f95911b3",
                 "shasum": ""
             },
             "require": {
@@ -25,12 +26,17 @@
             },
             "require-dev": {
                 "phpdocumentor/phpdocumentor": "*",
-                "phpunit/phpunit": "4.3.*"
+                "phpunit/phpunit": "4.7.*"
+            },
+            "suggest": {
+                "league/oauth2-client": "Needed for Gmail's XOAUTH2 authentication system"
             },
             "type": "library",
             "autoload": {
                 "classmap": [
                     "class.phpmailer.php",
+                    "class.phpmaileroauth.php",
+                    "class.phpmaileroauthgoogle.php",
                     "class.smtp.php",
                     "class.pop3.php",
                     "extras/EasyPeasyICS.php",
@@ -59,36 +65,57 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2015-05-04 12:37:21"
+            "time": "2015-09-14 09:18:12"
         },
         {
             "name": "zendframework/zend-authentication",
             "version": "2.0.8",
-            "target-dir": "Zend/Authentication",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendAuthentication.git",
-                "reference": "2e19292f1cb07a292a6582fc41978a48198e29c1"
+                "url": "https://github.com/zendframework/zend-authentication.git",
+                "reference": "cd9cec38fb4254098c7d03bf9b0b6434757ff755"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendAuthentication/zipball/2e19292f1cb07a292a6582fc41978a48198e29c1",
-                "reference": "2e19292f1cb07a292a6582fc41978a48198e29c1",
+                "url": "https://api.github.com/repos/zendframework/zend-authentication/zipball/cd9cec38fb4254098c7d03bf9b0b6434757ff755",
+                "reference": "cd9cec38fb4254098c7d03bf9b0b6434757ff755",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3",
                 "zendframework/zend-stdlib": "self.version"
             },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
+                "zendframework/zend-crypt": "self.version",
+                "zendframework/zend-db": "self.version",
+                "zendframework/zend-http": "self.version",
+                "zendframework/zend-ldap": "self.version",
+                "zendframework/zend-session": "self.version",
+                "zendframework/zend-uri": "self.version",
+                "zendframework/zend-validator": "self.version"
+            },
             "suggest": {
+                "zendframework/zend-crypt": "Zend\\Crypt component",
                 "zendframework/zend-db": "Zend\\Db component",
+                "zendframework/zend-http": "Zend\\Http component",
+                "zendframework/zend-ldap": "Zend\\Ldap component",
                 "zendframework/zend-session": "Zend\\Session component",
-                "zendframework/zend-uri": "Zend\\Uri component"
+                "zendframework/zend-uri": "Zend\\Uri component",
+                "zendframework/zend-validator": "Zend\\Validator component"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Zend\\Authentication\\": ""
+                "psr-4": {
+                    "Zend\\Authentication\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -96,34 +123,48 @@
                 "BSD-3-Clause"
             ],
             "description": "provides an API for authentication and includes concrete authentication adapters for common use case scenarios",
+            "homepage": "https://github.com/zendframework/zend-authentication",
             "keywords": [
                 "Authentication",
                 "zf2"
             ],
-            "time": "2013-01-22 20:50:52"
+            "time": "2013-03-13 22:05:23"
         },
         {
             "name": "zendframework/zend-permissions-acl",
             "version": "2.0.8",
-            "target-dir": "Zend/Permissions/Acl",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendPermissionsAcl.git",
-                "reference": "58925a3c23a2b38a807a9894b1dc04ab7088aeae"
+                "url": "https://github.com/zendframework/zend-permissions-acl.git",
+                "reference": "707b4314c7038970496c10de7e0d479436169773"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendPermissionsAcl/zipball/58925a3c23a2b38a807a9894b1dc04ab7088aeae",
-                "reference": "58925a3c23a2b38a807a9894b1dc04ab7088aeae",
+                "url": "https://api.github.com/repos/zendframework/zend-permissions-acl/zipball/707b4314c7038970496c10de7e0d479436169773",
+                "reference": "707b4314c7038970496c10de7e0d479436169773",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "suggest": {
+                "zendframework/zend-servicemanager": "To support Zend\\Permissions\\Acl\\Assertion\\AssertionManager plugin manager usage"
+            },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Zend\\Permissions\\Acl\\": ""
+                "psr-4": {
+                    "Zend\\Permissions\\Acl\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -131,48 +172,68 @@
                 "BSD-3-Clause"
             ],
             "description": "provides a lightweight and flexible access control list (ACL) implementation for privileges management",
+            "homepage": "https://github.com/zendframework/zend-permissions-acl",
             "keywords": [
                 "acl",
                 "zf2"
             ],
-            "time": "2013-01-22 10:37:58"
+            "time": "2013-01-26 11:18:56"
         },
         {
             "name": "zendframework/zend-stdlib",
             "version": "2.0.8",
-            "target-dir": "Zend/Stdlib",
             "source": {
                 "type": "git",
-                "url": "https://github.com/zendframework/Component_ZendStdlib.git",
-                "reference": "955622d5b20e45c4cd2520f54cbca3b19cfec8c0"
+                "url": "https://github.com/zendframework/zend-stdlib.git",
+                "reference": "53f0837c7b97497d88130132d447531b1f881f6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/Component_ZendStdlib/zipball/955622d5b20e45c4cd2520f54cbca3b19cfec8c0",
-                "reference": "955622d5b20e45c4cd2520f54cbca3b19cfec8c0",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/53f0837c7b97497d88130132d447531b1f881f6c",
+                "reference": "53f0837c7b97497d88130132d447531b1f881f6c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
+            "require-dev": {
+                "fabpot/php-cs-fixer": "1.7.*",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "dev-master",
+                "zendframework/zend-eventmanager": "self.version",
+                "zendframework/zend-filter": "self.version",
+                "zendframework/zend-serializer": "self.version",
+                "zendframework/zend-servicemanager": "self.version"
+            },
             "suggest": {
-                "pecl-weakref": "Implementation of weak references for Stdlib\\CallbackHandler"
+                "pecl-weakref": "Implementation of weak references for Stdlib\\CallbackHandler",
+                "zendframework/zend-eventmanager": "To support aggregate hydrator usage",
+                "zendframework/zend-filter": "To support naming strategy hydrator usage",
+                "zendframework/zend-serializer": "Zend\\Serializer component",
+                "zendframework/zend-servicemanager": "To support hydrator plugin manager usage"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Zend\\Stdlib\\": ""
+                "psr-4": {
+                    "Zend\\Stdlib\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
+            "homepage": "https://github.com/zendframework/zend-stdlib",
             "keywords": [
                 "stdlib",
                 "zf2"
             ],
-            "time": "2013-01-22 20:50:52"
+            "time": "2013-01-26 11:18:56"
         }
     ],
     "packages-dev": [],
