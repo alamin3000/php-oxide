@@ -19,12 +19,12 @@ class Element
       /**
        * @var Element
        */
-      $_parent = null,
+      $parent = null,
            
       /**
        * @var Renderer
        */
-      $_renderer = null;
+      $renderer = null;
          
    /**
 	 * construct the element
@@ -80,7 +80,7 @@ class Element
     * @param Element $element
     */
    public function setParent(Element $element = null) {
-      $this->_parent = $element;
+      $this->parent = $element;
       
       return $this;
    }
@@ -91,7 +91,7 @@ class Element
     * @return Element
     */
    public function getParent() {
-      return $this->_parent;
+      return $this->parent;
    }
    
 	/**
@@ -129,7 +129,7 @@ class Element
     * @param Renderer $renderer
     */
    public function setRendererDelegate(Renderer $renderer) {
-      $this->_renderer = $renderer;
+      $this->renderer = $renderer;
    }
    
    /**
@@ -139,7 +139,7 @@ class Element
     * @return Renderer
     */
    public function getRendererDelegate() {
-      return $this->_renderer;
+      return $this->renderer;
    }
    
    /**

@@ -19,7 +19,6 @@ class HelperContainer extends Container {
       $_helpers = [
          'html' 		=> '\oxide\app\helper\Html',
          'flash' 		=> '\oxide\app\helper\Flash', 
-         'ui' 			=> '\oxide\app\helper\Ui',
          'master' 	=> '\oxide\app\helper\Master',
          'url' 		=> '\oxide\app\helper\Url',
          'locale' 	=> '\oxide\app\helper\Locale',
@@ -48,6 +47,8 @@ class HelperContainer extends Container {
    public function getContext() {
       return $this->_context;
    }
+   
+   
    
    /**
     * Register a helper

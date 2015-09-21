@@ -18,8 +18,6 @@ class ViewData extends Container {
    public
       $title = null,
            
-       
-           
       /**
        * @var HelperContainer
        */

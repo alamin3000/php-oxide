@@ -21,6 +21,9 @@ class Form extends Element {
       $errorTag = null,
       $successTag = null,
       $infoTag = null,
+           
+      $headerElement = null,
+      $footerElement = null,
       
       $disabledMessage = 'Form is disabled.',
   		$submitErrorMessage = 'Form validation failed.',
@@ -77,6 +80,9 @@ class Form extends Element {
       else throw new \Exception('Unknown Form method : '. $method);
       if($_FILES) $values = array_merge($values, $_FILES);
 
+      $this->headerElement = new Element('div');
+      $this->footerElement = new Element('div');
+      
       $this->_name = $name;
       $this->setMethod($method);
 		$this->setAction($action);      
@@ -247,7 +253,7 @@ class Form extends Element {
     * Optionally checks if form submit validation using session
 	 * @return bool
 	 */
-	public function isSubmitted($key = null) {         
+	public function isSubmitted($key = null) {
 		/*
 		 * only way to find out if the form is submitted or not is to first check
 		 * if GET/POST value is preset with the form id
@@ -457,31 +463,25 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormHeader() {
-      $rowTag = new Tag('p');
-      $msgs = ''; // message buffer
-      
+      $errorTag = ($this->errorTag) ? $this->errorTag : new Tag('strong');
       if($this->disabled()) { // for is disabled
-         $msgs .= $rowTag->renderWithContent($this->disabledMessage);
+         $this->headerElement []= $errorTag->renderWithContent($this->disabledMessage);
       } else { 
          if($this->isProcessed()) { // form already has been processed
             // check validations
             if(($result = $this->getResult()) && !$result->isValid()) { // validation failed
-               $errorTag = ($this->errorTag) ? $this->errorTag : new Tag('strong');
-               $msgs .= $rowTag->renderWithContent(
-                        $errorTag->renderWithContent($this->submitErrorMessage));
+               $this->headerElement[] = $errorTag->renderWithContent($this->submitErrorMessage);
                if($result->hasError($this->getId())) {
-                  $msgs .= $rowTag->renderWithContent(
-                           $errorTag->renderWithContent($result->getErrorString($this->getId())));
+                  $this->headerElement[] = $errorTag->renderWithContent($result->getErrorString($this->getId()));
                }
             } else { // for submission success
                $successTag = isset($this->successTag) ? $this->successTag : new Tag('b');
-               $msgs .= $rowTag->renderWithContent(
-                        $successTag->renderWithContent($this->submitSuccessMessage));
+               $this->headerElement[] = $successTag->renderWithContent($this->submitSuccessMessage);
             }
          }
       }
       
-      return $msgs;
+      return $this->headerElement->render();
 	}
    
    /**
@@ -491,17 +491,13 @@ class Form extends Element {
     * @return string
     */
 	public function renderFormFooter() {
-      $str = '';
       if($this->getValidationProcessor()->isRequired()) {
-         $rowtag = isset($this->rowTag) ? $this->rowTag : new Tag('p');
          $infotag = isset($this->infoTag) ? $this->infoTag : new Tag('small');
-         
-         $str.= $rowtag->renderWithContent(
-                 $infotag->renderWithContent($this->requiredMessage));
+         $this->footerElement[] = $infotag->renderWithContent($this->requiredMessage);
       }
       
-      $str .= $this->getIdentifierControl()->render();
-      return $str;
+      $this->footerElement[] = $this->getIdentifierControl()->render();
+      return $this->footerElement->render();
 	}
    
    /**

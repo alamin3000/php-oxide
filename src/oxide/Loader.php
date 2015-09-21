@@ -156,12 +156,7 @@ class Loader {
       app\helper\HelperContainer::setSharedInstance(function() use ($context) {
          return new app\helper\HelperContainer($context);
       });
-      
-      // add the helper container to the context
-      $context->addResolver('helpers', function($c) {
-         return app\helper\HelperContainer::sharedInstance();
-      });
-      
+            
       // setup mailer
       util\Mailer::setSharedInstance(function() use ($config) {
          $options = isset($config['email']) ? $config['email'] : exception('Email configuration not set.');
