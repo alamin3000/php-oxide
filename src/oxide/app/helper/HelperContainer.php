@@ -44,7 +44,7 @@ class HelperContainer extends Container {
     * @param type $name
     * @param type $helperClass
     */
-   protected function registerHelper($name, $helperClass) {
+   public function registerHelper($name, $helperClass) {
       $this->addResolver($name, function(Container $c) use ($helperClass) {
          $instance = $c->instanciate($helperClass);
          return $instance;
