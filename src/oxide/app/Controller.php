@@ -53,7 +53,7 @@ abstract class Controller
       /**
        * @var HelperContainer Helper container class
        */
-      $helpers = null;
+      $helperContainer = null;
    
 	private  
       /**
@@ -159,6 +159,18 @@ abstract class Controller
     */
    public function setViewManager(ViewManager $viewManager) {
       $this->_viewManager = $viewManager;
+   }
+   
+   /**
+    * 
+    * @return helper\HelperContainer
+    */
+   public function getHelperContainer() {
+      if(!helper\HelperContainer::hasSharedInstance()) {
+         helper\HelperContainer::setSharedInstance(new helper\HelperContainer($this->getContext()));
+      }
+      
+      return helper\HelperContainer::sharedInstance();
    }
 
    /**
@@ -286,9 +298,9 @@ abstract class Controller
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      $helpers = helper\HelperContainer::sharedInstance();
-      $this->viewData = new ViewData(null, $helpers);
-      $this->helpers = $helpers;
+      $helperContainer = $this->getHelperContainer();
+      $this->viewData = new ViewData(null, $helperContainer);
+      $this->helperContainer = $helperContainer;
    }
    
    /**
@@ -330,7 +342,6 @@ abstract class Controller
     */
    protected function onRender(Context $context, View $view) {
       $response = $context->getResponse();
-      
       $response->setContentType($view->getContentType(), $view->getEncoding());
       $response->addBody($view->render());
    }

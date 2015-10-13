@@ -22,8 +22,8 @@ class Flash  {
        */
       $_session = null;
    
-   public function __construct(Session $session) {
-      $this->_session = $session;
+   public function __construct(\oxide\http\Context $context) {
+      $this->_session = $context->getSession();
    }
    
    /**

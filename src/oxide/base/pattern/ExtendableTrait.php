@@ -17,29 +17,6 @@ trait ExtendableTrait {
    
    
    /**
-    * hasExtendedClass function.
-    * 
-    * @access public
-    * @param mixed $object
-    * @param bool $strict (default: false)
-    * @return void
-    */
-   public function hasExtendedClass($object, $strict = false) {
-	   if(isset($this->_t_extendedObjects[get_class($object)])) {
-		   if($strict) {
-			   $obj = $this->_t_extendedObjects[get_class($object)];
-			   if($obj ===  $object) return true;
-			   else return false;
-		   } else {
-			   return true;
-		   }
-	   } 
-	   
-	   return false;
-   }
-   
-   
-   /**
     * hasExtendedMethod function.
     * 
     * @access public
@@ -51,26 +28,30 @@ trait ExtendableTrait {
    }
          
    /**
-    * extendObject function.
+    * Extend Object function (methods)
     * 
     * @access public
     * @param mixed $object
     * @return void
     */
-   public function extendObject($object, $prefix = '', $override = false) {
+   public function extendObject($object, $name = null, $method_prefix = '', $override = false) {
 	   if(!is_object($object)) throw new \Exception("Not object.");
       $reflector = new \ReflectionClass($object);
-      $this->_t_extendedObjects[$reflector->getName()] = $object;
+      if(!$name) {
+         $name = $reflector->getShortName();
+      }
+      
+      $this->_t_extendedObjects[$name] = $object;
       $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
       foreach($methods as $method) {
-	      $name = $prefix . $method->getName();
+	      $name = $method_prefix . $method->getName();
 	      $this->extendCallable($name, [$object, $name], $override);
       }
    }
    
       
    /**
-    * extendClass function.
+    * Extend Class functions (static methods)
     * 
     * @access public
     * @param mixed $classname
@@ -81,7 +62,7 @@ trait ExtendableTrait {
     */
    public function extendClass($classname, $instance = null, $prefix = '', $override = false) {
 	   $reflector = new \ReflectionClass($classname);
-      $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
+      $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_STATIC);
       foreach($methods as $method) {
 	      $name = $prefix . $method->getName();
 	      $this->extendCallable($name, [$classname, $name], $override);
@@ -135,5 +116,5 @@ trait ExtendableTrait {
       } else {
 	      throw new \Exception("Method ({$name}) has not been extended.");
       }
-   }   
+   }
 }

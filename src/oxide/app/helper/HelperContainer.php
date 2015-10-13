@@ -35,20 +35,21 @@ class HelperContainer extends Container {
       parent::__construct();
       $this->setFlags(self::ARRAY_AS_PROPS);
       
-      $this->_context = $context;
+      $this->set('context', $context);
       $this->registerBuiltInHelpers();
    }
-
+   
    /**
-    * Get the application context object
-    * 
-    * @return Context
+    * Register a helper with given name and class name
+    * @param type $name
+    * @param type $helperClass
     */
-   public function getContext() {
-      return $this->_context;
+   protected function registerHelper($name, $helperClass) {
+      $this->addResolver($name, function(Container $c) use ($helperClass) {
+         $instance = $c->instanciate($helperClass);
+         return $instance;
+      });
    }
-   
-   
    
    /**
     * Register a helper
@@ -61,33 +62,11 @@ class HelperContainer extends Container {
     */
    protected function registerBuiltInHelpers() {
 	   $helpers = $this->_helpers;
-      $context = $this->getContext();
       
       foreach($helpers as $name => $helper) {
-         $this->addResolver($name, function($c) use($context, $helper) {
-            $instance = $context->instanciate($helper);
-            return $instance;
-         });
+         $this->registerHelper($name, $helper);
       }
    }
-   
-//   public static function get($helpers = null) {
-//      $instance = static::sharedInstance();
-//      
-//      if($helpers) {
-//         if(is_array($helpers)) {
-//            return $instance->getTuple($helpers);
-//         } else {
-//            if(func_num_args() > 1) {
-//               return $instance->getTuple(func_num_args());
-//            } else {
-//               return $instance->offsetGet($helpers);
-//            }
-//         }
-//      }
-//   
-//      return $instance;
-//   }
    
    /**
     * Override getter to allow multiple get using array

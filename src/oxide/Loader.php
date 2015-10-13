@@ -30,6 +30,17 @@ function exception($str = null, $code = null) {
    throw new \Exception($str, $code);
 }
 
+/**
+ * 
+ */
+function helper(...$arg) {
+   $helper = app\helper\HelperContainer::sharedInstance();
+   if($arg === null) {
+      return $helper;
+   } else {
+      return $helper->get(...$arg);
+   }
+}
 
 /**
  * Oxide Loader
@@ -141,7 +152,6 @@ class Loader {
             ])
          );
             
-      //
       util\Debug::setResponse($context->getResponse());
       
       // configure the shared database conneciton
@@ -172,7 +182,7 @@ class Loader {
       $loader->loadModules($modules, $fc->getRouter());
       
       // load libraries
-      $libraries = isset($config['libraries']) ? $config['libraries'] : null;
+      $libraries = isset($config['namespaces']) ? $config['namespaces'] : null;
       if($libraries) $loader->registerNamespaces ($libraries);
       
       $notifier->notify(self::EVENT_BOOTSTRAP_END, null);

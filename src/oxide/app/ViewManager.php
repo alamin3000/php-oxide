@@ -95,6 +95,21 @@ class ViewManager {
    }  
    
    /**
+    * Create a view script page with given data
+    * 
+    * @param string $script
+    * @param \oxide\app\ViewData $data
+    * @return Page
+    */
+   public function createPage($script, ViewData $data) {
+      $templateScript = $this->getTemplateScript($script); // get templatized script
+      $page = new Page($templateScript);
+      $page->setData($data);
+      
+      return $page;
+   }
+   
+   /**
     * Create a new view using given $script
     * 
     * If $script is not provided, it will create the view based on route action
@@ -102,9 +117,7 @@ class ViewManager {
     * @return Page
     */
    public function createView($script, ViewData $data) {
-      $templateScript = $this->getTemplateScript($script); // get templatized script
-      $page = new Page($templateScript);
-      $page->setData($data);
+      $page = $this->createPage($script, $data);
       
       // use layout page if not disabled
       if(!$this->disableLayout) {

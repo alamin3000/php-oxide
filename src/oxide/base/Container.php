@@ -78,7 +78,7 @@ class Container extends Dictionary {
     * @throws \Exception
     * @throws \InvalidArgumentException
     */
-   public function invoke(callable $callable) {
+   public function invoke(callable $callable, array $additionalParams = null) {
       if(is_string($callable) || $callable instanceof \Closure) {
          $reflection = new \ReflectionFunction($callable);
       } else if(is_array($callable)) {
@@ -88,7 +88,7 @@ class Container extends Dictionary {
          throw new \Exception("Unable to resolve this callable.");
       }
       
-      $args = $this->resolveParamArguments($reflection);
+      $args = $this->resolveParamArguments($reflection, $additionalParams);
 
       return call_user_func_array($callable, $args);
    }
@@ -99,14 +99,17 @@ class Container extends Dictionary {
     * @return type
     * @throws \InvalidArgumentException
     */
-   protected function resolveParamArguments(\ReflectionFunctionAbstract $function) {
+   protected function resolveParamArguments(\ReflectionFunctionAbstract $function, array $additionalParams = null) {
       $args = null;
       if($function->getNumberOfParameters() > 0) {
          $args = [];
          foreach($function->getParameters() as $param) {
             $name = $param->getName();
-            
-            $instance = isset($this[$name]) ? $this[$name] : null;
+            if(isset($additionalParams[$name])) {
+               $instance = $additionalParams[$name];
+            } else {
+               $instance = isset($this[$name]) ? $this[$name] : null;
+            }
             if($instance === null) {
                throw new \InvalidArgumentException("Unable to resolve parameter: " . $name);
             }
@@ -123,11 +126,11 @@ class Container extends Dictionary {
     * 
     * @param string $class
     */
-	public function instanciate($class) {
+	public function instanciate($class, array $additionalParams = null) {
 	   $reflector = new \ReflectionClass($class);
 	   $constructor = $reflector->getConstructor();
 	   if($constructor) {
-         $args = $this->resolveParamArguments($constructor);
+         $args = $this->resolveParamArguments($constructor, $additionalParams);
          $instance = $reflector->newInstanceArgs($args);
       } else {
          $instance = $reflector->newInstanceWithoutConstructor();

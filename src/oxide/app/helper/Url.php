@@ -16,9 +16,9 @@ class Url {
     * @param Request $request
     * @param Route $route
     */
-   public function __construct(Request $request, Route $route) {
-      $this->_request = $request;
-      $this->_route = $route;
+   public function __construct(\oxide\http\Context $context) {
+      $this->_request = $context->getRequest();
+      $this->_route = $context['route'];
    }
    
    /**

@@ -14,7 +14,7 @@ use oxide\app\helper\HelperContainer;
 
 /**
  */
-class ViewData extends Container {	
+class ViewData extends Container {
    public
       $title = null,
            
