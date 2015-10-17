@@ -1,6 +1,6 @@
 <?php
 namespace oxide\validation;
-use oxide\base\AbstractClass;
+use oxide\base\ReflectingClass;
 
 class ValidationProcessor {
    public
@@ -174,7 +174,7 @@ class ValidationProcessor {
          foreach($keys as $key) {
             if(isset($this->_filters[$key])) {
                foreach($this->_filters[$key] as $filter) {
-                  $instance = AbstractClass::instantiate($filter, '\oxide\validation\Filterer');
+                  $instance = ReflectingClass::instantiate($filter, '\oxide\validation\Filterer');
                   $values[$key] = $instance->filter($values[$key]);
                }
             }
@@ -220,7 +220,7 @@ class ValidationProcessor {
          foreach($keys as $key) {
             if(isset($this->_validators[$key])) {
                foreach($this->_validators[$key] as $validator) {
-                  $instance = AbstractClass::instantiate($validator, '\oxide\validation\Validator');
+                  $instance = ReflectingClass::instantiate($validator, '\oxide\validation\Validator');
                   if(empty($values[$key])) continue;
                   $result->currentOffset = $key;
                   $instance->validate($values[$key], $result);
