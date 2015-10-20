@@ -43,7 +43,7 @@ abstract class Controller
       /**
        * @var string
        */
-      $configFile = 'config.json',           
+      $configFile = 'config.json',
       
       /**
        * @var ViewData Data container for the view
@@ -162,15 +162,16 @@ abstract class Controller
    }
    
    /**
+    * Get the shared Helper
     * 
-    * @return helper\HelperContainer
+    * @return helper\Helper
     */
-   public function getHelperContainer() {
-      if(!helper\HelperContainer::hasSharedInstance()) {
-         helper\HelperContainer::setSharedInstance(new helper\HelperContainer($this->getContext()));
+   public function getHelper() {
+      if(!helper\Helper::hasSharedInstance()) {
+         helper\Helper::setSharedInstance(new helper\Helper($this->getContext()));
       }
       
-      return helper\HelperContainer::sharedInstance();
+      return helper\Helper::sharedInstance();
    }
 
    /**
@@ -200,7 +201,6 @@ abstract class Controller
       
       return $this->_config;
    }
-   
    
    /**
 	 * forward to given $action immediately
@@ -290,17 +290,13 @@ abstract class Controller
       $this->getAclManager()->performValidation($this->getContext()->getAuth());
    }
 
-   
-
    /**
     * Subclassing controller must/should call parent::onInit if overriding
     * 
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      $helperContainer = $this->getHelperContainer();
-      $this->viewData = new ViewData(null, $helperContainer);
-      $this->helperContainer = $helperContainer;
+      $this->viewData = new ViewData(null, $this->getHelper());
    }
    
    /**

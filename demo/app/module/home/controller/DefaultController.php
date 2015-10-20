@@ -1,7 +1,6 @@
 <?php
 namespace app\module\home\controller;
 use oxide\app\Controller;
-use oxide\app;
 
 /**
  * Description of HomeDefaultController
@@ -10,10 +9,16 @@ use oxide\app;
  */
 class DefaultController extends Controller {
    protected function executeIndex() {
+      
    }
    
    protected function executeTesting() {
       $this->autoRender = false;
       
+      $helper = $this->viewData->helper;
+      $helper->load('html');
+      
+      echo $helper->tag('h1', 'Hello World');
+      echo $helper->html->tag('p', 'Start something amazing.');
    }
 }

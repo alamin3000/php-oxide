@@ -99,9 +99,7 @@ class Loader {
    public function registerNamespaces(array $namespaces) {
       $autoloader = $this->getAutoloader();
       if($namespaces) {
-         foreach($namespaces as $defs) {
-            $dir = (isset($defs['dir'])) ? $defs['dir'] : trigger_error('dir key required for namespace.');
-            $namespace = (isset($defs['namespace'])) ? $defs['namespace'] : trigger_error('namespace key required for namespace definition.');
+         foreach($namespaces as $namespace => $dir) {
             $autoloader->addNamespace($namespace, $dir);
          }
       }
@@ -160,11 +158,6 @@ class Loader {
             \PDO::ATTR_ERRMODE	=> \PDO::ERRMODE_EXCEPTION,
             'FETCH_MODE'			=> \PDO::FETCH_ASSOC
          ]);
-      });
-      
-      // configure helper container
-      app\helper\HelperContainer::setSharedInstance(function() use ($context) {
-         return new app\helper\HelperContainer($context);
       });
             
       // setup mailer

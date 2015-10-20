@@ -10,7 +10,7 @@
 
 namespace oxide\app;
 use oxide\base\Container;
-use oxide\app\helper\HelperContainer;
+use oxide\app\helper\Helper;
 
 /**
  */
@@ -21,7 +21,7 @@ class ViewData extends Container {
       /**
        * @var HelperContainer
        */
-      $helpers = null;
+      $helper = null;
    
    
    /**
@@ -29,9 +29,10 @@ class ViewData extends Container {
     * 
     * @param mixed $data
     */
-   public function __construct($data = null, HelperContainer $helpers = null) {
+   public function __construct($data = null, Helper $helper = null) {
       parent::__construct($data);
-      if($helpers) $this->helpers = $helpers;
+      if($helper) $this->helper = $helper;
+      else $this->helper = Helper::sharedInstance ();
    }
    
    /**
@@ -41,8 +42,8 @@ class ViewData extends Container {
     * @param array $names
     * @return void
     */
-   public function getHelpers() {
-	   $helpers = $this->helpers;
-	   return $helpers->get(func_get_args());
+   public function getHelper(...$helpers) {
+	   $helper = $this->helper;
+	   return $helper->get(...$helpers);
    }
 }

@@ -12,7 +12,6 @@ namespace oxide\base\pattern;
 
 trait ExtendableTrait {
    protected
-   	$_t_extendedObjects = [],
       $_t_callables = [];
    
    
@@ -41,7 +40,6 @@ trait ExtendableTrait {
          $name = $reflector->getShortName();
       }
       
-      $this->_t_extendedObjects[$name] = $object;
       $methods = $reflector->getMethods(\ReflectionMethod::IS_PUBLIC);
       foreach($methods as $method) {
 	      $name = $method_prefix . $method->getName();
@@ -68,7 +66,6 @@ trait ExtendableTrait {
 	      $this->extendCallable($name, [$classname, $name], $override);
       }
       if($instance === null) $instance = $classname;
-      $this->_t_extendedObjects[$reflector->getName()] = $instance;
    }
    
    /**
