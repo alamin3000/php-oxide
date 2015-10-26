@@ -1,6 +1,6 @@
 <?php
 namespace oxide\app\helper;
-use oxide\http\Session;
+use oxide\http\Context;
 
 class Flash  {
    /**
@@ -22,19 +22,8 @@ class Flash  {
        */
       $_session = null;
    
-   public function __construct(\oxide\http\Context $context) {
+   public function __construct(Context $context) {
       $this->_session = $context->getSession();
-   }
-   
-   /**
-    * Checks if flash message exists
-    * 
-    * @param string $namespace
-    * @return bool
-    */
-   public function has($namespace = '') {
-      $key = self::$_key . $namespace;
-      return $this->_session[$key];
    }
   
    /**
@@ -43,31 +32,20 @@ class Flash  {
     * @param type $namespace
     * @return type 
     */
-   public function get($namespace = null) {
-		$key = self::$_key.$namespace;
+   public function flash($value = null, $type = '') {
+		$key = self::$_key;
       $session = $this->_session;
-      
-		$value = null;
-		if($session->exists($key)) {
-			$value = unserialize($session[$key]);
-			unset($session[$key]);
-		}
-
-		return $value;
-	}
-
-   /**
-    * sets the flash message within given namespace
-    * @access public
-    * @param type $value
-    * @param type $namespace
-    * @param type $type 
-    */
-	public function set($value, $namespace = null, $type = '') {
-		$key = self::$_key.$namespace;
-		
-		$message = new FlashMessage($value, $type);
-		$this->_session[$key] = serialize($message);
+      if($value === null) {
+         if(isset($session[$key])) {
+            $value = unserialize($session[$key]);
+            unset($session[$key]);
+            return $value;
+         } else {
+            return false;
+         }
+		} else {
+         $session[$key] = serialize(new FlashMessage($value, $type));
+      }
 	}
 }
 

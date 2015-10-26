@@ -30,17 +30,6 @@ function exception($str = null, $code = null) {
    throw new \Exception($str, $code);
 }
 
-/**
- * 
- */
-function helper(...$arg) {
-   $helper = app\helper\HelperContainer::sharedInstance();
-   if($arg === null) {
-      return $helper;
-   } else {
-      return $helper->get(...$arg);
-   }
-}
 
 /**
  * Oxide Loader

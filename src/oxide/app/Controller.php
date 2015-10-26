@@ -48,12 +48,7 @@ abstract class Controller
       /**
        * @var ViewData Data container for the view
        */
-      $viewData = null,
-           
-      /**
-       * @var HelperContainer Helper container class
-       */
-      $helperContainer = null;
+      $viewData = null;
    
 	private  
       /**
@@ -159,19 +154,6 @@ abstract class Controller
     */
    public function setViewManager(ViewManager $viewManager) {
       $this->_viewManager = $viewManager;
-   }
-   
-   /**
-    * Get the shared Helper
-    * 
-    * @return helper\Helper
-    */
-   public function getHelper() {
-      if(!helper\Helper::hasSharedInstance()) {
-         helper\Helper::setSharedInstance(new helper\Helper($this->getContext()));
-      }
-      
-      return helper\Helper::sharedInstance();
    }
 
    /**
@@ -296,7 +278,10 @@ abstract class Controller
     * @param Context $context
     */
    protected function onInit(Context $context) {
-      $this->viewData = new ViewData(null, $this->getHelper());
+      if(!helper\Helper::hasSharedInstance()) {
+         helper\Helper::setSharedInstance(new helper\Helper($context));
+      }
+      $this->viewData = new ViewData(null, helper\Helper::sharedInstance());
    }
    
    /**
