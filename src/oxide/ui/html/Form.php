@@ -70,9 +70,9 @@ class Form extends Element {
 	 * @param string $action url here form processing will be performed
     * @param string $name name/id of the form.  this is important when there are multiple forms in the page
     */
-	public function __construct($name, $method = self::METHOD_POST, $action = null) {
+	public function __construct($name, $method = self::METHOD_POST, $action = null, $attributes = null) {
       self::$_counter++;
-      parent::__construct('form');
+      parent::__construct('form', null, $attributes);
       if(!$action) $action = '';
       if(!$name) $name = "_form-" . self::$_counter;
       if($method == self::METHOD_POST) $values = filter_input_array(INPUT_POST);

@@ -2,7 +2,49 @@
 namespace oxide\ui\html;
 
 
-abstract class ControlFactory {
+class ControlFactory {
+   
+   protected
+      $_typeMap = [];
+   
+
+   public function __construct() {
+      
+   }
+   
+   /**
+    * 
+    * @param string $type
+    * @param string $namespace
+    */
+   public function registerType($type, $namespace) {
+      $this->_typeMap[$type] = $namespace;
+   }
+   
+   /**
+    * 
+    * @param string $type
+    * @return string|null
+    */
+   public function resolveTypeClass($type) {
+      if(isset($this->_typeMap[$type])) {
+         $namespace = $this->_typeMap[$type];
+      } else {
+         // use the default oxide type
+         $namespace = '\\oxide\\ui\\html\\';
+      }
+      
+      $class = ucfirst($type) . 'Control';
+      $fullclass = "{$namespace}{$class}";
+      
+      if(class_exists($fullclass)) {
+         return $fullclass;
+      } else {
+         return null;
+      }
+   }
+   
+   
    /**
     * create function.
     * 
@@ -15,16 +57,15 @@ abstract class ControlFactory {
     * @param mixed $data (default: null)
     * @param array $attribs (default: null)
     * @return void
+    * @throws Exception
     */
-   public static function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
-	   $class = ucfirst($type) . 'Control';
-	   $namespace = '\\oxide\\ui\\html\\';
-	   $fullclass = "{$namespace}{$class}";
-	   if(!class_exists($fullclass)) {
+   public function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
+      $class = $this->resolveTypeClass($type);
+	   if(!$class) {
 		   throw new \Exception("Control ({$type}) not found using class: {$class}");
 	   }
 	  
-		$control = new $fullclass($name, $value, $label);
+		$control = new $class($name, $value, $label, $data);
 		if($data) {
 			$control->setData($data);
 		}

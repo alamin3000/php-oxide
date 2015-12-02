@@ -67,12 +67,13 @@ class Control extends Element implements FormAware {
     * @param string $value
     * @param string $label
     */
-   public function __construct($name, $value = null, $label = null, $data = null) {
-      parent::__construct();
+   public function __construct($name, $value = null, $label = null, $data = null, $attributes = null) {
+      parent::__construct(null, null, $attributes);
       $this->setName($name);      
       if($label) $this->setLabel($label);
       if($value) $this->setValue($value);
       if($data) $this->setData($data);
+      
    }
       
    /**
