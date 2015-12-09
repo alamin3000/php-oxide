@@ -56,13 +56,13 @@ class ControlFactory {
     * @param mixed $label (default: null)
     * @param mixed $data (default: null)
     * @param array $attribs (default: null)
-    * @return void
+    * @return html\Control
     * @throws Exception
     */
    public function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
       $class = $this->resolveTypeClass($type);
 	   if(!$class) {
-		   throw new \Exception("Control ({$type}) not found using class: {$class}");
+		   throw new \Exception("Control ({$type}) not found, or unable to resolve.");
 	   }
 	  
 		$control = new $class($name, $value, $label, $data);

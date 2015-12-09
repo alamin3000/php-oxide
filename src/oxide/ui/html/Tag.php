@@ -88,6 +88,23 @@ class Tag implements Renderer {
    }
    
    /**
+    * Set multiple attributes at once.  
+    * 
+    * If $replace is set to true, all current attributes will be removed first.
+    * @param array $attributes
+    * @param boolean $replace if set to true, current attributes will be removed
+    */
+   public function setAttributes(array $attributes, $replace = false) {
+      if($replace) {
+         $this->attributes = [];
+      }
+      
+      foreach($attributes as $name => $value) {
+         $this->setAttribute($name, $value);
+      }
+   }
+   
+   /**
     * remove the given attribute $key
     * 
     * @param string $key
