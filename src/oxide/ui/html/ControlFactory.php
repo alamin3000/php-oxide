@@ -75,4 +75,21 @@ class ControlFactory {
 		}
 		return $control;
    }
+   
+   /**
+    * 
+    * @param \oxide\base\Dictionary $dictionary
+    * @return type
+    */
+   public function createFromDictionary(\oxide\base\Dictionary $dictionary) {
+      $type = $dictionary->get('type', 'text');
+      $label = $dictionary->get('label', null);
+      $name = $dictionary->get('name', null);
+      $data = $dictionary->get('data', null);
+      $attribs = $dictionary->get('attributes');
+      $value = $dictionary->get('value');
+      
+      
+      return $this->create($type, $name, $value, $label, $data, $attribs);
+   }
 }
