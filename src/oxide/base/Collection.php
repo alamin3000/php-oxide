@@ -15,8 +15,8 @@ class Collection
    implements \ArrayAccess, \Countable , \IteratorAggregate {   
    use ArrayAccessTrait;
    
-   public function __construct($data = null) {
-      $this->exchangeArray($data);
+   public function __construct(array $data = null) {
+      if($data) $this->exchangeArray($data);
    }
    
    /**
