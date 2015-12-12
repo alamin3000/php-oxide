@@ -31,6 +31,8 @@ class Page implements Renderer, \ArrayAccess {
       $this->_script = $script;
       if($data) {
          $this->setData($data);
+      } else {
+         $this->setData(new \ArrayObject());
       }
       if($codeScript) $this->setCodeScript ($codeScript);
    }
