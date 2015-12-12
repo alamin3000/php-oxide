@@ -9,7 +9,6 @@
  */
 
 namespace oxide\ui;
-use oxide\base\Dictionary;
 
 class Page implements Renderer, \ArrayAccess {
    protected
@@ -40,7 +39,7 @@ class Page implements Renderer, \ArrayAccess {
    /**
     * Set data for the page script
     * 
-    * @param Dictionary $data
+    * @param \ArrayObject $data
     */
    public function setData(\ArrayObject $data) {
       $this->data = $data;
@@ -142,7 +141,7 @@ class Page implements Renderer, \ArrayAccess {
     * @param string $script
     * @param array $data
     */
-   protected function renderPage($script, Dictionary $data = null) {
+   protected function renderPage($script, \ArrayObject $data = null) {
       ob_start();
       if(!file_exists($script)) {
          trigger_error("View script '{$script}' not found", E_USER_ERROR);
