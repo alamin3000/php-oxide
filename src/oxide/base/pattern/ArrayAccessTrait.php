@@ -32,6 +32,7 @@ trait ArrayAccessTrait {
     * @return type
     */
    public function exchangeArray(array $arr) {
+      $this->onArrayExchange($arr);
       $curr = $this->_t_array_storage;
       $this->_t_array_storage = $arr;
       
@@ -200,7 +201,7 @@ trait ArrayAccessTrait {
       return count($this->_t_array_storage, $mode);
    }
    
-   
+   protected function onArrayExchange(&$arr) {}
    protected function onArrayAccessSet(&$key, $value) {}
    protected function onArrayAccessUnset(&$key, $value) {}
 }

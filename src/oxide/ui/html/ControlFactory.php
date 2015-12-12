@@ -50,10 +50,10 @@ class ControlFactory {
     * 
     * @access public
     * @static
-    * @param mixed $type
-    * @param mixed $name
-    * @param mixed $value (default: null)
-    * @param mixed $label (default: null)
+    * @param string $type
+    * @param string $name
+    * @param string $value (default: null)
+    * @param string $label (default: null)
     * @param mixed $data (default: null)
     * @param array $attribs (default: null)
     * @return html\Control
