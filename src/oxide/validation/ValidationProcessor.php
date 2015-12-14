@@ -95,6 +95,16 @@ class ValidationProcessor {
          }
       }
 	}
+   
+   /**
+    * 
+    * @param string $key
+    */
+   public function addRequiredKey($key) {
+      if(!in_array($key, $this->_requiredKeys)) {
+         $this->_requiredKeys[] = $key;
+      }
+   }
 
    /**
     * Returns array of keys, whos values are required
