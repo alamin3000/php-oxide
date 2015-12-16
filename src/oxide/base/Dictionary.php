@@ -38,7 +38,7 @@ class Dictionary extends \ArrayObject {
     * @param string $file
     * @return \self
     */
-   public function createFromFile($file) {
+   static public function createFromFile($file) {
       $parser = new FileParser();
       $data = $parser->parse($file);
       
