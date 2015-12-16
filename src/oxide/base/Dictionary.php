@@ -9,6 +9,7 @@
  */
 
 namespace oxide\base;
+use oxide\util\FileParser;
 
 /**
  * Dictionary
@@ -29,6 +30,23 @@ class Dictionary extends \ArrayObject {
       if($data) {
          $this->exchangeArray($data);
       }
+   }
+   
+   /**
+    * Create a new dictionary from the given file
+    * 
+    * @param string $file
+    * @return \self
+    */
+   public function createFromFile($file) {
+      $parser = new FileParser();
+      $data = $parser->parse($file);
+      
+      if($data) {
+         return new self((array) $data);
+      }
+      
+      return null;
    }
    
    /**
