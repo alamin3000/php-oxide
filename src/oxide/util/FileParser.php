@@ -52,8 +52,9 @@ class FileParser {
     * @return \Closure
     */
    public function getParser($ext) {
-      if(isset($this->_parsers[strtolower($ext)])) {
-         return $this->_parsers;
+      $lext = strtolower($ext);
+      if(isset($this->_parsers[$lext])) {
+         return $this->_parsers[$lext];
       }
       
       return null;
