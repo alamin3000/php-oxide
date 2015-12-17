@@ -8,8 +8,8 @@
  * @license http://URL name 
  */
 
-namespace oxide\validation;
-
+namespace oxide\validation\misc;
+use oxide\validation\Filterer;
 
 class ArrayKeyMapFilterer implements Filterer{
    protected
