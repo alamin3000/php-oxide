@@ -10,12 +10,17 @@
 
 namespace oxide\util;
 
+/**
+ * File Parser
+ */
 class FileParser {
    protected
       $_parsers = [];
    
+   /**
+    * 
+    */
    public function __construct() {
-      
       // add the json parser
       $this->addParser('json', function($file) {
          $raw = file_get_contents($file);

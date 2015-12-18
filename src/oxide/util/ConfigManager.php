@@ -15,6 +15,7 @@ class ConfigManager {
    
    protected 
       $_defaultConfigFilename = 'config.json',
+      $_parser = null,
       $_config = null,
       $_dir = null;
    
@@ -46,6 +47,18 @@ class ConfigManager {
    }
    
    /**
+    * 
+    * @return FileParser
+    */
+   public function getFileParser() {
+      if($this->_parser === null) {
+         $this->_parser = new FileParser();
+      }
+      
+      return $this->_parser;
+   }
+   
+   /**
     * Create a config object from given $filename using current config directory
     * 
     * Filename provided must be relative to the managed configuration directory
@@ -60,7 +73,8 @@ class ConfigManager {
          throw new \Exception('Config file not found in location: ' . $file);
       }
       
-      $data = $this->parseFile($file);
+      $parser = $this->getFileParser();
+      $data = $parser->parse($file);
       return new Dictionary($data);
    }
    
@@ -75,39 +89,5 @@ class ConfigManager {
       $dir = trim($relative_dir, '/');
       $filename = "{$dir}/{$name}";
       return $this->openConfigByFilename($filename);
-   }
-   
-   /**
-    * Parse the given file into an array
-    * 
-    * @param type $file
-    * @return array
-    * @throws \Exception
-    */
-   public function parseFile($file) {
-      // first we need to check if file exits
-      if(!is_file($file)) {
-         throw new \Exception("File: $file is not found.");
-      }
-      
-      $info = pathinfo($file);
-      $data = null;
-      switch(strtolower($info['extension'])) {
-         case 'json':
-            $raw = file_get_contents($file);
-            $data =json_decode($raw, true);
-            
-            break;
-         
-         case 'ini':
-            $data = parse_ini_file($file, true);
-            
-            break;
-            
-         case 'php':
-         	$data = include $file;
-      }
-      
-      return $data;
    }
 }
