@@ -5,11 +5,20 @@ namespace oxide\ui\html;
 class ControlFactory {
    
    protected
-      $_types = [],
       $_typeMap = [];
    
 
    public function __construct() {
+      
+   }
+   
+   /**
+    * 
+    * @param string $type
+    * @param string $namespace
+    */
+   public function registerType($type, $namespace) {
+      $this->_typeMap[$type] = $namespace;
    }
    
    /**
@@ -17,55 +26,25 @@ class ControlFactory {
     * @param string $type
     * @return string|null
     */
-   public function resolveType($type) {
-      if(isset($this->_types[$type])) {
-         $var = $this->_types[$type];
+   public function resolveTypeClass($type) {
+      if(isset($this->_typeMap[$type])) {
+         $namespace = $this->_typeMap[$type];
       } else {
          // use the default oxide type
-         $var = '\\oxide\\ui\\html\\';
+         $namespace = '\\oxide\\ui\\html\\';
       }
       
-      if(is_string($var)) {
-         $namespace = $var;
-         $class = ucfirst($type) . 'Control';
-         $fullclass = "{$namespace}\\{$class}";
-
-         if(class_exists($fullclass)) {
-            return $fullclass;
-         } else {
-            return null;
-         }
-      } else if($var instanceof \Closure) {
-         // this is a closure
-         return $var;
+      $class = ucfirst($type) . 'Control';
+      $fullclass = "{$namespace}{$class}";
+      
+      if(class_exists($fullclass)) {
+         return $fullclass;
       } else {
          return null;
       }
    }
    
    
-   /**
-    * 
-    * @param string $type
-    * @param string $namespace
-    */
-   public function registerNamespace($type, $namespace) {
-      $this->_types[$type] = $namespace;
-   }
-   
-   /**
-    * Register a clsoure
-    * 
-    * @param string $type
-    * @param \Closure $closure
-    */
-   public function registerClosure($type, \Closure $closure) {
-      $this->_types[$type] = $closure;
-   }
-   
-   
-
-
    /**
     * create function.
     * 
@@ -81,23 +60,19 @@ class ControlFactory {
     * @throws Exception
     */
    public function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
-      $class = $this->resolveType($type);
+      $class = $this->resolveTypeClass($type);
 	   if(!$class) {
 		   throw new \Exception("Control ({$type}) not found, or unable to resolve.");
 	   }
 	  
-      if(is_string($class)) {
-         $control = new $class($name, $value, $label, $data, $attribs);
-      } else if($class instanceof \Closure) {
-         $control = $class($type, $name, $value, $label, $data, $attribs);
-         if(!$control instanceof Control) {
-            throw new Exception('Closure must return an instance of Control');
-         }
-      } else {
-         throw new Exception('Invalid');
-      }
+		$control = new $class($name, $value, $label, $data);
+		if($data) {
+			$control->setData($data);
+		}
       
-		
+		if($attribs) {
+			$control->setAttributes($attribs);
+		}
 		return $control;
    }
    
