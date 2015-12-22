@@ -1,6 +1,6 @@
 <?php
 namespace oxide\ui\html;
-
+use oxide\base\ReflectingClass;
 
 class ControlFactory {
    
@@ -26,7 +26,7 @@ class ControlFactory {
     * @param string $type
     * @return string|null
     */
-   public function resolveTypeClass($type) {
+   public function resolveType($type) {
       if(isset($this->_typeMap[$type])) {
          $namespace = $this->_typeMap[$type];
       } else {
@@ -60,19 +60,12 @@ class ControlFactory {
     * @throws Exception
     */
    public function create($type, $name, $value = null, $label = null, $data = null, array $attribs = null) {
-      $class = $this->resolveTypeClass($type);
+      $class = $this->resolveType($type);
 	   if(!$class) {
 		   throw new \Exception("Control ({$type}) not found, or unable to resolve.");
 	   }
 	  
-		$control = new $class($name, $value, $label, $data);
-		if($data) {
-			$control->setData($data);
-		}
-      
-		if($attribs) {
-			$control->setAttributes($attribs);
-		}
+      $control = ReflectingClass::instantiate($class, [$name, $value, $label, $data, $attribs]);
 		return $control;
    }
    
