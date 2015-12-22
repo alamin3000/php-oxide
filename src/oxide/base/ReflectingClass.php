@@ -122,7 +122,7 @@ abstract class ReflectingClass {
     * @param type $instanceof
     * @return \oxide\base\args
     */
-   public static function instantiate($args, $instanceof = null) {
+   public static function instantiate($args, $params = null, $instanceof = null) {
       if(is_object($args)) {
          $instance = $args;
       } else if(is_array($args)) {
@@ -131,9 +131,9 @@ abstract class ReflectingClass {
          list($class, $params) = each($args);
          $instance =  self::create($class, $params);
       } else if(is_string($args)) {
-         $instance =  new $args();
+         $instance =  self::create($args, $params);
       } else if($args instanceof \Closure) {
-         $instance = $args();
+         $instance = call_user_func_array($args, $params);
       }
       
       if($instanceof) {
