@@ -23,7 +23,16 @@ class Factory {
    }
    
    
-   public function create(...$args) {
+   public function createValidator($args) {
+      if(is_string($args)) {
+         $class = $args;
+      } else if(is_array($args)) {
+         
+      }
       
+      
+      if($class && class_exists($args)) {
+         
+      }
    }
 }

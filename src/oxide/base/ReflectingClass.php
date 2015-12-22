@@ -128,7 +128,7 @@ abstract class ReflectingClass {
       } else if(is_array($args)) {
          // create instance using reflection
          // class => args
-         list($class, $params) = $args;
+         list($class, $params) = each($args);
          $instance =  self::create($class, $params);
       } else if(is_string($args)) {
          $instance =  new $args();

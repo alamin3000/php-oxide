@@ -13,6 +13,7 @@ class EmailValidator extends ValidatorAbstract  {
       $_errorMessage = "Invalid Email Address provided.";
 	
 	public function __construct() {
+      parent::__construct();
 		// make sure that filter extension is installed
 		if(!function_exists('filter_list')) {
 			throw new Exception(__CLASS__ . ' requires filter functions in php 5.2 > or PECL');
