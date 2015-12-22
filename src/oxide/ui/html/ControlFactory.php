@@ -65,7 +65,10 @@ class ControlFactory {
 		   throw new \Exception("Control ({$type}) not found, or unable to resolve.");
 	   }
 	  
-      $control = ReflectingClass::instantiate($class, [$name, $value, $label, $data, $attribs]);
+      $control = ReflectingClass::instantiate(
+              $class, 
+              [$name, $value, $label, $data, $attribs],
+              '\\oxide\\ui\\html\\Control');
 		return $control;
    }
    
