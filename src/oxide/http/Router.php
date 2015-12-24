@@ -174,12 +174,13 @@ class Router {
     * @param \oxide\http\Route $route
     */
    public function rerouteToDefaultController(Route $route) {
-      /*
-       * we will also shift the routing parts to make space for the default module name
-       */
-      if($route->action) {
-         array_unshift($route->params, $route->action); 	# glue the action part as param
+      $action = $route->action;
+      if($action && $action != $this->defaultAction) {
+         array_unshift($route->params, $action); 	# glue the action part as param
+      } else {
+         $route->action = $this->defaultAction;
       }
+      
       $route->action = $route->controller;				# set controller as action
       $route->controller = $this->defaultController;  # using default controller
 
@@ -200,10 +201,12 @@ class Router {
     * @param \oxide\http\Route $route
     */
    public function rerouteToDefaultAction(Route $route) {
-      if($route->action) {
-         array_unshift($route->params, $route->action); 	# glue the action part as param
+      $action = $route->action;
+      if($action && $action != $this->defaultAction) {
+         array_unshift($route->params, $action); 	# glue the action part as param
+      } else {
+         $route->action = $this->defaultAction;
       }
-      $route->action = $this->defaultAction;
       
       // unshift may create an empty param
       // we need to remove that
