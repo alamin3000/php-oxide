@@ -188,7 +188,7 @@ class ViewManager {
          }
       }
       
-      return $script;
+      return $scriptfile;
    }
 
    /**
