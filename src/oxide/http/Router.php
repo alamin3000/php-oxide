@@ -1,6 +1,5 @@
 <?php
 namespace oxide\http;
-use oxide\base\Container;
 
 /**
  * Router class.
@@ -194,7 +193,8 @@ class Router {
    /**
     * Reroutes the given $route into default action
     * 
-    * Meaning:
+    * Meaning:*+6
+    * 
     *    - the current action, if any will be shifted as first param
     *    - action name will be current $defaultAction name of the router
     *    - everything else is unchanged.

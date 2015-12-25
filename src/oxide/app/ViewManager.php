@@ -102,7 +102,7 @@ class ViewManager {
     * @return Page
     */
    public function createPage($script, ViewData $data) {
-      $templateScript = $this->getTemplateScript($script); // get templatized script
+      $templateScript = $this->resolveTemplateScript($script); // get templatized script
       $page = new Page($templateScript);
       $page->setData($data);
       
@@ -165,7 +165,7 @@ class ViewManager {
     * @param string $script
     * @return string
     */
-   public function getTemplateScript($script) {
+   public function resolveTemplateScript($script) {
       $route = $this->_route;
       
       $module = $route->module;

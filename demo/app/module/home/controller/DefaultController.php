@@ -27,4 +27,9 @@ class DefaultController extends Controller {
       echo $helper->currency(20000);
       echo $helper->a('Hello', 'link');
    }
+   
+   
+   public function executeTest1($a) {
+      $this->autoRender = false;
+   }
 }
