@@ -184,7 +184,7 @@ class ViewManager {
       foreach($dirs as $dir) {
          $file = "{$dir}/{$scriptfile}";
          if (file_exists($file)) {
-            return $file;
+            return realpath($file);
          }
       }
       
