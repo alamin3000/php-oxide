@@ -167,7 +167,6 @@ class ViewManager {
     */
    public function resolveTemplateScript($script) {
       $route = $this->_route;
-      
       $module = $route->module;
       $controller = $route->controller;
       $dirs = [
@@ -188,7 +187,7 @@ class ViewManager {
          }
       }
       
-      return $scriptfile;
+      return null;
    }
 
    /**
