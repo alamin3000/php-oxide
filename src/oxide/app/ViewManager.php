@@ -3,6 +3,7 @@ namespace oxide\app;
 use oxide\http\Route;
 use oxide\ui\Page;
 use oxide\ui\Renderer;
+use Exception;
 
 /**
  * View Controller

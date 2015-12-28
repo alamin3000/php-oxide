@@ -8,6 +8,7 @@ use oxide\http\Route;
 use oxide\http\Context;
 use oxide\base\Dictionary;
 use oxide\util\ConfigManager;
+use Exception;
 
 /**
  * Action Controller
