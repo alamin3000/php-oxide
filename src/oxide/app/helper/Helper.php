@@ -32,6 +32,7 @@ class Helper extends Container {
    public function __construct(Context $context) {
       parent::__construct(['context' => $context]);
       $this->setFlags(self::ARRAY_AS_PROPS);
+      $this->selfResolvingName = 'helper';
       
       foreach($this->_helpers as $helper => $class) {
          $this->register($helper, $class);
@@ -49,10 +50,10 @@ class Helper extends Container {
     * @param string $class
     */
    public function register($name, $class) {
-      $this->addResolver($name, function(Helper $c) use ($name, $class) {
-         $instance = $c->instanciate($class);
-         $c->{$name} = $instance;
-         $c->extendObject($instance);
+      $this->bind($name, function(Helper $helper) use ($name, $class) {
+         $instance = $helper->instanciate($class);
+         $helper->{$name} = $instance;
+         $helper->extendObject($instance);
          return $instance;
       });
    }

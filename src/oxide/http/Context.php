@@ -1,65 +1,53 @@
 <?php
-namespace oxide\http;
-use oxide\base\Container;
+namespace Oxide\Http;
+
+use Oxide\Common\ServiceContainer;
 
 /**
  * Context class
- * 
- * Context a container of storing data and services for the current http session.
- * Provides lazy loading functionality
- * @package oxide
- * @subpackage http
+ *
  */
-class Context extends Container {
-   /**
-    * Create http context
-    * 
-    * @param \oxide\http\Request $request
-    * @param \oxide\http\Response $response
-    * @param \oxide\http\Session $session
-    */
-	public function __construct(Request $request, Response $response, Session $session) {
-		parent::__construct();
-      $this->set('request', $request); 
-      $this->set('response', $response);
-      $this->set('session', $session);
-      
-      // setup the authentication based on the session
-      $this->addResolver('auth', function() {
-         return new Auth(new AuthStorage($this->get('session')));
-      });
-	}
-  
-   /**
-    * Current application request object
-    * @return Request
-    */
-	public function getRequest() {
-		return $this->get('request');
-	}
+class Context extends ServiceContainer
+{
 
-   /**
-    * Current application response object
-    * @return Response
-    */
-	public function getResponse() {
-      return $this->get('response');
-	}
-   
-   /**
-    * 
-    * @return Session
-    */
-   public function getSession() {
-      return $this->get('session');
-   }
-   
-   /**
-    * Get user auth
-    * 
-    * @return Auth
-    */
-   public function getAuth() {
-      return $this->get('auth');
-   }
+    /**
+     * Create http context
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param Session $session
+     */
+    public function __construct(Request $request, Response $response = null, Session $session = null)
+    {
+        return;
+        parent::__construct();
+        // bind self instance
+        $this->bind([self::class, 'context'], $this);
+        // bind request with alias
+        $this->bind([Request::class, 'request'], $request);
+
+        // bind response if not already provided
+        if (!$response) {
+            $response = Response::class;
+        }
+        $this->bind([Response::class, 'response']);
+
+
+        // bind session if not already provided
+        if (!$session) {
+            $this->bind('session', function (Request $request) {
+                return new Session([
+                    'cookie_domain' => $request->getUriComponents(Request::URI_HOST),
+                    'cookie_secure' => $request->isSecured()
+                ]);
+            });
+        } else {
+            $this['session'] = $session;
+        }
+
+        // bind the auth
+        $this->bind('auth', function (Session $session) {
+            return new Auth(new AuthStorage($session));
+        });
+    }
 }

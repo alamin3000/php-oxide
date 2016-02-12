@@ -57,7 +57,6 @@ abstract class Controller
        */
       $_defaultActionName = 'index',
            
-           
       /**
        * @var Route
        */
@@ -67,7 +66,6 @@ abstract class Controller
        * @var Context
        */
       $_context = null,
-           
       
       /**
        * _config
@@ -111,6 +109,7 @@ abstract class Controller
    }
    
    /**
+    * Get the current application context
     * 
     * @return Context
     */
@@ -119,6 +118,7 @@ abstract class Controller
    }
    
    /**
+    * Get the Authorization manager for handling access validation
     * 
     * @return AclManager
     */
@@ -134,7 +134,7 @@ abstract class Controller
    }
          
 	/**
-	 * get the view manager for the action controller
+	 * Get the view manager for the action controller
 	 *
 	 * @return ViewManager
 	 */
@@ -172,7 +172,7 @@ abstract class Controller
     * Get controller configuration
     * 
     * @access public
-    * @return void
+    * @return \oxide\base\Dictionary
     */
    public function getConfig() {
       if($this->_config === null) {
@@ -186,9 +186,9 @@ abstract class Controller
    }
    
    /**
-	 * forward to given $action immediately
+	 * Forward to given $action immediately
 	 * 
-    * Route object will be updated accordinly
+    * Route object will be updated accordinly.
     * @access public
 	 * @param string $action
     * @throws Exception
@@ -233,9 +233,9 @@ abstract class Controller
 	}
    
    /**
-	 * this method determine which action method to call and the attempts to call
-	 *
-	 * override this to provide one action per controller design pattern
+    * Implementing Command pattern.
+    * 
+    * This is the main entry point of the controller, invoked by dispatcher.
 	 * @param Context $context
 	 */
 	final public function execute(Context $context) {
@@ -257,7 +257,7 @@ abstract class Controller
          }
          
          $this->onExit($context);
-      } 
+      }
       
       catch(\Exception $e) {
          $this->onException($context, $e);
@@ -270,7 +270,7 @@ abstract class Controller
     * @param Context $context
     */
    protected function onAccessValidation() {
-      $this->getAclManager()->performValidation($this->getContext()->getAuth());
+      $this->getAclManager()->performValidation($this->getContext()->get('auth'));
    }
 
    /**
@@ -323,7 +323,7 @@ abstract class Controller
     * @throws Exception
     */
    protected function onRender(Context $context, View $view) {
-      $response = $context->getResponse();
+      $response = $context->get('response');
       $response->setContentType($view->getContentType(), $view->getEncoding());
       $response->addBody($view->render());
    }

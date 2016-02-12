@@ -1,5 +1,5 @@
 <?php
-namespace oxide\http;
+namespace Oxide\Http;
 
 /**
  * Command interface
@@ -7,6 +7,7 @@ namespace oxide\http;
  * @package oxide
  * @subpackage http
  */
-interface Command {
-	public function execute(Context $context);
+interface Command
+{
+    public function execute(Context $context);
 }

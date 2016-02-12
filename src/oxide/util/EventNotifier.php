@@ -1,94 +1,117 @@
 <?php
-namespace oxide\util;
+namespace Oxide\Util;
+
+use Oxide\Common\Pattern\SharedInstanceTrait;
 
 /**
  * Event Notifier class
- * 
- * Centralizes event notification system.  Object can notify any event, while other objects can register to listen to perticular event
+ *
+ * Centralizes event notification system. Object can notify any event, while other objects can register to listen to perticular event
+ *
  * @package oxide
  * @subpackage engine
  */
-class EventNotifier {
-   use \oxide\base\pattern\SharedInstanceTrait;
-   
-   protected
-      /**
-       * @var array Holds all listeneres
-       */
-		$_listeners = [];
+class EventNotifier
+{
+    use SharedInstanceTrait;
 
-   /**
-    * construction
-    * @return 
-    */
-	public function __construct() {
-	}
-   
-   /**
-    * Register a $callable for an $event broadcast
-    * 
-    * @param string $event
-    * @param callable $callback
-    * @param mixed $scope
-    */
-   public function register($event, callable $callback, $scope = null) {
-      $callable_name = null;
-      if(is_callable($callback, true, $callable_name)) {
-         $this->_listeners[$event][$callable_name] = [$callback, $scope];
-      } else {
-         throw new \InvalidArgumentException('Event callback is not callable.');
-      }
-   }
+    protected
+        /**
+         *
+         * @var array Holds all listeneres
+         */
+        $_listeners = [];
 
-   /**
-    * Unregister given $callback from the given $event
-    * 
-    * @param string $event
-    * @param callable $callback
-    */
-   public function unregister($event, callable $callback) {
-      $callable_name = null;
-      if(is_callable($callback, true, $callable_name)) {
-         if(isset($this->_listeners[$event][$callable_name])) {
-            $this->_listeners[$event][$callable_name] = null;
-            unset($this->_listeners[$event][$callable_name]);
-         }
-         return true;
-      } else return false;
-   }
+    /**
+     * construction
+     *
+     * @return
+     *
+     */
+    public function __construct()
+    {
+    }
 
-   /**
-    * Request an $event to be broadcast in $scope with given $args
-    * 
-    * @param string $event
-    * @param mixed $scope 
-    * @param mixed $args arguments to be passed to the listener
-    */
-   public function notify($event, $scope, $args = null) {
-      // if no listeners for the event, do nothing
-      if(!isset($this->_listeners[$event])) return;
+    /**
+     * Register a $callable for an $event broadcast
+     *
+     * @param string $event
+     * @param callable $callback
+     * @param mixed $scope
+     */
+    public function register($event, callable $callback, $scope = null)
+    {
+        $callable_name = null;
+        if (is_callable($callback, true, $callable_name)) {
+            $this->_listeners[$event][$callable_name] = [
+                $callback,
+                $scope
+            ];
+        } else {
+            throw new \InvalidArgumentException('Event callback is not callable.');
+        }
+    }
 
-      $args = func_get_args();
-      foreach($this->_listeners[$event] as $listener_name => $listener) {
-         list($listener_callback, $listener_scope) = $listener;
-         if($listener_scope && $listener_scope != $scope) continue; // if scope provided, it must match
+    /**
+     * Unregister given $callback from the given $event
+     *
+     * @param string $event
+     * @param callable $callback
+     */
+    public function unregister($event, callable $callback)
+    {
+        $callable_name = null;
+        if (is_callable($callback, true, $callable_name)) {
+            if (isset($this->_listeners[$event][$callable_name])) {
+                $this->_listeners[$event][$callable_name] = null;
+                unset($this->_listeners[$event][$callable_name]);
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-         if(call_user_func_array($listener_callback, $args) === FALSE) {
-            throw new \Exception('Unable to broadcast to [' . $listener_name . ']');
-         }
-      }
-   }
+    /**
+     * Request an $event to be broadcast in $scope with given $args
+     *
+     * @param string $event
+     * @param mixed $scope
+     * @param mixed $args
+     *            arguments to be passed to the listener
+     */
+    public function notify($event, $scope, $args = null)
+    {
+        // if no listeners for the event, do nothing
+        if (!isset($this->_listeners[$event])) {
+            return;
+        }
 
-	/**
-	 * check if event listeners are available
-	 * 
-	 * @param string $event check for listeneres on perticular event
-	 * @return bool
-	 */
-	public function hasListener($event = null) {
-		if($event) {
-			return isset($this->_listeners[$event]);
-		}
-		return (count($this->_listeners) > 0 );
-	}
+        $args = func_get_args();
+        foreach ($this->_listeners[$event] as $listener_name => $listener) {
+            list ($listener_callback, $listener_scope) = $listener;
+            if ($listener_scope && $listener_scope != $scope) {
+                continue;
+            } // if scope provided, it must match
+
+            if (call_user_func_array($listener_callback, $args) === false) {
+                throw new \Exception('Unable to broadcast to [' . $listener_name . ']');
+            }
+        }
+    }
+
+    /**
+     * check if event listeners are available
+     *
+     * @param string $event
+     *            check for listeneres on perticular event
+     * @return bool
+     */
+    public function hasListener($event = null)
+    {
+        if ($event) {
+            return isset($this->_listeners[$event]);
+        }
+        return (count($this->_listeners) > 0);
+    }
 }

@@ -1,4 +1,6 @@
 <?php
-namespace oxide\http\exception;
+namespace Oxide\Http\Exception;
 
-class HeaderAlreadySentException extends \Exception {}
+class HeaderAlreadySentException extends \Exception
+{
+}

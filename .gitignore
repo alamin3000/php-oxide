@@ -3,3 +3,7 @@
 /nbproject/private/
 project.xml
 project.properties
+.buildpath
+.idea/
+.project
+.settings/

@@ -1,7 +1,9 @@
 <?php
-namespace oxide\http;
+namespace Oxide\Http;
+
 use Zend\Authentication\AuthenticationService;
 
-class Auth extends AuthenticationService {   
-  
+class Auth extends AuthenticationService
+{
+
 }

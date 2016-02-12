@@ -1,3 +1,6 @@
 <?php
-namespace oxide\http\exception;
-class SessionAlreadyStartedException extends \Exception {}
+namespace Oxide\Http\Exception;
+
+class SessionAlreadyStartedException extends \Exception
+{
+}

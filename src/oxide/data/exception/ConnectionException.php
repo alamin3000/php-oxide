@@ -2,14 +2,17 @@
 
 /**
  * Oxide Framework
- * 
+ *
  * @link https://github.com/alamin3000/php-oxide Git source code
  * @copyright (c) 2014, Alamin Ahmed
- * @license http://URL name 
+ * @license http://URL name
  */
 
-namespace oxide\data\exception;
+namespace Oxide\Data\Exception;
 
-class ConnectionException extends \Exception {
-   
+use Exception;
+
+class ConnectionException extends Exception
+{
+
 }

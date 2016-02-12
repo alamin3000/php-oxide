@@ -1,3 +1,6 @@
 <?php
-namespace oxide\http\exception;
-class HttpException extends \Exception { }
+namespace Oxide\Http\Exception;
+
+class HttpException extends \Exception
+{
+}

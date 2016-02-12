@@ -13,19 +13,7 @@ use oxide\http\Context;
 
 abstract class Plugin implements Pluggable {
    
-   protected 
-      /**
-       * @var helper/HelperContainer 
-       */
-      $helpers = null,
-           
-      /**
-       * @var Context
-       */
-      $context = null;
-
-
-   final public function __construct(Context $context) {
-      $this->context = $context;
+   public function getConfig() {
+      
    }
 }
