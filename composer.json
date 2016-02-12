@@ -20,9 +20,6 @@
         "phpmailer/phpmailer": "~5.2"
     },
     
-    "autoload": {
-        "psr-4": { "Oxide\\": "src/Oxide" }
-    },
 
     "minimum-stability": "dev"
 }
