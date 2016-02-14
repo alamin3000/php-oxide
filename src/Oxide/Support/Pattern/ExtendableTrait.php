@@ -8,7 +8,7 @@
  * @license http://URL name
  */
 
-namespace Oxide\Common\Pattern;
+namespace Oxide\Suppert\Pattern;
 
 /**
  * ExtendableTrait

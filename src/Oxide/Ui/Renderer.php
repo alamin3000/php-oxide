@@ -1,5 +1,5 @@
 <?php
-namespace oxide\ui;
+namespace Oxide\Ui;
 
 /**
  * Renderer interface

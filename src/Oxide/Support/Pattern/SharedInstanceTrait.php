@@ -1,12 +1,12 @@
 <?php
-namespace Oxide\Common\Pattern;
+namespace Oxide\Support\Pattern;
 
 use Closure;
 
 /**
  * Trait the provides default instance functionality
  *
- * Provides abiity to set and access default instance for any object using it.
+ * Provides ability to set and access default instance for any object using it.
  */
 trait SharedInstanceTrait
 {
@@ -22,8 +22,8 @@ trait SharedInstanceTrait
      *
      * If you need to simply check if there is default instance, use hasDefaultInstance()
      * This method will create new instance if instance isn't available
-     *
-     * @return self
+     * @return static
+     * @throws \Exception
      */
     final public static function sharedInstance()
     {
@@ -58,7 +58,7 @@ trait SharedInstanceTrait
      *
      * The instance must be same object type of the class type
      *
-     * @param object|Closure $instance
+     * @param Closure|object|SharedInstanceTrait $instance
      * @return null
      */
     final public static function setSharedInstance(self $instance)

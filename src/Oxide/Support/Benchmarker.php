@@ -8,7 +8,8 @@
  * @license http://URL name
  */
 
-namespace Oxide\Util;
+namespace Oxide\Support;
+
 use Closure;
 
 class Benchmarker

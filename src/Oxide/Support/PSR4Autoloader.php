@@ -1,5 +1,5 @@
 <?php
-namespace Oxide\Util;
+namespace Oxide\Support;
 
 class PSR4Autoloader
 {

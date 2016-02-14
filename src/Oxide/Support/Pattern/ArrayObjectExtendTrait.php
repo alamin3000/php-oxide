@@ -7,7 +7,7 @@
  * @copyright (c) 2014, Alamin Ahmed
  * @license http://URL name
  */
-namespace Oxide\Common\Pattern;
+namespace Oxide\Supprt\Pattern;
 
 /**
  * Adds additional functionalities to ArrayObject

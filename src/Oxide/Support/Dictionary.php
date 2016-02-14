@@ -7,12 +7,11 @@
  * @copyright (c) 2014, Alamin Ahmed
  * @license http://URL name
  */
-namespace Oxide\Common;
+namespace Oxide\Support;
 
-use Oxide\Common\Pattern\ArrayObjectExtendTrait;
-use Oxide\Util\FileParser;
+use Oxide\Support\Pattern\ArrayObjectExtendTrait;
 use ArrayObject;
-use Oxide\Common\Pattern\ObservableTrait;
+use Oxide\Support\Pattern\ObservableTrait;
 
 /**
  * Dictionary
@@ -34,37 +33,6 @@ class Dictionary extends ArrayObject
         parent::__construct();
         if ($data) {
             $this->exchangeArray($data);
-        }
-    }
-
-    /**
-     * Create a new dictionary from the given file
-     *
-     * Uses shared FileParser to parse the given file into dictionary
-     * @see self::loadFromFile
-     * @param string $file
-     * @return static
-     */
-    static public function createFromFile($file)
-    {
-        $dictionary = new Dictionary();
-        $dictionary->loadFromFile($file);
-
-        return $dictionary;
-    }
-
-    /**
-     * Load content from file and merge the contents into current dictionary
-     *
-     * @param string $file
-     */
-    public function loadFromFile($file)
-    {
-        $parser = FileParser::sharedInstance();
-        $data = $parser->parse($file);
-
-        if ($data) {
-            $this->merge($data);
         }
     }
 

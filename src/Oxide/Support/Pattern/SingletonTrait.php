@@ -1,5 +1,5 @@
 <?php
-namespace Oxide\Common\Pattern;
+namespace Oxide\Support\Pattern;
 
 use Oxide\Common\AbstractClass;
 

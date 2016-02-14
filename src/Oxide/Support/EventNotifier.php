@@ -1,7 +1,7 @@
 <?php
-namespace Oxide\Util;
+namespace Oxide\Support;
 
-use Oxide\Common\Pattern\SharedInstanceTrait;
+use Oxide\Support\Pattern\SharedInstanceTrait;
 
 /**
  * Event Notifier class

@@ -8,7 +8,7 @@
  * @license http://URL name
  */
 
-namespace Oxide\Util;
+namespace Oxide\Support;
 
 abstract class Debug
 {

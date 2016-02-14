@@ -8,7 +8,7 @@
  * @license http://URL name
  */
 
-namespace Oxide\Common;
+namespace Oxide\Support\Patter;
 
 trait InjectorTrait
 {

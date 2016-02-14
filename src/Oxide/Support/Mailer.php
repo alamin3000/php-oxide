@@ -8,10 +8,9 @@
  * @license http://URL name
  */
 
-namespace Oxide\Util;
+namespace Oxide\Support;
 
-use Oxide\Common\Dictionary;
-use Oxide\Common\Pattern\SharedInstanceTrait;
+use Oxide\Support\Pattern\SharedInstanceTrait;
 
 class Mailer extends \PHPMailer
 {

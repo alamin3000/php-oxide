@@ -9,16 +9,17 @@
 
 namespace Oxide;
 
-use Oxide\Common\Dictionary;
-use Oxide\Common\Pattern\SingletonTrait;
+use Oxide\Support\Dictionary;
+use Oxide\Support\Pattern\SingletonTrait;
 use Oxide\Data\Connection;
 use Oxide\Http\Context;
 use Oxide\Http\FrontController;
 use Oxide\Http\Server;
-use Oxide\Util\ConfigManager;
-use Oxide\Util\EventNotifier;
-use Oxide\Util\Mailer;
-use Oxide\Util\PSR4Autoloader;
+use Oxide\Support\ConfigManager;
+use Oxide\Support\EventNotifier;
+use Oxide\Support\Mailer;
+use Oxide\Support\PSR4Autoloader;
+use Oxide\Support\Debug;
 
 /**
  * Print variable info
@@ -27,7 +28,7 @@ use Oxide\Util\PSR4Autoloader;
  */
 function dump($var)
 {
-    util\Debug::dump($var, false, 1);
+    Debug::dump($var, false, 1);
 }
 
 /**

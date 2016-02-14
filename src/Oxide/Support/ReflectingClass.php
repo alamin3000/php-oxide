@@ -1,5 +1,5 @@
 <?php
-namespace Oxide\Common;
+namespace Oxide\Support;
 
 use ReflectionClass;
 use Closure;

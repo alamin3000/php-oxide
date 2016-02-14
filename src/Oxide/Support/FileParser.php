@@ -7,18 +7,15 @@
  * @copyright (c) 2014, Alamin Ahmed
  * @license http://URL name
  */
-namespace Oxide\Util;
+namespace Oxide\Support;
 
 use Closure;
-use Oxide\Common\Pattern\SharedInstanceTrait;
 
 /**
  * File Parser
  */
 class FileParser
 {
-    use SharedInstanceTrait;
-
     protected
         /**
          * @var array

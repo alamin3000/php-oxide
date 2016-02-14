@@ -1,9 +1,9 @@
 <?php
-namespace Oxide\Common;
+namespace Oxide\Support;
 
 use ArrayObject;
 use Closure;
-use Oxide\Common\Pattern\ArrayObjectTrait;
+use Oxide\Support\Pattern\ArrayObjectTrait;
 
 /**
  *
@@ -15,7 +15,7 @@ class ArrayString extends ArrayObject
 
     private
         /**
-         * @var Closure
+         * @var \Closure
          */
         $_stringify_callback = null;
 
@@ -32,7 +32,7 @@ class ArrayString extends ArrayObject
      * get current stringify callback.
      *
      * @access public
-     * @return void
+     * @return \Closure
      */
     public function getStringifier()
     {
@@ -57,8 +57,8 @@ class ArrayString extends ArrayObject
      */
     public function __toString()
     {
-        if ($this->_stringify_callback) {
-            $callback = $this->_stringify_callback;
+        $callback = $this->getStringifier();
+        if ($callback) {
             return $callback($this);
         } else {
             return implode('', $this->getArrayCopy());

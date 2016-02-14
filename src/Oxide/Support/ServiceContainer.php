@@ -7,7 +7,7 @@
  * @copyright (c) 2014, Alamin Ahmed
  * @license http://URL name
  */
-namespace Oxide\Common;
+namespace Oxide\Support;
 
 use Exception;
 use ArrayAccess;
