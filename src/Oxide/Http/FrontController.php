@@ -1,9 +1,9 @@
 <?php
 namespace Oxide\Http;
 
-use Oxide\Common\Pattern\SharedInstanceTrait;
+use Oxide\Support\Pattern\SharedInstanceTrait;
 use Oxide\Http\Exception\HttpException;
-use Oxide\Util\EventNotifier;
+use Oxide\Support\EventNotifier;
 
 
 /**
@@ -57,7 +57,7 @@ class FrontController
      */
     public function getRouter()
     {
-        return $this->context->resolve('router', 'oxide\http\Router');
+        return $this->context->resolve('Oxide\Http\Router');
     }
 
     /**

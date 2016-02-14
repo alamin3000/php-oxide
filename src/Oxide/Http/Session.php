@@ -10,7 +10,7 @@
 
 namespace Oxide\Http;
 
-use Oxide\Common\Dictionary;
+use Oxide\Support\Dictionary;
 
 class Session extends Dictionary
 {

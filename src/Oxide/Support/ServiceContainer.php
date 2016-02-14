@@ -120,6 +120,7 @@ class ServiceContainer implements ArrayAccess
      *
      * @param string|array $alias
      * @param string $resolvable
+     * @throws Exception
      */
     public function alias($alias, $resolvable)
     {
@@ -142,7 +143,8 @@ class ServiceContainer implements ArrayAccess
      *
      * @access public
      * @param mixed $resolvable
-     * @return void
+     * @return mixed|string
+     * @throws Exception
      */
     public function resolve($resolvable)
     {

@@ -2,7 +2,7 @@
 namespace Oxide\Data;
 
 use Exception;
-use Oxide\Common\Pattern\SharedInstanceTrait;
+use Oxide\Support\Pattern\SharedInstanceTrait;
 use PDO;
 
 /**

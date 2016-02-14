@@ -11,8 +11,9 @@
 namespace Oxide\Support;
 
 use Oxide\Support\Pattern\SharedInstanceTrait;
+use PHPMailer\PHPMailer\PHPMailer;
 
-class Mailer extends \PHPMailer
+class Mailer extends PHPMailer
 {
     use SharedInstanceTrait;
 

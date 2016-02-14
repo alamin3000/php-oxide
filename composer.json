@@ -19,7 +19,10 @@
         "zendframework/zend-permissions-acl": "2.0.*",
         "phpmailer/phpmailer": "~5.2"
     },
-    
+
+    "autoload": {
+        "psr-4": { "Oxide\\": "src/Oxide" }
+    },
 
     "minimum-stability": "dev"
 }
