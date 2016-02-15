@@ -1,7 +1,7 @@
 <?php
-namespace Oxide\Http;
+namespace Oxide\Access;
 
-use Oxide\Common\Dictionary;
+use Oxide\Support\Dictionary;
 use Zend\Authentication\Storage\StorageInterface;
 
 class AuthStorage implements StorageInterface

@@ -122,6 +122,15 @@ class Loader
             throw new \Exception("Error type: {$errno} raised: \"{$errstr}\" at {$errfile}:{$errline}");
         });
 
+
+//        set_error_handler(function ($severity, $message, $file, $line) {
+//            if (!(error_reporting() & $severity)) {
+//                // This error code is not included in error_reporting
+//                return;
+//            }
+//            throw new \ErrorException($message, 0, $severity, $file, $line);
+//        });
+
         // register auto loader
 //        $autoloader = $this->getAutoloader();
 //        $autoloader->register();

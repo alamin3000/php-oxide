@@ -1,5 +1,5 @@
 <?php
-namespace Oxide\Http;
+namespace Oxide\Access;
 
 use Zend\Authentication\AuthenticationService;
 
