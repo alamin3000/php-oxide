@@ -19,10 +19,11 @@ class Context extends ServiceContainer
      */
     public function __construct(Request $request, Response $response = null, Session $session = null)
     {
-        return;
         parent::__construct();
+
         // bind self instance
         $this->bind([self::class, 'context'], $this);
+
         // bind request with alias
         $this->bind([Request::class, 'request'], $request);
 
@@ -30,7 +31,7 @@ class Context extends ServiceContainer
         if (!$response) {
             $response = Response::class;
         }
-        $this->bind([Response::class, 'response']);
+        $this->bind([Response::class, 'response'], $response);
 
 
         // bind session if not already provided

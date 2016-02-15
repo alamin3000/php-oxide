@@ -139,7 +139,6 @@ class Loader
      */
     public static function bootstrap($config_dir)
     {
-
         // get singleton loader and register it.
         $loader = self::getInstance();
         $loader->load();
@@ -152,18 +151,14 @@ class Loader
         // create and initialize the global services
         $loader->initializeSharedServices($config);
 
-
         // create and configure the request object
         $request = Server::currentRequest();
         if (isset($config['base'])) {
             $request->setBase($config['base']);
         }
 
-
         // creating the http context with the current server request
         $context = new Context($request);
-
-
 
         // create the front controller and share it
         $fc = new FrontController($context);

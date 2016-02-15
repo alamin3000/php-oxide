@@ -120,7 +120,7 @@ class FrontController
         $context = $this->context;
 
         // attempt to create the command using the route
-        $factory = $context->resolve('commandFactory', '\Oxide\Http\CommandFactory', true);
+        $factory = $context->resolve('\Oxide\Http\CommandFactory');
         $command = $factory->create($route);
 
         // if unable to find the controller

@@ -48,15 +48,18 @@ class ServiceContainer implements ArrayAccess
         if (!$resolver) {
             // if resolver is not given, then we assume $resolvable is also $resolver class
             $resolver = $resolvable;
+
         } else {
+
             if (is_object($resolver) && !$resolver instanceof \Closure) {
                 // if resolver is an object, (not closure)
                 // then we will treat it as an instance
                 // so store directly into the container
                 // please note, this will also update if there is already instance exits
-                $this[$resolvable] = $resolver;
+                $this->_instances[$resolvable] = $resolver;
             }
         }
+
 
         $this->_resolvers[$resolvable] = [
             $resolver,
