@@ -29,6 +29,7 @@ class FrontController
         EVENT_EXCEPTION = 'FrontControllerException';
 
     protected
+        $registry = [],
         $routes = [],
         $context = null;
 
@@ -51,13 +52,41 @@ class FrontController
         return $this->context;
     }
 
+    public function register($path, Command $command) {
+        $this->registry[$path] = $command;
+    }
+
+    public function unregister($path) {
+        if(isset($this->registry[$path])) {
+            unset($this->registry[$path]);
+        }
+    }
+
+    public function registered($path) {
+        return isset($this->registry[$path]);
+    }
+
+    public function route(Request $request) {
+        $registry = $this->registry;
+        if(empty($registry)) return NULL;
+        $path = $request->getPath();
+        $base = $request->getBase();
+        if($base != "" && $base != "/" && (strpos($path, $base) === 0)) {
+            $path = substr($path, strlen($base));
+        }
+
+        // sort with longer path first
+        $offsets = array_keys($registry);
+        rsort($offsets);
+    }
+
     /**
      *
      * @return Router
      */
     public function getRouter()
     {
-        return $this->context->resolve('Oxide\Http\Router');
+        return $this->context->resolve(Router::class);
     }
 
     /**
@@ -120,7 +149,7 @@ class FrontController
         $context = $this->context;
 
         // attempt to create the command using the route
-        $factory = $context->resolve('\Oxide\Http\CommandFactory');
+        $factory = $context->resolve(CommandFactory::class);
         $command = $factory->create($route);
 
         // if unable to find the controller
