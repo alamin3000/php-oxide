@@ -1,4 +1,1 @@
-php-oxide
-=========
-
-A modern php (5.5+) framework
+NOTE: Future development of php-oxide has been discontinued.  Instead @phpcompose development has been initiated.
